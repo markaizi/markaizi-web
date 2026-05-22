@@ -2,16 +2,17 @@
 import { useState, useEffect, useRef } from "react";
 
 const LOGOS = [
-  { name: "NOVA", sub: "Market" },
-  { name: "APEX", sub: "Digital" },
-  { name: "PULSE", sub: "Studio" },
-  { name: "TERRA", sub: "Homes" },
-  { name: "ZEST", sub: "Foods" },
-  { name: "FIRA", sub: "Wear" },
-  { name: "VELO", sub: "Tech" },
-  { name: "KODA", sub: "Agency" },
-  { name: "LYRA", sub: "Beauty" },
-  { name: "ORION", sub: "Group" },
+  { name: "Alitel",    sub: "İstikbal" },
+  { name: "Duru",      sub: "Avize" },
+  { name: "Şahin",     sub: "Avize" },
+  { name: "Sarsılmaz", sub: "Mobilya" },
+  { name: "Vizyon",    sub: "Aksesuar" },
+  { name: "Getat",     sub: "Etimesgut" },
+  { name: "Fıtrina",   sub: "" },
+  { name: "Alanya",    sub: "Pro Clean" },
+  { name: "Efsane",    sub: "Kebapçı" },
+  { name: "Ahenk",     sub: "Mobilya" },
+  { name: "Retrocar",  sub: "" },
 ];
 
 const TESTIMONIALS = [
@@ -70,7 +71,7 @@ export default function Portfolio() {
         </div>
 
         {/* Logo Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mb-16 reveal">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-16 reveal">
           {LOGOS.map((l) => (
             <div
               key={l.name}

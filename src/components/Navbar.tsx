@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Logo from "@/components/Logo";
 
 const links = [
   { href: "#hizmetler", label: "Hizmetler" },
@@ -44,8 +45,8 @@ export default function Navbar() {
       >
         <nav className="max-w-[1200px] mx-auto px-6 flex items-center justify-between">
           {/* Logo */}
-          <Link href="#" className="text-[22px] font-black tracking-tight">
-            marka<span className="gradient-text">izi</span>
+          <Link href="#" className="flex items-center">
+            <Logo height={36} />
           </Link>
 
           {/* Desktop Links */}

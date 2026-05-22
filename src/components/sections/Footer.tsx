@@ -1,14 +1,16 @@
+import Logo from "@/components/Logo";
+
 export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer style={{ background:"var(--bg-alt)", borderTop:"1px solid var(--border)" }}>
+    <footer style={{ background: "var(--bg-alt)", borderTop: "1px solid var(--border)" }}>
       <div className="max-w-[1200px] mx-auto px-6 pt-[72px] pb-0">
         <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-16 mb-16">
           {/* Brand */}
           <div>
-            <a href="#" className="block text-2xl font-black tracking-tight mb-4">
-              marka<span className="gradient-text">izi</span>
+            <a href="#" className="inline-block mb-5">
+              <Logo height={40} />
             </a>
             <p className="text-sm text-[#8a8a9a] leading-relaxed max-w-[220px]">
               Dijital dünyada markanızın en güçlü sesi.
@@ -40,9 +42,9 @@ export default function Footer() {
             <FooterCol
               title="İletişim"
               links={[
-                { label: "info@markaizi.com",  href: "mailto:info@markaizi.com" },
-                { label: "+90 (532) 000 00 00", href: "tel:+905320000000" },
-                { label: "İstanbul, Türkiye",  href: "#" },
+                { label: "markaizicom@gmail.com",  href: "mailto:markaizicom@gmail.com" },
+                { label: "+90 (552) 077 27 00",    href: "tel:+905520772700" },
+                { label: "Ankara, Türkiye",        href: "#" },
               ]}
             />
           </div>
@@ -50,7 +52,7 @@ export default function Footer() {
       </div>
 
       {/* Bottom Bar */}
-      <div style={{ borderTop:"1px solid var(--border)" }}>
+      <div style={{ borderTop: "1px solid var(--border)" }}>
         <div className="max-w-[1200px] mx-auto px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-[13px] text-[#8a8a9a]">© {year} markaizi. Tüm hakları saklıdır.</p>
           <div className="flex gap-6">

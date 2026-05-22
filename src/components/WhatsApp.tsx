@@ -3,7 +3,7 @@
 export default function WhatsApp() {
   return (
     <a
-      href="https://wa.me/905320000000"
+      href="https://wa.me/905520772700"
       target="_blank"
       rel="noopener noreferrer"
       aria-label="WhatsApp ile iletişime geç"
