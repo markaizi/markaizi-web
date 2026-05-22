@@ -10,7 +10,7 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <a href="#" className="inline-block mb-5">
-              <Logo height={40} />
+              <Logo height={56} />
             </a>
             <p className="text-sm text-[#8a8a9a] leading-relaxed max-w-[220px]">
               Dijital dünyada markanızın en güçlü sesi.
