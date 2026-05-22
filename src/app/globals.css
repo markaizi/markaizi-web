@@ -1,26 +1,178 @@
 @import "tailwindcss";
 
+/* ── Marka Değişkenleri ────────────────── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg:        #050505;
+  --bg-alt:    #0a0a0f;
+  --surface:   #0f0f14;
+  --surface-2: #141420;
+  --border:    rgba(255,255,255,0.07);
+  --grad:      linear-gradient(135deg, #7c3aed, #a855f7, #ec4899);
+  --grad-soft: linear-gradient(135deg, rgba(124,58,237,0.15), rgba(236,72,153,0.15));
+  --glow:      0 0 30px rgba(168,85,247,0.35);
+  --glow-sm:   0 0 15px rgba(168,85,247,0.25);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+html { scroll-behavior: smooth; }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: #fff;
+  font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, sans-serif;
+  overflow-x: hidden;
+}
+
+/* ── Yardımcı Sınıflar ─────────────────── */
+.gradient-text {
+  background: var(--grad);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.section-tag {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  background: var(--grad-soft);
+  border: 1px solid rgba(168,85,247,0.3);
+  color: #c084fc;
+  padding: 6px 16px;
+  border-radius: 999px;
+  margin-bottom: 20px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 32px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  white-space: nowrap;
+  text-decoration: none;
+}
+.btn-primary {
+  background: var(--grad);
+  color: #fff;
+  box-shadow: var(--glow-sm);
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: var(--glow); }
+
+.btn-outline {
+  background: transparent;
+  color: #fff;
+  border: 1.5px solid var(--border);
+}
+.btn-outline:hover {
+  border-color: rgba(168,85,247,0.5);
+  background: rgba(168,85,247,0.08);
+  transform: translateY(-2px);
+}
+
+/* ── Scroll Reveal ─────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* ── Animasyonlar ──────────────────────── */
+@keyframes float {
+  0%, 100% { transform: translate(0,0) scale(1); }
+  33%       { transform: translate(30px,-40px) scale(1.05); }
+  66%       { transform: translate(-20px,20px) scale(0.95); }
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes scrollDown {
+  0%   { transform: translateY(0); opacity: 1; }
+  80%  { transform: translateY(14px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 0; }
+}
+@keyframes spinRing {
+  from { transform: translate(-50%,-50%) rotate(0deg); }
+  to   { transform: translate(-50%,-50%) rotate(360deg); }
+}
+@keyframes floatIcon {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-10px); }
+}
+@keyframes floatIconCenter {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50%       { transform: translateX(-50%) translateY(-10px); }
+}
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50%       { opacity: 1;   transform: scale(1.2); }
+}
+@keyframes floatMetric {
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  50%       { transform: translateY(-8px) rotate(1deg); }
+}
+@keyframes waPulse {
+  0%   { transform: scale(1);   opacity: 0.7; }
+  70%  { transform: scale(1.6); opacity: 0; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+/* ── Hero Visual ───────────────────────── */
+.hv-ring {
+  position: absolute; top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  width: 320px; height: 320px;
+  border-radius: 50%;
+  border: 1px solid rgba(168,85,247,0.15);
+  animation: spinRing 18s linear infinite;
+  pointer-events: none;
+}
+.hv-ring-2 {
+  width: 430px; height: 430px;
+  border-color: rgba(124,58,237,0.08);
+  animation-duration: 28s;
+  animation-direction: reverse;
+}
+.hv-icon         { animation: floatIcon 4s ease-in-out infinite; animation-delay: var(--delay,0s); }
+.hv-pos-1,
+.hv-pos-4        { animation-name: floatIconCenter; }
+.hv-center-glow  { animation: glowPulse 3s ease-in-out infinite; }
+.hv-metric       { animation: floatMetric 5s ease-in-out infinite; animation-delay: var(--delay,0s); }
+.scroll-dot      { animation: scrollDown 2s ease-in-out infinite; }
+
+/* ── Hero Text Animations ──────────────── */
+.hero-badge { animation: fadeInUp 0.8s ease forwards; }
+.hero-h1    { animation: fadeInUp 0.8s ease 0.1s both; }
+.hero-sub   { animation: fadeInUp 0.8s ease 0.2s both; }
+.hero-cta   { animation: fadeInUp 0.8s ease 0.3s both; }
+.hero-stats { animation: fadeInUp 0.8s ease 0.4s both; }
+
+/* ── WhatsApp Pulse ────────────────────── */
+.wa-pulse { animation: waPulse 2.5s ease-out infinite; }
+
+/* ── Form Focus ────────────────────────── */
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: rgba(168,85,247,0.5) !important;
+  box-shadow: 0 0 0 3px rgba(168,85,247,0.1);
+}
+
+/* ── Testimonial Slider ────────────────── */
+.testimonial-track { display: flex; transition: transform 0.5s cubic-bezier(0.4,0,0.2,1); }
+.testimonial-card  { min-width: 100%; }
+
+/* ── Pricing Featured Amount ───────────── */
+.pricing-featured-amount {
+  color: #ffffff !important;
+  background: none !important;
+  -webkit-text-fill-color: #ffffff !important;
+  text-shadow: 0 0 20px rgba(255,255,255,0.3);
 }
