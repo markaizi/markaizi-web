@@ -52,15 +52,40 @@ const CONTACT_ITEMS = [
 ];
 
 export default function Contact() {
-  const [status, setStatus] = useState<"idle" | "sending" | "done">("idle");
+  const [status, setStatus] = useState<"idle" | "sending" | "done" | "error">("idle");
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setStatus("sending");
-    setTimeout(() => {
-      setStatus("done");
-      setTimeout(() => setStatus("idle"), 3000);
-    }, 1200);
+
+    const form = e.currentTarget;
+    const data = {
+      name:    (form.elements.namedItem("name")    as HTMLInputElement).value,
+      email:   (form.elements.namedItem("email")   as HTMLInputElement).value,
+      phone:   (form.elements.namedItem("phone")   as HTMLInputElement).value,
+      service: (form.elements.namedItem("service") as HTMLSelectElement).value,
+      message: (form.elements.namedItem("message") as HTMLTextAreaElement).value,
+    };
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      if (res.ok) {
+        setStatus("done");
+        form.reset();
+        setTimeout(() => setStatus("idle"), 5000);
+      } else {
+        setStatus("error");
+        setTimeout(() => setStatus("idle"), 4000);
+      }
+    } catch {
+      setStatus("error");
+      setTimeout(() => setStatus("idle"), 4000);
+    }
   };
 
   return (
@@ -84,6 +109,7 @@ export default function Contact() {
             onSubmit={handleSubmit}
             className="reveal rounded-2xl p-10"
             style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+            noValidate
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
               <Field label="Ad Soyad" id="name" type="text" placeholder="Ahmet Yılmaz" required />
@@ -97,6 +123,7 @@ export default function Contact() {
                 İlgilendiğiniz Hizmet
               </label>
               <select
+                name="service"
                 className="w-full px-4 py-3.5 rounded-xl text-[15px] text-white"
                 style={{
                   background: "var(--bg)", border: "1.5px solid var(--border)",
@@ -114,23 +141,37 @@ export default function Contact() {
             <div className="mb-7">
               <label className="block text-[13px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-2">Mesajınız</label>
               <textarea
+                name="message"
                 rows={4}
                 placeholder="Projenizden bahsedin..."
+                required
                 className="w-full px-4 py-3.5 rounded-xl text-[15px] text-white placeholder:text-white/20 resize-y min-h-[120px]"
                 style={{ background: "var(--bg)", border: "1.5px solid var(--border)" }}
               />
             </div>
+            {status === "error" && (
+              <p className="text-red-400 text-[13px] text-center mb-4">
+                Bir hata oluştu, lütfen tekrar deneyin veya doğrudan e-posta gönderin.
+              </p>
+            )}
             <button
               type="submit"
-              disabled={status !== "idle"}
+              disabled={status === "sending" || status === "done"}
               className="btn w-full"
               style={{
-                background: status === "done" ? "linear-gradient(135deg,#059669,#10b981)" : "var(--grad)",
+                background: status === "done"
+                  ? "linear-gradient(135deg,#059669,#10b981)"
+                  : status === "error"
+                  ? "linear-gradient(135deg,#dc2626,#ef4444)"
+                  : "var(--grad)",
                 color: "#fff",
                 boxShadow: "var(--glow-sm)",
               }}
             >
-              {status === "idle" ? "Ücretsiz Teklif Al →" : status === "sending" ? "Gönderiliyor..." : "✓ Mesajınız Alındı!"}
+              {status === "idle"    ? "Ücretsiz Teklif Al →"
+               : status === "sending" ? "Gönderiliyor..."
+               : status === "done"    ? "✓ Mesajınız Alındı!"
+               : "Hata — Tekrar Dene"}
             </button>
           </form>
 

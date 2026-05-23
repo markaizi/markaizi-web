@@ -55,10 +55,15 @@ export default function Footer() {
       <div style={{ borderTop: "1px solid var(--border)" }}>
         <div className="max-w-[1200px] mx-auto px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-[13px] text-[#8a8a9a]">© {year} markaizi. Tüm hakları saklıdır.</p>
-          <div className="flex gap-6">
-            {["Gizlilik Politikası", "Kullanım Şartları"].map((l) => (
-              <a key={l} href="#" className="text-[13px] text-[#8a8a9a] hover:text-white transition-colors">
-                {l}
+          <div className="flex flex-wrap gap-4 justify-center sm:justify-end">
+            {[
+              { label: "KVKK", href: "/kvkk" },
+              { label: "Gizlilik Politikası", href: "/gizlilik-politikasi" },
+              { label: "Çerez Politikası", href: "/cerez-politikasi" },
+              { label: "Kullanım Şartları", href: "/kullanim-sartlari" },
+            ].map((l) => (
+              <a key={l.label} href={l.href} className="text-[13px] text-[#8a8a9a] hover:text-white transition-colors">
+                {l.label}
               </a>
             ))}
           </div>

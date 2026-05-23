@@ -176,3 +176,82 @@ input:focus, select:focus, textarea:focus {
   -webkit-text-fill-color: #ffffff !important;
   text-shadow: 0 0 20px rgba(255,255,255,0.3);
 }
+
+/* ── Legal Pages ───────────────────────── */
+.legal-content h2 {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  margin-top: 2.5rem;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.legal-content h2:first-child { margin-top: 0; }
+.legal-content h3 {
+  font-size: 15px;
+  font-weight: 600;
+  color: #c084fc;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+.legal-content p {
+  font-size: 14px;
+  line-height: 1.9;
+  color: #8a8a9a;
+  margin-bottom: 1rem;
+}
+.legal-content ul {
+  margin: 0 0 1rem 1.25rem;
+  list-style: disc;
+}
+.legal-content ul li {
+  font-size: 14px;
+  line-height: 1.8;
+  color: #8a8a9a;
+  margin-bottom: 0.25rem;
+}
+.legal-content a {
+  color: #c084fc;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.legal-content a:hover { color: #fff; }
+.legal-content strong { color: #e0e0f0; font-weight: 600; }
+.legal-content table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0 1.5rem;
+  font-size: 13px;
+}
+.legal-content th {
+  text-align: left;
+  padding: 8px 12px;
+  background: rgba(168,85,247,0.1);
+  color: #c084fc;
+  font-weight: 600;
+  border: 1px solid var(--border);
+}
+.legal-content td {
+  padding: 8px 12px;
+  color: #8a8a9a;
+  border: 1px solid var(--border);
+}
+
+/* ── Blog Card ─────────────────────────── */
+.blog-card {
+  border: 1px solid var(--border);
+  transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+}
+.blog-card:hover {
+  border-color: rgba(168,85,247,0.4);
+  transform: translateY(-4px);
+  box-shadow: var(--glow-sm);
+}
+
+/* ── Cookie Banner ─────────────────────── */
+@keyframes slideUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+.cookie-banner { animation: slideUp 0.4s ease forwards; }

@@ -1,18 +1,24 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
 import Logo from "@/components/Logo";
 
-const links = [
-  { href: "#hizmetler", label: "Hizmetler" },
-  { href: "#hakkimizda", label: "Hakkımızda" },
-  { href: "#portfolio", label: "Portföy" },
-  { href: "#fiyatlar", label: "Fiyatlar" },
+const NAV_LINKS = [
+  { href: "/#hizmetler",  label: "Hizmetler",  section: "hizmetler" },
+  { href: "/#hakkimizda", label: "Hakkımızda", section: "hakkimizda" },
+  { href: "/#portfolio",  label: "Portföy",    section: "portfolio" },
+  { href: "/#fiyatlar",   label: "Fiyatlar",   section: "fiyatlar" },
+  { href: "/blog",        label: "Blog",       section: null },
+  { href: "/sss",         label: "SSS",        section: null },
 ];
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+  const router = useRouter();
+  const isHome = pathname === "/";
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -20,12 +26,26 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Menü açıkken body scroll kilitle
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
   }, [open]);
 
   const close = () => setOpen(false);
+
+  // Anasayfadaysa smooth scroll, değilse sayfaya git + hash
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, link: typeof NAV_LINKS[number]) => {
+    if (link.section && isHome) {
+      e.preventDefault();
+      const el = document.getElementById(link.section);
+      if (el) {
+        const top = el.getBoundingClientRect().top + window.scrollY - 80;
+        window.scrollTo({ top, behavior: "smooth" });
+      }
+      close();
+    } else {
+      close();
+    }
+  };
 
   return (
     <>
@@ -45,24 +65,33 @@ export default function Navbar() {
       >
         <nav className="max-w-[1200px] mx-auto px-6 flex items-center justify-between">
           {/* Logo */}
-          <Link href="#" className="flex items-center">
+          <Link href="/" className="flex items-center">
             <Logo height={52} />
           </Link>
 
           {/* Desktop Links */}
-          <ul className="hidden md:flex items-center gap-2">
-            {links.map((l) => (
+          <ul className="hidden md:flex items-center gap-1">
+            {NAV_LINKS.map((l) => (
               <li key={l.href}>
                 <a
                   href={l.href}
-                  className="px-4 py-2 text-sm font-medium text-[#8a8a9a] rounded-full transition-all hover:text-white hover:bg-white/[0.06]"
+                  onClick={(e) => handleNavClick(e, l)}
+                  className="px-4 py-2 text-sm font-medium rounded-full transition-all hover:text-white hover:bg-white/[0.06]"
+                  style={{
+                    color: pathname === l.href ? "#fff" : "#8a8a9a",
+                    background: pathname === l.href ? "rgba(255,255,255,0.06)" : "transparent",
+                  }}
                 >
                   {l.label}
                 </a>
               </li>
             ))}
             <li>
-              <a href="#iletisim" className="btn btn-primary text-sm px-[22px] py-[10px]">
+              <a
+                href={isHome ? "#iletisim" : "/#iletisim"}
+                className="btn btn-primary text-sm px-[22px] py-[10px] ml-2"
+                onClick={close}
+              >
                 İletişim
               </a>
             </li>
@@ -74,18 +103,13 @@ export default function Navbar() {
             aria-label="Menüyü aç"
             className="md:hidden flex flex-col gap-[5px] p-1 z-[1001] relative"
           >
-            <span
-              className="block w-6 h-[2px] bg-white rounded transition-all duration-300"
-              style={open ? { transform: "translateY(7px) rotate(45deg)" } : {}}
-            />
-            <span
-              className="block w-6 h-[2px] bg-white rounded transition-all duration-300"
-              style={open ? { opacity: 0 } : {}}
-            />
-            <span
-              className="block w-6 h-[2px] bg-white rounded transition-all duration-300"
-              style={open ? { transform: "translateY(-7px) rotate(-45deg)" } : {}}
-            />
+            {[
+              open ? { transform: "translateY(7px) rotate(45deg)" } : {},
+              open ? { opacity: 0 } : {},
+              open ? { transform: "translateY(-7px) rotate(-45deg)" } : {},
+            ].map((style, i) => (
+              <span key={i} className="block w-6 h-[2px] bg-white rounded transition-all duration-300" style={style} />
+            ))}
           </button>
         </nav>
       </header>
@@ -100,11 +124,11 @@ export default function Navbar() {
         }}
       >
         <ul className="flex flex-col items-center gap-8">
-          {[...links, { href: "#iletisim", label: "İletişim" }].map((l) => (
+          {[...NAV_LINKS, { href: isHome ? "#iletisim" : "/#iletisim", label: "İletişim", section: "iletisim" as string | null }].map((l) => (
             <li key={l.href}>
               <a
                 href={l.href}
-                onClick={close}
+                onClick={(e) => handleNavClick(e, l as typeof NAV_LINKS[number])}
                 className="text-[28px] font-bold text-[#8a8a9a] hover:text-white transition-colors"
               >
                 {l.label}
