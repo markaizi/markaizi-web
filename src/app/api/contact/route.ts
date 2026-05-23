@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export async function POST(req: NextRequest) {
+  // Lazy init — API key sadece runtime'da okunur, build sırasında değil
+  const resend = new Resend(process.env.RESEND_API_KEY ?? "");
   try {
     const body = await req.json();
     const { name, email, phone, service, message } = body;
