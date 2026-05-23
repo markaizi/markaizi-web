@@ -1,9 +1,12 @@
 "use client";
+import Link from "next/link";
+
 const SERVICES = [
   {
     title: "Sosyal Medya Yönetimi",
     desc: "Instagram, Facebook ve TikTok hesaplarınızı profesyonelce yönetiyoruz. Özgün içerikler, tutarlı paylaşım takvimi ve topluluk yönetimi ile takipçi kitlenizi büyütüyoruz.",
     tags: ["Instagram", "Facebook", "TikTok"],
+    href: "/hizmetler/sosyal-medya-yonetimi",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6" style={{ stroke: "#c084fc" }}>
         <path d="M17 2H7C4.24 2 2 4.24 2 7v10c0 2.76 2.24 5 5 5h10c2.76 0 5-2.24 5-5V7c0-2.76-2.24-5-5-5z" strokeWidth="1.5"/>
@@ -16,6 +19,7 @@ const SERVICES = [
     title: "Meta Reklamları",
     desc: "Instagram ve Facebook reklam kampanyalarınızı hedef kitleye en etkili şekilde ulaştırıyoruz. A/B testleri ve detaylı raporlamalarla ROAS'ınızı maksimize ediyoruz.",
     tags: ["Meta Ads", "Retargeting", "Lookalike"],
+    href: "/hizmetler/meta-reklamlari",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6" style={{ stroke: "#c084fc" }}>
         <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -26,6 +30,7 @@ const SERVICES = [
     title: "TikTok Reklamları",
     desc: "Gen Z ve Millennial kitlelere TikTok Ads Manager ile güçlü şekilde ulaşıyoruz. Viral potansiyeli yüksek reklam kreatifleriyle marka bilinirliğinizi artırıyoruz.",
     tags: ["TikTok Ads", "In-Feed", "TopView"],
+    href: "/hizmetler/tiktok-reklamlari",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6" style={{ stroke: "#c084fc" }}>
         <path d="M9 12a4 4 0 104 4V4a5 5 0 005 5" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -36,6 +41,7 @@ const SERVICES = [
     title: "Google Reklamları",
     desc: "Google Search, Display ve YouTube kampanyalarıyla potansiyel müşterilerinize tam doğru anda ulaşıyoruz. Akıllı teklif stratejileriyle bütçenizi verimli kullanıyoruz.",
     tags: ["Search Ads", "Display", "YouTube"],
+    href: "/hizmetler/google-reklamlari",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6" style={{ stroke: "#c084fc" }}>
         <circle cx="11" cy="11" r="8" strokeWidth="1.5"/>
@@ -46,8 +52,9 @@ const SERVICES = [
   },
   {
     title: "İçerik Üretimi",
-    desc: "Markanıza özel görsel tasarımlar, profesyonel video içerikler ve etkileyici metinler üretiyoruz. Her platform için optimize edilmiş kreatifleri hızla teslim ediyoruz.",
-    tags: ["Görsel", "Video", "Metin"],
+    desc: "Mağazanıza gelip ürün videoları çekiyoruz, yapay zeka araçlarıyla içerikler üretiyoruz. Her platform için optimize edilmiş kreatifleri hızla teslim ediyoruz.",
+    tags: ["Görsel", "Video", "AI İçerik"],
+    href: "/hizmetler/icerik-uretimi",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6" style={{ stroke: "#c084fc" }}>
         <path d="M14.5 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V7.5L14.5 2z" strokeWidth="1.5"/>
@@ -60,6 +67,7 @@ const SERVICES = [
     title: "Web Tasarım & Hosting",
     desc: "Markanızı yansıtan modern, hızlı ve mobil uyumlu web siteleri tasarlıyoruz. Domain kaydı ve yüksek performanslı hosting çözümleri ile sitenizi ayağa kaldırıyoruz.",
     tags: ["Web Tasarım", "Domain", "Hosting"],
+    href: "/hizmetler/web-tasarim-hosting",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6" style={{ stroke: "#c084fc" }}>
         <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -75,7 +83,7 @@ export default function Services() {
         {/* Header */}
         <div className="text-center max-w-[680px] mx-auto mb-16 reveal">
           <span className="section-tag">Hizmetlerimiz</span>
-          <h2 className="font-black leading-tight mb-4" style={{ fontSize:"clamp(28px,4vw,42px)" }}>
+          <h2 className="font-black leading-tight mb-4" style={{ fontSize: "clamp(28px,4vw,42px)" }}>
             Dijital Dünyada <span className="gradient-text">Her Adımda</span> Yanınızdayız
           </h2>
           <p className="text-[#8a8a9a] text-[17px]">
@@ -86,13 +94,11 @@ export default function Services() {
         {/* Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {SERVICES.map((s) => (
-            <div
+            <Link
               key={s.title}
-              className="reveal group relative overflow-hidden rounded-2xl p-8 transition-all duration-300 cursor-default"
-              style={{
-                background:"var(--surface)",
-                border:"1px solid var(--border)",
-              }}
+              href={s.href}
+              className="reveal group relative overflow-hidden rounded-2xl p-8 transition-all duration-300 block"
+              style={{ background: "var(--surface)", border: "1px solid var(--border)", textDecoration: "none" }}
               onMouseEnter={(e) => {
                 const el = e.currentTarget;
                 el.style.borderColor = "rgba(168,85,247,0.4)";
@@ -109,30 +115,31 @@ export default function Services() {
               {/* Icon */}
               <div
                 className="w-[52px] h-[52px] flex items-center justify-center rounded-xl mb-5"
-                style={{
-                  background:"var(--grad-soft)",
-                  border:"1px solid rgba(168,85,247,0.25)",
-                }}
+                style={{ background: "var(--grad-soft)", border: "1px solid rgba(168,85,247,0.25)" }}
               >
                 {s.icon}
               </div>
-              <h3 className="text-lg font-bold mb-3">{s.title}</h3>
+              <h3 className="text-lg font-bold mb-3 text-white">{s.title}</h3>
               <p className="text-[14px] text-[#8a8a9a] leading-relaxed mb-5">{s.desc}</p>
-              <div className="flex gap-2 flex-wrap">
+              <div className="flex gap-2 flex-wrap mb-5">
                 {s.tags.map((t) => (
                   <span
                     key={t}
                     className="text-[11px] font-semibold px-[10px] py-1 rounded-full text-[#c084fc]"
-                    style={{
-                      background:"rgba(168,85,247,0.1)",
-                      border:"1px solid rgba(168,85,247,0.2)",
-                    }}
+                    style={{ background: "rgba(168,85,247,0.1)", border: "1px solid rgba(168,85,247,0.2)" }}
                   >
                     {t}
                   </span>
                 ))}
               </div>
-            </div>
+              {/* Detay linki */}
+              <div className="flex items-center gap-1.5 text-[13px] font-semibold text-[#c084fc] transition-all duration-200 group-hover:gap-2.5">
+                Detayları Gör
+                <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth="2">
+                  <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+            </Link>
           ))}
         </div>
       </div>
