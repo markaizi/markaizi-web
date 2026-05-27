@@ -60,8 +60,8 @@ export default function About() {
           {/* Sol */}
           <div className="reveal">
             <span className="section-tag">Hakkımızda</span>
-            <h2 className="font-black leading-tight mb-5 mt-3" style={{ fontSize:"clamp(28px,3.5vw,40px)" }}>
-              Dijital Başarı İçin <span className="gradient-text">Doğru Adres</span>
+            <h2 className="font-black leading-tight mb-5 mt-3 text-white" style={{ fontSize:"clamp(28px,3.5vw,40px)" }}>
+              Dijital Başarı İçin <span style={{ color: "#c084fc" }}>Doğru Adres</span>
             </h2>
             <p className="text-[#8a8a9a] text-base leading-[1.8] mb-4">
               markaizi olarak, markaların dijital dünyada güçlü bir iz bırakması için stratejik ve yaratıcı çözümler sunuyoruz. 5 yılı aşkın deneyimimizle küçük işletmelerden büyük kurumlara kadar yüzlerce markayı başarıya taşıdık.

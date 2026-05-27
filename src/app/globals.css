@@ -238,6 +238,30 @@ input:focus, select:focus, textarea:focus {
   border: 1px solid var(--border);
 }
 
+/* ── Blog Article ──────────────────────── */
+.blog-article { }
+.blog-intro {
+  font-size: 17px;
+  line-height: 1.85;
+  color: #c0c0d0;
+  margin-bottom: 2.5rem;
+  padding-bottom: 2.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.blog-section { margin-bottom: 2rem; }
+.blog-section h2 {
+  font-size: 19px;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 0.75rem;
+  letter-spacing: -0.3px;
+}
+.blog-section p {
+  font-size: 15px;
+  line-height: 1.85;
+  color: #8a8a9a;
+}
+
 /* ── Blog Card ─────────────────────────── */
 .blog-card {
   border: 1px solid var(--border);

@@ -21,10 +21,30 @@ export default function Portfolio() {
         {/* Header */}
         <div className="text-center max-w-[680px] mx-auto mb-16 reveal">
           <span className="section-tag">Portföy & Referanslar</span>
-          <h2 className="font-black leading-tight mb-4" style={{ fontSize:"clamp(28px,4vw,42px)" }}>
-            Güvendikleri <span className="gradient-text">Markalar</span>
+          <h2 className="font-black leading-tight mb-4 text-white" style={{ fontSize:"clamp(28px,4vw,42px)" }}>
+            Güvendikleri <span style={{ color: "#c084fc" }}>Markalar</span>
           </h2>
           <p className="text-[#8a8a9a] text-[17px]">200&apos;den fazla marka markaizi ile çalışarak dijital hedeflerine ulaştı.</p>
+        </div>
+
+        {/* Sonuç Bandı */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12 reveal">
+          {[
+            { value: "+%240", label: "Ort. Organik Büyüme", sub: "3 ayda" },
+            { value: "-%38",  label: "Reklam Maliyeti",     sub: "optimizasyon sonrası" },
+            { value: "3.2×",  label: "Ortalama ROAS",       sub: "Meta kampanyaları" },
+            { value: "24sa",  label: "Yanıt Süresi",        sub: "destek & raporlama" },
+          ].map((stat) => (
+            <div
+              key={stat.label}
+              className="text-center rounded-xl py-6 px-4"
+              style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+            >
+              <div className="text-[28px] font-black gradient-text leading-none mb-1">{stat.value}</div>
+              <div className="text-[13px] font-semibold text-white mb-0.5">{stat.label}</div>
+              <div className="text-[11px] text-[#8a8a9a]">{stat.sub}</div>
+            </div>
+          ))}
         </div>
 
         {/* Logo Grid */}

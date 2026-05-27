@@ -118,9 +118,20 @@ export default function Hero() {
             Sosyal medya yönetiminden Google reklamlarına, içerik üretiminden web tasarıma kadar markanızın her dijital adımında yanınızdayız.
           </p>
 
-          <div className="hero-cta flex flex-wrap gap-4 mb-14">
+          <div className="hero-cta flex flex-wrap gap-4 mb-4">
             <a href="#iletisim" className="btn btn-primary">Ücretsiz Teklif Al</a>
             <a href="#portfolio" className="btn btn-outline">Çalışmalarımızı Gör</a>
+          </div>
+          <div className="hero-cta flex flex-wrap items-center gap-x-5 gap-y-2 mb-10 text-[13px] text-[#8a8a9a]">
+            <span className="flex items-center gap-1.5">
+              <span className="text-green-400">✓</span> 24 saatte dönüş
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="text-green-400">✓</span> Taahhüt yok
+            </span>
+            <a href="tel:+905520772700" className="flex items-center gap-1.5 hover:text-white transition-colors">
+              <span className="text-[#c084fc]">📞</span> +90 (552) 077 27 00
+            </a>
           </div>
 
           <div className="hero-stats flex items-center gap-8 flex-wrap">

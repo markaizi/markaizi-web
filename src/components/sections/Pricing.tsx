@@ -70,8 +70,8 @@ export default function Pricing() {
         {/* Header */}
         <div className="text-center max-w-[680px] mx-auto mb-16 reveal">
           <span className="section-tag">Fiyatlandırma</span>
-          <h2 className="font-black leading-tight mb-4" style={{ fontSize: "clamp(28px,4vw,42px)" }}>
-            Şeffaf ve <span className="gradient-text">Adil Fiyatlar</span>
+          <h2 className="font-black leading-tight mb-4 text-white" style={{ fontSize: "clamp(28px,4vw,42px)" }}>
+            Şeffaf ve <span style={{ color: "#c084fc" }}>Adil Fiyatlar</span>
           </h2>
           <p className="text-[#8a8a9a] text-[17px]">
             Her bütçeye uygun paketlerimizle markanızı dijitalde büyütün. Gizli ücret yok.
@@ -163,7 +163,7 @@ function PlanContent({ plan }: { plan: Plan }) {
         href="#iletisim"
         className={`btn w-full mt-auto text-sm py-3 ${plan.featured ? "btn-primary" : "btn-outline"}`}
       >
-        Başla
+        {plan.featured ? "Hemen Başla" : plan.name === "Elite" ? "Teklif Al" : "Teklif Al"}
       </a>
     </>
   );

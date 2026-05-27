@@ -3,68 +3,13 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/sections/Footer";
 import WhatsApp from "@/components/WhatsApp";
+import { BLOG_POSTS } from "@/lib/blog-data";
 
 export const metadata: Metadata = {
   title: "Blog — markaizi Dijital Reklam Ajansı",
   description: "Dijital pazarlama, sosyal medya yönetimi, Google Ads ve Meta reklamları hakkında güncel makaleler ve rehberler.",
+  alternates: { canonical: "https://markaizi.com.tr/blog" },
 };
-
-const POSTS = [
-  {
-    category: "Sosyal Medya",
-    title: "Instagram Algoritması 2024: Organik Büyüme İçin 10 Strateji",
-    excerpt: "Instagram'ın son algoritma güncellemeleri neleri değiştirdi? Reels, Carousel ve Story formatlarında nasıl daha fazla erişim elde edersiniz?",
-    date: "15 Ocak 2025",
-    readTime: "7 dk",
-    color: "#c084fc",
-    slug: "instagram-algoritmasi",
-  },
-  {
-    category: "Google Ads",
-    title: "Google Ads'de Bütçeyi Optimize Etmenin 7 Yolu",
-    excerpt: "Tıklama başı maliyeti (CPC) nasıl düşürülür? Anahtar kelime kalite puanı neden önemlidir ve nasıl artırılır?",
-    date: "22 Ocak 2025",
-    readTime: "9 dk",
-    color: "#60a5fa",
-    slug: "google-ads-butce-optimizasyonu",
-  },
-  {
-    category: "Meta Reklamları",
-    title: "Meta Ads'de ROAS Artırmanın Kesin Yolları",
-    excerpt: "Facebook ve Instagram reklamlarında reklam harcaması getirisini (ROAS) nasıl maksimize edersiniz? A/B test stratejileri ve kreatif ipuçları.",
-    date: "5 Şubat 2025",
-    readTime: "8 dk",
-    color: "#f472b6",
-    slug: "meta-ads-roas",
-  },
-  {
-    category: "TikTok",
-    title: "TikTok For Business: Markalar İçin Kapsamlı Rehber",
-    excerpt: "TikTok Ads Manager kullanımı, In-Feed reklam formatları ve Türkiye pazarında TikTok'u etkin kullanma stratejileri.",
-    date: "12 Şubat 2025",
-    readTime: "10 dk",
-    color: "#34d399",
-    slug: "tiktok-for-business",
-  },
-  {
-    category: "İçerik Üretimi",
-    title: "Yapay Zeka ile İçerik Üretimi: Ajansların Kullandığı Araçlar",
-    excerpt: "ChatGPT, Midjourney, Canva AI ve daha fazlası. Dijital ajanslar içerik üretimini nasıl hızlandırıyor ve kaliteyi nasıl koruyor?",
-    date: "20 Şubat 2025",
-    readTime: "6 dk",
-    color: "#fbbf24",
-    slug: "yapay-zeka-icerik",
-  },
-  {
-    category: "Web Tasarım",
-    title: "2025'te Web Sitesi Hız Optimizasyonu: Core Web Vitals Rehberi",
-    excerpt: "Google'ın sıralamada önem verdiği Core Web Vitals metrikleri nelerdir? LCP, FID ve CLS nasıl iyileştirilir?",
-    date: "1 Mart 2025",
-    readTime: "8 dk",
-    color: "#a78bfa",
-    slug: "core-web-vitals",
-  },
-];
 
 export default function BlogPage() {
   return (
@@ -90,11 +35,12 @@ export default function BlogPage() {
         <section className="py-16" style={{ background: "var(--bg-alt)" }}>
           <div className="max-w-[1200px] mx-auto px-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {POSTS.map((post) => (
-                <article
+              {BLOG_POSTS.map((post) => (
+                <Link
                   key={post.slug}
+                  href={`/blog/${post.slug}`}
                   className="blog-card rounded-2xl overflow-hidden group transition-all duration-300 flex flex-col"
-                  style={{ background: "var(--surface)" }}
+                  style={{ background: "var(--surface)", textDecoration: "none" }}
                 >
                   {/* Renk bandı */}
                   <div className="h-1 w-full" style={{ background: `linear-gradient(90deg, ${post.color}, transparent)` }} />
@@ -124,7 +70,7 @@ export default function BlogPage() {
                       </span>
                     </div>
                   </div>
-                </article>
+                </Link>
               ))}
             </div>
 
