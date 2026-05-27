@@ -44,7 +44,7 @@ const CONTACT_ITEMS = [
   },
   {
     label: "Adres",
-    value: "Zübeyde Hanım Mah. Elif Sok. No:7/106 2. Kat, Ankara",
+    value: "Zübeyde Hanım Mah. Elif Sok. No:7/106 2. Kat, Sütçü Kemal İş Merkezi, Ankara",
     href: "https://maps.google.com/?q=Zübeyde+Hanım+Mahallesi+Elif+Sokak+No:7+Ankara",
     svg: <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" style={{ stroke: "#c084fc" }}><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" strokeWidth="1.5"/><circle cx="12" cy="10" r="3" strokeWidth="1.5"/></svg>,
   },
@@ -132,7 +132,7 @@ export default function Contact() {
                 }}
               >
                 <option value="">Seçiniz...</option>
-                {["Sosyal Medya Yönetimi", "Meta Reklamları", "TikTok Reklamları", "Google Reklamları", "İçerik Üretimi", "Web Tasarım & Hosting", "Tüm Hizmetler"].map((o) => (
+                {["Sosyal Medya Yönetimi", "Meta Reklamları", "TikTok Reklamları", "Google Reklamları", "Yapay Zeka & Otomasyon", "Web Tasarım & Hosting", "Tüm Hizmetler"].map((o) => (
                   <option key={o} style={{ background: "#0f0f14" }}>{o}</option>
                 ))}
               </select>

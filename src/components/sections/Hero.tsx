@@ -138,7 +138,7 @@ export default function Hero() {
             {[
               { value: "200+", label: "Mutlu Müşteri" },
               { divider: true },
-              { value: "5+",   label: "Yıl Deneyim" },
+              { value: "10+",  label: "Yıl Deneyim" },
               { divider: true },
               { value: "%94",  label: "Müşteri Memnuniyeti" },
             ].map((s, i) =>

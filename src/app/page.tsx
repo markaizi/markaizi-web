@@ -22,7 +22,7 @@ const jsonLd = {
   email: "markaizicom@gmail.com",
   address: {
     "@type": "PostalAddress",
-    streetAddress: "Zübeyde Hanım Mahallesi Elif Sokak No:7/106 2. Kat",
+    streetAddress: "Zübeyde Hanım Mahallesi Elif Sokak No:7/106 2. Kat, Sütçü Kemal İş Merkezi",
     addressLocality: "Ankara",
     addressCountry: "TR",
   },

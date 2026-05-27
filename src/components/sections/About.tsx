@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 
 const STATS = [
   { target: 200, suffix: "+", label: "Mutlu Müşteri" },
-  { target: 5,   suffix: "+", label: "Yıl Deneyim" },
+  { target: 10,  suffix: "+", label: "Yıl Deneyim" },
   { target: 850, suffix: "+", label: "Kampanya" },
   { target: 94,  suffix: "%", label: "Memnuniyet" },
 ];
@@ -64,10 +64,10 @@ export default function About() {
               Dijital Başarı İçin <span style={{ color: "#c084fc" }}>Doğru Adres</span>
             </h2>
             <p className="text-[#8a8a9a] text-base leading-[1.8] mb-4">
-              markaizi olarak, markaların dijital dünyada güçlü bir iz bırakması için stratejik ve yaratıcı çözümler sunuyoruz. 5 yılı aşkın deneyimimizle küçük işletmelerden büyük kurumlara kadar yüzlerce markayı başarıya taşıdık.
+              Ankara merkezli markaizi olarak, reklamcılık dünyasına matbaa, baskı, insert ve katalog tasarımı tarafından girdik. 10 yılı aşkın bu birikimi arkamıza alarak artık tamamen dijital pazarlamaya odaklandık; çünkü markaların müşterilerine en hızlı ve ölçülebilir şekilde ulaştığı yer burası.
             </p>
             <p className="text-[#8a8a9a] text-base leading-[1.8] mb-10">
-              Veri odaklı yaklaşımımız, yaratıcı ekibimiz ve şeffaf raporlama anlayışımızla sonuç garantili kampanyalar yürütüyoruz.
+              Bugün sosyal medya yönetiminden Google ve Meta reklamlarına, yapay zeka destekli içerik üretimine kadar her adımda yanınızdayız. Veri odaklı kararlar, şeffaf raporlama ve aktif yapay zeka araçlarıyla markanızı dijitalde zirveye taşıyoruz.
             </p>
             <div className="grid grid-cols-2 gap-6">
               {STATS.map((s) => (

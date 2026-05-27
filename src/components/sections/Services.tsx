@@ -50,15 +50,20 @@ const SERVICES = [
     ),
   },
   {
-    title: "İçerik Üretimi",
-    desc: "Mağazanıza gelip ürün videoları çekiyoruz, yapay zeka araçlarıyla içerikler üretiyoruz. Her platform için optimize edilmiş kreatifleri hızla teslim ediyoruz.",
-    tags: ["Görsel", "Video", "AI İçerik"],
-    href: "/hizmetler/icerik-uretimi",
+    title: "Yapay Zeka & Otomasyon",
+    desc: "Yapay zeka ile görseller, reklam filmleri ve videolar üretiyoruz. AI destekli otomasyon araçlarıyla içerik süreçlerinizi hızlandırıyor, kampanyalarınızı akıllı hale getiriyoruz.",
+    tags: ["AI Görsel", "AI Video", "Reklam Filmi"],
+    href: "/hizmetler/yapay-zeka-otomasyon",
     icon: (
       <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6" style={{ stroke: "#c084fc" }}>
-        <path d="M14.5 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V7.5L14.5 2z" strokeWidth="1.5"/>
-        <path d="M14 2v6h6" strokeWidth="1.5" strokeLinecap="round"/>
-        <path d="M9 13h6M9 17h4" strokeWidth="1.5" strokeLinecap="round"/>
+        <path d="M12 2a2 2 0 012 2v1a2 2 0 01-2 2 2 2 0 01-2-2V4a2 2 0 012-2z" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        <path d="M12 7v3" strokeWidth="1.5" strokeLinecap="round"/>
+        <path d="M8.5 9.5L6 7" strokeWidth="1.5" strokeLinecap="round"/>
+        <path d="M15.5 9.5L18 7" strokeWidth="1.5" strokeLinecap="round"/>
+        <path d="M5 13a7 7 0 0014 0" strokeWidth="1.5" strokeLinecap="round"/>
+        <path d="M8 17.5l-2 2.5" strokeWidth="1.5" strokeLinecap="round"/>
+        <path d="M16 17.5l2 2.5" strokeWidth="1.5" strokeLinecap="round"/>
+        <path d="M10 20h4" strokeWidth="1.5" strokeLinecap="round"/>
       </svg>
     ),
   },

@@ -12,6 +12,7 @@ const LOGOS = [
   { name: "Efsane",    sub: "Kebapçı" },
   { name: "Ahenk",     sub: "Mobilya" },
   { name: "Retrocar",  sub: "" },
+  { name: "Özçalık",   sub: "Dizayn" },
 ];
 
 export default function Portfolio() {

@@ -23,16 +23,18 @@ export default function SosyalMedyaPage() {
       subtitle="Markanızın sesini Instagram, Facebook ve TikTok'ta en güçlü şekilde duyuruyoruz. Strateji, içerik ve topluluk yönetimini tamamen üstleniyoruz."
       description={[
         "Sosyal medya, günümüzde bir markanın dijital kimliğinin temel taşıdır. Yalnızca paylaşım yapmak değil; doğru içeriği, doğru kitleye, doğru zamanda ulaştırmak başarıyı belirler.",
-        "markaizi olarak hesabınızı baştan sona yönetiyoruz: aylık içerik takvimi oluşturuyoruz, özgün görseller ve metinler hazırlıyoruz, yorumlara ve mesajlara düzenli yanıt veriyoruz, algoritma güncellemelerini takip ederek stratejinizi sürekli güncelliyoruz.",
+        "markaizi olarak hesabınızı baştan sona yönetiyoruz: aylık içerik takvimi oluşturuyoruz, mağazanıza gelerek ürün ve mekan çekimleri yapıyoruz, yapay zeka araçlarıyla hızlı ve tutarlı içerikler üretiyoruz. Yorumlara ve mesajlara düzenli yanıt vererek topluluğunuzu büyütüyoruz.",
         "Her ay detaylı raporlama ile hangi içeriklerin ne kadar etkileşim aldığını, takipçi büyüme eğrisini ve reklamların performansını şeffaf biçimde aktarıyoruz.",
       ]}
       features={[
         { icon: "📅", title: "Aylık İçerik Takvimi", desc: "Her ay başında onaylı içerik takvimi ile ne zaman, ne paylaşılacağını biliyorsunuz." },
-        { icon: "🎨", title: "Özgün Görsel Tasarım", desc: "Marka kimliğinize uygun, profesyonel görseller ve videolar hazırlıyoruz." },
+        { icon: "🎨", title: "Özgün Görsel & Video Üretimi", desc: "Marka kimliğinize uygun profesyonel görseller, Reels ve TikTok videoları hazırlıyoruz." },
+        { icon: "🎥", title: "Yerinde Çekim Hizmeti", desc: "Ekibimiz mağazanıza veya ofisine gelerek ürün ve mekan videolarını profesyonelce çeker." },
+        { icon: "🤖", title: "Yapay Zeka Destekli İçerik", desc: "AI araçlarıyla hızlı görsel üretimi, metin yazarlığı ve içerik optimizasyonu sağlıyoruz." },
         { icon: "💬", title: "Topluluk Yönetimi", desc: "Yorum ve mesajlara hızlı, samimi yanıtlarla takipçi bağlılığı oluşturuyoruz." },
-        { icon: "📊", title: "Aylık Raporlama", desc: "Etkileşim, erişim ve büyüme verilerini şeffaf raporlarla aktarıyoruz." },
+        { icon: "📊", title: "Şeffaf Raporlama", desc: "Etkileşim, erişim ve büyüme verilerini haftalık veya aylık raporlarla aktarıyoruz." },
         { icon: "🔍", title: "Hashtag & SEO", desc: "Platformun arama algoritmalarına uygun hashtag ve açıklama stratejisi." },
-        { icon: "📈", title: "Büyüme Stratejisi", desc: "Organik büyümeyi hızlandırmak için sürekli güncellenen içerik stratejisi." },
+        { icon: "📈", title: "Büyüme Stratejisi", desc: "Organik büyümeyi hızlandırmak için sürekli güncellenen içerik ve yayın stratejisi." },
       ]}
       pricing={[
         {

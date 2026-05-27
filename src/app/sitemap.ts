@@ -22,7 +22,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/hizmetler/meta-reklamlari`,          lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${BASE}/hizmetler/google-reklamlari`,        lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${BASE}/hizmetler/tiktok-reklamlari`,        lastModified: now, changeFrequency: "monthly", priority: 0.7 },
-    { url: `${BASE}/hizmetler/icerik-uretimi`,           lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${BASE}/hizmetler/yapay-zeka-otomasyon`,     lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${BASE}/hizmetler/web-tasarim-hosting`,      lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE}/kvkk`,                               lastModified: now, changeFrequency: "yearly",  priority: 0.3 },
     { url: `${BASE}/gizlilik-politikasi`,                lastModified: now, changeFrequency: "yearly",  priority: 0.3 },
