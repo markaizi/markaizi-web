@@ -1,4 +1,3 @@
-"use client";
 import Link from "next/link";
 
 const SERVICES = [
@@ -97,20 +96,8 @@ export default function Services() {
             <Link
               key={s.title}
               href={s.href}
-              className="reveal group relative overflow-hidden rounded-2xl p-8 transition-all duration-300 block"
-              style={{ background: "var(--surface)", border: "1px solid var(--border)", textDecoration: "none" }}
-              onMouseEnter={(e) => {
-                const el = e.currentTarget;
-                el.style.borderColor = "rgba(168,85,247,0.4)";
-                el.style.boxShadow = "var(--glow)";
-                el.style.transform = "translateY(-6px)";
-              }}
-              onMouseLeave={(e) => {
-                const el = e.currentTarget;
-                el.style.borderColor = "var(--border)";
-                el.style.boxShadow = "none";
-                el.style.transform = "translateY(0)";
-              }}
+              className="service-card reveal group relative overflow-hidden rounded-2xl p-8 block"
+              style={{ background: "var(--surface)", textDecoration: "none" }}
             >
               {/* Icon */}
               <div

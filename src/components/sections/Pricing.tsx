@@ -1,5 +1,3 @@
-"use client";
-
 const PLANS = [
   {
     name: "Başlangıç",
@@ -90,16 +88,8 @@ export default function Pricing() {
                 </div>
               ) : (
                 <div
-                  className="rounded-2xl p-7 h-full flex flex-col transition-all duration-300"
-                  style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
-                  onMouseEnter={(e) => {
-                    (e.currentTarget as HTMLElement).style.borderColor = "rgba(168,85,247,0.3)";
-                    (e.currentTarget as HTMLElement).style.transform = "translateY(-4px)";
-                  }}
-                  onMouseLeave={(e) => {
-                    (e.currentTarget as HTMLElement).style.borderColor = "var(--border)";
-                    (e.currentTarget as HTMLElement).style.transform = "translateY(0)";
-                  }}
+                  className="pricing-card rounded-2xl p-7 h-full flex flex-col"
+                  style={{ background: "var(--surface)" }}
                 >
                   <PlanContent plan={plan} />
                 </div>

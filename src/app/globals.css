@@ -276,10 +276,21 @@ input:focus, select:focus, textarea:focus {
   color: #8a8a9a;
 }
 
-/* ── Blog Card ─────────────────────────── */
+/* ── Hover Kartları (CSS — JS yok) ────── */
+.service-card,
+.pricing-card,
 .blog-card {
   border: 1px solid var(--border);
   transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+}
+.service-card:hover {
+  border-color: rgba(168,85,247,0.4);
+  transform: translateY(-6px);
+  box-shadow: var(--glow);
+}
+.pricing-card:hover {
+  border-color: rgba(168,85,247,0.3);
+  transform: translateY(-4px);
 }
 .blog-card:hover {
   border-color: rgba(168,85,247,0.4);
