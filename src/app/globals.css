@@ -20,6 +20,20 @@ body {
   color: #fff;
   font-family: var(--font-inter), -apple-system, BlinkMacSystemFont, sans-serif;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Tipografi Skalası ─────────────────── */
+/* xs: 12px  sm: 13px  base: 15px  md: 17px  lg: 20px  xl: 24px  2xl: 32px  3xl: 42px  4xl: 56px+ */
+
+/* Display font — h1, h2 başlıkları */
+h1, h2 {
+  font-family: var(--font-display), var(--font-inter), sans-serif;
+  letter-spacing: -0.02em;
+}
+h3, h4 {
+  font-family: var(--font-inter), sans-serif;
+  letter-spacing: -0.01em;
 }
 
 /* ── Yardımcı Sınıflar ─────────────────── */

@@ -125,7 +125,7 @@ export default function Services() {
                 {s.tags.map((t) => (
                   <span
                     key={t}
-                    className="text-[11px] font-semibold px-[10px] py-1 rounded-full text-[#c084fc]"
+                    className="text-[12px] font-semibold px-[10px] py-1 rounded-full text-[#c084fc]"
                     style={{ background: "rgba(168,85,247,0.1)", border: "1px solid rgba(168,85,247,0.2)" }}
                   >
                     {t}

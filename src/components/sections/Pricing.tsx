@@ -79,7 +79,7 @@ export default function Pricing() {
         </div>
 
         {/* Cards — 1 kolon mobil, 2 tablet, 4 masaüstü */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
           {PLANS.map((plan) => (
             <div key={plan.name} className="reveal">
               {plan.featured ? (

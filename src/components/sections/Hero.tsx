@@ -178,7 +178,7 @@ export default function Hero() {
               >
                 {icon.svg}
               </div>
-              <span className="text-[10px] font-semibold text-white/40 whitespace-nowrap">{icon.label}</span>
+              <span className="text-[11px] font-semibold text-white/50 whitespace-nowrap">{icon.label}</span>
             </div>
           ))}
 

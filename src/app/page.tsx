@@ -22,14 +22,14 @@ const jsonLd = {
   email: "markaizicom@gmail.com",
   address: {
     "@type": "PostalAddress",
+    streetAddress: "Zübeyde Hanım Mahallesi Elif Sokak No:7/106 2. Kat",
     addressLocality: "Ankara",
     addressCountry: "TR",
   },
   areaServed: "TR",
   priceRange: "₺₺",
   openingHoursSpecification: [
-    { "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday","Tuesday","Wednesday","Thursday","Friday"], opens: "09:00", closes: "18:00" },
-    { "@type": "OpeningHoursSpecification", dayOfWeek: ["Saturday"], opens: "10:00", closes: "15:00" },
+    { "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"], opens: "09:00", closes: "20:00" },
   ],
   sameAs: [
     "https://instagram.com/markaizicom",

@@ -48,7 +48,7 @@ export default function BlogPage() {
                   <div className="p-7 flex flex-col flex-1">
                     <div className="flex items-center justify-between mb-4">
                       <span
-                        className="text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full"
+                        className="text-[12px] font-bold uppercase tracking-wider px-3 py-1 rounded-full"
                         style={{ background: "rgba(168,85,247,0.1)", color: post.color, border: `1px solid ${post.color}30` }}
                       >
                         {post.category}

@@ -25,9 +25,8 @@ const SOCIAL = [
 ];
 
 const HOURS = [
-  { day: "Pazartesi — Cuma", time: "09:00 — 18:00" },
-  { day: "Cumartesi",        time: "10:00 — 15:00" },
-  { day: "Pazar",            time: "Kapalı" },
+  { day: "Pazartesi — Cumartesi", time: "09:00 — 20:00" },
+  { day: "Pazar",                 time: "Kapalı" },
 ];
 
 const CONTACT_ITEMS = [
@@ -45,8 +44,8 @@ const CONTACT_ITEMS = [
   },
   {
     label: "Adres",
-    value: "Ankara, Türkiye",
-    href: "#",
+    value: "Zübeyde Hanım Mah. Elif Sok. No:7/106 2. Kat, Ankara",
+    href: "https://maps.google.com/?q=Zübeyde+Hanım+Mahallesi+Elif+Sokak+No:7+Ankara",
     svg: <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" style={{ stroke: "#c084fc" }}><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" strokeWidth="1.5"/><circle cx="12" cy="10" r="3" strokeWidth="1.5"/></svg>,
   },
 ];
