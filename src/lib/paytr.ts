@@ -37,8 +37,10 @@ export async function fetchPayTRIframeToken(
 
   // PayTR sepet — tek ürün
   // Format: [[isim, birim_fiyat_string, adet], ...]
+  // Fiyat TL cinsinden ondalıklı string olmalı (örn: "19900.00"), kuruş değil
+  const priceInTL = (params.paymentAmount / 100).toFixed(2);
   const userBasket = Buffer.from(
-    JSON.stringify([[params.basketName, String(params.paymentAmount), 1]])
+    JSON.stringify([[params.basketName, priceInTL, 1]])
   ).toString("base64");
 
   // PayTR iFrame API hash formülü (resmi dokümantasyon):
