@@ -24,9 +24,9 @@ export const metadata: Metadata = {
     template: "%s — markaizi",
   },
   description:
-    "Ankara merkezli dijital reklam ajansı. Sosyal medya yönetimi, Google & Meta reklamları, TikTok reklamları, içerik üretimi ve web tasarım hizmetleri.",
+    "Ankara Siteler merkezli dijital reklam ajansı. Mobilyacı, avizeci, aksesuarcı, doktor ve yerel işletmelere özel sosyal medya yönetimi, Google & Meta reklamları, web tasarım hizmetleri.",
   keywords:
-    "dijital reklam ajansı ankara, sosyal medya yönetimi, google reklamları, meta ads, tiktok reklamları, içerik üretimi, web tasarım ankara, instagram yönetimi",
+    "dijital reklam ajansı ankara, sosyal medya yönetimi ankara, google reklamları ankara, meta ads ankara, instagram yönetimi ankara, siteler dijital reklam, ankara mobilya reklamı, ankara avize reklam ajansı, ankara doktor dijital pazarlama, ankara aksesuar sosyal medya, ostim reklam ajansı, keçiören reklam ajansı, etimesgut reklam ajansı, çankaya dijital ajans, tiktok reklamları ankara, web tasarım ankara, işletme sosyal medya yönetimi, yerel işletme dijital pazarlama ankara",
   authors: [{ name: "markaizi" }],
   creator: "markaizi",
   openGraph: {

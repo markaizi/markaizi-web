@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/sections/Footer";
 import WhatsApp from "@/components/WhatsApp";
@@ -80,13 +79,30 @@ const FAQS = [
   },
 ];
 
-// Metadata can't be exported from "use client" component
-// Move to a separate layout or use generateMetadata
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: FAQS.flatMap((group) =>
+    group.items.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: item.a,
+      },
+    }))
+  ),
+};
+
 export default function SSSPage() {
   const [open, setOpen] = useState<string | null>(null);
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       <Navbar />
       <main>
         {/* Hero */}

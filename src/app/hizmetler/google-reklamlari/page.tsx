@@ -2,8 +2,10 @@ import { Metadata } from "next";
 import ServicePageTemplate from "@/components/ServicePageTemplate";
 
 export const metadata: Metadata = {
-  title: "Google Reklamları — markaizi",
-  description: "Google Search, Display ve YouTube reklam kampanyalarınızı yönetiyoruz. Arama niyetiyle gelen kullanıcılara doğru anda ulaşın.",
+  title: "Google Reklamları Ankara — Google Ads Yönetimi | markaizi",
+  description: "Ankara'da Google Ads yönetimi. Doktor, klinik, mobilyacı, avizeci ve yerel işletmeler için Search, Display ve YouTube reklam kampanyaları. Müşteriniz sizi aradığında karşısına çıkın.",
+  keywords: "google reklamları ankara, google ads yönetimi ankara, ankara doktor google reklamı, ankara klinik google ads, siteler google reklamı, ankara mobilya google ads, ankara işletme google reklamları, arama reklamı ankara",
+  alternates: { canonical: "https://markaizi.com.tr/hizmetler/google-reklamlari" },
 };
 
 const ICON = (

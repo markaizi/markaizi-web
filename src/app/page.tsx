@@ -1,3 +1,4 @@
+import { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/sections/Hero";
 import Services from "@/components/sections/Services";
@@ -8,6 +9,15 @@ import Contact from "@/components/sections/Contact";
 import Footer from "@/components/sections/Footer";
 import WhatsApp from "@/components/WhatsApp";
 import ScrollReveal from "@/components/ScrollReveal";
+
+export const metadata: Metadata = {
+  title: "markaizi — Ankara Dijital Reklam Ajansı | Siteler, Sosyal Medya & Google Reklamları",
+  description:
+    "Ankara Siteler merkezli dijital reklam ajansı. Mobilyacı, avizeci, aksesuarcı, klinik ve yerel işletmelere özel sosyal medya yönetimi, Google Ads, Meta reklam ve web tasarım. 10+ yıl deneyim, 200+ mutlu müşteri.",
+  keywords:
+    "dijital reklam ajansı ankara, siteler reklam ajansı, ankara mobilya sosyal medya, ankara avize dijital pazarlama, ankara aksesuar instagram yönetimi, ankara klinik doktor google reklamları, ostim dijital ajans, keçiören sosyal medya ajansı, etimesgut reklam, çankaya dijital pazarlama, ankara google ads, ankara meta reklam, ankara tiktok reklamları, ankara instagram yönetimi, yerel işletme dijital pazarlama",
+  alternates: { canonical: "https://markaizi.com.tr" },
+};
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -24,9 +34,26 @@ const jsonLd = {
     "@type": "PostalAddress",
     streetAddress: "Zübeyde Hanım Mahallesi Elif Sokak No:7/106 2. Kat, Sütçü Kemal İş Merkezi",
     addressLocality: "Ankara",
+    addressRegion: "Ankara",
+    postalCode: "06110",
     addressCountry: "TR",
   },
-  areaServed: "TR",
+  geo: {
+    "@type": "GeoCoordinates",
+    latitude: "39.9835",
+    longitude: "32.8652",
+  },
+  hasMap: "https://maps.google.com/?q=Zübeyde+Hanım+Mahallesi+Elif+Sokak+No:7+Ankara",
+  areaServed: [
+    { "@type": "City", name: "Ankara" },
+    { "@type": "Neighborhood", name: "Siteler" },
+    { "@type": "Neighborhood", name: "Ostim" },
+    { "@type": "Neighborhood", name: "Keçiören" },
+    { "@type": "Neighborhood", name: "Etimesgut" },
+    { "@type": "Neighborhood", name: "Çankaya" },
+    { "@type": "Neighborhood", name: "Yenimahalle" },
+    { "@type": "Neighborhood", name: "Mamak" },
+  ],
   priceRange: "₺₺",
   openingHoursSpecification: [
     { "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"], opens: "09:00", closes: "20:00" },

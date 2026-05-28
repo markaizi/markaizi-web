@@ -12,8 +12,8 @@ export default function Footer() {
             <a href="#" className="inline-block mb-5">
               <Logo height={56} />
             </a>
-            <p className="text-sm text-[#8a8a9a] leading-relaxed max-w-[220px]">
-              Dijital dünyada markanızın en güçlü sesi.
+            <p className="text-sm text-[#8a8a9a] leading-relaxed max-w-[240px]">
+              Ankara Siteler merkezli dijital reklam ajansı. Mobilyacıdan doktora, avizeciden aksesuarcıya her işletmeye dijital büyüme.
             </p>
           </div>
 
@@ -22,12 +22,12 @@ export default function Footer() {
             <FooterCol
               title="Hizmetler"
               links={[
-                { label: "Sosyal Medya Yönetimi", href: "#hizmetler" },
-                { label: "Meta Reklamları",        href: "#hizmetler" },
-                { label: "Google Reklamları",      href: "#hizmetler" },
-                { label: "TikTok Reklamları",      href: "#hizmetler" },
-                { label: "İçerik Üretimi",         href: "#hizmetler" },
-                { label: "Web Tasarım & Hosting",  href: "#hizmetler" },
+                { label: "Sosyal Medya Yönetimi", href: "/hizmetler/sosyal-medya-yonetimi" },
+                { label: "Meta Reklamları",        href: "/hizmetler/meta-reklamlari" },
+                { label: "Google Reklamları",      href: "/hizmetler/google-reklamlari" },
+                { label: "TikTok Reklamları",      href: "/hizmetler/tiktok-reklamlari" },
+                { label: "Yapay Zeka & Otomasyon", href: "/hizmetler/yapay-zeka-otomasyon" },
+                { label: "Web Tasarım & Hosting",  href: "/hizmetler/web-tasarim-hosting" },
               ]}
             />
             <FooterCol
@@ -44,7 +44,8 @@ export default function Footer() {
               links={[
                 { label: "markaizicom@gmail.com",  href: "mailto:markaizicom@gmail.com" },
                 { label: "+90 (552) 077 27 00",    href: "tel:+905520772700" },
-                { label: "Ankara, Türkiye",        href: "#" },
+                { label: "Siteler, Ankara",          href: "https://maps.google.com/?q=Zübeyde+Hanım+Mahallesi+Elif+Sokak+No:7+Ankara" },
+                { label: "SSS",                      href: "/sss" },
               ]}
             />
           </div>

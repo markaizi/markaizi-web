@@ -2,8 +2,10 @@ import { Metadata } from "next";
 import ServicePageTemplate from "@/components/ServicePageTemplate";
 
 export const metadata: Metadata = {
-  title: "TikTok Reklamları — markaizi",
-  description: "TikTok Ads Manager ile Gen Z ve Millennial kitlelere ulaşın. Viral potansiyeli yüksek reklam kreatifleriyle marka bilinirliğinizi artırın.",
+  title: "TikTok Reklamları Ankara — TikTok Ads Yönetimi | markaizi",
+  description: "Ankara'da TikTok Ads yönetimi. Mobilyacı, avizeci, aksesuar ve yerel Ankara işletmeleri için viral potansiyelli TikTok reklam kampanyaları.",
+  keywords: "tiktok reklamları ankara, tiktok ads ankara, ankara tiktok reklam ajansı, siteler tiktok reklamı, ankara mobilya tiktok, tiktok reklam yönetimi ankara",
+  alternates: { canonical: "https://markaizi.com.tr/hizmetler/tiktok-reklamlari" },
 };
 
 const ICON = (
