@@ -298,6 +298,17 @@ input:focus, select:focus, textarea:focus {
   box-shadow: var(--glow-sm);
 }
 
+/* ── Form Label ────────────────────────── */
+.field-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: #8a8a9a;
+  margin-bottom: 4px;
+}
+
 /* ── Cookie Banner ─────────────────────── */
 @keyframes slideUp {
   from { transform: translateY(100%); opacity: 0; }
