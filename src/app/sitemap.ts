@@ -24,6 +24,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/hizmetler/tiktok-reklamlari`,        lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE}/hizmetler/yapay-zeka-otomasyon`,     lastModified: now, changeFrequency: "monthly", priority: 0.8 },
     { url: `${BASE}/hizmetler/web-tasarim-hosting`,      lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${BASE}/hizmetler/web-tasarim-hosting/teklif`, lastModified: now, changeFrequency: "monthly", priority: 0.6 },
     { url: `${BASE}/kvkk`,                               lastModified: now, changeFrequency: "yearly",  priority: 0.3 },
     { url: `${BASE}/gizlilik-politikasi`,                lastModified: now, changeFrequency: "yearly",  priority: 0.3 },
     { url: `${BASE}/cerez-politikasi`,                   lastModified: now, changeFrequency: "yearly",  priority: 0.3 },

@@ -262,7 +262,7 @@ function PricingCard({ pkg }: { pkg: PricingPackage }) {
         ))}
       </ul>
       <a
-        href={pkg.cta === "Forma Git ↓" ? "#teklif-formu" : pkg.price ? "/#iletisim" : "/#iletisim"}
+        href={pkg.cta === "Teklif Formu →" ? "/hizmetler/web-tasarim-hosting/teklif" : pkg.price ? "/#iletisim" : "/#iletisim"}
         className={`btn w-full text-sm py-3 mt-auto ${pkg.featured ? "btn-primary" : "btn-outline"}`}
       >
         {pkg.cta ?? (pkg.price ? "Bu Paketi Seç" : "Teklif İste")}

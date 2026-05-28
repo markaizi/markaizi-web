@@ -1,6 +1,5 @@
 import { Metadata } from "next";
 import ServicePageTemplate from "@/components/ServicePageTemplate";
-import WebTeklifForm from "@/components/WebTeklifForm";
 
 export const metadata: Metadata = {
   title: "Web Tasarım Ankara — Kurumsal Web Sitesi & Hosting | markaizi",
@@ -17,8 +16,7 @@ const ICON = (
 
 export default function WebTasarimPage() {
   return (
-    <>
-      <ServicePageTemplate
+    <ServicePageTemplate
         badge="Dijital Altyapı"
         icon={ICON}
         title="Web Tasarım & Hosting"
@@ -83,8 +81,8 @@ export default function WebTasarimPage() {
           {
             name: "E-Ticaret Sitesi",
             price: null,
-            desc: "Ürün sayısı ve özel gereksinimlere göre fiyatlandırılır. Aşağıdaki formu doldurun, size özel teklif hazırlayalım.",
-            cta: "Forma Git ↓",
+            desc: "Ürün sayısı ve özel gereksinimlere göre fiyatlandırılır. Teklif almak için formu doldurun.",
+            cta: "Teklif Formu →",
             features: [
               "Sınırsız ürün kataloğu",
               "Güvenli ödeme entegrasyonu",
@@ -95,8 +93,6 @@ export default function WebTasarimPage() {
             ],
           },
         ]}
-      />
-      <WebTeklifForm />
-    </>
+    />
   );
 }
