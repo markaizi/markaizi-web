@@ -1,5 +1,9 @@
 # markaizi.com — Next.js Web Sitesi
 
+> ⚠️ **ÖNCE OKU:** Projenin güncel durumu, bekleyen işler ve geçmiş değişiklikler
+> [`PROJE-DURUM.md`](./PROJE-DURUM.md) dosyasındadır. Yeni oturuma başlarken o dosyayı oku.
+> Samet "not al / güncelle" dediğinde ilgili bölümü güncelleyip commit et.
+
 ## Proje Nedir?
 markaizi.com için dijital reklam ajansı web sitesi.
 Hizmetler: sosyal medya yönetimi, Instagram/Facebook/TikTok/Google reklamları, içerik üretimi, web tasarım, domain & hosting.
