@@ -32,11 +32,10 @@ export async function POST(req: NextRequest) {
       merchantOid,
       email,
       paymentAmount: pkg.priceKurus,
-      basketId: pkg.slug,
       basketName: pkg.fullName,
       userName: name,
       userPhone: phone,
-      userAddress: "Ankara, Türkiye",
+      userAddress: "Ankara, Turkiye",
     });
 
     if (result.status !== "success" || !result.token) {

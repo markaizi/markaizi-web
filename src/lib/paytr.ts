@@ -7,15 +7,10 @@ export interface PayTRTokenParams {
   merchantOid: string;
   email: string;
   paymentAmount: number; // kuruş cinsinden
-  basketId: string;
   basketName: string;
   userName: string;
   userPhone: string;
   userAddress: string;
-  testMode?: "0" | "1";
-  debugOn?: "0" | "1";
-  noInstallment?: "0" | "1";
-  maxInstallment?: string;
   currency?: "TL" | "USD" | "EUR" | "GBP";
   lang?: "tr" | "en";
 }
@@ -24,43 +19,6 @@ export interface PayTRTokenResponse {
   status: "success" | "failed";
   token?: string;
   reason?: string;
-}
-
-export function generatePayTRToken(params: PayTRTokenParams): string {
-  const merchantId = process.env.PAYTR_MERCHANT_ID!;
-  const merchantKey = process.env.PAYTR_MERCHANT_KEY!;
-  const merchantSalt = process.env.PAYTR_MERCHANT_SALT!;
-
-  const {
-    userIp,
-    merchantOid,
-    email,
-    paymentAmount,
-    testMode = process.env.PAYTR_TEST_MODE === "1" ? "1" : "0",
-    noInstallment = "1",
-    maxInstallment = "0",
-    currency = "TL",
-  } = params;
-
-  const hashStr =
-    merchantId +
-    userIp +
-    merchantOid +
-    email +
-    String(paymentAmount) +
-    "0" + // payment_type: 0 = card
-    "0" + // installment_count: 0
-    currency +
-    testMode +
-    noInstallment +
-    maxInstallment;
-
-  const token = crypto
-    .createHmac("sha256", merchantKey)
-    .update(hashStr + merchantSalt)
-    .digest("base64");
-
-  return token;
 }
 
 export async function fetchPayTRIframeToken(
@@ -77,12 +35,32 @@ export async function fetchPayTRIframeToken(
   const lang = params.lang ?? "tr";
   const debugOn = testMode === "1" ? "1" : "0";
 
-  const paytrToken = generatePayTRToken({ ...params, testMode, noInstallment, maxInstallment, currency });
-
   // PayTR sepet — tek ürün
+  // Format: [[isim, birim_fiyat_string, adet], ...]
   const userBasket = Buffer.from(
-    JSON.stringify([[params.basketName, String(params.paymentAmount / 100) + " TL", 1]])
+    JSON.stringify([[params.basketName, String(params.paymentAmount), 1]])
   ).toString("base64");
+
+  // PayTR iFrame API hash formülü (resmi dokümantasyon):
+  // merchant_id + user_ip + merchant_oid + email + payment_amount +
+  // user_basket + debug_on + no_installment + max_installment + currency + test_mode
+  const hashStr =
+    merchantId +
+    params.userIp +
+    params.merchantOid +
+    params.email +
+    String(params.paymentAmount) +
+    userBasket +
+    debugOn +
+    noInstallment +
+    maxInstallment +
+    currency +
+    testMode;
+
+  const paytrToken = crypto
+    .createHmac("sha256", merchantKey)
+    .update(hashStr + merchantSalt)
+    .digest("base64");
 
   const body = new URLSearchParams({
     merchant_id: merchantId,
