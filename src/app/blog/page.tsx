@@ -1,14 +1,13 @@
 import { Metadata } from "next";
+import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/sections/Footer";
 import WhatsApp from "@/components/WhatsApp";
-import BlogGrid from "@/components/blog/BlogGrid";
 import { BLOG_POSTS } from "@/lib/blog-data";
 
 export const metadata: Metadata = {
-  title: "Blog — Dijital Pazarlama Rehberleri | markaizi",
-  description:
-    "Sosyal medya, Meta & Google reklamları, web tasarım, TikTok ve YouTube içerikleri. Ankara'nın dijital ajansından güncel rehberler.",
+  title: "Blog — markaizi Dijital Reklam Ajansı",
+  description: "Dijital pazarlama, sosyal medya yönetimi, Google Ads ve Meta reklamları hakkında güncel makaleler ve rehberler.",
   alternates: { canonical: "https://markaizi.com.tr/blog" },
 };
 
@@ -17,97 +16,69 @@ export default function BlogPage() {
     <>
       <Navbar />
       <main>
-        {/* ── Hero (koyu, marka tutarlılığı) ── */}
-        <section
-          className="relative overflow-hidden pt-32 pb-20"
-          style={{ background: "var(--bg)" }}
-        >
-          {/* Orbs */}
-          <div
-            className="absolute top-[-150px] left-[-100px] w-[400px] h-[400px] rounded-full pointer-events-none"
-            style={{
-              background: "radial-gradient(circle,rgba(124,58,237,0.22) 0%,transparent 70%)",
-              filter: "blur(80px)",
-            }}
-          />
-          <div
-            className="absolute top-[50px] right-[-150px] w-[350px] h-[350px] rounded-full pointer-events-none"
-            style={{
-              background: "radial-gradient(circle,rgba(236,72,153,0.15) 0%,transparent 70%)",
-              filter: "blur(80px)",
-            }}
-          />
-
-          <div className="max-w-[1200px] mx-auto px-6 relative z-10">
-            <div className="max-w-[640px]">
-              <span className="section-tag">Blog</span>
-              <h1
-                className="font-black leading-tight mt-4 mb-4"
-                style={{ fontSize: "clamp(32px,5vw,52px)", letterSpacing: "-1px" }}
-              >
-                Dijital Pazarlama{" "}
-                <span className="gradient-text">Rehberleri</span>
-              </h1>
-              <p className="text-[#8a8a9a] text-[17px] leading-relaxed">
-                Makaleler, YouTube videoları, Instagram ve TikTok paylaşımları —
-                sosyal medya, reklam ve web tasarımı üzerine güncel içerikler.
-              </p>
-            </div>
-
-            {/* İçerik türü istatistikleri */}
-            <div className="flex flex-wrap gap-4 mt-8">
-              {[
-                { label: "Makale",    count: BLOG_POSTS.filter((p) => p.type === "makale").length,    color: "#c084fc" },
-                { label: "Video",     count: BLOG_POSTS.filter((p) => p.type === "video").length,     color: "#ef4444" },
-                { label: "Instagram", count: BLOG_POSTS.filter((p) => p.type === "instagram").length, color: "#ec4899" },
-                { label: "TikTok",   count: BLOG_POSTS.filter((p) => p.type === "tiktok").length,    color: "#14b8a6" },
-              ]
-                .filter((s) => s.count > 0)
-                .map((stat) => (
-                  <div key={stat.label} className="flex items-center gap-2 text-[13px]" style={{ color: "#8a8a9a" }}>
-                    <span className="w-2 h-2 rounded-full" style={{ background: stat.color }} />
-                    <span className="font-semibold" style={{ color: stat.color }}>{stat.count}</span>{" "}
-                    {stat.label}
-                  </div>
-                ))}
-            </div>
+        {/* Hero */}
+        <section className="relative overflow-hidden pt-32 pb-16" style={{ background: "var(--bg)" }}>
+          <div className="absolute top-[-150px] left-[-100px] w-[400px] h-[400px] rounded-full pointer-events-none"
+            style={{ background: "radial-gradient(circle,rgba(124,58,237,0.2) 0%,transparent 70%)", filter: "blur(80px)" }} />
+          <div className="max-w-[1200px] mx-auto px-6 relative z-10 text-center">
+            <span className="section-tag">Blog</span>
+            <h1 className="font-black leading-tight mt-4 mb-4" style={{ fontSize: "clamp(32px,5vw,52px)" }}>
+              Dijital Pazarlama <span className="gradient-text">Rehberleri</span>
+            </h1>
+            <p className="text-[#8a8a9a] text-[17px] max-w-[560px] mx-auto">
+              Sosyal medya, reklam yönetimi ve dijital büyüme üzerine güncel makaleler.
+            </p>
           </div>
-
-          {/* Hero → açık tema geçiş gradienti */}
-          <div
-            className="absolute bottom-0 left-0 right-0 h-8 pointer-events-none"
-            style={{ background: "linear-gradient(to bottom, transparent, #f5f3ff)" }}
-          />
         </section>
 
-        {/* ── Blog Grid (açık tema) ── */}
-        <section className="py-12 pb-20" style={{ background: "#f5f3ff" }}>
+        {/* Blog Grid */}
+        <section className="py-16" style={{ background: "var(--bg-alt)" }}>
           <div className="max-w-[1200px] mx-auto px-6">
-            <BlogGrid posts={BLOG_POSTS} />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {BLOG_POSTS.map((post) => (
+                <Link
+                  key={post.slug}
+                  href={`/blog/${post.slug}`}
+                  className="blog-card rounded-2xl overflow-hidden group transition-all duration-300 flex flex-col"
+                  style={{ background: "var(--surface)", textDecoration: "none" }}
+                >
+                  {/* Renk bandı */}
+                  <div className="h-1 w-full" style={{ background: `linear-gradient(90deg, ${post.color}, transparent)` }} />
+
+                  <div className="p-7 flex flex-col flex-1">
+                    <div className="flex items-center justify-between mb-4">
+                      <span
+                        className="text-[12px] font-bold uppercase tracking-wider px-3 py-1 rounded-full"
+                        style={{ background: "rgba(168,85,247,0.1)", color: post.color, border: `1px solid ${post.color}30` }}
+                      >
+                        {post.category}
+                      </span>
+                      <span className="text-[12px] text-[#8a8a9a]">{post.readTime} okuma</span>
+                    </div>
+
+                    <h2 className="text-[17px] font-bold leading-snug mb-3 text-white">{post.title}</h2>
+                    <p className="text-[14px] text-[#8a8a9a] leading-relaxed flex-1 mb-5">{post.excerpt}</p>
+
+                    <div className="flex items-center justify-between mt-auto pt-4" style={{ borderTop: "1px solid var(--border)" }}>
+                      <span className="text-[12px] text-[#8a8a9a]">{post.date}</span>
+                      <span className="text-[13px] font-semibold flex items-center gap-1.5 transition-all duration-200 group-hover:gap-2.5"
+                        style={{ color: "#c084fc" }}>
+                        Oku
+                        <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth="2">
+                          <path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              ))}
+            </div>
 
             {/* CTA */}
-            <div
-              className="text-center mt-16 p-10 rounded-2xl"
-              style={{
-                background: "#ffffff",
-                border: "1px solid rgba(139,92,246,0.12)",
-                boxShadow: "0 2px 16px rgba(100,80,180,0.06)",
-              }}
-            >
-              <h3 className="text-[22px] font-bold mb-3" style={{ color: "#1a1733" }}>
-                Markanız için strateji konuşalım
-              </h3>
-              <p className="mb-6" style={{ color: "#6b6880" }}>
-                Ücretsiz danışmanlık randevusu alın, sizin için en uygun dijital büyüme
-                yolunu birlikte belirleyelim.
-              </p>
-              <a
-                href="/#iletisim"
-                className="inline-block px-6 py-3 rounded-full font-semibold text-white text-[14px] transition-opacity hover:opacity-90"
-                style={{ background: "linear-gradient(135deg, #7c3aed, #a855f7, #ec4899)" }}
-              >
-                Ücretsiz Danışmanlık Al
-              </a>
+            <div className="text-center mt-16 p-10 rounded-2xl" style={{ background: "var(--surface)", border: "1px solid rgba(168,85,247,0.2)" }}>
+              <h3 className="text-[22px] font-bold mb-3">Dijital pazarlama konusunda yardım mı lazım?</h3>
+              <p className="text-[#8a8a9a] mb-6">Ücretsiz danışmanlık randevusu alın, markanız için en uygun stratejiyi birlikte belirleyelim.</p>
+              <a href="/#iletisim" className="btn btn-primary">Ücretsiz Danışmanlık Al</a>
             </div>
           </div>
         </section>

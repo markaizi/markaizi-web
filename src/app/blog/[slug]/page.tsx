@@ -1,13 +1,9 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/sections/Footer";
 import WhatsApp from "@/components/WhatsApp";
-import YouTubeEmbed from "@/components/blog/YouTubeEmbed";
-import InstagramEmbed from "@/components/blog/InstagramEmbed";
-import TikTokEmbed from "@/components/blog/TikTokEmbed";
-import { BLOG_POSTS, CONTENT_TYPE_CONFIG, getPostBySlug } from "@/lib/blog-data";
+import { BLOG_POSTS, getPostBySlug } from "@/lib/blog-data";
 
 export function generateStaticParams() {
   return BLOG_POSTS.map((p) => ({ slug: p.slug }));
@@ -22,7 +18,7 @@ export async function generateMetadata({
   const post = getPostBySlug(slug);
   if (!post) return {};
   return {
-    title: `${post.title} | markaizi Blog`,
+    title: post.title,
     description: post.excerpt,
     alternates: { canonical: `https://markaizi.com.tr/blog/${slug}` },
     openGraph: {
@@ -31,9 +27,6 @@ export async function generateMetadata({
       type: "article",
       publishedTime: post.date,
       authors: ["markaizi"],
-      ...(post.videoId && {
-        images: [`https://img.youtube.com/vi/${post.videoId}/maxresdefault.jpg`],
-      }),
     },
   };
 }
@@ -47,192 +40,113 @@ export default async function BlogPostPage({
   const post = getPostBySlug(slug);
   if (!post) notFound();
 
-  const typeConf = CONTENT_TYPE_CONFIG[post.type];
-  const isEmbed = post.type !== "makale";
-  const hasTextContent = (post.sections && post.sections.length > 0) || post.conclusion;
-
-  // İlgili yazılar: aynı kategori öncelikli
-  const related = BLOG_POSTS.filter((p) => p.slug !== post.slug)
-    .sort((a, b) => (a.category === post.category ? -1 : b.category === post.category ? 1 : 0))
-    .slice(0, 2);
-
   return (
     <>
       <Navbar />
       <main>
-        {/* ── Hero (koyu) ── */}
+        {/* Hero */}
         <section
-          className="relative overflow-hidden pt-32 pb-14"
+          className="relative overflow-hidden pt-32 pb-12"
           style={{ background: "var(--bg)" }}
         >
           <div
             className="absolute top-[-150px] right-[-100px] w-[400px] h-[400px] rounded-full pointer-events-none"
             style={{
-              background: `radial-gradient(circle, ${post.color}20 0%, transparent 70%)`,
+              background: `radial-gradient(circle, ${post.color}22 0%, transparent 70%)`,
               filter: "blur(80px)",
             }}
           />
-
-          <div className="max-w-[800px] mx-auto px-6 relative z-10">
-            {/* Breadcrumb */}
-            <div className="flex items-center gap-2 mb-6 flex-wrap">
-              <Link
+          <div className="max-w-[760px] mx-auto px-6 relative z-10">
+            <div className="flex items-center gap-3 mb-5">
+              <a
                 href="/blog"
-                className="text-[13px] text-[#8a8a9a] hover:text-white transition-colors flex items-center gap-1.5"
+                className="text-[13px] text-[#8a8a9a] hover:text-white transition-colors flex items-center gap-1"
               >
-                <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5" stroke="currentColor" strokeWidth="2">
-                  <path d="M19 12H5M5 12l7 7M5 12l7-7" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-                Blog
-              </Link>
-              <span className="text-[#555]">/</span>
+                ← Blog
+              </a>
+              <span className="text-[#8a8a9a]">/</span>
               <span
-                className="text-[11px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full"
+                className="text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full"
                 style={{
-                  background: `${post.color}18`,
+                  background: "rgba(168,85,247,0.1)",
                   color: post.color,
                   border: `1px solid ${post.color}30`,
                 }}
               >
                 {post.category}
               </span>
-              <span
-                className="text-[11px] font-semibold px-2.5 py-1 rounded-full"
-                style={{ background: typeConf.bg, color: typeConf.color }}
-              >
-                {typeConf.emoji} {typeConf.label}
-              </span>
             </div>
 
             <h1
-              className="font-black leading-tight mb-5"
-              style={{ fontSize: "clamp(24px,4vw,42px)", letterSpacing: "-0.5px" }}
+              className="font-black leading-tight mb-4"
+              style={{ fontSize: "clamp(26px,4vw,42px)", letterSpacing: "-0.5px" }}
             >
               {post.title}
             </h1>
 
-            <div className="flex items-center gap-3 text-[13px] text-[#8a8a9a] flex-wrap">
+            <div className="flex items-center gap-4 text-[13px] text-[#8a8a9a]">
               <span>{post.date}</span>
               <span>·</span>
-              <span>{post.readTime}</span>
+              <span>{post.readTime} okuma</span>
               <span>·</span>
               <span>markaizi</span>
             </div>
           </div>
-
-          {/* Hero → açık geçiş */}
-          <div
-            className="absolute bottom-0 left-0 right-0 h-8 pointer-events-none"
-            style={{ background: "linear-gradient(to bottom, transparent, #f5f3ff)" }}
-          />
         </section>
 
-        {/* ── İçerik (açık tema) ── */}
-        <section className="py-10 pb-20" style={{ background: "#f5f3ff" }}>
-          <div className="max-w-[800px] mx-auto px-6">
+        {/* Renk şeridi */}
+        <div
+          className="h-[3px] w-full"
+          style={{
+            background: `linear-gradient(90deg, ${post.color}, transparent)`,
+          }}
+        />
 
-            {/* Ana içerik kartı */}
-            <article
-              className="rounded-2xl p-7 md:p-10 mb-6"
+        {/* İçerik */}
+        <section className="py-14" style={{ background: "var(--bg-alt)" }}>
+          <div className="max-w-[760px] mx-auto px-6">
+            <div
+              className="rounded-2xl p-8 md:p-12 blog-article"
               style={{
-                background: "#ffffff",
-                border: "1px solid rgba(139,92,246,0.1)",
-                boxShadow: "0 2px 20px rgba(100,80,180,0.07)",
+                background: "var(--surface)",
+                border: "1px solid var(--border)",
               }}
             >
-              {/* Giriş / Açıklama */}
-              <p
-                className="text-[17px] leading-[1.85] mb-8"
+              {/* Giriş */}
+              <p className="blog-intro">{post.intro}</p>
+
+              {/* Bölümler */}
+              {post.sections.map((section, i) => (
+                <div key={i} className="blog-section">
+                  <h2>{section.h2}</h2>
+                  <p>{section.body}</p>
+                </div>
+              ))}
+
+              {/* Sonuç */}
+              <div
+                className="mt-10 p-6 rounded-xl"
                 style={{
-                  color: "#4a4870",
-                  borderLeft: `3px solid ${post.color}`,
-                  paddingLeft: "1.25rem",
+                  background: "rgba(168,85,247,0.06)",
+                  border: "1px solid rgba(168,85,247,0.2)",
                 }}
               >
-                {post.intro}
-              </p>
-
-              {/* EMBED ALANI */}
-              {post.type === "video" && post.videoId && (
-                <div className="mb-8">
-                  <YouTubeEmbed videoId={post.videoId} title={post.title} />
-                </div>
-              )}
-              {post.type === "instagram" && post.instagramUrl && (
-                <div className="mb-8">
-                  <InstagramEmbed url={post.instagramUrl} />
-                </div>
-              )}
-              {post.type === "tiktok" && post.tiktokUrl && (
-                <div className="mb-8">
-                  <TikTokEmbed url={post.tiktokUrl} />
-                </div>
-              )}
-
-              {/* Metin bölümler (varsa) */}
-              {hasTextContent && (
-                <div>
-                  {/* Makale için renk çizgisi bölücü */}
-                  {!isEmbed && (
-                    <div
-                      className="h-px mb-8"
-                      style={{ background: "linear-gradient(90deg, rgba(139,92,246,0.2), transparent)" }}
-                    />
-                  )}
-
-                  {post.sections?.map((section, i) => (
-                    <div key={i} className={i > 0 ? "mt-8" : ""}>
-                      <h2
-                        className="font-bold mb-3"
-                        style={{
-                          fontSize: "clamp(17px,2.5vw,20px)",
-                          color: "#1a1733",
-                        }}
-                      >
-                        {section.h2}
-                      </h2>
-                      <p
-                        className="text-[15px] leading-[1.85]"
-                        style={{ color: "#4a4870" }}
-                      >
-                        {section.body}
-                      </p>
-                    </div>
-                  ))}
-
-                  {post.conclusion && (
-                    <div
-                      className="mt-8 p-5 rounded-xl"
-                      style={{
-                        background: "linear-gradient(135deg, rgba(124,58,237,0.06), rgba(236,72,153,0.04))",
-                        border: "1px solid rgba(168,85,247,0.15)",
-                      }}
-                    >
-                      <p
-                        className="text-[15px] leading-[1.85] m-0"
-                        style={{ color: "#4a4870" }}
-                      >
-                        {post.conclusion}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              )}
-            </article>
+                <p className="text-[15px] text-[#c0c0d0] leading-[1.8] m-0">
+                  {post.conclusion}
+                </p>
+              </div>
+            </div>
 
             {/* CTA */}
             <div
-              className="text-center p-8 rounded-2xl mb-6"
+              className="mt-8 text-center p-10 rounded-2xl"
               style={{
-                background: "#ffffff",
-                border: "1px solid rgba(139,92,246,0.12)",
-                boxShadow: "0 2px 16px rgba(100,80,180,0.06)",
+                background: "var(--surface)",
+                border: "1px solid rgba(168,85,247,0.2)",
               }}
             >
-              <p className="font-bold text-[18px] mb-2" style={{ color: "#1a1733" }}>
-                Projenizi konuşalım
-              </p>
-              <p className="text-[14px] mb-5" style={{ color: "#6b6880" }}>
+              <p className="font-bold text-[18px] mb-2">Projenizi konuşalım</p>
+              <p className="text-[#8a8a9a] text-[14px] mb-6">
                 Ücretsiz danışmanlık için WhatsApp veya iletişim formunu kullanın.
               </p>
               <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -250,48 +164,37 @@ export default async function BlogPostPage({
               </div>
             </div>
 
-            {/* İlgili içerikler */}
-            {related.length > 0 && (
-              <div>
-                <p
-                  className="text-[12px] font-bold uppercase tracking-widest mb-4"
-                  style={{ color: "#9997b8" }}
-                >
-                  Diğer İçerikler
-                </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  {related.map((rel) => (
-                    <Link
-                      key={rel.slug}
-                      href={`/blog/${rel.slug}`}
-                      className="block p-5 rounded-xl transition-all duration-200 hover:-translate-y-0.5"
+            {/* Diğer yazılar */}
+            <div className="mt-8">
+              <p className="text-[13px] font-semibold text-[#8a8a9a] uppercase tracking-widest mb-4">
+                Diğer Yazılar
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {BLOG_POSTS.filter((p) => p.slug !== post.slug)
+                  .slice(0, 2)
+                  .map((related) => (
+                    <a
+                      key={related.slug}
+                      href={`/blog/${related.slug}`}
+                      className="block p-5 rounded-xl transition-all duration-200 hover:border-purple-500/40"
                       style={{
-                        background: "#ffffff",
-                        border: "1px solid rgba(139,92,246,0.1)",
-                        boxShadow: "0 2px 8px rgba(100,80,180,0.04)",
-                        textDecoration: "none",
+                        background: "var(--surface)",
+                        border: "1px solid var(--border)",
                       }}
                     >
                       <span
                         className="text-[10px] font-bold uppercase tracking-wider mb-2 block"
-                        style={{ color: rel.color }}
+                        style={{ color: related.color }}
                       >
-                        {rel.category}
+                        {related.category}
                       </span>
-                      <p
-                        className="text-[14px] font-semibold leading-snug"
-                        style={{ color: "#1a1733" }}
-                      >
-                        {rel.title}
+                      <p className="text-[14px] font-semibold leading-snug text-white">
+                        {related.title}
                       </p>
-                      <p className="text-[12px] mt-1" style={{ color: "#9997b8" }}>
-                        {rel.readTime}
-                      </p>
-                    </Link>
+                    </a>
                   ))}
-                </div>
               </div>
-            )}
+            </div>
           </div>
         </section>
       </main>
