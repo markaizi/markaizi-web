@@ -11,6 +11,7 @@ export interface PricingPackage {
   features: string[];
   featured?: boolean;
   cta?: string;
+  paymentSlug?: string; // /odeme/[slug] yönlendirmesi için
 }
 
 export interface ServicePageProps {
@@ -262,10 +263,16 @@ function PricingCard({ pkg }: { pkg: PricingPackage }) {
         ))}
       </ul>
       <a
-        href={pkg.cta === "Teklif Formu →" ? "/hizmetler/web-tasarim-hosting/teklif" : pkg.price ? "/#iletisim" : "/#iletisim"}
+        href={
+          pkg.cta === "Teklif Formu →"
+            ? "/hizmetler/web-tasarim-hosting/teklif"
+            : pkg.paymentSlug
+            ? `/odeme/${pkg.paymentSlug}`
+            : "/#iletisim"
+        }
         className={`btn w-full text-sm py-3 mt-auto ${pkg.featured ? "btn-primary" : "btn-outline"}`}
       >
-        {pkg.cta ?? (pkg.price ? "Bu Paketi Seç" : "Teklif İste")}
+        {pkg.cta ?? (pkg.price ? "Satın Al" : "Teklif İste")}
       </a>
     </>
   );

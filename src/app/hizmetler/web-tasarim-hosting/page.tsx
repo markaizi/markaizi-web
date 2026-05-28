@@ -39,6 +39,7 @@ export default function WebTasarimPage() {
             name: "Basit Tanıtım Sitesi",
             price: "14.900",
             period: "",
+            paymentSlug: "web-basit",
             desc: "Küçük işletmeler ve bireysel girişimciler için tek seferlik kurulum.",
             features: [
               "5 sayfaya kadar tasarım",
@@ -53,6 +54,7 @@ export default function WebTasarimPage() {
             name: "Kurumsal Web Sitesi",
             price: "29.900",
             period: "",
+            paymentSlug: "web-kurumsal",
             desc: "Marka kimliğini yansıtan, SEO uyumlu kurumsal site.",
             featured: true,
             features: [
@@ -68,6 +70,7 @@ export default function WebTasarimPage() {
             name: "Gelişmiş SEO'lu Site",
             price: "49.900",
             period: "",
+            paymentSlug: "web-seo",
             desc: "Kapsamlı SEO altyapısı ve yüksek performanslı tam kurulum.",
             features: [
               "Sınırsız sayfa",

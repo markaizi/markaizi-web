@@ -1,6 +1,7 @@
 const PLANS = [
   {
     name: "Başlangıç",
+    slug: "baslangic",
     price: "19.900",
     desc: "Sosyal medyada ilk adımını atmak isteyen işletmeler için.",
     featured: false,
@@ -16,6 +17,7 @@ const PLANS = [
   },
   {
     name: "Büyüme",
+    slug: "buyume",
     price: "29.900",
     desc: "Hızlı büyümek isteyen markalar için çok kanallı paket.",
     featured: true,
@@ -31,6 +33,7 @@ const PLANS = [
   },
   {
     name: "Kurumsal",
+    slug: "kurumsal",
     price: "39.900",
     desc: "Dijital varlığını güçlendirmek isteyen kurumsal markalar için.",
     featured: false,
@@ -46,6 +49,7 @@ const PLANS = [
   },
   {
     name: "Elite",
+    slug: "elite",
     price: "59.900",
     desc: "Size özel çözümler, web sitesi desteği, SEO avantajları ve tüm paket kapsamı.",
     featured: false,
@@ -150,10 +154,10 @@ function PlanContent({ plan }: { plan: Plan }) {
       </ul>
 
       <a
-        href="#iletisim"
+        href={`/odeme/${plan.slug}`}
         className={`btn w-full mt-auto text-sm py-3 ${plan.featured ? "btn-primary" : "btn-outline"}`}
       >
-        {plan.featured ? "Hemen Başla" : plan.name === "Elite" ? "Teklif Al" : "Teklif Al"}
+        {plan.featured ? "Hemen Satın Al" : "Satın Al"}
       </a>
     </>
   );
