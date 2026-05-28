@@ -154,10 +154,10 @@ function PlanContent({ plan }: { plan: Plan }) {
       </ul>
 
       <a
-        href={`/odeme/${plan.slug}`}
+        href="#iletisim"
         className={`btn w-full mt-auto text-sm py-3 ${plan.featured ? "btn-primary" : "btn-outline"}`}
       >
-        {plan.featured ? "Hemen Satın Al" : "Satın Al"}
+        {plan.featured ? "Hemen Başla" : "Başla"}
       </a>
     </>
   );

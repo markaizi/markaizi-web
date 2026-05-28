@@ -266,13 +266,11 @@ function PricingCard({ pkg }: { pkg: PricingPackage }) {
         href={
           pkg.cta === "Teklif Formu →"
             ? "/hizmetler/web-tasarim-hosting/teklif"
-            : pkg.paymentSlug
-            ? `/odeme/${pkg.paymentSlug}`
             : "/#iletisim"
         }
         className={`btn w-full text-sm py-3 mt-auto ${pkg.featured ? "btn-primary" : "btn-outline"}`}
       >
-        {pkg.cta ?? (pkg.price ? "Satın Al" : "Teklif İste")}
+        {pkg.cta ?? (pkg.price ? "Teklif Al" : "Teklif İste")}
       </a>
     </>
   );
