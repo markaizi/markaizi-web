@@ -61,6 +61,7 @@ const jsonLd = {
   sameAs: [
     "https://instagram.com/markaizicom",
     "https://tiktok.com/@markaizicom",
+    "https://share.google/S5wQdPjBKZT7DQ9zu",
   ],
   hasOfferCatalog: {
     "@type": "OfferCatalog",
