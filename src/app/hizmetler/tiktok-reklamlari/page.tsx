@@ -49,6 +49,24 @@ export default function TikTokReklamlariPage() {
           ],
         },
       ]}
+      faq={[
+        {
+          q: "TikTok reklamları hangi işletmeler için uygun?",
+          a: "TikTok algoritması takipçi sayısından bağımsız çalıştığı için küçük ve orta ölçekli işletmeler bile viral olabilir. Özellikle moda, güzellik, yemek, dekorasyon, eğitim ve hizmet sektörleri yüksek erişim alır. Türkiye'de TikTok reklamları henüz Meta kadar doymuş olmadığından tıklama maliyetleri genellikle daha düşüktür.",
+        },
+        {
+          q: "TikTok video içeriklerini kim üretiyor?",
+          a: "Video içeriklerini markaizi ekibi platforma özel olarak üretir. TikTok'ta Instagram'dan kopyalanmış içerikler çalışmaz; trend seslerini ve formatları markanıza uyarlayarak özgün videolar hazırlarız. İlk 1–2 saniyede izleyiciyi tutmaya odaklanan kurguyla çalışırız.",
+        },
+        {
+          q: "TikTok reklam bütçesi ne kadar olmalı?",
+          a: "TikTok Ads için günlük 150–250 ₺ uygun bir başlangıç noktasıdır. Spark Ads formatıyla organik olarak iyi performans gösteren içeriklerinizi reklama dönüştürerek genellikle en yüksek dönüşüm oranını yakalarız. Reklam bütçesi yönetim ücretine dahil değildir.",
+        },
+        {
+          q: "TikTok'ta sonuç almak ne kadar sürer?",
+          a: "Reklam kampanyalarında ilk veriler birkaç gün içinde gelir. Organik tarafta ise tutarlılık esastır: haftada 3–4 video ile genellikle birkaç hafta içinde erişim artışı gözlenir. Bir trend 48–72 saatte zirve yaptığı için hızlı aksiyon almak kritiktir.",
+        },
+      ]}
     />
   );
 }

@@ -41,6 +41,24 @@ export default function YapayZekaOtomasyonPage() {
         { icon: "🤝", title: "Müşteri İletişimi Otomasyonu", desc: "Chatbot, otomatik mesaj akışları ve CRM entegrasyonlarıyla müşteri deneyimini ölçeklendiriyoruz." },
       ]}
       noPricingNote="Yapay zeka & otomasyon hizmetinin fiyatlandırması; proje kapsamı, içerik adedi, otomasyon karmaşıklığı ve süreye göre belirlenmektedir. Size özel teklif için WhatsApp veya iletişim formu üzerinden ulaşın — 24 saat içinde yanıt veriyoruz."
+      faq={[
+        {
+          q: "Yapay zeka & otomasyon işletmeme ne kazandırır?",
+          a: "Tekrarlayan manuel işleri otomatikleştirerek zaman ve maliyet tasarrufu sağlar: müşteri mesajlarına otomatik yanıt, içerik üretiminde hız, raporlamada otomasyon ve 7/24 çalışan chatbot'lar. Sonuçta ekibiniz değer üreten işlere odaklanır, operasyon ölçeklenir.",
+        },
+        {
+          q: "Hangi süreçler otomatikleştirilebilir?",
+          a: "Müşteri iletişimi (chatbot, otomatik mesaj akışları), sosyal medya içerik üretimi, e-posta pazarlama dizileri, randevu/sipariş yönetimi, CRM güncellemeleri ve raporlama gibi pek çok süreç otomatikleştirilebilir. İşletmenizi inceleyip en yüksek getiri sağlayacak noktalardan başlarız.",
+        },
+        {
+          q: "Mevcut sistemlerimle (CRM, site, sosyal medya) entegre olur mu?",
+          a: "Evet. Çözümlerimizi mevcut araçlarınızla (web siteniz, WhatsApp, Instagram, CRM yazılımınız, e-posta sistemleriniz) entegre çalışacak şekilde kuruyoruz. Amaç, sıfırdan sistem kurmak değil; var olan akışınızı akıllandırmaktır.",
+        },
+        {
+          q: "Kullanmak için teknik bilgi gerekiyor mu?",
+          a: "Hayır. Kurulumu ve yapılandırmayı baştan sona biz üstleniriz; size kullanımı kolay, hazır bir sistem teslim ederiz. Kısa bir kullanım eğitimi verir, ihtiyaç halinde teknik desteği sürdürürüz.",
+        },
+      ]}
     />
   );
 }

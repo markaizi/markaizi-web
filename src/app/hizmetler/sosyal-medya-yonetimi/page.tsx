@@ -93,6 +93,24 @@ export default function SosyalMedyaPage() {
           ],
         },
       ]}
+      faq={[
+        {
+          q: "Paylaşılacak içerikleri kim hazırlıyor?",
+          a: "İçeriklerin tamamını markaizi ekibi hazırlar: metin yazarlığı, görsel tasarım ve video montaj. Her ay başında içerik takvimini sizinle paylaşır, onayınızı alırız. Sonrasında tüm planlama, zamanlama ve yayınlamayı biz yönetiriz.",
+        },
+        {
+          q: "Ayda kaç paylaşım yapılıyor?",
+          a: "Paketinize göre değişir: Başlangıç pakedinde haftada 3, Büyüme pakedinde haftada 5, Kurumsal ve Elite paketlerde haftada 7+ paylaşım yapılır. Bu paylaşımlara feed gönderileri, Reels videoları ve Story içerikleri dahildir.",
+        },
+        {
+          q: "Hesabımın şifresini paylaşmak zorunda mıyım?",
+          a: "Hayır. Instagram ve Facebook için hesabınıza 'Yönetici' yetkisi vermeniz yeterli — şifrenizi asla talep etmiyoruz. Bu sayede hesabınızın kontrolü tamamen sizde kalır.",
+        },
+        {
+          q: "Ne zaman takipçi ve etkileşim artışı görürüm?",
+          a: "Organik sosyal medya büyümesinde ilk anlamlı sonuçlar genellikle 2–3. ayda görülür. Tutarlılık burada en kritik faktördür; düzenli ve kaliteli içerik yayını, zamanla erişimi ve etkileşimi geometrik biçimde artırır.",
+        },
+      ]}
     />
   );
 }

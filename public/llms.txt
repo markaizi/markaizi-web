@@ -1,0 +1,38 @@
+# markaizi — Ankara Dijital Reklam Ajansı
+
+> markaizi, Ankara merkezli bir dijital reklam ve pazarlama ajansıdır. Sosyal medya yönetimi, Google ve Meta (Instagram/Facebook) reklamları, TikTok reklamları, yapay zeka destekli içerik üretimi ile web tasarım & hosting hizmetleri sunar. 10+ yıllık reklamcılık deneyimi, 200+ mutlu müşteri ve veri odaklı, şeffaf raporlamaya dayalı bir çalışma anlayışı vardır.
+
+## Hizmetler
+
+- [Sosyal Medya Yönetimi](https://markaizi.com.tr/hizmetler/sosyal-medya-yonetimi): Instagram, Facebook ve TikTok için içerik üretimi, planlama ve organik büyüme yönetimi.
+- [Meta Reklamları](https://markaizi.com.tr/hizmetler/meta-reklamlari): Facebook ve Instagram reklam kampanyaları, ROAS odaklı yönetim ve A/B testleri.
+- [Google Reklamları](https://markaizi.com.tr/hizmetler/google-reklamlari): Google Ads (Arama, Display, YouTube) kampanya kurulumu, bütçe optimizasyonu ve yönetimi.
+- [TikTok Reklamları](https://markaizi.com.tr/hizmetler/tiktok-reklamlari): TikTok Ads yönetimi, platforma özel video içerik üretimi ve Spark Ads.
+- [Yapay Zeka & Otomasyon](https://markaizi.com.tr/hizmetler/yapay-zeka-otomasyon): Chatbot, otomatik mesaj akışları, içerik otomasyonu ve CRM entegrasyonları.
+- [Web Tasarım & Hosting](https://markaizi.com.tr/hizmetler/web-tasarim-hosting): Mobil uyumlu, SEO dostu, hızlı kurumsal web siteleri; domain, hosting ve SSL dahil.
+
+## Paketler ve Fiyatlandırma
+
+- Sosyal Medya Başlangıç: 19.900 ₺/ay
+- Sosyal Medya Büyüme (en popüler): 29.900 ₺/ay
+- Sosyal Medya Kurumsal: 39.900 ₺/ay
+- Sosyal Medya Elite: 59.900 ₺/ay
+- Web Tasarım — Basit Tanıtım Sitesi: 14.900 ₺ (tek seferlik)
+- Web Tasarım — Kurumsal Site: 29.900 ₺ (tek seferlik)
+- Web Tasarım — Gelişmiş SEO'lu Site: 49.900 ₺ (tek seferlik)
+- E-Ticaret Sitesi: Teklife göre
+
+Not: Reklam bütçesi yönetim ücretine dahil değildir ve doğrudan ilgili reklam platformuna yüklenir. Standart sözleşme süresi 3 aydır.
+
+## Kaynaklar
+
+- [Blog — Dijital Pazarlama Rehberleri](https://markaizi.com.tr/blog): Sosyal medya, reklam ve web tasarım üzerine güncel makaleler.
+- [Sıkça Sorulan Sorular](https://markaizi.com.tr/sss): Çalışma şekli, ödeme, sözleşme ve hizmetlerle ilgili cevaplar.
+
+## İletişim
+
+- Telefon: +90 552 077 27 00
+- E-posta: markaizicom@gmail.com
+- Adres: Zübeyde Hanım Mah. Elif Sok. No:7/106 2. Kat, Sütçü Kemal İş Merkezi, Ankara
+- Hizmet bölgesi: Ankara (Siteler, Ostim, Keçiören, Etimesgut, Çankaya, Yenimahalle, Mamak ve çevresi)
+- Çalışma saatleri: Pazartesi–Cumartesi 09:00–20:00

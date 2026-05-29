@@ -96,6 +96,24 @@ export default function WebTasarimPage() {
             ],
           },
         ]}
+        faq={[
+          {
+            q: "Web sitem ne kadar sürede hazır olur?",
+            a: "Basit tanıtım siteleri 7–10 iş günü, kurumsal siteler 3–4 hafta, gelişmiş SEO'lu siteler 5–6 hafta, e-ticaret siteleri ise 6–8 hafta içinde teslim edilir. Süre, içeriklerin (metin ve görsel) tarafınızdan ne kadar hızlı temin edildiğine bağlı olarak değişebilir.",
+          },
+          {
+            q: "Siteyi yaptırdıktan sonra kendim güncelleyebilir miyim?",
+            a: "Evet. Tüm sitelere kolay kullanımlı bir yönetim paneli (CMS) entegre ediyoruz. Teknik bilgi gerektirmeden metin, görsel, fiyat ve ürün gibi içerikleri kendiniz güncelleyebilirsiniz. Talep ederseniz kısa bir kullanım eğitimi de veriyoruz.",
+          },
+          {
+            q: "Hosting ve domain ücreti dahil mi?",
+            a: "Temel paketlerde ilk yıl hosting kurulumu ve domain kaydı hizmet bedeline dahildir. İkinci yıldan itibaren hosting (yıllık yaklaşık 1.500–3.000 ₺) ve domain yenileme ücreti ayrıca fatura edilir. SSL sertifikası tüm paketlerde ücretsizdir.",
+          },
+          {
+            q: "Sitem SEO uyumlu ve mobil uyumlu olacak mı?",
+            a: "Kesinlikle. Tüm sitelerimiz mobil öncelikli (responsive) tasarlanır ve teknik SEO temelleriyle kodlanır: hızlı yükleme, doğru başlık yapısı, meta etiketleri ve yapısal veri. Next.js gibi modern altyapılarla Google'ın Core Web Vitals kriterlerinde yüksek puan hedefleriz.",
+          },
+        ]}
     />
   );
 }

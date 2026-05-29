@@ -2,6 +2,7 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/sections/Footer";
 import WhatsApp from "@/components/WhatsApp";
+import ServiceFAQ, { FAQItem } from "@/components/ServiceFAQ";
 
 export interface PricingPackage {
   name: string;
@@ -21,6 +22,7 @@ export interface ServicePageProps {
   features: { icon: string; title: string; desc: string }[];
   pricing?: PricingPackage[];
   noPricingNote?: string; // fiyat yoksa alt not
+  faq?: FAQItem[]; // hizmete özel sıkça sorulan sorular
   icon: React.ReactNode;
   badge: string;
 }
@@ -32,11 +34,30 @@ export default function ServicePageTemplate({
   features,
   pricing,
   noPricingNote,
+  faq,
   icon,
   badge,
 }: ServicePageProps) {
+  const faqJsonLd = faq && faq.length > 0
+    ? {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: faq.map((item) => ({
+          "@type": "Question",
+          name: item.q,
+          acceptedAnswer: { "@type": "Answer", text: item.a },
+        })),
+      }
+    : null;
+
   return (
     <>
+      {faqJsonLd && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+        />
+      )}
       <Navbar />
       <main>
         {/* ── Hero ── */}
@@ -190,6 +211,13 @@ export default function ServicePageTemplate({
                 <p className="text-[16px] text-[#8a8a9a] leading-relaxed">{noPricingNote}</p>
               </div>
             </div>
+          </section>
+        )}
+
+        {/* ── SSS ── */}
+        {faq && faq.length > 0 && (
+          <section className="py-20" style={{ background: "var(--bg)" }}>
+            <ServiceFAQ faqs={faq} />
           </section>
         )}
 

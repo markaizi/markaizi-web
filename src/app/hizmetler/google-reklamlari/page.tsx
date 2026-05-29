@@ -65,6 +65,24 @@ export default function GoogleReklamlariPage() {
           ],
         },
       ]}
+      faq={[
+        {
+          q: "Google Ads reklam bütçem ne kadar olmalı?",
+          a: "Sektöre ve rekabete göre değişmekle birlikte, anlamlı veri biriktirmek için günlük 150–300 ₺ uygun bir başlangıç noktasıdır. Bütçeyi artırdıkça veri birikimi hızlanır ve kampanya optimizasyonu daha etkili hale gelir. Reklam bütçesi yönetim ücretine dahil değildir; doğrudan Google'a yüklenir ve tamamen sizin kontrolünüzdedir.",
+        },
+        {
+          q: "Reklamlarım ne zaman ilk sıralarda çıkar?",
+          a: "Google Ads'de reklamlar yayına alındığı anda gösterilmeye başlar; SEO'dan farklı olarak beklemeye gerek yoktur. İlk 1–2 haftada tıklama ve gösterim verileri gelir, dönüşüm odaklı optimizasyon ise genellikle 4–6 hafta içinde oturur. Kalite Puanı yükseldikçe daha az maliyetle daha üst sıralarda görünürsünüz.",
+        },
+        {
+          q: "Anahtar kelimeleri kim belirliyor?",
+          a: "Anahtar kelime araştırmasını markaizi ekibi yapar. İşletmenizi, hedef kitlenizi ve rakiplerinizi analiz ederek dönüşüm getirme ihtimali en yüksek kelimeleri seçeriz. Bütçe israfını önlemek için negatif anahtar kelime listesini de düzenli olarak güncelleriz.",
+        },
+        {
+          q: "Reklam hesabı kimin üzerine açılıyor?",
+          a: "Google Ads hesabı her zaman size aittir. Biz hesabınıza yönetici erişimi alarak kampanyaları yönetiriz. Çalışma ilişkimiz sona erdiğinde hesap, tüm geçmiş verileriyle birlikte tamamen sizde kalır.",
+        },
+      ]}
     />
   );
 }

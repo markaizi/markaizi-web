@@ -10,7 +10,6 @@ const NAV_LINKS = [
   { href: "/#portfolio",  label: "Portföy",    section: "portfolio" },
   { href: "/#fiyatlar",   label: "Fiyatlar",   section: "fiyatlar" },
   { href: "/blog",        label: "Blog",       section: null },
-  { href: "/sss",         label: "SSS",        section: null },
 ];
 
 export default function Navbar() {

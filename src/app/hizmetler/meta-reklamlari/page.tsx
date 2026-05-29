@@ -63,6 +63,24 @@ export default function MetaReklamlariPage() {
           ],
         },
       ]}
+      faq={[
+        {
+          q: "Meta (Facebook & Instagram) reklamları için minimum bütçe nedir?",
+          a: "Meta reklamlarında günlük minimum 100–200 ₺ ile başlanabilir. Bu bütçe, algoritmanın hedef kitlenizi öğrenmesi ve test edebilmesi için yeterli veriyi sağlar. Bütçe ne kadar yüksekse optimizasyon o kadar hızlı oturur. Reklam bütçesi yönetim ücretine dahil değildir; doğrudan Meta'ya yüklenir.",
+        },
+        {
+          q: "Reklam görsellerini ve videolarını kim hazırlıyor?",
+          a: "Tüm kreatif içerikleri (görsel tasarım, video montaj, reklam metni) markaizi ekibi hazırlar. Her kampanyada birden fazla kreatif varyasyonu test eder, en iyi performans göstereni ölçeklendiririz. Ürün fotoğraflarınız varsa kullanırız; yoksa AI destekli içerik üretimiyle de destekleriz.",
+        },
+        {
+          q: "Hangi sektörler Meta reklamlarından en çok fayda görür?",
+          a: "Görsel ağırlıklı ve geniş kitleye hitap eden sektörler öne çıkar: mobilya, dekorasyon, giyim ve aksesuar, güzellik & estetik, restoran & kafe, klinik ve sağlık hizmetleri. Yine de doğru hedefleme ve kreatifle hemen her işletme Meta'da sonuç alabilir.",
+        },
+        {
+          q: "Reklam sonuçlarını nasıl takip ederim?",
+          a: "Haftalık ve aylık raporları e-posta ile iletiyoruz. Erişim, tıklama, dönüşüm ve harcama gibi tüm metrikleri şeffaf şekilde paylaşıyoruz. İsterseniz reklam hesabınıza kendi giriş bilgilerinizle anlık erişim de sağlayabilirsiniz.",
+        },
+      ]}
     />
   );
 }
