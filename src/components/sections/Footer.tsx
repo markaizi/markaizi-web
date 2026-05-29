@@ -77,7 +77,7 @@ export default function Footer() {
 function FooterCol({ title, links }: { title: string; links: { label: string; href: string }[] }) {
   return (
     <div>
-      <h5 className="text-[13px] font-bold uppercase tracking-wider text-[#8a8a9a] mb-5">{title}</h5>
+      <h3 className="text-[13px] font-bold uppercase tracking-wider text-[#8a8a9a] mb-5">{title}</h3>
       <ul className="flex flex-col gap-3">
         {links.map((l) => (
           <li key={l.label}>

@@ -118,10 +118,11 @@ export default function Contact() {
               <Field label="Telefon" id="phone" type="tel" placeholder="+90 552 077 27 00" />
             </div>
             <div className="mb-5">
-              <label className="block text-[13px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-2">
+              <label htmlFor="service" className="block text-[13px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-2">
                 İlgilendiğiniz Hizmet
               </label>
               <select
+                id="service"
                 name="service"
                 className="w-full px-4 py-3.5 rounded-xl text-[15px] text-white"
                 style={{
@@ -138,8 +139,9 @@ export default function Contact() {
               </select>
             </div>
             <div className="mb-7">
-              <label className="block text-[13px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-2">Mesajınız</label>
+              <label htmlFor="message" className="block text-[13px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-2">Mesajınız</label>
               <textarea
+                id="message"
                 name="message"
                 rows={4}
                 placeholder="Projenizden bahsedin..."
@@ -224,7 +226,7 @@ export default function Contact() {
 
             {/* Çalışma Saatleri */}
             <div className="pt-6">
-              <h4 className="text-[13px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-4">Çalışma Saatleri</h4>
+              <h3 className="text-[13px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-4">Çalışma Saatleri</h3>
               {HOURS.map((h) => (
                 <div key={h.day} className="flex justify-between text-[14px] mb-2.5">
                   <span className="text-[#8a8a9a]">{h.day}</span>
