@@ -47,11 +47,11 @@ export const PACKAGES: Package[] = [
     slug: "elite",
     name: "Elite",
     fullName: "Sosyal Medya Elite Paketi",
-    price: 59900,
-    priceKurus: 5990000,
+    price: 54900,
+    priceKurus: 5490000,
     type: "abonelik",
     period: "/ay",
-    desc: "Tüm platformlar + web sitesi desteği & SEO",
+    desc: "Tüm platformlar + web sitesi, SEO & yapay zeka entegrasyonu",
   },
   // Web Tasarım Tek Seferlik Paketler
   {

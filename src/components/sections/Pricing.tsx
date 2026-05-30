@@ -3,16 +3,15 @@ const PLANS = [
     name: "Başlangıç",
     slug: "baslangic",
     price: "19.900",
-    desc: "Sosyal medyada ilk adımını atmak isteyen işletmeler için.",
+    desc: "Sosyal medyaya ilk adımını atmak isteyen işletmeler için.",
     featured: false,
     features: [
-      { ok: true,  text: "Instagram & Facebook yönetimi" },
-      { ok: true,  text: "Haftada 3 paylaşım" },
-      { ok: true,  text: "10.000 ₺'ye kadar reklam kampanyası yönetimi" },
-      { ok: true,  text: "Aylık raporlama" },
-      { ok: false, text: "TikTok yönetimi" },
-      { ok: false, text: "Google Ads yönetimi" },
-      { ok: false, text: "Web sitesi desteği & SEO" },
+      { ok: true, text: "Instagram ve Facebook Yönetimi" },
+      { ok: true, text: "Meta Ads Yönetimi" },
+      { ok: true, text: "Ayda 15 Reels Video İçeriği" },
+      { ok: true, text: "Özel Gün Story ve Post Tasarımları" },
+      { ok: true, text: "Ayda 2 Çekim Günü" },
+      { ok: true, text: "Aylık Performans Raporlaması" },
     ],
   },
   {
@@ -22,13 +21,14 @@ const PLANS = [
     desc: "Hızlı büyümek isteyen markalar için çok kanallı paket.",
     featured: true,
     features: [
-      { ok: true, text: "Instagram, Facebook & TikTok yönetimi" },
-      { ok: true, text: "Haftada 5 paylaşım" },
-      { ok: true, text: "50.000 ₺'ye kadar reklam kampanyası yönetimi" },
-      { ok: true, text: "Google İşletme yönetimi" },
-      { ok: true, text: "Giriş seviye Google Ads yönetimi" },
-      { ok: true, text: "Haftalık raporlama" },
-      { ok: false, text: "Web sitesi desteği & SEO" },
+      { ok: true, text: "Instagram, Facebook ve TikTok Yönetimi" },
+      { ok: true, text: "Gelişmiş Meta Ads Yönetimi" },
+      { ok: true, text: "Ayda 20 Reels Video İçeriği" },
+      { ok: true, text: "Özel Gün Story ve Post Tasarımları" },
+      { ok: true, text: "Ayda 4 Çekim Günü" },
+      { ok: true, text: "15 Günde Bir Performans Raporlaması" },
+      { ok: true, text: "Google İşletme Profili Yönetimi" },
+      { ok: true, text: "Google Ads Yönetimi" },
     ],
   },
   {
@@ -38,29 +38,38 @@ const PLANS = [
     desc: "Dijital varlığını güçlendirmek isteyen kurumsal markalar için.",
     featured: false,
     features: [
-      { ok: true, text: "Instagram, Facebook & TikTok yönetimi" },
-      { ok: true, text: "Haftada 7 paylaşım" },
-      { ok: true, text: "100.000 ₺'ye kadar reklam kampanyası yönetimi" },
-      { ok: true, text: "Google İşletme yönetimi" },
-      { ok: true, text: "Kapsamlı Google Ads yönetimi" },
-      { ok: true, text: "Haftalık raporlama" },
-      { ok: false, text: "Web sitesi desteği & SEO" },
+      { ok: true, text: "Instagram, Facebook ve TikTok Yönetimi" },
+      { ok: true, text: "Gelişmiş Meta Ads Yönetimi" },
+      { ok: true, text: "Ayda 30 Reels Video İçeriği" },
+      { ok: true, text: "Özel Gün Story ve Post Tasarımları" },
+      { ok: true, text: "Ayda 5 Çekim Günü" },
+      { ok: true, text: "Haftalık Performans Raporlaması" },
+      { ok: true, text: "Google İşletme Profili Yönetimi" },
+      { ok: true, text: "Gelişmiş Google Ads Yönetimi" },
+      { ok: true, text: "Kurumsal Web Sitesi Kurulumu" },
+      { ok: true, text: "1 Yıl Ücretsiz Hosting ve Domain" },
     ],
   },
   {
     name: "Elite",
     slug: "elite",
-    price: "59.900",
-    desc: "Size özel çözümler, web sitesi desteği, SEO avantajları ve tüm paket kapsamı.",
+    price: "54.900",
+    desc: "Tüm dijital kanalları kapsayan, SEO ve yapay zeka entegrasyonlu tam paket.",
     featured: false,
     features: [
-      { ok: true, text: "Tüm platformlar tam yönetim" },
-      { ok: true, text: "Haftada 7+ paylaşım" },
-      { ok: true, text: "Sınırsız reklam bütçesi yönetimi" },
-      { ok: true, text: "Kapsamlı Google Ads & İşletme" },
-      { ok: true, text: "Web sitesi tasarım & desteği" },
-      { ok: true, text: "SEO optimizasyonu" },
-      { ok: true, text: "Özel dijital strateji & danışmanlık" },
+      { ok: true, text: "Instagram, Facebook ve TikTok Yönetimi" },
+      { ok: true, text: "Gelişmiş Meta Ads Yönetimi" },
+      { ok: true, text: "Ayda 40 Reels Video İçeriği" },
+      { ok: true, text: "Özel Gün Story ve Post Tasarımları" },
+      { ok: true, text: "Ayda 6 Çekim Günü" },
+      { ok: true, text: "Haftalık Performans Raporlaması" },
+      { ok: true, text: "Google İşletme Profili Yönetimi" },
+      { ok: true, text: "Gelişmiş Google Ads Yönetimi" },
+      { ok: true, text: "Gelişmiş Web Sitesi Kurulumu" },
+      { ok: true, text: "1 Yıl Ücretsiz Hosting ve Domain" },
+      { ok: true, text: "Web Sitesi Yönetimi ve İçerik Güncellemeleri" },
+      { ok: true, text: "Teknik SEO ve Sayfa İçi SEO Çalışmaları" },
+      { ok: true, text: "Yapay Zekâ ve Otomasyon Entegrasyonları" },
     ],
   },
 ];
@@ -71,12 +80,12 @@ export default function Pricing() {
       <div className="max-w-[1200px] mx-auto px-6">
         {/* Header */}
         <div className="text-center max-w-[680px] mx-auto mb-16 reveal">
-          <span className="section-tag">Fiyatlandırma</span>
+          <span className="section-tag">Sosyal Medya Paketleri</span>
           <h2 className="font-black leading-tight mb-4 text-white" style={{ fontSize: "clamp(28px,4vw,42px)" }}>
-            Şeffaf ve <span style={{ color: "#c084fc" }}>Adil Fiyatlar</span>
+            Aylık Sosyal Medya <span style={{ color: "#c084fc" }}>Yönetim Paketleri</span>
           </h2>
           <p className="text-[#8a8a9a] text-[17px]">
-            Her bütçeye uygun paketlerimizle markanızı dijitalde büyütün. Gizli ücret yok.
+            İçerik üretiminden reklam yönetimine, çekim gününden raporlamaya — ihtiyacınıza göre paket seçin.
           </p>
         </div>
 
