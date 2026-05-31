@@ -3,14 +3,16 @@
 import { useState, useEffect } from "react";
 import type { ClientData, Campaign } from "@/lib/clients";
 
-type Tab = "meta" | "google" | "updates" | "calendar" | "invoice";
+type Tab = "meta" | "google" | "tiktok" | "website" | "updates" | "calendar" | "invoice";
 
 const TABS: { id: Tab; label: string; emoji: string }[] = [
-  { id: "meta",     label: "Meta Ads",        emoji: "📣" },
-  { id: "google",   label: "Google Ads",       emoji: "🔍" },
-  { id: "updates",  label: "Ajans Güncellemeleri", emoji: "📝" },
-  { id: "calendar", label: "İçerik Takvimi",   emoji: "📅" },
-  { id: "invoice",  label: "Fatura Bilgisi",   emoji: "💳" },
+  { id: "meta",     label: "Meta Ads",             emoji: "📣" },
+  { id: "google",   label: "Google Ads",            emoji: "🔍" },
+  { id: "tiktok",   label: "TikTok Ads",            emoji: "🎵" },
+  { id: "website",  label: "Website",               emoji: "🌐" },
+  { id: "updates",  label: "Ajans Güncellemeleri",  emoji: "📝" },
+  { id: "calendar", label: "İçerik Takvimi",        emoji: "📅" },
+  { id: "invoice",  label: "Fatura Bilgisi",        emoji: "💳" },
 ];
 
 // ── Ana bileşen ──────────────────────────────────────────────────────────────
@@ -171,7 +173,7 @@ function Dashboard({ client, onLogout }: { client: ClientData; onLogout: () => v
         </div>
 
         {/* Tab Butonları */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-8">
+        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3 mb-8">
           {TABS.map((tab) => {
             const isActive = activeTab === tab.id;
             return (
@@ -208,6 +210,8 @@ function Dashboard({ client, onLogout }: { client: ClientData; onLogout: () => v
         <div>
           {activeTab === "meta"     && <MetaTab     client={client} />}
           {activeTab === "google"   && <GoogleTab   client={client} />}
+          {activeTab === "tiktok"   && <TikTokTab   client={client} />}
+          {activeTab === "website"  && <WebsiteTab  client={client} />}
           {activeTab === "updates"  && <UpdatesTab  client={client} />}
           {activeTab === "calendar" && <CalendarTab client={client} />}
           {activeTab === "invoice"  && <InvoiceTab  client={client} />}
@@ -258,6 +262,46 @@ function GoogleTab({ client }: { client: ClientData }) {
   );
 }
 
+// ── Tab: TikTok Ads ───────────────────────────────────────────────────────────
+function TikTokTab({ client }: { client: ClientData }) {
+  if (!client.tiktokCampaigns?.length) {
+    return <Empty text="TikTok Ads kampanyası henüz tanımlanmadı." />;
+  }
+  return (
+    <Section title="TikTok Ads Kampanyaları" subtitle="TikTok reklam kampanyalarınız">
+      <CampaignTable campaigns={client.tiktokCampaigns} />
+    </Section>
+  );
+}
+
+// ── Tab: Website ──────────────────────────────────────────────────────────────
+function WebsiteTab({ client }: { client: ClientData }) {
+  if (!client.websiteUpdates?.length) {
+    return <Empty text="Website güncellemesi henüz girilmedi." />;
+  }
+  return (
+    <Section title="Website" subtitle="Web sitenizde yapılan çalışmalar ve güncellemeler">
+      <div className="space-y-3">
+        {client.websiteUpdates.map((u, i) => (
+          <div
+            key={i}
+            className="rounded-xl p-5 flex gap-4 items-start"
+            style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+          >
+            <span
+              className="text-[11px] font-semibold px-2.5 py-1 rounded-lg flex-shrink-0 whitespace-nowrap mt-0.5"
+              style={{ background: "rgba(96,165,250,0.1)", color: "#60a5fa" }}
+            >
+              {u.date}
+            </span>
+            <p className="text-[14px] text-[#c8c8d8] leading-relaxed">{u.text}</p>
+          </div>
+        ))}
+      </div>
+    </Section>
+  );
+}
+
 // ── Tab: Ajans Güncellemeleri ─────────────────────────────────────────────────
 function UpdatesTab({ client }: { client: ClientData }) {
   if (!client.updates?.length) {
@@ -282,6 +326,8 @@ function UpdatesTab({ client }: { client: ClientData }) {
           </div>
         ))}
       </div>
+      {/* Sabit not */}
+      <SectionNote text="Ajans güncellemelerimiz ay sonu size raporunuz verildiğinde sıfırlanır." />
     </Section>
   );
 }
@@ -310,6 +356,8 @@ function CalendarTab({ client }: { client: ClientData }) {
           </div>
         ))}
       </div>
+      {/* Sabit not */}
+      <SectionNote text="İçerik takvimi aylık olarak planlandıkça güncellenir. Ay bittiğinde raporunuz tarafınıza iletilir ve bu bölüm sıfırlanır." />
     </Section>
   );
 }
@@ -449,6 +497,18 @@ function Section({ title, subtitle, children }: { title: string; subtitle: strin
         <p className="text-[13px] text-[#8a8a9a] mt-0.5">{subtitle}</p>
       </div>
       {children}
+    </div>
+  );
+}
+
+function SectionNote({ text }: { text: string }) {
+  return (
+    <div
+      className="mt-4 flex items-start gap-2.5 rounded-xl px-4 py-3"
+      style={{ background: "rgba(139,142,160,0.07)", border: "1px solid rgba(139,142,160,0.15)" }}
+    >
+      <span className="text-[14px] flex-shrink-0 mt-0.5">ℹ️</span>
+      <p className="text-[12px] text-[#8a8a9a] leading-relaxed">{text}</p>
     </div>
   );
 }

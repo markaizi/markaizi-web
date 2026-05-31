@@ -39,11 +39,13 @@ export interface ClientData {
 
   metaCampaigns?: Campaign[];
   googleCampaigns?: Campaign[];
+  tiktokCampaigns?: Campaign[];
+  websiteUpdates?: ClientUpdate[];
   updates?: ClientUpdate[];
   contentCalendar?: { date: string; content: string }[];
 
   invoices?: Invoice[];
-  invoiceNote?: string; // Fatura sayfası altındaki not
+  invoiceNote?: string;
 }
 
 export const CLIENTS: ClientData[] = [
@@ -64,15 +66,7 @@ export const CLIENTS: ClientData[] = [
       },
     ],
 
-    googleCampaigns: [
-      {
-        name: "Şahin Avize — Arama Kampanyası",
-        startDate: "1 Mayıs 2025",
-        endDate: "Devam ediyor",
-        dailyBudget: "100 ₺ / gün",
-        status: "Aktif",
-      },
-    ],
+    googleCampaigns: [],
 
     updates: [
       {

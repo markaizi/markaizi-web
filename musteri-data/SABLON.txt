@@ -16,7 +16,18 @@ Paket: Başlangıç Paketi       ← Başlangıç / Büyüme / Kurumsal / Elite
 
 # GOOGLE ADS KAMPANYALARI
 # Aynı format: Başlangıç | Bitiş | Kampanya Adı | Günlük Bütçe | Durum
+# Kampanya yoksa bu bölümü boş bırak
 1 Ocak 2025 | Devam ediyor | Kampanya Adı | 100 ₺/gün | Aktif
+
+# TIKTOK ADS KAMPANYALARI
+# Aynı format: Başlangıç | Bitiş | Kampanya Adı | Günlük Bütçe | Durum
+# Kampanya yoksa bu bölümü boş bırak
+1 Ocak 2025 | Devam ediyor | Kampanya Adı | 100 ₺/gün | Aktif
+
+# WEBSITE GÜNCELLEMELERİ
+# Web sitesinde yapılan çalışmalar → Tarih: Açıklama
+# Yoksa bu bölümü boş bırak
+28 Mayıs 2025: Anasayfa hero bölümü güncellendi.
 
 # AJANS GÜNCELLEMELERİ
 # Her güncelleme bir satır → Tarih: Açıklama
