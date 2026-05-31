@@ -115,14 +115,30 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       <div
-        className="fixed inset-0 z-[999] flex items-center justify-center transition-transform duration-300"
+        className="fixed inset-0 z-[999] flex flex-col transition-transform duration-300"
         style={{
           background: "rgba(5,5,5,0.97)",
           backdropFilter: "blur(20px)",
           transform: open ? "translateX(0)" : "translateX(100%)",
         }}
       >
-        <ul className="flex flex-col items-center gap-8">
+        {/* Kapatma butonu — sağ üst */}
+        <div className="flex justify-end px-6 pt-6 pb-2">
+          <button
+            onClick={close}
+            aria-label="Menüyü kapat"
+            className="flex items-center gap-2 px-4 py-2 rounded-full transition-all"
+            style={{ background: "rgba(255,255,255,0.07)", border: "1px solid rgba(255,255,255,0.1)" }}
+          >
+            <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5 text-white" stroke="currentColor" strokeWidth="2.5">
+              <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" />
+            </svg>
+            <span className="text-[14px] font-semibold text-white">Kapat</span>
+          </button>
+        </div>
+
+        {/* Menü linkleri */}
+        <ul className="flex flex-col items-center justify-center gap-8 flex-1">
           {[...NAV_LINKS, { href: isHome ? "#iletisim" : "/#iletisim", label: "İletişim", section: "iletisim" as string | null }].map((l) => (
             <li key={l.href}>
               <a
