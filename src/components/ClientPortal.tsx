@@ -172,15 +172,48 @@ function Dashboard({ client, onLogout }: { client: ClientData; onLogout: () => v
           <p className="text-[14px] text-[#8a8a9a]">Görmek istediğiniz bölümü seçin.</p>
         </div>
 
-        {/* Tab Butonları */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-3 mb-8">
+        {/* Tab Butonları — mobilde yatay kaydır, masaüstünde grid */}
+        {/* Mobil */}
+        <div className="md:hidden -mx-6 px-6 mb-6">
+          <div className="flex gap-2 overflow-x-auto pb-2" style={{ scrollbarWidth: "none" }}>
+            {TABS.map((tab) => {
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id)}
+                  className="flex items-center gap-1.5 flex-shrink-0 px-4 py-2.5 rounded-full text-[13px] font-semibold transition-all duration-200"
+                  style={
+                    isActive
+                      ? {
+                          background: "linear-gradient(135deg, #7c3aed, #a855f7)",
+                          color: "#fff",
+                          boxShadow: "0 2px 12px rgba(124,58,237,0.4)",
+                        }
+                      : {
+                          background: "var(--surface)",
+                          border: "1px solid var(--border)",
+                          color: "#8a8a9a",
+                        }
+                  }
+                >
+                  <span>{tab.emoji}</span>
+                  <span>{tab.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Masaüstü */}
+        <div className="hidden md:grid md:grid-cols-4 lg:grid-cols-7 gap-3 mb-8">
           {TABS.map((tab) => {
             const isActive = activeTab === tab.id;
             return (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className="flex flex-col items-center gap-2 rounded-2xl px-4 py-5 transition-all duration-200 text-center"
+                className="flex flex-col items-center gap-2 rounded-2xl px-3 py-5 transition-all duration-200 text-center"
                 style={
                   isActive
                     ? {
@@ -196,7 +229,7 @@ function Dashboard({ client, onLogout }: { client: ClientData; onLogout: () => v
               >
                 <span className="text-2xl">{tab.emoji}</span>
                 <span
-                  className="text-[12px] font-semibold leading-tight"
+                  className="text-[11px] font-semibold leading-tight"
                   style={{ color: isActive ? "#e2d0ff" : "#8a8a9a" }}
                 >
                   {tab.label}
@@ -369,9 +402,39 @@ function InvoiceTab({ client }: { client: ClientData }) {
   }
   return (
     <Section title="Fatura Bilgisi" subtitle="Hizmet ödemelerinizin özeti">
-      {/* Fatura tablosu */}
-      <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid var(--border)" }}>
-        {/* Tablo başlığı */}
+      {/* Mobil: kart */}
+      <div className="md:hidden space-y-3">
+        {client.invoices.map((inv, i) => (
+          <div
+            key={i}
+            className="rounded-2xl p-5"
+            style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+          >
+            <div className="flex items-start justify-between gap-3 mb-3">
+              <div>
+                <p className="text-[13px] font-semibold text-white">{inv.period}</p>
+                {inv.dueDate && (
+                  <p className="text-[11px] text-[#8a8a9a] mt-0.5">Son ödeme: {inv.dueDate}</p>
+                )}
+              </div>
+              <span
+                className="text-[11px] font-bold px-3 py-1 rounded-full flex-shrink-0"
+                style={
+                  inv.status === "Ödendi"
+                    ? { background: "rgba(52,211,153,0.12)", color: "#34d399" }
+                    : { background: "rgba(251,191,36,0.12)", color: "#fbbf24" }
+                }
+              >
+                {inv.status === "Ödendi" ? "✓ Ödendi" : "⏳ Bekliyor"}
+              </span>
+            </div>
+            <p className="text-[26px] font-black gradient-text">{inv.amount}</p>
+          </div>
+        ))}
+      </div>
+
+      {/* Masaüstü: tablo */}
+      <div className="hidden md:block rounded-2xl overflow-hidden" style={{ border: "1px solid var(--border)" }}>
         <div
           className="grid grid-cols-3 px-5 py-3 text-[11px] font-bold uppercase tracking-wider text-[#8a8a9a]"
           style={{ background: "var(--surface-2)" }}
@@ -380,8 +443,6 @@ function InvoiceTab({ client }: { client: ClientData }) {
           <span className="text-center">Tutar</span>
           <span className="text-right">Durum</span>
         </div>
-
-        {/* Fatura satırları */}
         {client.invoices.map((inv, i) => (
           <div
             key={i}
@@ -428,63 +489,84 @@ function InvoiceTab({ client }: { client: ClientData }) {
   );
 }
 
-// ── Kampanya Tablosu ──────────────────────────────────────────────────────────
+// ── Kampanya Tablosu / Kartlar ────────────────────────────────────────────────
 function CampaignTable({ campaigns }: { campaigns: Campaign[] }) {
+  const statusStyle = (status: string) =>
+    status === "Aktif"
+      ? { background: "rgba(52,211,153,0.12)", color: "#34d399" }
+      : status === "Duraklatıldı"
+      ? { background: "rgba(251,191,36,0.12)", color: "#fbbf24" }
+      : { background: "rgba(139,142,160,0.12)", color: "#8a8a9a" };
+
   return (
-    <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid var(--border)" }}>
-      {/* Başlık */}
-      <div
-        className="grid grid-cols-4 px-5 py-3 text-[11px] font-bold uppercase tracking-wider text-[#8a8a9a]"
-        style={{ background: "var(--surface-2)" }}
-      >
-        <span className="col-span-1">Başlangıç</span>
-        <span>Bitiş</span>
-        <span className="col-span-1 hidden sm:block">Kampanya Adı</span>
-        <span className="text-right">Günlük Bütçe</span>
+    <>
+      {/* Mobil: kart düzeni */}
+      <div className="md:hidden space-y-3">
+        {campaigns.map((c, i) => (
+          <div
+            key={i}
+            className="rounded-2xl p-5"
+            style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+          >
+            {/* Kampanya adı + durum */}
+            <div className="flex items-start justify-between gap-3 mb-4">
+              <p className="text-[14px] font-semibold text-white leading-snug flex-1">{c.name}</p>
+              <span className="text-[11px] font-bold px-2.5 py-1 rounded-full flex-shrink-0" style={statusStyle(c.status)}>
+                {c.status}
+              </span>
+            </div>
+            {/* Detaylar */}
+            <div className="grid grid-cols-3 gap-2">
+              <div className="rounded-xl px-3 py-2.5" style={{ background: "var(--bg)" }}>
+                <p className="text-[10px] text-[#8a8a9a] mb-1 uppercase tracking-wide">Başlangıç</p>
+                <p className="text-[12px] text-white font-medium">{c.startDate}</p>
+              </div>
+              <div className="rounded-xl px-3 py-2.5" style={{ background: "var(--bg)" }}>
+                <p className="text-[10px] text-[#8a8a9a] mb-1 uppercase tracking-wide">Bitiş</p>
+                <p className="text-[12px] text-white font-medium">{c.endDate}</p>
+              </div>
+              <div className="rounded-xl px-3 py-2.5" style={{ background: "var(--bg)" }}>
+                <p className="text-[10px] text-[#8a8a9a] mb-1 uppercase tracking-wide">Günlük</p>
+                <p className="text-[12px] text-white font-medium">{c.dailyBudget}</p>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
 
-      {/* Satırlar */}
-      {campaigns.map((c, i) => (
+      {/* Masaüstü: tablo düzeni */}
+      <div className="hidden md:block rounded-2xl overflow-hidden" style={{ border: "1px solid var(--border)" }}>
         <div
-          key={i}
-          className="grid grid-cols-4 px-5 py-4 items-center"
-          style={{
-            background: i % 2 === 0 ? "var(--surface)" : "var(--bg)",
-            borderTop: i > 0 ? "1px solid var(--border)" : "none",
-          }}
+          className="grid grid-cols-4 px-5 py-3 text-[11px] font-bold uppercase tracking-wider text-[#8a8a9a]"
+          style={{ background: "var(--surface-2)" }}
         >
-          <span className="text-[13px] text-white">{c.startDate}</span>
-          <span className="text-[13px] text-[#8a8a9a]">{c.endDate}</span>
-          <span className="text-[13px] text-[#c8c8d8] hidden sm:block truncate pr-2">{c.name}</span>
-          <div className="flex flex-col items-end gap-1">
-            <span className="text-[13px] font-semibold text-white">{c.dailyBudget}</span>
-            <span
-              className="text-[10px] font-bold px-2 py-0.5 rounded-full"
-              style={
-                c.status === "Aktif"
-                  ? { background: "rgba(52,211,153,0.12)", color: "#34d399" }
-                  : c.status === "Duraklatıldı"
-                  ? { background: "rgba(251,191,36,0.12)", color: "#fbbf24" }
-                  : { background: "rgba(139,142,160,0.12)", color: "#8a8a9a" }
-              }
-            >
-              {c.status}
-            </span>
-          </div>
+          <span>Başlangıç</span>
+          <span>Bitiş</span>
+          <span>Kampanya Adı</span>
+          <span className="text-right">Günlük Bütçe</span>
         </div>
-      ))}
-
-      {/* Mobil: kampanya adı ayrı satırda */}
-      {campaigns.length > 0 && (
-        <div className="sm:hidden" style={{ borderTop: "1px solid var(--border)" }}>
-          {campaigns.map((c, i) => (
-            <div key={i} className="px-5 py-2" style={{ background: i % 2 === 0 ? "var(--surface)" : "var(--bg)" }}>
-              <p className="text-[11px] text-[#8a8a9a]">{c.name}</p>
+        {campaigns.map((c, i) => (
+          <div
+            key={i}
+            className="grid grid-cols-4 px-5 py-4 items-center"
+            style={{
+              background: i % 2 === 0 ? "var(--surface)" : "var(--bg)",
+              borderTop: i > 0 ? "1px solid var(--border)" : "none",
+            }}
+          >
+            <span className="text-[13px] text-white">{c.startDate}</span>
+            <span className="text-[13px] text-[#8a8a9a]">{c.endDate}</span>
+            <span className="text-[13px] text-[#c8c8d8] truncate pr-3">{c.name}</span>
+            <div className="flex flex-col items-end gap-1">
+              <span className="text-[13px] font-semibold text-white">{c.dailyBudget}</span>
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={statusStyle(c.status)}>
+                {c.status}
+              </span>
             </div>
-          ))}
-        </div>
-      )}
-    </div>
+          </div>
+        ))}
+      </div>
+    </>
   );
 }
 
