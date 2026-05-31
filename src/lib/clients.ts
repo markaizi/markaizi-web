@@ -59,35 +59,35 @@ export const CLIENTS: ClientData[] = [
     metaCampaigns: [
       {
         name: "Mayıs Mesaj Kampanyaları",
-        startDate: "1 Mayıs 2025",
+        startDate: "1 Mayıs 2026",
         endDate: "Devam ediyor",
         dailyBudget: "200 ₺/gün",
         status: "Aktif",
       },
       {
         name: "Mayıs Bilinirlik Kampanyaları",
-        startDate: "1 Mayıs 2025",
+        startDate: "1 Mayıs 2026",
         endDate: "Devam ediyor",
         dailyBudget: "200 ₺/gün",
         status: "Aktif",
       },
       {
         name: "Yasin Düşüyor Reels Kampanyası",
-        startDate: "21 Mayıs 2025",
+        startDate: "21 Mayıs 2026",
         endDate: "Devam ediyor",
         dailyBudget: "100 ₺/gün",
         status: "Aktif",
       },
       {
         name: "%70'e Varan İndirimler — Instagram",
-        startDate: "31 Mayıs 2025",
+        startDate: "31 Mayıs 2026",
         endDate: "6 Haziran 2025",
         dailyBudget: "120 ₺/gün",
         status: "Aktif",
       },
       {
         name: "%70'e Varan İndirimler — Mesaj",
-        startDate: "31 Mayıs 2025",
+        startDate: "31 Mayıs 2026",
         endDate: "Devam ediyor",
         dailyBudget: "100 ₺/gün",
         status: "Aktif",
@@ -98,26 +98,26 @@ export const CLIENTS: ClientData[] = [
 
     websiteUpdates: [
       {
-        date: "31 Mayıs 2025",
+        date: "31 Mayıs 2026",
         text: "Yapılması planlanan web sitesi için döküman hazırlandı, sunum yapılacak.",
       },
     ],
 
     updates: [
       {
-        date: "31 Mayıs 2025",
+        date: "31 Mayıs 2026",
         text: "Instagram üzerinden günlük 120 TL, 7 gün süreyle '%70'e varan indirimler' kampanyası yayınlandı.",
       },
       {
-        date: "31 Mayıs 2025",
+        date: "31 Mayıs 2026",
         text: "Meta üzerinden '%70'e varan indirimler' günlük 100 TL bütçe ile mesaj dönüşümü olarak yayınlandı.",
       },
       {
-        date: "31 Mayıs 2025",
+        date: "31 Mayıs 2026",
         text: "'Doğru avize evinizin imzasıdır' videosu yeterince izlendi; günlük 50 TL bütçeli kampanya kapatıldı.",
       },
       {
-        date: "31 Mayıs 2025",
+        date: "31 Mayıs 2026",
         text: "'%70'e varan indirimler' videosu, Mayıs bilinirlik kampanyası içerisine günlük 50 TL bütçe ile eklendi.",
       },
     ],
@@ -130,12 +130,12 @@ export const CLIENTS: ClientData[] = [
 
     invoices: [
       {
-        period: "13 Nisan – 13 Mayıs 2025",
+        period: "13 Nisan – 13 Mayıs 2026",
         amount: "20.000 ₺",
         status: "Ödendi",
       },
       {
-        period: "13 Mayıs – 13 Haziran 2025",
+        period: "13 Mayıs – 13 Haziran 2026",
         amount: "20.000 ₺",
         status: "Bekliyor",
         dueDate: "20 Haziran 2025",
@@ -154,14 +154,14 @@ export const CLIENTS: ClientData[] = [
     metaCampaigns: [
       {
         name: "Genel Kampanyalar",
-        startDate: "31 Mayıs 2025",
+        startDate: "31 Mayıs 2026",
         endDate: "Devam ediyor",
         dailyBudget: "300 ₺/gün",
         status: "Aktif",
       },
       {
         name: "Abonelik Paketleri",
-        startDate: "31 Mayıs 2025",
+        startDate: "31 Mayıs 2026",
         endDate: "Devam ediyor",
         dailyBudget: "100 ₺/gün",
         status: "Aktif",
@@ -171,14 +171,14 @@ export const CLIENTS: ClientData[] = [
     googleCampaigns: [
       {
         name: "Türkçe Arama Kampanyası",
-        startDate: "31 Mayıs 2025",
+        startDate: "31 Mayıs 2026",
         endDate: "Devam ediyor",
         dailyBudget: "200 ₺/gün",
         status: "Aktif",
       },
       {
         name: "İngilizce Arama Kampanyası",
-        startDate: "31 Mayıs 2025",
+        startDate: "31 Mayıs 2026",
         endDate: "Devam ediyor",
         dailyBudget: "150 ₺/gün",
         status: "Aktif",
@@ -187,22 +187,22 @@ export const CLIENTS: ClientData[] = [
 
     websiteUpdates: [
       {
-        date: "20 Mayıs 2025",
+        date: "20 Mayıs 2026",
         text: "Wix ile yapılan altyapı şu an aktif. Yeni teknoloji ve altyapı yapay zeka desteğiyle yapımı devam ediyor. Muhtemel Bitiş Tarihi: 10 Haziran 2025",
       },
     ],
 
     updates: [
       {
-        date: "31 Mayıs 2025",
+        date: "31 Mayıs 2026",
         text: "Meta Ads Genel Kampanyalar reklamı açıldı. Kampanya içerisinde Genel Reels ve Postlarımız tek kampanya içerisinde toplanarak maksimum dönüşüm hedeflendi.",
       },
       {
-        date: "31 Mayıs 2025",
+        date: "31 Mayıs 2026",
         text: "Abonelik paketleri kampanyası günlük 100 TL bütçe ile açıldı.",
       },
       {
-        date: "31 Mayıs 2025",
+        date: "31 Mayıs 2026",
         text: "Google Ads bakiyesi tükenmişti, 1.000 ₺ sonu 7458 olan karttan çekildi.",
       },
     ],
@@ -214,12 +214,12 @@ export const CLIENTS: ClientData[] = [
 
     invoices: [
       {
-        period: "25 Şubat – 25 Mart 2025",
+        period: "25 Şubat – 25 Mart 2026",
         amount: "20.000 ₺ + KDV",
         status: "Ödendi",
       },
       {
-        period: "25 Mart – 25 Nisan 2025",
+        period: "25 Mart – 25 Nisan 2026",
         amount: "20.000 ₺ + KDV",
         status: "Ödendi",
       },
@@ -230,7 +230,7 @@ export const CLIENTS: ClientData[] = [
         dueDate: "1 Haziran 2025",
       },
       {
-        period: "25 Nisan – 25 Mayıs 2025",
+        period: "25 Nisan – 25 Mayıs 2026",
         amount: "20.000 ₺ + KDV",
         status: "Bekliyor",
         dueDate: "1 Haziran 2025",

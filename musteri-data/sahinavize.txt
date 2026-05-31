@@ -8,11 +8,11 @@ URL Kodu: sahinavize
 Paket: Büyüme Paketi
 
 # META ADS KAMPANYALARI
-1 Mayıs 2025 | Devam ediyor | Mayıs Mesaj Kampanyaları | 200 ₺/gün | Aktif
-1 Mayıs 2025 | Devam ediyor | Mayıs Bilinirlik Kampanyaları | 200 ₺/gün | Aktif
-21 Mayıs 2025 | Devam ediyor | Yasin Düşüyor Reels Kampanyası | 100 ₺/gün | Aktif
-31 Mayıs 2025 | 6 Haziran 2025 | %70'e varan indirimler İnstagram | 120 ₺/gün | Aktif
-31 Mayıs 2025 | Devam ediyor | %70'e varan indirimler Mesaj | 100 ₺/gün | Aktif
+1 Mayıs 2026 | Devam ediyor | Mayıs Mesaj Kampanyaları | 200 ₺/gün | Aktif
+1 Mayıs 2026 | Devam ediyor | Mayıs Bilinirlik Kampanyaları | 200 ₺/gün | Aktif
+21 Mayıs 2026 | Devam ediyor | Yasin Düşüyor Reels Kampanyası | 100 ₺/gün | Aktif
+31 Mayıs 2026 | 6 Haziran 2025 | %70'e varan indirimler İnstagram | 120 ₺/gün | Aktif
+31 Mayıs 2026 | Devam ediyor | %70'e varan indirimler Mesaj | 100 ₺/gün | Aktif
 
 
 # GOOGLE ADS KAMPANYALARI
@@ -20,13 +20,13 @@ Paket: Büyüme Paketi
 # TIKTOK ADS KAMPANYALARI
 
 # WEBSITE GÜNCELLEMELERİ
-31 Mayıs 2025 | Yapılması planlanan web sitesi için döküman hazırlandı sunum yapılacak
+31 Mayıs 2026 | Yapılması planlanan web sitesi için döküman hazırlandı sunum yapılacak
 
 # AJANS GÜNCELLEMELERİ
-31 Mayıs 2025: İnstagram üzerinden günlük 120 TL 7 gün %70'e varan indirimler kampanyası yayınlandı
-31 Mayıs 2025: Meta üzerinden %70'e varan indirimler günlük 100 TL bütçe ile mesaj dönüşümü olarak yayınlandı
-31 Mayıs 2025: Doğru avize evinizin imzasıdır videosu yeterince izlendi günlük 50 TL bütçe kazanmak için kampanya kapatıldı
-31 Mayıs 2025: %70'e varan indirimler videosu mayıs bilinirlik kampanyası içerisine günlük 50 TL bütçe ile yayınlandı
+31 Mayıs 2026: İnstagram üzerinden günlük 120 TL 7 gün %70'e varan indirimler kampanyası yayınlandı
+31 Mayıs 2026: Meta üzerinden %70'e varan indirimler günlük 100 TL bütçe ile mesaj dönüşümü olarak yayınlandı
+31 Mayıs 2026: Doğru avize evinizin imzasıdır videosu yeterince izlendi günlük 50 TL bütçe kazanmak için kampanya kapatıldı
+31 Mayıs 2026: %70'e varan indirimler videosu mayıs bilinirlik kampanyası içerisine günlük 50 TL bütçe ile yayınlandı
 
 # İÇERİK TAKVİMİ
 1 Haziran: Evinizin atmosferini değiştirecek avize reels
@@ -35,8 +35,8 @@ Paket: Büyüme Paketi
 
 
 # FATURALAR
-13 Nisan - 13 Mayıs 2025 | 20.000 ₺ | Ödendi
-13 Mayıs - 13 Haziran 2025 | 20.000 ₺ | Bekliyor | 20 Haziran 2025
+13 Nisan - 13 Mayıs 2026 | 20.000 ₺ | Ödendi
+13 Mayıs - 13 Haziran 2026 | 20.000 ₺ | Bekliyor | 20 Haziran 2025
 
 # FATURA NOTU
 Şahin Avize için ödeme periyodu her ayın 13'üdür.
