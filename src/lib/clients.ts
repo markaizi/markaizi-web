@@ -58,42 +58,74 @@ export const CLIENTS: ClientData[] = [
 
     metaCampaigns: [
       {
-        name: "Şahin Avize — Mayıs Tanıtım",
+        name: "Mayıs Mesaj Kampanyaları",
         startDate: "1 Mayıs 2025",
         endDate: "Devam ediyor",
-        dailyBudget: "150 ₺ / gün",
+        dailyBudget: "200 ₺/gün",
+        status: "Aktif",
+      },
+      {
+        name: "Mayıs Bilinirlik Kampanyaları",
+        startDate: "1 Mayıs 2025",
+        endDate: "Devam ediyor",
+        dailyBudget: "200 ₺/gün",
+        status: "Aktif",
+      },
+      {
+        name: "Yasin Düşüyor Reels Kampanyası",
+        startDate: "21 Mayıs 2025",
+        endDate: "Devam ediyor",
+        dailyBudget: "100 ₺/gün",
+        status: "Aktif",
+      },
+      {
+        name: "%70'e Varan İndirimler — Instagram",
+        startDate: "31 Mayıs 2025",
+        endDate: "6 Haziran 2025",
+        dailyBudget: "120 ₺/gün",
+        status: "Aktif",
+      },
+      {
+        name: "%70'e Varan İndirimler — Mesaj",
+        startDate: "31 Mayıs 2025",
+        endDate: "Devam ediyor",
+        dailyBudget: "100 ₺/gün",
         status: "Aktif",
       },
     ],
 
     googleCampaigns: [],
 
+    websiteUpdates: [
+      {
+        date: "31 Mayıs 2025",
+        text: "Yapılması planlanan web sitesi için döküman hazırlandı, sunum yapılacak.",
+      },
+    ],
+
     updates: [
       {
-        date: "28 Mayıs 2025",
-        text: "Bu hafta 5 Reels videosu yayınlandı. Erişim oranları geçen haftaya göre %18 arttı.",
+        date: "31 Mayıs 2025",
+        text: "Instagram üzerinden günlük 120 TL, 7 gün süreyle '%70'e varan indirimler' kampanyası yayınlandı.",
       },
       {
-        date: "26 Mayıs 2025",
-        text: "Meta reklam kampanyası optimize edildi. Tıklama başı maliyet %12 düşürüldü.",
+        date: "31 Mayıs 2025",
+        text: "Meta üzerinden '%70'e varan indirimler' günlük 100 TL bütçe ile mesaj dönüşümü olarak yayınlandı.",
       },
       {
-        date: "22 Mayıs 2025",
-        text: "Google İşletme Profili fotoğrafları ve açıklaması güncellendi.",
+        date: "31 Mayıs 2025",
+        text: "'Doğru avize evinizin imzasıdır' videosu yeterince izlendi; günlük 50 TL bütçeli kampanya kapatıldı.",
       },
       {
-        date: "19 Mayıs 2025",
-        text: "Mayıs ayı içerik takvimi hazırlandı ve onaylandı.",
+        date: "31 Mayıs 2025",
+        text: "'%70'e varan indirimler' videosu, Mayıs bilinirlik kampanyası içerisine günlük 50 TL bütçe ile eklendi.",
       },
     ],
 
     contentCalendar: [
-      { date: "2 Haziran",  content: "Yeni sezon avize koleksiyonu Reels videosu" },
-      { date: "4 Haziran",  content: "Müşteri yorumu paylaşımı — Story + Feed" },
-      { date: "6 Haziran",  content: "Avize bakım ipuçları carousel" },
-      { date: "9 Haziran",  content: "Ürün tanıtım Reels — kristal koleksiyon" },
-      { date: "11 Haziran", content: "Özel gün paylaşımı" },
-      { date: "13 Haziran", content: "Before/After dekorasyon Reels" },
+      { date: "1 Haziran", content: "Evinizin atmosferini değiştirecek avize reels" },
+      { date: "2 Haziran", content: "Işığın dekorasyonla buluştuğu avize reels" },
+      { date: "3 Haziran", content: "Gramofonlar reels" },
     ],
 
     invoices: [
