@@ -36,7 +36,7 @@ Paket: Büyüme Paketi
 
 # FATURALAR
 13 Nisan - 13 Mayıs 2026 | 20.000 ₺ | Ödendi
-13 Mayıs - 13 Haziran 2026 | 20.000 ₺ | Bekliyor | 20 Haziran 2025
+13 Mayıs - 13 Haziran 2026 | 20.000 ₺ | Bekliyor | 20 Haziran 2026
 
 # FATURA NOTU
 Şahin Avize için ödeme periyodu her ayın 13'üdür.

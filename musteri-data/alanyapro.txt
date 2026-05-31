@@ -34,8 +34,8 @@ Paket: Kurumsal Paketi
 # FATURALAR
 25 Şubat - 25 Mart 2026 | 20.000 ₺ + KDV | Ödendi
 25 Mart - 25 Nisan 2026 | 20.000 ₺ + KDV | Ödendi
-Ajans hesabından Reklam | 1.900 ₺ | Bekliyor | 1 Haziran 2025
-25 Nisan - 25 Mayıs 2026 | 20.000 ₺ + KDV | Bekliyor | 1 Haziran 2025
+Ajans hesabından Reklam | 1.900 ₺ | Bekliyor | 1 Haziran 2026
+25 Nisan - 25 Mayıs 2026 | 20.000 ₺ + KDV | Bekliyor | 1 Haziran 2026
 
 # FATURA NOTU
 Alanya Pro Cleaning için ödeme periyodu her ayın 25'i dir.
