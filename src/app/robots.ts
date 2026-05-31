@@ -5,7 +5,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
-      disallow: ["/api/"],
+      disallow: ["/api/", "/musteri/"],
     },
     sitemap: "https://markaizi.com.tr/sitemap.xml",
   };
