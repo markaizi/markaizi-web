@@ -1,0 +1,40 @@
+====================================================
+  markaizi — Müşteri Panel Veri Şablonu
+  Bu dosyayı kopyalayıp yeni müşteri için doldur.
+====================================================
+
+# MÜŞTERI BİLGİLERİ
+Ad: Müşteri Adı
+URL Kodu: musteriadi          ← markaizi.com.tr/musteri/musteriadi
+Paket: Başlangıç Paketi       ← Başlangıç / Büyüme / Kurumsal / Elite
+
+# META ADS KAMPANYALARI
+# Her kampanya bir satır → Başlangıç | Bitiş | Kampanya Adı | Günlük Bütçe | Durum
+# Durum seçenekleri: Aktif / Duraklatıldı / Tamamlandı
+# Bitmemişse Bitiş kısmına "Devam ediyor" yaz
+1 Ocak 2025 | Devam ediyor | Kampanya Adı | 100 ₺/gün | Aktif
+
+# GOOGLE ADS KAMPANYALARI
+# Aynı format: Başlangıç | Bitiş | Kampanya Adı | Günlük Bütçe | Durum
+1 Ocak 2025 | Devam ediyor | Kampanya Adı | 100 ₺/gün | Aktif
+
+# AJANS GÜNCELLEMELERİ
+# Her güncelleme bir satır → Tarih: Açıklama
+# En yeni üstte olsun
+28 Mayıs 2025: Buraya güncelleme açıklamasını yaz.
+25 Mayıs 2025: Bir önceki güncelleme.
+
+# İÇERİK TAKVİMİ
+# Her satır → Tarih: İçerik açıklaması
+2 Haziran: Ne paylaşılacak
+5 Haziran: Ne paylaşılacak
+
+# FATURALAR
+# Her fatura bir satır → Dönem | Tutar | Durum | Son Ödeme Tarihi
+# Durum: Ödendi veya Bekliyor
+# Son Ödeme Tarihi sadece "Bekliyor" olanlarda yazılır
+1 Nisan - 1 Mayıs 2025 | 19.900 ₺ | Ödendi
+1 Mayıs - 1 Haziran 2025 | 19.900 ₺ | Bekliyor | 10 Haziran 2025
+
+# FATURA NOTU
+Ödeme periyodu hakkında özel bir not varsa buraya yaz.
