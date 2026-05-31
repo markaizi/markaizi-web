@@ -112,6 +112,101 @@ export const CLIENTS: ClientData[] = [
     invoiceNote: "Şahin Avize için ödeme periyodu her ayın 13'üdür.",
   },
 
+  // ─── Alanya Pro Cleaning ───────────────────────────────────────────────────
+  {
+    slug: "alanyapro",
+    name: "Alanya Pro Cleaning",
+    package: "Kurumsal Paketi",
+    envKey: "ALANYAPRO",
+
+    metaCampaigns: [
+      {
+        name: "Genel Kampanyalar",
+        startDate: "31 Mayıs 2025",
+        endDate: "Devam ediyor",
+        dailyBudget: "300 ₺/gün",
+        status: "Aktif",
+      },
+      {
+        name: "Abonelik Paketleri",
+        startDate: "31 Mayıs 2025",
+        endDate: "Devam ediyor",
+        dailyBudget: "100 ₺/gün",
+        status: "Aktif",
+      },
+    ],
+
+    googleCampaigns: [
+      {
+        name: "Türkçe Arama Kampanyası",
+        startDate: "31 Mayıs 2025",
+        endDate: "Devam ediyor",
+        dailyBudget: "200 ₺/gün",
+        status: "Aktif",
+      },
+      {
+        name: "İngilizce Arama Kampanyası",
+        startDate: "31 Mayıs 2025",
+        endDate: "Devam ediyor",
+        dailyBudget: "150 ₺/gün",
+        status: "Aktif",
+      },
+    ],
+
+    websiteUpdates: [
+      {
+        date: "20 Mayıs 2025",
+        text: "Wix ile yapılan altyapı şu an aktif. Yeni teknoloji ve altyapı yapay zeka desteğiyle yapımı devam ediyor. Muhtemel Bitiş Tarihi: 10 Haziran 2025",
+      },
+    ],
+
+    updates: [
+      {
+        date: "31 Mayıs 2025",
+        text: "Meta Ads Genel Kampanyalar reklamı açıldı. Kampanya içerisinde Genel Reels ve Postlarımız tek kampanya içerisinde toplanarak maksimum dönüşüm hedeflendi.",
+      },
+      {
+        date: "31 Mayıs 2025",
+        text: "Abonelik paketleri kampanyası günlük 100 TL bütçe ile açıldı.",
+      },
+      {
+        date: "31 Mayıs 2025",
+        text: "Google Ads bakiyesi tükenmişti, 1.000 ₺ sonu 7458 olan karttan çekildi.",
+      },
+    ],
+
+    contentCalendar: [
+      { date: "1 Haziran",  content: "İnşaat Sonrası Temizlik Görsel ve Videosu Yayınlanacak" },
+      { date: "3 Haziran",  content: "Haziran özel kampanya Görsel ve Videosu Yayınlanacak" },
+    ],
+
+    invoices: [
+      {
+        period: "25 Şubat – 25 Mart 2025",
+        amount: "20.000 ₺ + KDV",
+        status: "Ödendi",
+      },
+      {
+        period: "25 Mart – 25 Nisan 2025",
+        amount: "20.000 ₺ + KDV",
+        status: "Ödendi",
+      },
+      {
+        period: "Ajans hesabından Reklam Ödemesi",
+        amount: "1.900 ₺",
+        status: "Bekliyor",
+        dueDate: "1 Haziran 2025",
+      },
+      {
+        period: "25 Nisan – 25 Mayıs 2025",
+        amount: "20.000 ₺ + KDV",
+        status: "Bekliyor",
+        dueDate: "1 Haziran 2025",
+      },
+    ],
+    invoiceNote: "Alanya Pro Cleaning için ödeme periyodu her ayın 25'idir.",
+  },
+
   // ─── Yeni müşteri şablonu ──────────────────────────────────────────────────
   // {
   //   slug: "musteri-slug",
