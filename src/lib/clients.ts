@@ -138,7 +138,7 @@ export const CLIENTS: ClientData[] = [
         period: "13 Mayıs – 13 Haziran 2026",
         amount: "20.000 ₺",
         status: "Bekliyor",
-        dueDate: "20 Haziran 2025",
+        dueDate: "20 Haziran 2026",
       },
     ],
     invoiceNote: "Şahin Avize için ödeme periyodu her ayın 13'üdür.",
