@@ -282,7 +282,7 @@ function LoginModal({ onClose, router }: { onClose: () => void; router: ReturnTy
               placeholder="kullaniciadiniz"
               autoFocus
               autoComplete="username"
-              className="w-full px-4 py-3 rounded-xl text-[14px] text-white placeholder-[#555] outline-none focus:ring-1 focus:ring-purple-500/50"
+              className="w-full px-4 py-3 rounded-xl text-[16px] text-white placeholder-[#555] outline-none focus:ring-1 focus:ring-purple-500/50"
               style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
             />
           </div>
@@ -298,7 +298,7 @@ function LoginModal({ onClose, router }: { onClose: () => void; router: ReturnTy
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
               autoComplete="current-password"
-              className="w-full px-4 py-3 rounded-xl text-[14px] text-white placeholder-[#555] outline-none focus:ring-1 focus:ring-purple-500/50"
+              className="w-full px-4 py-3 rounded-xl text-[16px] text-white placeholder-[#555] outline-none focus:ring-1 focus:ring-purple-500/50"
               style={{ background: "var(--bg)", border: `1px solid ${error ? "rgba(239,68,68,0.5)" : "var(--border)"}` }}
             />
             {error && <p className="text-[12px] text-red-400 mt-2">{error}</p>}
