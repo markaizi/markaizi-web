@@ -101,6 +101,10 @@ export const CLIENTS: ClientData[] = [
         date: "31 Mayıs 2026",
         text: "Yapılması planlanan web sitesi için döküman hazırlandı, sunum yapılacak.",
       },
+      {
+        date: "2 Haziran 2026",
+        text: "Web sitesi Şahin bey'e sunuldu, alternatif tasarım yapılacak.",
+      },
     ],
 
     updates: [
@@ -120,12 +124,26 @@ export const CLIENTS: ClientData[] = [
         date: "31 Mayıs 2026",
         text: "'%70'e varan indirimler' videosu, Mayıs bilinirlik kampanyası içerisine günlük 50 TL bütçe ile eklendi.",
       },
+      {
+        date: "1 Haziran 2026",
+        text: "Google reklamları ve web sitesi ile ilgili görüşüldü, teklif verilecek.",
+      },
+      {
+        date: "2 Haziran 2026",
+        text: "1 Haziran çekimleri tamamı editlendi, sunuldu ve planlanacak.",
+      },
     ],
 
     contentCalendar: [
       { date: "1 Haziran", content: "Evinizin atmosferini değiştirecek avize reels" },
       { date: "2 Haziran", content: "Işığın dekorasyonla buluştuğu avize reels" },
       { date: "3 Haziran", content: "Gramofonlar reels" },
+      { date: "4 Haziran", content: "Tablo Çekilişi (1 Ay)" },
+      { date: "5 Haziran", content: "Onu görmüşümdür Viral" },
+      { date: "6 Haziran", content: "Avize Modeli" },
+      { date: "7 Haziran", content: "Kedi El Sallama Viral" },
+      { date: "8 Haziran", content: "Melisa Tık Tık %70" },
+      { date: "9 Haziran", content: "Şahin Uçuyor YZ" },
     ],
 
     invoices: [
@@ -156,7 +174,7 @@ export const CLIENTS: ClientData[] = [
         name: "Genel Kampanyalar",
         startDate: "31 Mayıs 2026",
         endDate: "Devam ediyor",
-        dailyBudget: "300 ₺/gün",
+        dailyBudget: "280 ₺/gün",
         status: "Aktif",
       },
       {
@@ -205,11 +223,15 @@ export const CLIENTS: ClientData[] = [
         date: "31 Mayıs 2026",
         text: "Google Ads bakiyesi tükenmişti, 1.000 ₺ sonu 7458 olan karttan çekildi.",
       },
+      {
+        date: "1 Haziran 2026",
+        text: "Meta hesabında optimize ve bütçe düzenlemesi yapıldı.",
+      },
     ],
 
     contentCalendar: [
-      { date: "1 Haziran",  content: "İnşaat Sonrası Temizlik Görsel ve Videosu Yayınlanacak" },
-      { date: "3 Haziran",  content: "Haziran özel kampanya Görsel ve Videosu Yayınlanacak" },
+      { date: "2 Haziran", content: "İnşaat Sonrası Temizlik Görsel ve Videosu Yayınlanacak" },
+      { date: "4 Haziran", content: "Haziran özel kampanya Görsel ve Videosu Yayınlanacak" },
     ],
 
     invoices: [
