@@ -117,12 +117,13 @@ export default function Navbar() {
             <button
               onClick={() => setLoginOpen(true)}
               aria-label="Müşteri Girişi"
-              className="flex items-center justify-center w-9 h-9 rounded-full transition-all hover:bg-white/[0.08]"
-              style={{ border: "1px solid var(--border)" }}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-full transition-all hover:bg-white/[0.08] text-[13px] font-medium"
+              style={{ border: "1px solid var(--border)", color: "#c084fc" }}
             >
-              <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="#c084fc" strokeWidth="2">
+              <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 flex-shrink-0" stroke="currentColor" strokeWidth="2">
                 <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
+              Müşteri Girişi
             </button>
           {/* Hamburger */}
           <button
