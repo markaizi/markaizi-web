@@ -5,8 +5,8 @@
  * ardından Vercel'de CLIENT_PASSWORD_{ENVKEY} env var'ını oluştur.
  */
 
-export type CampaignStatus = "Aktif" | "Duraklatıldı" | "Tamamlandı";
-export type InvoiceStatus  = "Ödendi" | "Bekliyor";
+export type CampaignStatus = "Aktif" | "Duraklatıldı" | "Tamamlandı" | "Ödeme Hatası";
+export type InvoiceStatus  = "Ödendi" | "Bekliyor" | "Günü Gelmedi";
 
 /** Meta Ads veya Google Ads kampanya satırı */
 export interface Campaign {
@@ -259,6 +259,89 @@ export const CLIENTS: ClientData[] = [
       },
     ],
     invoiceNote: "Alanya Pro Cleaning için ödeme periyodu her ayın 25'idir.",
+  },
+
+  // ─── Fitrina ───────────────────────────────────────────────────────────────
+  {
+    slug: "fitrina",
+    name: "Fitrina",
+    package: "Meta - Basit Yönetim",
+    envKey: "FITRINA",
+
+    metaCampaigns: [
+      { name: "D3K2 - Site Trafiği",        startDate: "14 Mayıs 2026", endDate: "Devam ediyor", dailyBudget: "800 ₺/gün", status: "Aktif" },
+      { name: "Ferrotrin - Site Trafiği",    startDate: "15 Mayıs 2026", endDate: "Devam ediyor", dailyBudget: "400 ₺/gün", status: "Aktif" },
+      { name: "Ferrotrin - Bilinirlik",      startDate: "15 Mayıs 2026", endDate: "Devam ediyor", dailyBudget: "200 ₺/gün", status: "Aktif" },
+      { name: "Magnezyum - Site Trafiği",    startDate: "16 Mayıs 2026", endDate: "Devam ediyor", dailyBudget: "400 ₺/gün", status: "Aktif" },
+      { name: "Magnezyum - Bilinirlik",      startDate: "16 Mayıs 2026", endDate: "Devam ediyor", dailyBudget: "200 ₺/gün", status: "Aktif" },
+      { name: "Omega 3 - Site Trafiği",      startDate: "17 Mayıs 2026", endDate: "Devam ediyor", dailyBudget: "500 ₺/gün", status: "Aktif" },
+      { name: "Omega 3 - Bilinirlik",        startDate: "17 Mayıs 2026", endDate: "Devam ediyor", dailyBudget: "300 ₺/gün", status: "Aktif" },
+    ],
+
+    googleCampaigns: [],
+    updates: [],
+    contentCalendar: [],
+
+    invoices: [
+      { period: "1 Ocak – 1 Şubat 2026",   amount: "10.000 ₺ + KDV", status: "Ödendi" },
+      { period: "1 Şubat – 1 Mart 2026",    amount: "10.000 ₺ + KDV", status: "Ödendi" },
+      { period: "1 Mart – 1 Nisan 2026",     amount: "10.000 ₺ + KDV", status: "Ödendi" },
+      { period: "1 Nisan – 1 Mayıs 2026",   amount: "10.000 ₺ + KDV", status: "Ödendi" },
+      { period: "1 Mayıs – 1 Haziran 2026", amount: "10.000 ₺ + KDV", status: "Bekliyor", dueDate: "5 Haziran 2026" },
+    ],
+    invoiceNote: "Fitrina için ödeme periyodu her ayın 1'idir.",
+  },
+
+  // ─── RetroCar ──────────────────────────────────────────────────────────────
+  {
+    slug: "retrocar",
+    name: "RetroCar",
+    package: "Meta - Basit Yönetim",
+    envKey: "RETROCAR",
+
+    metaCampaigns: [
+      { name: "Yeni yerimizde hizmetinizdeyiz", startDate: "24 Mayıs 2026", endDate: "Devam ediyor", dailyBudget: "150 ₺/gün", status: "Aktif" },
+    ],
+
+    googleCampaigns: [],
+    contentCalendar: [],
+
+    updates: [
+      { date: "25 Mayıs 2026", text: "2 yeni hedef kitle oluşturulmuş ve optimize edilmiştir." },
+      { date: "26 Mayıs 2026", text: "Remarketing için özel hedef kitle oluşturulmuş ve reklamlarda kullanılmaya başlanmıştır." },
+    ],
+
+    invoices: [
+      { period: "25 Mayıs – 25 Haziran 2026", amount: "10.000 ₺", status: "Günü Gelmedi", dueDate: "1 Temmuz 2026" },
+    ],
+    invoiceNote: "RetroCar için ödeme periyodu her ayın 25'idir.",
+  },
+
+  // ─── Sarsılmaz Mobilya ─────────────────────────────────────────────────────
+  {
+    slug: "sarsilmaz",
+    name: "Sarsılmaz Mobilya",
+    package: "Başlangıç Paketi",
+    envKey: "SARSILMAZ",
+
+    metaCampaigns: [
+      { name: "Bahçe takımları toplu kampanya",    startDate: "10 Mart 2026", endDate: "Devam ediyor", dailyBudget: "200 ₺/gün", status: "Ödeme Hatası" },
+      { name: "Porselen masa takımları toplu",     startDate: "10 Mart 2026", endDate: "Devam ediyor", dailyBudget: "150 ₺/gün", status: "Ödeme Hatası" },
+      { name: "Albatros balkon takımı 1",          startDate: "10 Mart 2026", endDate: "Devam ediyor", dailyBudget: "100 ₺/gün", status: "Ödeme Hatası" },
+      { name: "Albatros balkon takımı 2",          startDate: "10 Mart 2026", endDate: "Devam ediyor", dailyBudget: "150 ₺/gün", status: "Ödeme Hatası" },
+    ],
+
+    googleCampaigns: [],
+    updates: [],
+
+    contentCalendar: [
+      { date: "3 Haziran", content: "Dron videosu" },
+    ],
+
+    invoices: [
+      { period: "20 Mart – 20 Mayıs 2026", amount: "15.000 ₺", status: "Bekliyor", dueDate: "1 Haziran 2026" },
+    ],
+    invoiceNote: "Sarsılmaz Mobilya için ödeme periyodu her ayın 20'sidir.",
   },
 
   // ─── Yeni müşteri şablonu ──────────────────────────────────────────────────

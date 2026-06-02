@@ -8,7 +8,7 @@ const PLANS = [
     features: [
       { ok: true, text: "Instagram ve Facebook Yönetimi" },
       { ok: true, text: "Meta Ads Yönetimi" },
-      { ok: true, text: "Ayda 15 Reels Video İçeriği" },
+      { ok: true, text: "Ayda 10 Reels Video İçeriği" },
       { ok: true, text: "Özel Gün Story ve Post Tasarımları" },
       { ok: true, text: "Ayda 2 Çekim Günü" },
       { ok: true, text: "Aylık Performans Raporlaması" },
@@ -23,7 +23,7 @@ const PLANS = [
     features: [
       { ok: true, text: "Instagram, Facebook ve TikTok Yönetimi" },
       { ok: true, text: "Gelişmiş Meta Ads Yönetimi" },
-      { ok: true, text: "Ayda 20 Reels Video İçeriği" },
+      { ok: true, text: "Ayda 15 Reels Video İçeriği" },
       { ok: true, text: "Özel Gün Story ve Post Tasarımları" },
       { ok: true, text: "Ayda 4 Çekim Günü" },
       { ok: true, text: "15 Günde Bir Performans Raporlaması" },

@@ -408,10 +408,12 @@ function InvoiceTab({ client }: { client: ClientData }) {
                 style={
                   inv.status === "Ödendi"
                     ? { background: "rgba(52,211,153,0.12)", color: "#34d399" }
+                    : inv.status === "Günü Gelmedi"
+                    ? { background: "rgba(99,102,241,0.12)", color: "#818cf8" }
                     : { background: "rgba(251,191,36,0.12)", color: "#fbbf24" }
                 }
               >
-                {inv.status === "Ödendi" ? "✓ Ödendi" : "⏳ Bekliyor"}
+                {inv.status === "Ödendi" ? "✓ Ödendi" : inv.status === "Günü Gelmedi" ? "📅 Günü Gelmedi" : "⏳ Bekliyor"}
               </span>
             </div>
             <p className="text-[26px] font-black gradient-text">{inv.amount}</p>
@@ -451,10 +453,12 @@ function InvoiceTab({ client }: { client: ClientData }) {
                 style={
                   inv.status === "Ödendi"
                     ? { background: "rgba(52,211,153,0.12)", color: "#34d399" }
+                    : inv.status === "Günü Gelmedi"
+                    ? { background: "rgba(99,102,241,0.12)", color: "#818cf8" }
                     : { background: "rgba(251,191,36,0.12)", color: "#fbbf24" }
                 }
               >
-                {inv.status === "Ödendi" ? "✓ Ödendi" : "⏳ Bekliyor"}
+                {inv.status === "Ödendi" ? "✓ Ödendi" : inv.status === "Günü Gelmedi" ? "📅 Günü Gelmedi" : "⏳ Bekliyor"}
               </span>
             </div>
           </div>
@@ -482,6 +486,8 @@ function CampaignTable({ campaigns }: { campaigns: Campaign[] }) {
       ? { background: "rgba(52,211,153,0.12)", color: "#34d399" }
       : status === "Duraklatıldı"
       ? { background: "rgba(251,191,36,0.12)", color: "#fbbf24" }
+      : status === "Ödeme Hatası"
+      ? { background: "rgba(239,68,68,0.12)", color: "#f87171" }
       : { background: "rgba(139,142,160,0.12)", color: "#8a8a9a" };
 
   return (
