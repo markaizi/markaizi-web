@@ -112,11 +112,23 @@ export default function Navbar() {
             </li>
           </ul>
 
+          {/* Mobil: Müşteri Girişi ikonu + Hamburger */}
+          <div className="md:hidden flex items-center gap-3">
+            <button
+              onClick={() => setLoginOpen(true)}
+              aria-label="Müşteri Girişi"
+              className="flex items-center justify-center w-9 h-9 rounded-full transition-all hover:bg-white/[0.08]"
+              style={{ border: "1px solid var(--border)" }}
+            >
+              <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="#c084fc" strokeWidth="2">
+                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
           {/* Hamburger */}
           <button
             onClick={() => setOpen((v) => !v)}
             aria-label="Menüyü aç"
-            className="md:hidden flex flex-col gap-[5px] p-1 z-[1001] relative"
+            className="flex flex-col gap-[5px] p-1 z-[1001] relative"
           >
             {[
               open ? { transform: "translateY(7px) rotate(45deg)" } : {},
@@ -126,6 +138,7 @@ export default function Navbar() {
               <span key={i} className="block w-6 h-[2px] bg-white rounded transition-all duration-300" style={style} />
             ))}
           </button>
+          </div>
         </nav>
       </header>
 
@@ -166,15 +179,6 @@ export default function Navbar() {
               </a>
             </li>
           ))}
-          {/* Müşteri Girişi — mobil menüde */}
-          <li>
-            <button
-              onClick={() => { close(); setTimeout(() => setLoginOpen(true), 300); }}
-              className="text-[28px] font-bold text-[#8a8a9a] hover:text-white transition-colors"
-            >
-              Müşteri Girişi
-            </button>
-          </li>
         </ul>
       </div>
 
