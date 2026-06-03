@@ -5,7 +5,7 @@ const PLATFORM_ICONS = [
   {
     label: "Instagram",
     delay: "0s",
-    style: { top: "9%", left: "14%" },
+    style: { top: "12%", left: "19%" },
     svg: (
       <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" style={{ stroke: "#c084fc" }}>
         <path d="M17 2H7C4.24 2 2 4.24 2 7v10c0 2.76 2.24 5 5 5h10c2.76 0 5-2.24 5-5V7c0-2.76-2.24-5-5-5z" strokeWidth="1.5"/>
@@ -17,7 +17,7 @@ const PLATFORM_ICONS = [
   {
     label: "TikTok",
     delay: "0.7s",
-    style: { top: "7%", right: "12%" },
+    style: { top: "10%", right: "17%" },
     svg: (
       <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" style={{ stroke: "#c084fc" }}>
         <path d="M9 12a4 4 0 104 4V4a5 5 0 005 5" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -27,7 +27,7 @@ const PLATFORM_ICONS = [
   {
     label: "Facebook",
     delay: "1.4s",
-    style: { bottom: "12%", left: "13%" },
+    style: { bottom: "14%", left: "18%" },
     svg: (
       <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" style={{ stroke: "#c084fc" }}>
         <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -37,7 +37,7 @@ const PLATFORM_ICONS = [
   {
     label: "Google Ads",
     delay: "2.1s",
-    style: { bottom: "10%", right: "11%" },
+    style: { bottom: "13%", right: "16%" },
     svg: (
       <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" style={{ stroke: "#c084fc" }}>
         <circle cx="11" cy="11" r="8" strokeWidth="1.5"/>
@@ -49,7 +49,7 @@ const PLATFORM_ICONS = [
   {
     label: "YouTube",
     delay: "2.8s",
-    style: { top: "42%", right: "9%" },
+    style: { top: "42%", right: "15%" },
     svg: (
       <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" style={{ stroke: "#c084fc" }}>
         <path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 00-1.95 1.96A29 29 0 001 12a29 29 0 00.46 5.58A2.78 2.78 0 003.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 001.95-1.95A29 29 0 0023 12a29 29 0 00-.46-5.58z" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -60,7 +60,7 @@ const PLATFORM_ICONS = [
   {
     label: "Meta Ads",
     delay: "3.5s",
-    style: { top: "42%", left: "11%" },
+    style: { top: "42%", left: "18%" },
     svg: (
       <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" style={{ stroke: "#c084fc" }}>
         <path d="M4 4l4.5 8L4 20h2.5l3-6 3 6H15l-4.5-8L15 4h-2.5l-3 6-3-6H4z" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
@@ -86,7 +86,7 @@ export default function Hero() {
           style={{ filter:"blur(80px)", animation:"float 8s ease-in-out infinite", ...o.style }} />
       ))}
 
-      <div className="max-w-[1200px] mx-auto px-6 w-full relative z-10 grid grid-cols-1 lg:grid-cols-[42%_58%] gap-8 items-center">
+      <div className="max-w-[1200px] mx-auto px-6 w-full relative z-10 grid grid-cols-1 lg:grid-cols-[45%_55%] gap-8 items-center">
 
         {/* ── Sol: İçerik ── */}
         <div>
@@ -97,14 +97,16 @@ export default function Hero() {
           </div>
 
           <h1 className="hero-h1 font-black leading-[1.1] tracking-tight mb-8"
-            style={{ fontSize:"clamp(30px,4.5vw,58px)", letterSpacing:"-1.5px" }}
+            style={{ fontSize:"clamp(32px,3.8vw,46px)", letterSpacing:"-1.5px" }}
           >
-            Markanızı <span className="gradient-text">Dijitalde</span>
-            <br />Zirveye Taşıyoruz
+            <span style={{ display:"block", whiteSpace:"nowrap" }}>
+              Markanızı <span className="gradient-text">Dijitalde</span>
+            </span>
+            <span style={{ display:"block" }}>Zirveye Taşıyoruz</span>
           </h1>
 
           <p className="hero-sub text-[#8a8a9a] max-w-[520px] mb-16 leading-relaxed"
-            style={{ fontSize:"clamp(14px,1.4vw,16px)" }}
+            style={{ fontSize:"clamp(16px,1.4vw,17px)" }}
           >
             Sosyal medya yönetiminden Google reklamlarına, içerik üretiminden web tasarıma kadar markanızın her dijital adımında yanınızdayız.
           </p>
