@@ -100,6 +100,31 @@ export default function CvForm() {
   const labelCls = "block text-[12px] font-bold text-[#8a8a9a] uppercase tracking-wider mb-2";
 
   return (
+    <>
+    {/* Espri popup — "Yok" seçilince */}
+    {showYokJoke && (
+      <div
+        className="fixed inset-0 z-50 flex items-center justify-center px-5"
+        style={{ background: "rgba(0,0,0,0.75)", backdropFilter: "blur(6px)" }}
+      >
+        <div
+          className="rounded-2xl p-8 max-w-sm w-full text-center"
+          style={{ background: "var(--surface)", border: "1px solid rgba(251,191,36,0.35)" }}
+        >
+          <div className="text-[52px] mb-4 leading-none">😄</div>
+          <p className="text-white font-bold text-[18px] mb-1">olmazsa biz seni ararız :)</p>
+          <button
+            type="button"
+            onClick={() => setShowYokJoke(false)}
+            className="mt-6 px-6 py-3 rounded-full text-[14px] font-bold transition-all w-full"
+            style={{ background: "rgba(251,191,36,0.15)", color: "#fbbf24", border: "1px solid rgba(251,191,36,0.4)" }}
+          >
+            şaka şaka, devam et 😄
+          </button>
+        </div>
+      </div>
+    )}
+
     <div className="rounded-2xl p-8" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
       <h2 className="text-white font-black text-[22px] mb-1">İş Başvurusu</h2>
       <p className="text-[#8a8a9a] text-[13px] mb-8">
@@ -210,31 +235,6 @@ export default function CvForm() {
               ))}
             </div>
 
-            {/* Espri kutucuğu — "Yok" seçilince */}
-            {showYokJoke && (
-              <div
-                className="mt-3 rounded-2xl px-5 py-4 flex items-start gap-4 animate-[fadeIn_0.25s_ease]"
-                style={{ background: "rgba(251,191,36,0.08)", border: "1px solid rgba(251,191,36,0.25)" }}
-              >
-                <span className="text-[28px] leading-none flex-shrink-0 mt-0.5">😄</span>
-                <div className="flex-1 min-w-0">
-                  <p className="text-[14px] font-semibold" style={{ color: "#fbbf24" }}>
-                    Sorun değil, öğrenmek en güzel başlangıç!
-                  </p>
-                  <p className="text-[13px] mt-0.5" style={{ color: "rgba(251,191,36,0.7)" }}>
-                    olmazsa biz seni ararız :)
-                  </p>
-                  <button
-                    type="button"
-                    onClick={() => setShowYokJoke(false)}
-                    className="mt-3 px-4 py-1.5 rounded-full text-[12px] font-bold transition-all"
-                    style={{ background: "rgba(251,191,36,0.15)", color: "#fbbf24", border: "1px solid rgba(251,191,36,0.3)" }}
-                  >
-                    şaka şaka, devam et 😄
-                  </button>
-                </div>
-              </div>
-            )}
           </div>
 
           {/* Programlar */}
@@ -332,5 +332,6 @@ export default function CvForm() {
         </form>
       )}
     </div>
+    </>
   );
 }
