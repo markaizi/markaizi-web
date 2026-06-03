@@ -9,12 +9,20 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: false, error: "Eksik alan." }, { status: 400 });
     }
 
-    const client = getClient(slug);
-    if (!client) {
-      return NextResponse.json({ ok: false, error: "Müşteri bulunamadı." }, { status: 404 });
+    // ── Admin kontrolü ──────────────────────────────────────────────────────
+    const adminUser = process.env.ADMIN_USERNAME;
+    const adminPass = process.env.ADMIN_PASSWORD;
+
+    if (adminUser && adminPass && slug === adminUser && password === adminPass) {
+      return NextResponse.json({ ok: true, isAdmin: true });
     }
 
-    // Şifre Vercel env var'ından okunur: CLIENT_PASSWORD_{ENVKEY}
+    // ── Müşteri kontrolü ────────────────────────────────────────────────────
+    const client = getClient(slug);
+    if (!client) {
+      return NextResponse.json({ ok: false, error: "Kullanıcı adı veya şifre hatalı." }, { status: 401 });
+    }
+
     const envKey = `CLIENT_PASSWORD_${client.envKey}`;
     const correctPassword = process.env[envKey];
 
@@ -24,10 +32,10 @@ export async function POST(req: NextRequest) {
     }
 
     if (password !== correctPassword) {
-      return NextResponse.json({ ok: false, error: "Şifre hatalı." }, { status: 401 });
+      return NextResponse.json({ ok: false, error: "Kullanıcı adı veya şifre hatalı." }, { status: 401 });
     }
 
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ ok: true, isAdmin: false });
   } catch {
     return NextResponse.json({ ok: false, error: "Sunucu hatası." }, { status: 500 });
   }

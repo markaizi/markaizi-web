@@ -25,7 +25,9 @@ export default function ClientPortal({ client }: { client: ClientData }) {
   const [checking, setChecking] = useState(true);
 
   useEffect(() => {
-    if (sessionStorage.getItem(sessionKey) === "1") setAuthed(true);
+    const isAdmin   = sessionStorage.getItem("mkz_admin") === "1";
+    const isAuthed  = sessionStorage.getItem(sessionKey)  === "1";
+    if (isAdmin || isAuthed) setAuthed(true);
     setChecking(false);
   }, [sessionKey]);
 

@@ -224,10 +224,16 @@ function LoginModal({ onClose, router }: { onClose: () => void; router: ReturnTy
       });
       const data = await res.json();
       if (data.ok) {
-        const slug = username.trim().toLowerCase();
-        sessionStorage.setItem(`mkz_auth_${slug}`, "1");
-        onClose();
-        router.push(`/musteri/${slug}`);
+        if (data.isAdmin) {
+          sessionStorage.setItem("mkz_admin", "1");
+          onClose();
+          router.push("/musteri/admin");
+        } else {
+          const slug = username.trim().toLowerCase();
+          sessionStorage.setItem(`mkz_auth_${slug}`, "1");
+          onClose();
+          router.push(`/musteri/${slug}`);
+        }
       } else {
         setError(data.error ?? "Kullanıcı adı veya şifre hatalı.");
       }
