@@ -87,6 +87,22 @@ export default function Home() {
       <Navbar />
       <main>
         <Hero />
+
+        {/* ── Kampanya Marquee Şeridi ── */}
+        <div className="relative overflow-hidden py-[13px]" style={{ background: "var(--grad)" }}>
+          <div
+            className="flex whitespace-nowrap text-white font-semibold text-[14px] tracking-wide"
+            style={{ animation: "marquee 28s linear infinite" }}
+          >
+            {Array.from({ length: 6 }).map((_, i) => (
+              <span key={i} className="inline-flex items-center gap-4 pr-16">
+                <span className="opacity-70">✦</span>
+                İlk 2 aylık hizmet bedelini peşin ödeyin, profesyonel kurumsal web sitesi kurulumu, 1 yıllık hosting ve 1 yıllık alan adı (domain) tamamen bizden!
+              </span>
+            ))}
+          </div>
+        </div>
+
         <Services />
         <About />
         <Portfolio />

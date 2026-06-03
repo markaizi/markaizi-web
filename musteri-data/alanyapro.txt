@@ -8,7 +8,7 @@ URL Kodu: alanyapro
 Paket: Kurumsal Paketi
 
 # META ADS KAMPANYALARI
-31 Mayıs 2026 | Devam ediyor | Genel Kampanyalar | 300 ₺/gün | Aktif
+31 Mayıs 2026 | Devam ediyor | Genel Kampanyalar | 280 ₺/gün | Aktif
 31 Mayıs 2026 | Devam ediyor | Abonelik Paketleri | 100 ₺/gün | Aktif
 
 # GOOGLE ADS KAMPANYALARI
@@ -18,24 +18,28 @@ Paket: Kurumsal Paketi
 # TIKTOK ADS KAMPANYALARI
 
 # WEBSITE GÜNCELLEMELERİ
-20 Mayıs 2026: Wix ile yapılan altyapı şu an aktif. Yeni teknoloji ve altyapı yapay zeka desteğiyle yapımı devam ediyor. Muhtemel Bitiş Tarihi: 10 Haziran 2025
+2 Haziran 2026: Site altyapısı tamamen yenilendi. Eski tasarım kaldırılarak daha modern ve kurumsal bir tasarıma geçildi. Önceki altyapıda bulunan tasarımsal ve teknik hatalar giderildi. Mobil, tablet ve masaüstü cihazlarda kullanım deneyimi iyileştirildi. Ayrıca çoklu dil sistemi başarıyla entegre edildi. Yurt dışından gelen ziyaretçiler için otomatik dil algılama özelliği aktif edildi. Böylece kullanıcılar siteyi ziyaret ettiklerinde tarayıcı dillerine göre içerikleri otomatik olarak kendi dillerinde görüntüleyebilecekler. Genel performans, hız ve kullanıcı deneyimi tarafında da önemli iyileştirmeler yapıldı.
 
 # AJANS GÜNCELLEMELERİ
 31 Mayıs 2026: Meta Ads Genel Kampanyalar reklamı açıldı. Kampanya içerisinde Genel Reels ve Postlarımız tek kampanya içerisinde toplanarak maksimum dönüşüm hedeflendi.
 31 Mayıs 2026: Abonelik paketleri kampanyası günlük 100 TL bütçe ile açıldı.
 31 Mayıs 2026: Google Ads Bakiyesi tükenmişti 1000 TL Sonu 7458 olan karttan çekildi
+1 Haziran 2026: Meta hesabında optimize ve bütçe düzenlemesi yapıldı.
+2 Haziran 2026: Yeni web sitesi tamamlandı yakında yayında
 
 
 # İÇERİK TAKVİMİ
-1 Haziran: İnşaat Sonrası Temizlik Görsel ve Videosu Yayınlanacak
-3 Haziran: Haziran özel kampanya Görsel ve Videosu Yayınlanacak
+2 Haziran: İnşaat Sonrası Temizlik Reels
+3 Haziran: İnşaat Sonrası Temizlik Post
+4 Haziran: Haziran özel kampanya Görsel ve Videosu Yayınlanacak
 
 
 # FATURALAR
 25 Şubat - 25 Mart 2026 | 20.000 ₺ + KDV | Ödendi
 25 Mart - 25 Nisan 2026 | 20.000 ₺ + KDV | Ödendi
-Ajans hesabından Reklam | 1.900 ₺ | Bekliyor | 1 Haziran 2026
-25 Nisan - 25 Mayıs 2026 | 20.000 ₺ + KDV | Bekliyor | 1 Haziran 2026
+Ajans hesabından Reklam | 1.900 ₺ | Ödendi
+25 Nisan - 25 Mayıs 2026 | 20.000 ₺ | Ödendi
+25 Mayıs - 25 Haziran 2026 | 20.000 ₺ + KDV | Günü Gelmedi | 1 Temmuz 2026
 
 # FATURA NOTU
 Alanya Pro Cleaning için ödeme periyodu her ayın 25'i dir.

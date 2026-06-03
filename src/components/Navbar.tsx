@@ -60,7 +60,7 @@ export default function Navbar() {
                 borderBottom: "1px solid var(--border)",
                 padding: "14px 0",
               }
-            : { padding: "20px 0" }
+            : { padding: "20px 0", borderBottom: "1px solid rgba(255,255,255,0.05)" }
         }
       >
         <nav className="max-w-[1200px] mx-auto px-6 flex items-center justify-between">
