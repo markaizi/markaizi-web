@@ -6,7 +6,7 @@ export default function Hero() {
     <section
       id="hero"
       className="min-h-screen flex items-center relative overflow-hidden"
-      style={{ padding: "140px 0 80px" }}
+      style={{ padding: "100px 0 80px" }}
     >
       {/* Orbs */}
       {[
@@ -65,7 +65,7 @@ export default function Hero() {
         </div>
 
         {/* ── Sağ: Hero Banner Görseli ── */}
-        <div className="hidden lg:flex items-center justify-center relative" style={{ minHeight: 480 }}>
+        <div className="hidden lg:flex items-center justify-center relative" style={{ minHeight: 560 }}>
           {/* Glow arkası */}
           <div
             className="absolute pointer-events-none rounded-full"
@@ -86,11 +86,11 @@ export default function Hero() {
             <Image
               src="/herobanner.png"
               alt="Dijital Pazarlama"
-              width={480}
-              height={480}
+              width={580}
+              height={580}
               priority
               style={{
-                width: 480,
+                width: 580,
                 height: "auto",
                 WebkitMaskImage: "radial-gradient(ellipse 90% 88% at 58% 50%, black 38%, transparent 100%)",
                 maskImage: "radial-gradient(ellipse 90% 88% at 58% 50%, black 38%, transparent 100%)",
