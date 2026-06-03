@@ -88,7 +88,11 @@ export default function Contact() {
   };
 
   return (
-    <section id="iletisim" className="py-24">
+    <section id="iletisim" className="py-24" style={{
+      backgroundColor: "#0c0c16",
+      backgroundImage: "linear-gradient(rgba(255,255,255,0.028) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.028) 1px, transparent 1px)",
+      backgroundSize: "44px 44px",
+    }}>
       <div className="max-w-[1200px] mx-auto px-6">
         {/* Header */}
         <div className="text-center max-w-[680px] mx-auto mb-16 reveal">

@@ -106,23 +106,23 @@ export default function Hero() {
           </div>
 
           <h1 className="hero-h1 font-black leading-[1.1] tracking-tight mb-6"
-            style={{ fontSize:"clamp(38px,6vw,72px)", letterSpacing:"-1.5px" }}
+            style={{ fontSize:"clamp(30px,4.5vw,58px)", letterSpacing:"-1.5px" }}
           >
             Markanızı <span className="gradient-text">Dijitalde</span>
             <br />Zirveye Taşıyoruz
           </h1>
 
-          <p className="hero-sub text-[#8a8a9a] max-w-[560px] mb-10 leading-relaxed"
-            style={{ fontSize:"clamp(16px,2vw,19px)" }}
+          <p className="hero-sub text-[#8a8a9a] max-w-[520px] mb-10 leading-relaxed"
+            style={{ fontSize:"clamp(14px,1.4vw,16px)" }}
           >
             Sosyal medya yönetiminden Google reklamlarına, içerik üretiminden web tasarıma kadar markanızın her dijital adımında yanınızdayız.
           </p>
 
-          <div className="hero-cta flex flex-wrap gap-4 mb-4">
+          <div className="hero-cta flex flex-wrap gap-5 mb-6">
             <a href="#iletisim" className="btn btn-primary">Ücretsiz Teklif Al</a>
             <a href="#portfolio" className="btn btn-outline">Çalışmalarımızı Gör</a>
           </div>
-          <div className="hero-cta flex flex-wrap items-center gap-x-5 gap-y-2 mb-10 text-[13px] text-[#8a8a9a]">
+          <div className="hero-cta flex flex-wrap items-center gap-x-6 gap-y-2 text-[13px] text-[#8a8a9a]">
             <span className="flex items-center gap-1.5">
               <span className="text-green-400">✓</span> 24 saatte dönüş
             </span>
@@ -132,25 +132,6 @@ export default function Hero() {
             <a href="tel:+905520772700" className="flex items-center gap-1.5 hover:text-white transition-colors">
               <span className="text-[#c084fc]">📞</span> +90 (552) 077 27 00
             </a>
-          </div>
-
-          <div className="hero-stats flex items-center gap-8 flex-wrap">
-            {[
-              { value: "200+", label: "Mutlu Müşteri" },
-              { divider: true },
-              { value: "10+",  label: "Yıl Deneyim" },
-              { divider: true },
-              { value: "%94",  label: "Müşteri Memnuniyeti" },
-            ].map((s, i) =>
-              s.divider ? (
-                <div key={i} className="w-px h-10" style={{ background:"var(--border)" }} />
-              ) : (
-                <div key={i} className="text-center">
-                  <strong className="block text-[28px] font-black">{s.value}</strong>
-                  <span className="text-[13px] text-[#8a8a9a]">{s.label}</span>
-                </div>
-              )
-            )}
           </div>
         </div>
 
