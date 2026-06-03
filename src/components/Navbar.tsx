@@ -65,8 +65,14 @@ export default function Navbar() {
       >
         <nav className="max-w-[1200px] mx-auto px-6 flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="flex items-center">
+          <Link href="/" className="flex items-center gap-2.5">
             <Logo height={52} />
+            <span
+              className="font-extralight text-[16px] text-white/80 tracking-[0.14em] hidden sm:block select-none"
+              style={{ letterSpacing: "0.14em" }}
+            >
+              marka<span style={{ color: "#c084fc" }}>izi</span>
+            </span>
           </Link>
 
           {/* Desktop Links */}

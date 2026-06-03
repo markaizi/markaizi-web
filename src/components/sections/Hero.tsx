@@ -89,7 +89,7 @@ export default function Hero() {
       <div className="max-w-[1200px] mx-auto px-6 w-full relative z-10 grid grid-cols-1 lg:grid-cols-[45%_55%] gap-8 items-center">
 
         {/* ── Sol: İçerik ── */}
-        <div>
+        <div className="text-center lg:text-left">
           <div className="hero-badge inline-flex items-center gap-2 text-[13px] font-medium text-[#c084fc] px-[18px] py-2 rounded-full mb-9"
             style={{ background:"rgba(124,58,237,0.12)", border:"1px solid rgba(124,58,237,0.3)" }}
           >
@@ -105,17 +105,17 @@ export default function Hero() {
             <span style={{ display:"block" }}>Zirveye Taşıyoruz</span>
           </h1>
 
-          <p className="hero-sub text-[#8a8a9a] max-w-[520px] mb-16 leading-relaxed"
+          <p className="hero-sub text-[#8a8a9a] mx-auto lg:mx-0 max-w-[520px] mb-16 leading-relaxed"
             style={{ fontSize:"clamp(16px,1.4vw,17px)" }}
           >
             Sosyal medya yönetiminden Google reklamlarına, içerik üretiminden web tasarıma kadar markanızın her dijital adımında yanınızdayız.
           </p>
 
-          <div className="hero-cta flex flex-wrap gap-5 mb-6">
+          <div className="hero-cta flex flex-wrap gap-5 mb-6 justify-center lg:justify-start">
             <a href="#iletisim" className="btn btn-primary">Ücretsiz Teklif Al</a>
             <a href="#portfolio" className="btn btn-outline">Çalışmalarımızı Gör</a>
           </div>
-          <div className="hero-cta flex flex-wrap items-center gap-x-6 gap-y-2 text-[13px] text-[#8a8a9a]">
+          <div className="hero-cta flex flex-wrap items-center gap-x-6 gap-y-2 text-[13px] text-[#8a8a9a] justify-center lg:justify-start">
             <span className="flex items-center gap-1.5"><span className="text-green-400">✓</span> 24 saatte dönüş</span>
             <span className="flex items-center gap-1.5"><span className="text-green-400">✓</span> Taahhüt yok</span>
             <a href="tel:+905520772700" className="flex items-center gap-1.5 hover:text-white transition-colors">
