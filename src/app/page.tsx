@@ -88,19 +88,7 @@ export default function Home() {
       <main>
         <Hero />
 
-        {/* ── Kampanya Şeridi ── */}
-        <div className="py-5 px-4" style={{ background: "var(--bg)" }}>
-          <div
-            className="max-w-3xl mx-auto px-7 py-4 text-center rounded-[22px]"
-            style={{ background: "#f97316" }}
-          >
-            <p className="text-white font-semibold leading-relaxed" style={{ fontSize: "clamp(12px,1.5vw,14px)" }}>
-              ✦&nbsp;&nbsp;İlk 2 aylık hizmet bedelini peşin ödeyin — profesyonel kurumsal web sitesi kurulumu, 1 yıllık hosting ve 1 yıllık alan adı (domain) tamamen bizden!&nbsp;&nbsp;✦
-            </p>
-          </div>
-        </div>
-
-        <Services />
+<Services />
         <About />
         <Portfolio />
         <Pricing />
