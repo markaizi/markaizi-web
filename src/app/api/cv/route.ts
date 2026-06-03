@@ -14,16 +14,17 @@ export async function POST(req: NextRequest) {
 
     const body = await req.json();
 
-    const name        = cleanStr(body.name, 120);
-    const email       = cleanStr(body.email, 254);
-    const phone       = cleanPhone(body.phone);
-    const age         = cleanStr(body.age, 10);
-    const experience  = cleanStr(body.experience, 80);
-    const programs    = Array.isArray(body.programs) ? body.programs.map((p: string) => cleanStr(p, 60)).join(", ") : "";
-    const usesAi      = cleanStr(body.usesAi, 20);
-    const aiTools     = cleanStr(body.aiTools, 300);
-    const portfolio   = cleanStr(body.portfolio, 500);
-    const about       = cleanStr(body.about, 3000);
+    const name          = cleanStr(body.name, 120);
+    const email         = cleanStr(body.email, 254);
+    const phone         = cleanPhone(body.phone);
+    const age           = cleanStr(body.age, 10);
+    const medeni        = cleanStr(body.medeni, 30);
+    const ucretBeklenti = cleanStr(body.ucretBeklenti, 100);
+    const experience    = cleanStr(body.experience, 80);
+    const programs      = Array.isArray(body.programs) ? body.programs.map((p: string) => cleanStr(p, 60)).join(", ") : "";
+    const usesAi        = cleanStr(body.usesAi, 20);
+    const aiTools       = cleanStr(body.aiTools, 3000);
+    const about         = cleanStr(body.about, 3000);
 
     if (!name || !email || !phone) {
       return NextResponse.json({ error: "Zorunlu alanlar eksik." }, { status: 400 });
@@ -56,15 +57,19 @@ export async function POST(req: NextRequest) {
           </div>
           <div style="padding:32px">
             <table style="width:100%;border-collapse:collapse">
-              ${row("Ad Soyad",    escapeHtml(name))}
-              ${row("E-posta",     `<a href="mailto:${encodeURIComponent(email)}" style="color:#c084fc">${escapeHtml(email)}</a>`)}
-              ${row("Telefon",     escapeHtml(phone))}
-              ${row("Yaş",         escapeHtml(age))}
-              ${row("Tecrübe",     escapeHtml(experience))}
-              ${row("Programlar",  escapeHtml(programs))}
-              ${row("YZ Araçları", usesAi === "evet" ? `Evet — ${escapeHtml(aiTools) || "belirtilmedi"}` : "Hayır")}
-              ${row("Portfolyo",   portfolio ? `<a href="${escapeHtml(portfolio)}" style="color:#c084fc">${escapeHtml(portfolio)}</a>` : "")}
-              ${row("Hakkında",    escapeHtml(about).replace(/\n/g, "<br>"))}
+              ${row("Ad Soyad",        escapeHtml(name))}
+              ${row("E-posta",         `<a href="mailto:${encodeURIComponent(email)}" style="color:#c084fc">${escapeHtml(email)}</a>`)}
+              ${row("Telefon",         escapeHtml(phone))}
+              ${row("Yaş",             escapeHtml(age))}
+              ${row("Medeni Durum",    escapeHtml(medeni))}
+              ${row("Ücret Beklenti",  escapeHtml(ucretBeklenti))}
+              ${row("Tecrübe",         escapeHtml(experience))}
+              ${row("Programlar",      escapeHtml(programs))}
+              ${row("YZ Araçları",     usesAi === "evet"
+                ? `<strong>Evet</strong><br><span style="color:#ccc">${escapeHtml(aiTools).replace(/\n/g, "<br>") || "Belirtilmedi"}</span>`
+                : "Hayır"
+              )}
+              ${row("Hakkında",        escapeHtml(about).replace(/\n/g, "<br>"))}
             </table>
             <div style="margin-top:24px;padding:16px;background:rgba(168,85,247,0.1);border:1px solid rgba(168,85,247,0.25);border-radius:8px">
               <p style="margin:0;font-size:13px;color:#c084fc">Yanıtlamak için: <a href="mailto:${encodeURIComponent(email)}" style="color:#c084fc;font-weight:600">${escapeHtml(email)}</a></p>

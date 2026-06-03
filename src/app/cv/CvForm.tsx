@@ -2,16 +2,41 @@
 
 import { useState, FormEvent } from "react";
 
-const PROGRAMS = ["Adobe Premiere", "CapCut", "Photoshop", "Illustrator", "DaVinci Resolve", "After Effects", "Diğer"];
+const EXPERIENCE_OPTIONS = [
+  "Yok — Sıfırdan öğrenmeye hazırım",
+  "Başlangıç — 1 yıldan az",
+  "Orta — 1-3 yıl",
+  "İleri — 3 yıl ve üzeri",
+];
+
+const PROGRAMS = [
+  "Adobe Premiere",
+  "CapCut",
+  "Adobe Photoshop",
+  "Illustrator",
+  "DaVinci Resolve",
+  "After Effects",
+  "Final Cut",
+  "Edits",
+  "Canva",
+  "Diğer",
+];
+
+const MEDENI_OPTIONS = ["Bekar", "Evli", "Boşanmış"];
 
 const inputCls = "w-full px-4 py-3 rounded-xl text-[16px] text-white placeholder-[#444] outline-none transition-all";
 const inputStyle = { background: "var(--bg)", border: "1px solid var(--border)" };
 const inputFocusStyle = { outline: "none", borderColor: "rgba(168,85,247,0.5)", boxShadow: "0 0 0 3px rgba(168,85,247,0.08)" };
 
+const toggleActive   = { background: "rgba(168,85,247,0.2)", color: "#c084fc", border: "1px solid rgba(168,85,247,0.5)" };
+const toggleInactive = { background: "var(--bg)", color: "#8a8a9a", border: "1px solid var(--border)" };
+
 export default function CvForm() {
-  const [status, setStatus] = useState<"idle" | "sending" | "done" | "error">("idle");
-  const [programs, setPrograms] = useState<string[]>([]);
-  const [usesAi, setUsesAi] = useState("hayir");
+  const [status, setStatus]       = useState<"idle" | "sending" | "done" | "error">("idle");
+  const [experience, setExperience] = useState("");
+  const [programs, setPrograms]   = useState<string[]>([]);
+  const [usesAi, setUsesAi]       = useState("hayir");
+  const [medeni, setMedeni]       = useState("");
 
   function toggleProgram(p: string) {
     setPrograms((prev) => prev.includes(p) ? prev.filter((x) => x !== p) : [...prev, p]);
@@ -22,19 +47,20 @@ export default function CvForm() {
     setStatus("sending");
 
     const form = e.currentTarget;
-    const get = (name: string) => (form.elements.namedItem(name) as HTMLInputElement | HTMLTextAreaElement | null)?.value ?? "";
+    const get  = (name: string) => (form.elements.namedItem(name) as HTMLInputElement | HTMLTextAreaElement | null)?.value ?? "";
 
     const body = {
-      name:       get("name"),
-      email:      get("email"),
-      phone:      get("phone"),
-      age:        get("age"),
-      experience: get("experience"),
+      name:           get("name"),
+      email:          get("email"),
+      phone:          get("phone"),
+      age:            get("age"),
+      medeni,
+      ucretBeklenti:  get("ucretBeklenti"),
+      experience,
       programs,
       usesAi,
-      aiTools:    get("aiTools"),
-      portfolio:  get("portfolio"),
-      about:      get("about"),
+      aiTools:        get("aiTools"),
+      about:          get("about"),
     };
 
     try {
@@ -46,8 +72,10 @@ export default function CvForm() {
       if (res.ok) {
         setStatus("done");
         form.reset();
+        setExperience("");
         setPrograms([]);
         setUsesAi("hayir");
+        setMedeni("");
       } else {
         const d = await res.json();
         console.error(d.error);
@@ -62,8 +90,10 @@ export default function CvForm() {
 
   return (
     <div className="rounded-2xl p-8" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
-      <h2 className="text-white font-black text-[20px] mb-1">Başvuru Formu</h2>
-      <p className="text-[#8a8a9a] text-[13px] mb-8">Tüm alanları eksiksiz doldurun. En kısa sürede size dönüş yapacağız.</p>
+      <h2 className="text-white font-black text-[22px] mb-1">İş Başvurusu</h2>
+      <p className="text-[#8a8a9a] text-[13px] mb-8">
+        Video Editör &amp; İçerik Üretici · markaizi Dijital Reklam Ajansı · Ankara
+      </p>
 
       {status === "done" ? (
         <div className="text-center py-12">
@@ -81,7 +111,7 @@ export default function CvForm() {
       ) : (
         <form onSubmit={handleSubmit} className="space-y-6">
 
-          {/* Kişisel Bilgiler */}
+          {/* Ad Soyad + Yaş */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div>
               <label className={labelCls}>Ad Soyad *</label>
@@ -97,6 +127,7 @@ export default function CvForm() {
             </div>
           </div>
 
+          {/* E-posta + Telefon */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div>
               <label className={labelCls}>E-posta *</label>
@@ -112,18 +143,61 @@ export default function CvForm() {
             </div>
           </div>
 
-          {/* Tecrübe */}
+          {/* Medeni Durum + Ücret Beklentisi */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div>
+              <label className={labelCls}>Medeni Durum</label>
+              <div className="flex gap-2">
+                {MEDENI_OPTIONS.map((opt) => (
+                  <button
+                    key={opt}
+                    type="button"
+                    onClick={() => setMedeni(opt)}
+                    className="flex-1 py-3 rounded-xl text-[13px] font-semibold transition-all duration-150"
+                    style={medeni === opt ? toggleActive : toggleInactive}
+                  >
+                    {medeni === opt && "✓ "}{opt}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div>
+              <label className={labelCls}>Ücret Beklentisi</label>
+              <input name="ucretBeklenti" placeholder="Örn: 25.000 ₺ / net" className={inputCls} style={inputStyle}
+                onFocus={(e) => Object.assign(e.target.style, inputFocusStyle)}
+                onBlur={(e) => Object.assign(e.target.style, inputStyle)} />
+            </div>
+          </div>
+
+          {/* Tecrübe — toggle butonlar */}
           <div>
             <label className={labelCls}>Video Kurgu / Montaj Tecrübesi *</label>
-            <select name="experience" required className={inputCls} style={{ ...inputStyle, cursor: "pointer",
-              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238a8a9a' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`,
-              backgroundRepeat: "no-repeat", backgroundPosition: "right 14px center", paddingRight: "40px" }}>
-              <option value="" style={{ background: "#0f0f14" }}>Seçiniz</option>
-              <option value="Yok (sıfırdan öğrenmeye hazırım)" style={{ background: "#0f0f14" }}>Yok (sıfırdan öğrenmeye hazırım)</option>
-              <option value="Başlangıç (1 yıldan az)" style={{ background: "#0f0f14" }}>Başlangıç — 1 yıldan az</option>
-              <option value="Orta (1-3 yıl)" style={{ background: "#0f0f14" }}>Orta — 1-3 yıl</option>
-              <option value="İleri (3 yıl ve üzeri)" style={{ background: "#0f0f14" }}>İleri — 3 yıl ve üzeri</option>
-            </select>
+            <div className="flex flex-col gap-2">
+              {EXPERIENCE_OPTIONS.map((opt) => (
+                <button
+                  key={opt}
+                  type="button"
+                  onClick={() => setExperience(opt)}
+                  className="w-full text-left px-4 py-3 rounded-xl text-[14px] font-semibold transition-all duration-150 flex items-center gap-3"
+                  style={experience === opt ? toggleActive : toggleInactive}
+                >
+                  <span
+                    className="w-4 h-4 rounded-full flex-shrink-0 flex items-center justify-center border transition-all"
+                    style={experience === opt
+                      ? { background: "#c084fc", borderColor: "#c084fc" }
+                      : { background: "transparent", borderColor: "#444" }
+                    }
+                  >
+                    {experience === opt && (
+                      <svg viewBox="0 0 10 10" className="w-2.5 h-2.5" fill="white">
+                        <circle cx="5" cy="5" r="3"/>
+                      </svg>
+                    )}
+                  </span>
+                  {opt}
+                </button>
+              ))}
+            </div>
           </div>
 
           {/* Programlar */}
@@ -138,10 +212,7 @@ export default function CvForm() {
                     type="button"
                     onClick={() => toggleProgram(p)}
                     className="px-4 py-2 rounded-full text-[13px] font-semibold transition-all duration-150"
-                    style={selected
-                      ? { background: "rgba(168,85,247,0.2)", color: "#c084fc", border: "1px solid rgba(168,85,247,0.5)" }
-                      : { background: "var(--bg)", color: "#8a8a9a", border: "1px solid var(--border)" }
-                    }
+                    style={selected ? toggleActive : toggleInactive}
                   >
                     {selected && <span className="mr-1.5">✓</span>}{p}
                   </button>
@@ -160,42 +231,45 @@ export default function CvForm() {
                   type="button"
                   onClick={() => setUsesAi(opt.val)}
                   className="flex-1 py-3 rounded-xl text-[14px] font-semibold transition-all duration-150"
-                  style={usesAi === opt.val
-                    ? { background: "rgba(168,85,247,0.2)", color: "#c084fc", border: "1px solid rgba(168,85,247,0.5)" }
-                    : { background: "var(--bg)", color: "#8a8a9a", border: "1px solid var(--border)" }
-                  }
+                  style={usesAi === opt.val ? toggleActive : toggleInactive}
                 >
                   {usesAi === opt.val && "✓ "}{opt.label}
                 </button>
               ))}
             </div>
             {usesAi === "evet" && (
-              <input name="aiTools" placeholder="Hangi araçları kullanıyorsunuz? (Örn: Midjourney, ChatGPT, Runway...)"
-                className={inputCls} style={inputStyle}
-                onFocus={(e) => Object.assign(e.target.style, inputFocusStyle)}
-                onBlur={(e) => Object.assign(e.target.style, inputStyle)} />
+              <div>
+                <p className="text-[12px] text-[#c084fc] mb-2 leading-relaxed">
+                  Bu kısım bizim için önemli — lütfen hangilerini, ne amaçla ve nasıl kullandığınızı kısaca anlatın.
+                </p>
+                <textarea
+                  name="aiTools"
+                  rows={4}
+                  placeholder="Örn: Midjourney ile içerik görseli üretiyorum, ChatGPT ile caption yazıyorum..."
+                  className={`${inputCls} resize-none`}
+                  style={inputStyle}
+                  onFocus={(e) => Object.assign(e.target.style, inputFocusStyle)}
+                  onBlur={(e) => Object.assign(e.target.style, inputStyle)}
+                />
+              </div>
             )}
-          </div>
-
-          {/* Portfolyo */}
-          <div>
-            <label className={labelCls}>Portfolyo / Demo Video Linki <span className="text-[#555] normal-case font-normal">(opsiyonel)</span></label>
-            <input name="portfolio" type="url" placeholder="https://drive.google.com/... veya YouTube linki"
-              className={inputCls} style={inputStyle}
-              onFocus={(e) => Object.assign(e.target.style, inputFocusStyle)}
-              onBlur={(e) => Object.assign(e.target.style, inputStyle)} />
           </div>
 
           {/* Hakkında */}
           <div>
             <label className={labelCls}>Kendinizi Kısaca Tanıtın *</label>
-            <textarea name="about" required rows={5} placeholder="Neden markaizi'de çalışmak istiyorsunuz? Kendinizden ve yeteneklerinizden bahsedin..."
-              className={`${inputCls} resize-none`} style={inputStyle}
+            <textarea
+              name="about"
+              required
+              rows={6}
+              className={`${inputCls} resize-none`}
+              style={inputStyle}
               onFocus={(e) => Object.assign(e.target.style, inputFocusStyle)}
-              onBlur={(e) => Object.assign(e.target.style, inputStyle)} />
+              onBlur={(e) => Object.assign(e.target.style, inputStyle)}
+            />
           </div>
 
-          {/* Submit */}
+          {/* Hata mesajı */}
           {status === "error" && (
             <p className="text-[13px] text-red-400 text-center">
               Bir hata oluştu. Lütfen tekrar deneyin veya{" "}
@@ -205,8 +279,8 @@ export default function CvForm() {
 
           <button
             type="submit"
-            disabled={status === "sending"}
-            className="btn btn-primary w-full py-4 text-[15px]"
+            disabled={status === "sending" || !experience}
+            className="btn btn-primary w-full py-4 text-[15px] disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {status === "sending" ? (
               <span className="flex items-center justify-center gap-2">
