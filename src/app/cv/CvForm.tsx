@@ -38,6 +38,17 @@ export default function CvForm() {
   const [usesAi, setUsesAi]       = useState("hayir");
   const [medeni, setMedeni]       = useState("");
 
+  const [showYokJoke, setShowYokJoke] = useState(false);
+
+  function handleExperience(opt: string) {
+    setExperience(opt);
+    if (opt === "Yok — Sıfırdan öğrenmeye hazırım") {
+      setShowYokJoke(true);
+    } else {
+      setShowYokJoke(false);
+    }
+  }
+
   function toggleProgram(p: string) {
     setPrograms((prev) => prev.includes(p) ? prev.filter((x) => x !== p) : [...prev, p]);
   }
@@ -177,7 +188,7 @@ export default function CvForm() {
                 <button
                   key={opt}
                   type="button"
-                  onClick={() => setExperience(opt)}
+                  onClick={() => handleExperience(opt)}
                   className="w-full text-left px-4 py-3 rounded-xl text-[14px] font-semibold transition-all duration-150 flex items-center gap-3"
                   style={experience === opt ? toggleActive : toggleInactive}
                 >
@@ -198,6 +209,32 @@ export default function CvForm() {
                 </button>
               ))}
             </div>
+
+            {/* Espri kutucuğu — "Yok" seçilince */}
+            {showYokJoke && (
+              <div
+                className="mt-3 rounded-2xl px-5 py-4 flex items-start gap-4 animate-[fadeIn_0.25s_ease]"
+                style={{ background: "rgba(251,191,36,0.08)", border: "1px solid rgba(251,191,36,0.25)" }}
+              >
+                <span className="text-[28px] leading-none flex-shrink-0 mt-0.5">😄</span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-[14px] font-semibold" style={{ color: "#fbbf24" }}>
+                    Sorun değil, öğrenmek en güzel başlangıç!
+                  </p>
+                  <p className="text-[13px] mt-0.5" style={{ color: "rgba(251,191,36,0.7)" }}>
+                    olmazsa biz seni ararız :)
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => setShowYokJoke(false)}
+                    className="mt-3 px-4 py-1.5 rounded-full text-[12px] font-bold transition-all"
+                    style={{ background: "rgba(251,191,36,0.15)", color: "#fbbf24", border: "1px solid rgba(251,191,36,0.3)" }}
+                  >
+                    şaka şaka, devam et 😄
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Programlar */}
