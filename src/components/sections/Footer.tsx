@@ -37,6 +37,7 @@ export default function Footer() {
                 { label: "Portföy",    href: "#portfolio" },
                 { label: "Fiyatlar",   href: "#fiyatlar" },
                 { label: "İletişim",   href: "#iletisim" },
+                { label: "Kariyer",    href: "/cv" },
               ]}
             />
             <FooterCol

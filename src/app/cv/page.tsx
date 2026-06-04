@@ -1,19 +1,22 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import CvForm from "./CvForm";
 
 export const metadata: Metadata = {
-  title: "İş Başvurusu — markaizi | Video Editör & İçerik Üretici",
-  description: "markaizi dijital reklam ajansı ekibine katılmak için iş başvurusu formunu doldurun.",
+  title: "Kariyer — markaizi",
+  description: "markaizi dijital reklam ajansı ekibine katılmak için başvuru formunu doldurun.",
 };
 
 export default function CvPage() {
   return (
     <div className="min-h-screen" style={{ background: "var(--bg)" }}>
 
-      {/* Üst bar — sadece logo */}
-      <div style={{ background: "rgba(5,5,5,0.95)", borderBottom: "1px solid rgba(255,255,255,0.07)", padding: "16px 24px" }}>
-        <div className="max-w-[720px] mx-auto">
-          <a href="/" className="font-black text-[20px] gradient-text">markaizi</a>
+      {/* Üst bar — logo ortalı */}
+      <div style={{ background: "rgba(5,5,5,0.95)", borderBottom: "1px solid rgba(255,255,255,0.07)", padding: "18px 24px" }}>
+        <div className="flex justify-center">
+          <a href="/">
+            <Image src="/logo.svg" alt="markaizi" width={140} height={36} priority />
+          </a>
         </div>
       </div>
 

@@ -22,6 +22,14 @@ const PROGRAMS = [
   "Diğer",
 ];
 
+const SOSYAL_MEDYA_OPTIONS = [
+  "Aktif sosyal medya kullanıcısıyım",
+  "TikTok / Instagram akımlarına hakimim",
+  "Güncel trendleri yakından takip ediyorum",
+  "Daha önce içerik ürettim / üretiyorum",
+  "Reels / kısa video formatlarına hakimim",
+];
+
 const MEDENI_OPTIONS = ["Bekar", "Evli", "Boşanmış"];
 
 const inputCls = "w-full px-4 py-3 rounded-xl text-[16px] text-white placeholder-[#444] outline-none transition-all";
@@ -32,25 +40,25 @@ const toggleActive   = { background: "rgba(168,85,247,0.2)", color: "#c084fc", b
 const toggleInactive = { background: "var(--bg)", color: "#8a8a9a", border: "1px solid var(--border)" };
 
 export default function CvForm() {
-  const [status, setStatus]       = useState<"idle" | "sending" | "done" | "error">("idle");
+  const [status, setStatus]         = useState<"idle" | "sending" | "done" | "error">("idle");
   const [experience, setExperience] = useState("");
-  const [programs, setPrograms]   = useState<string[]>([]);
-  const [usesAi, setUsesAi]       = useState("hayir");
-  const [medeni, setMedeni]       = useState("");
-
+  const [programs, setPrograms]     = useState<string[]>([]);
+  const [sosyalMedya, setSosyalMedya] = useState<string[]>([]);
+  const [usesAi, setUsesAi]         = useState("hayir");
+  const [medeni, setMedeni]         = useState("");
   const [showYokJoke, setShowYokJoke] = useState(false);
 
   function handleExperience(opt: string) {
     setExperience(opt);
-    if (opt === "Yok — Sıfırdan öğrenmeye hazırım") {
-      setShowYokJoke(true);
-    } else {
-      setShowYokJoke(false);
-    }
+    setShowYokJoke(opt === "Yok — Sıfırdan öğrenmeye hazırım");
   }
 
   function toggleProgram(p: string) {
     setPrograms((prev) => prev.includes(p) ? prev.filter((x) => x !== p) : [...prev, p]);
+  }
+
+  function toggleSosyal(p: string) {
+    setSosyalMedya((prev) => prev.includes(p) ? prev.filter((x) => x !== p) : [...prev, p]);
   }
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
@@ -69,6 +77,8 @@ export default function CvForm() {
       ucretBeklenti:  get("ucretBeklenti"),
       experience,
       programs,
+      sosyalMedya,
+      metaGoogle:     get("metaGoogle"),
       usesAi,
       aiTools:        get("aiTools"),
       about:          get("about"),
@@ -85,6 +95,7 @@ export default function CvForm() {
         form.reset();
         setExperience("");
         setPrograms([]);
+        setSosyalMedya([]);
         setUsesAi("hayir");
         setMedeni("");
       } else {
@@ -101,7 +112,7 @@ export default function CvForm() {
 
   return (
     <>
-    {/* Espri popup — "Yok" seçilince */}
+    {/* Espri popup */}
     {showYokJoke && (
       <div
         className="fixed inset-0 z-50 flex items-center justify-center px-5"
@@ -126,9 +137,9 @@ export default function CvForm() {
     )}
 
     <div className="rounded-2xl p-8" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
-      <h2 className="text-white font-black text-[22px] mb-1">İş Başvurusu</h2>
+      <h2 className="text-white font-black text-[22px] mb-1">Başvuru Formu</h2>
       <p className="text-[#8a8a9a] text-[13px] mb-8">
-        Video Editör &amp; İçerik Üretici · markaizi Dijital Reklam Ajansı · Ankara
+        Tüm alanları eksiksiz doldurun. En kısa sürede size dönüş yapacağız.
       </p>
 
       {status === "done" ? (
@@ -234,7 +245,6 @@ export default function CvForm() {
                 </button>
               ))}
             </div>
-
           </div>
 
           {/* Programlar */}
@@ -256,6 +266,58 @@ export default function CvForm() {
                 );
               })}
             </div>
+          </div>
+
+          {/* Sosyal Medya Tecrübesi */}
+          <div>
+            <label className={labelCls}>Sosyal Medya Tecrübeniz</label>
+            <p className="text-[12px] text-[#666] mb-3">Uyanlar varsa seçin, birden fazla seçebilirsiniz.</p>
+            <div className="flex flex-col gap-2">
+              {SOSYAL_MEDYA_OPTIONS.map((opt) => {
+                const selected = sosyalMedya.includes(opt);
+                return (
+                  <button
+                    key={opt}
+                    type="button"
+                    onClick={() => toggleSosyal(opt)}
+                    className="w-full text-left px-4 py-3 rounded-xl text-[14px] font-semibold transition-all duration-150 flex items-center gap-3"
+                    style={selected ? toggleActive : toggleInactive}
+                  >
+                    <span
+                      className="w-4 h-4 rounded-lg flex-shrink-0 flex items-center justify-center border transition-all"
+                      style={selected
+                        ? { background: "#c084fc", borderColor: "#c084fc" }
+                        : { background: "transparent", borderColor: "#444" }
+                      }
+                    >
+                      {selected && (
+                        <svg viewBox="0 0 10 8" className="w-2.5 h-2.5" fill="none" stroke="white" strokeWidth="2">
+                          <path d="M1 4l3 3 5-6" strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
+                      )}
+                    </span>
+                    {opt}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Meta & Google Reklam Tecrübesi */}
+          <div>
+            <label className={labelCls}>
+              Meta ve Google Reklam Tecrübeniz{" "}
+              <span className="text-[#555] normal-case font-normal">(opsiyonel)</span>
+            </label>
+            <textarea
+              name="metaGoogle"
+              rows={4}
+              placeholder="Reklam hesabı yönettiniz mi? Hangi platformlarda, nasıl kampanyalar kurdunuz?"
+              className={`${inputCls} resize-none`}
+              style={inputStyle}
+              onFocus={(e) => Object.assign(e.target.style, inputFocusStyle)}
+              onBlur={(e) => Object.assign(e.target.style, inputStyle)}
+            />
           </div>
 
           {/* Yapay Zeka */}
@@ -306,7 +368,6 @@ export default function CvForm() {
             />
           </div>
 
-          {/* Hata mesajı */}
           {status === "error" && (
             <p className="text-[13px] text-red-400 text-center">
               Bir hata oluştu. Lütfen tekrar deneyin veya{" "}

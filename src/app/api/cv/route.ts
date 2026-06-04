@@ -22,6 +22,8 @@ export async function POST(req: NextRequest) {
     const ucretBeklenti = cleanStr(body.ucretBeklenti, 100);
     const experience    = cleanStr(body.experience, 80);
     const programs      = Array.isArray(body.programs) ? body.programs.map((p: string) => cleanStr(p, 60)).join(", ") : "";
+    const sosyalMedya   = Array.isArray(body.sosyalMedya) ? body.sosyalMedya.map((p: string) => cleanStr(p, 100)).join(", ") : "";
+    const metaGoogle    = cleanStr(body.metaGoogle, 3000);
     const usesAi        = cleanStr(body.usesAi, 20);
     const aiTools       = cleanStr(body.aiTools, 3000);
     const about         = cleanStr(body.about, 3000);
@@ -48,12 +50,12 @@ export async function POST(req: NextRequest) {
       from: `"markaizi İK" <${process.env.GMAIL_USER}>`,
       to: process.env.GMAIL_USER,
       replyTo: email,
-      subject: `[İş Başvurusu] ${name} — Video Editör & İçerik Üretici`.slice(0, 200),
+      subject: `[İş Başvurusu] ${name}`.slice(0, 200),
       html: `
         <div style="font-family:Inter,Arial,sans-serif;max-width:620px;margin:0 auto;background:#050505;color:#fff;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,0.1)">
           <div style="background:linear-gradient(135deg,#7c3aed,#a855f7,#ec4899);padding:24px 32px">
             <h1 style="margin:0;font-size:20px;font-weight:700;color:#fff">Yeni İş Başvurusu</h1>
-            <p style="margin:4px 0 0;color:rgba(255,255,255,0.85);font-size:14px">Video Editör & İçerik Üretici · markaizi.com.tr/cv</p>
+            <p style="margin:4px 0 0;color:rgba(255,255,255,0.85);font-size:14px">markaizi.com.tr/cv</p>
           </div>
           <div style="padding:32px">
             <table style="width:100%;border-collapse:collapse">
@@ -63,8 +65,10 @@ export async function POST(req: NextRequest) {
               ${row("Yaş",             escapeHtml(age))}
               ${row("Medeni Durum",    escapeHtml(medeni))}
               ${row("Ücret Beklenti",  escapeHtml(ucretBeklenti))}
-              ${row("Tecrübe",         escapeHtml(experience))}
+              ${row("Kurgu Tecrübesi", escapeHtml(experience))}
               ${row("Programlar",      escapeHtml(programs))}
+              ${row("Sosyal Medya",    escapeHtml(sosyalMedya))}
+              ${row("Meta / Google",   metaGoogle ? escapeHtml(metaGoogle).replace(/\n/g, "<br>") : "")}
               ${row("YZ Araçları",     usesAi === "evet"
                 ? `<strong>Evet</strong><br><span style="color:#ccc">${escapeHtml(aiTools).replace(/\n/g, "<br>") || "Belirtilmedi"}</span>`
                 : "Hayır"
