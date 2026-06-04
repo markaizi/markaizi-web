@@ -15,7 +15,8 @@ export default function CvPage() {
       <div style={{ background: "rgba(5,5,5,0.95)", borderBottom: "1px solid rgba(255,255,255,0.07)", padding: "18px 24px" }}>
         <div className="flex justify-center">
           <a href="/">
-            <Image src="/logo.svg" alt="markaizi" width={140} height={36} priority />
+            <Image src="/logo.svg" alt="markaizi" width={140} height={36} priority
+              style={{ filter: "brightness(0) invert(1)" }} />
           </a>
         </div>
       </div>
