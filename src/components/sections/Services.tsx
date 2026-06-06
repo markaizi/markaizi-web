@@ -100,7 +100,7 @@ export default function Services() {
         </div>
 
         {/* Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
           {SERVICES.map((s) => (
             <Link
               key={s.title}
@@ -137,6 +137,24 @@ export default function Services() {
               </div>
             </Link>
           ))}
+        </div>
+
+        {/* Diğer Fiyatlarımız CTA */}
+        <div className="reveal text-center">
+          <p className="text-[14px] text-[#666] mb-4">
+            Aylık paket yerine tek seferlik iş mi yaptırmak istiyorsunuz? Kartvizit, tabela, video çekimi, broşür, logo tasarımı ve daha fazlası için tekil fiyat listemize göz atın.
+          </p>
+          <Link
+            href="/fiyatlar"
+            className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full text-[14px] font-bold transition-all duration-200 hover:opacity-80"
+            style={{ background: "rgba(168,85,247,0.12)", color: "#c084fc", border: "1px solid rgba(168,85,247,0.35)" }}
+          >
+            <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth="2">
+              <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M9 12h6M9 16h4" strokeLinecap="round"/>
+            </svg>
+            Diğer Fiyatlarımız
+          </Link>
         </div>
       </div>
     </section>

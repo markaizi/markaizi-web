@@ -37,6 +37,7 @@ export default function Footer() {
                 { label: "Portföy",    href: "#portfolio" },
                 { label: "Fiyatlar",   href: "#fiyatlar" },
                 { label: "İletişim",   href: "#iletisim" },
+                { label: "Tekil Fiyatlar", href: "/fiyatlar" },
                 { label: "Kariyer",    href: "/cv" },
               ]}
             />

@@ -93,6 +93,7 @@ export default function SosyalMedyaPage() {
           ],
         },
       ]}
+      pricingNote="Reklam bütçeniz 100.000 ₺ ve üzerinde ise paneldeki iş gücü artacağı için fiyatlarımız değişiklik gösterebilir. Detay için bizimle iletişime geçin."
       faq={[
         {
           q: "Paylaşılacak içerikleri kim hazırlıyor?",
