@@ -25,8 +25,9 @@ const SOCIAL = [
 ];
 
 const HOURS = [
-  { day: "Pazartesi — Cumartesi", time: "09:00 — 20:00" },
-  { day: "Pazar",                 time: "Kapalı" },
+  { day: "Pazartesi — Cuma", time: "10:00 — 20:00" },
+  { day: "Cumartesi",        time: "14:00 — 19:00" },
+  { day: "Pazar",            time: "Kapalı" },
 ];
 
 const CONTACT_ITEMS = [
