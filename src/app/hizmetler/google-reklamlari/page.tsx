@@ -39,7 +39,7 @@ export default function GoogleReklamlariPage() {
       pricing={[
         {
           name: "Basit Yönetim",
-          price: "14.900",
+          price: "15.000",
           desc: "Tek kampanya, temel optimizasyon. Başlamak için ideal.",
           features: [
             "Google Ads hesabı kurulumu",
@@ -52,7 +52,7 @@ export default function GoogleReklamlariPage() {
         },
         {
           name: "Tam Kapsamlı Yönetim",
-          price: "24.900",
+          price: "25.000",
           desc: "Search + Display + YouTube, sürekli optimizasyon ve dönüşüm takibi.",
           featured: true,
           features: [
@@ -65,6 +65,7 @@ export default function GoogleReklamlariPage() {
           ],
         },
       ]}
+      pricingNote="Reklam bütçeniz 100.000 ₺ ve üzerinde ise paneldeki iş gücü artacağı için fiyatlarımız değişiklik gösterebilir. Detay için bizimle iletişime geçin."
       faq={[
         {
           q: "Google Ads reklam bütçem ne kadar olmalı?",

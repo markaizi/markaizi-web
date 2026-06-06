@@ -37,7 +37,7 @@ export default function TikTokReklamlariPage() {
       pricing={[
         {
           name: "TikTok Reklam Yönetimi",
-          price: "9.900",
+          price: "10.000",
           desc: "TikTok Ads Manager'da kampanya kurulumu, optimizasyonu ve aylık raporlama.",
           features: [
             "TikTok Ads hesabı kurulumu",
@@ -49,6 +49,7 @@ export default function TikTokReklamlariPage() {
           ],
         },
       ]}
+      pricingNote="Reklam bütçeniz 100.000 ₺ ve üzerinde ise paneldeki iş gücü artacağı için fiyatlarımız değişiklik gösterebilir. Detay için bizimle iletişime geçin."
       faq={[
         {
           q: "TikTok reklamları hangi işletmeler için uygun?",

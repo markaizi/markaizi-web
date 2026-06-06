@@ -41,7 +41,7 @@ export default function SosyalMedyaPage() {
       pricing={[
         {
           name: "Başlangıç",
-          price: "19.900",
+          price: "20.000",
           desc: "Sosyal medyada ilk adımını atmak isteyen işletmeler için.",
           features: [
             "Instagram & Facebook yönetimi",
@@ -53,7 +53,7 @@ export default function SosyalMedyaPage() {
         },
         {
           name: "Büyüme",
-          price: "29.900",
+          price: "30.000",
           desc: "Hızlı büyümek isteyen markalar için çok kanallı paket.",
           featured: true,
           features: [
@@ -67,7 +67,7 @@ export default function SosyalMedyaPage() {
         },
         {
           name: "Kurumsal",
-          price: "39.900",
+          price: "40.000",
           desc: "Dijital varlığını güçlendirmek isteyen kurumsal markalar için.",
           features: [
             "Instagram, Facebook & TikTok yönetimi",
@@ -80,7 +80,7 @@ export default function SosyalMedyaPage() {
         },
         {
           name: "Elite",
-          price: "59.900",
+          price: "60.000",
           desc: "Size özel çözümler, web desteği ve SEO avantajları.",
           features: [
             "Tüm platformlar tam yönetim",

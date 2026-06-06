@@ -21,6 +21,7 @@ export interface ServicePageProps {
   description: string[];
   features: { icon: string; title: string; desc: string }[];
   pricing?: PricingPackage[];
+  pricingNote?: string;   // fiyat tablosunun altında gösterilecek not
   noPricingNote?: string; // fiyat yoksa alt not
   faq?: FAQItem[]; // hizmete özel sıkça sorulan sorular
   icon: React.ReactNode;
@@ -33,6 +34,7 @@ export default function ServicePageTemplate({
   description,
   features,
   pricing,
+  pricingNote,
   noPricingNote,
   faq,
   icon,
@@ -195,6 +197,13 @@ export default function ServicePageTemplate({
                   </div>
                 ))}
               </div>
+
+              {/* Fiyatlandırma alt not */}
+              {pricingNote && (
+                <p className="text-center text-[13px] text-[#666] mt-6 max-w-[680px] mx-auto leading-relaxed">
+                  ⚠ {pricingNote}
+                </p>
+              )}
             </div>
           </section>
         )}
