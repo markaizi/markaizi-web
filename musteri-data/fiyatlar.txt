@@ -1,0 +1,77 @@
+# ─────────────────────────────────────────────────────────
+# markaizi — Tekil Hizmet Fiyat Listesi
+# Sayfa: markaizi.com.tr/fiyatlar
+# ─────────────────────────────────────────────────────────
+#
+# KULLANIM:
+#   Fiyat girmek istediğiniz satırda  | Teklif alın  kısmını
+#   → | 2.500 ₺  gibi düzenleyin.
+#   Fiyat girmek istemediğinizde "Teklif alın" bırakın.
+#
+#   Güncellediğinizde Claude'a söyleyin, sayfaya işlenir.
+# ─────────────────────────────────────────────────────────
+
+
+# ══════════════════════════════════════════════════════════
+# 🎨  GRAFİK & TASARIM
+# ══════════════════════════════════════════════════════════
+
+Logo Tasarımı                                  | Teklif alın
+Kartvizit Tasarımı                             | Teklif alın
+Sosyal Medya Post Tasarımı (Tekli)             | Teklif alın
+Broşür Tasarımı (2 Yüz)                        | Teklif alın
+Katalog Tasarımı                               | Teklif alın
+Billboard / Tabela Tasarımı                    | Teklif alın
+Menü Tasarımı                                  | Teklif alın
+Davetiye / Etkinlik Görseli                    | Teklif alın
+Roll-Up / Bez Afiş Tasarımı                   | Teklif alın
+Marka Kimliği Paketi                           | Teklif alın
+
+
+# ══════════════════════════════════════════════════════════
+# 🎬  VİDEO & FOTOĞRAF ÇEKİMİ
+# ══════════════════════════════════════════════════════════
+
+Tekli Reels / Kısa Video Çekimi               | Teklif alın
+Ürün Tanıtım Videosu                           | Teklif alın
+Kurumsal Tanıtım Filmi                         | Teklif alın
+Ürün Fotoğraf Çekimi (10 Kare)                | Teklif alın
+Mekân / Vitrin Fotoğraf Çekimi                | Teklif alın
+Model & Lookbook Çekimi                        | Teklif alın
+Drone Çekimi                                   | Teklif alın
+
+
+# ══════════════════════════════════════════════════════════
+# 🖨️  BASKI MATERYALLERİ
+# ══════════════════════════════════════════════════════════
+
+Kartvizit Baskısı (250 Adet)                  | Teklif alın
+Broşür Baskısı (500 Adet)                     | Teklif alın
+Kağıt Poşet Baskısı                           | Teklif alın
+Bez Çanta Baskısı                              | Teklif alın
+Roll-Up Stand Baskısı                          | Teklif alın
+Tabela / Totem Baskısı                         | Teklif alın
+Stiker / Etiket Baskısı                        | Teklif alın
+
+
+# ══════════════════════════════════════════════════════════
+# 💻  WEB & DİJİTAL
+# ══════════════════════════════════════════════════════════
+
+Tek Sayfalık Web Sitesi (Landing Page)         | Teklif alın
+Kurumsal Web Sitesi (5 Sayfa)                  | Teklif alın
+E-Ticaret Sitesi                               | Teklif alın
+Domain & Hosting Kurulumu                      | Teklif alın
+Web Sitesi Bakım & Güncelleme                  | Teklif alın
+Google İşletme Profili Kurulumu                | Teklif alın
+
+
+# ══════════════════════════════════════════════════════════
+# 📣  TEKİL REKLAM HİZMETLERİ
+# ══════════════════════════════════════════════════════════
+
+Meta Reklam Hesabı Kurulumu (Tek Seferlik)    | Teklif alın
+Google Ads Hesabı Kurulumu (Tek Seferlik)     | Teklif alın
+Tek Kampanya Kurulumu & Optimizasyonu         | Teklif alın
+Reklam Kreatif Tasarımı (Görsel + Metin)      | Teklif alın
+Hedef Kitle Analizi & Strateji Raporu         | Teklif alın
