@@ -11,7 +11,6 @@ Paket: Meta - Basit Yönetim
 24 Mayıs 2026 | Devam ediyor | Yeni yerimizde hizmetinizdeyiz | 150 ₺/gün | Aktif
 4 Haziran 2026 2026 | Devam ediyor | Genel Kampanyalar bilinirlik | 100 ₺/gün | Aktif
 4 Haziran 2026 | Devam ediyor | Kayıt kamerası kampanyası | 100 ₺/gün | Aktif
-4 Haziran 2026 | Devam ediyor | Araç ses yalıtım | 100 ₺/gün | Aktif
 
 
 # GOOGLE ADS KAMPANYALARI
@@ -25,6 +24,7 @@ Paket: Meta - Basit Yönetim
 26 Mayıs 2026: Remarketing için özel hedef kitle oluşturulmuş ve reklamlarda kullanılmaya başlanmıştır.
 4 Haziran 2026: Genel kampanyalar adı altında 8 videomuz bilinirlik reklamı içerisinde kullanılmaya başlandı
 4 Haziran 2026: Kayıt kamerası kampanyası ve araç ses yalıtım kampanyası 100'er tl bütçe ile mesaj kampanyası başlatıldı
+6 Haziran 2026: Adem bey talimatı üzerine araç ses yalıtımı reklam kampanyası kapatıldı.
 
 # İÇERİK TAKVİMİ
 

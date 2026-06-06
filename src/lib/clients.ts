@@ -314,7 +314,7 @@ export const CLIENTS: ClientData[] = [
       { name: "Yeni yerimizde hizmetinizdeyiz",      startDate: "24 Mayıs 2026", endDate: "Devam ediyor", dailyBudget: "150 ₺/gün", status: "Aktif" },
       { name: "Genel Kampanyalar bilinirlik",         startDate: "4 Haziran 2026", endDate: "Devam ediyor", dailyBudget: "100 ₺/gün", status: "Aktif" },
       { name: "Kayıt kamerası kampanyası",            startDate: "4 Haziran 2026", endDate: "Devam ediyor", dailyBudget: "100 ₺/gün", status: "Aktif" },
-      { name: "Araç ses yalıtım",                    startDate: "4 Haziran 2026", endDate: "Devam ediyor", dailyBudget: "100 ₺/gün", status: "Aktif" },
+      { name: "Araç ses yalıtım",                    startDate: "4 Haziran 2026", endDate: "6 Haziran 2026", dailyBudget: "100 ₺/gün", status: "Tamamlandı" },
     ],
 
     googleCampaigns: [],
@@ -325,6 +325,7 @@ export const CLIENTS: ClientData[] = [
       { date: "26 Mayıs 2026", text: "Remarketing için özel hedef kitle oluşturulmuş ve reklamlarda kullanılmaya başlanmıştır." },
       { date: "4 Haziran 2026", text: "Genel kampanyalar adı altında 8 videomuz bilinirlik reklamı içerisinde kullanılmaya başlandı." },
       { date: "4 Haziran 2026", text: "Kayıt kamerası kampanyası ve araç ses yalıtım kampanyası 100'er TL bütçe ile mesaj kampanyası olarak başlatıldı." },
+      { date: "6 Haziran 2026", text: "Adem bey talimatı üzerine araç ses yalıtımı reklam kampanyası kapatıldı." },
     ],
 
     invoices: [
