@@ -81,7 +81,7 @@ export const CLIENTS: ClientData[] = [
       {
         name: "%70'e Varan İndirimler — Instagram",
         startDate: "31 Mayıs 2026",
-        endDate: "6 Haziran 2025",
+        endDate: "6 Haziran 2026",
         dailyBudget: "120 ₺/gün",
         status: "Aktif",
       },
@@ -90,6 +90,13 @@ export const CLIENTS: ClientData[] = [
         startDate: "31 Mayıs 2026",
         endDate: "Devam ediyor",
         dailyBudget: "100 ₺/gün",
+        status: "Aktif",
+      },
+      {
+        name: "Çekiliş Etkileşim Reklamı",
+        startDate: "5 Haziran 2026",
+        endDate: "30 Haziran 2026",
+        dailyBudget: "75 ₺/gün",
         status: "Aktif",
       },
     ],
@@ -104,6 +111,10 @@ export const CLIENTS: ClientData[] = [
       {
         date: "2 Haziran 2026",
         text: "Web sitesi Şahin bey'e sunuldu, alternatif tasarım yapılacak.",
+      },
+      {
+        date: "4 Haziran 2026",
+        text: "Yeni web sitesi tasarımı yapıldı, sunum bekliyor.",
       },
     ],
 
@@ -130,7 +141,7 @@ export const CLIENTS: ClientData[] = [
       },
       {
         date: "2 Haziran 2026",
-        text: "1 Haziran çekimleri tamamı editlendi, sunuldu ve planlanacak.",
+        text: "1 Haziran çekimleri tamamı editlendi, sunuldu ve planlandı.",
       },
     ],
 

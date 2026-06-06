@@ -11,8 +11,9 @@ Paket: Büyüme Paketi
 1 Mayıs 2026 | Devam ediyor | Mayıs Mesaj Kampanyaları | 200 ₺/gün | Aktif
 1 Mayıs 2026 | Devam ediyor | Mayıs Bilinirlik Kampanyaları | 200 ₺/gün | Aktif
 21 Mayıs 2026 | Devam ediyor | Yasin Düşüyor Reels Kampanyası | 100 ₺/gün | Aktif
-31 Mayıs 2026 | 6 Haziran 2025 | %70'e varan indirimler İnstagram | 120 ₺/gün | Aktif
+31 Mayıs 2026 | 6 Haziran 2026 | %70'e varan indirimler İnstagram | 120 ₺/gün | Aktif
 31 Mayıs 2026 | Devam ediyor | %70'e varan indirimler Mesaj | 100 ₺/gün | Aktif
+5 Haziran 2026 | 30 Haziran 2026 | Çekiliş etkileşim reklamı | 75 ₺/gün | Aktif
 
 
 # GOOGLE ADS KAMPANYALARI
@@ -23,6 +24,7 @@ Paket: Büyüme Paketi
 # WEBSITE GÜNCELLEMELERİ
 31 Mayıs 2026 | Yapılması planlanan web sitesi için döküman hazırlandı sunum yapılacak
 2 Haziran 2026 | Web sitesi Şahin bey'e sunuldu alternatif tasarım yapılacak
+4 Haziran 2026 | Yeni web sitesi tasarımı yapıldı sunum bekliyor.
 
 # AJANS GÜNCELLEMELERİ
 31 Mayıs 2026: İnstagram üzerinden günlük 120 TL 7 gün %70'e varan indirimler kampanyası yayınlandı
@@ -30,7 +32,7 @@ Paket: Büyüme Paketi
 31 Mayıs 2026: Doğru avize evinizin imzasıdır videosu yeterince izlendi günlük 50 TL bütçe kazanmak için kampanya kapatıldı
 31 Mayıs 2026: %70'e varan indirimler videosu mayıs bilinirlik kampanyası içerisine günlük 50 TL bütçe ile yayınlandı
 1 Haziran 2026: Google reklamları ve web sitesi ile ilgili görüşüldü teklif verilecek
-2 Haziran 2026: 1 Haziran çekimleri tamamı editlendi Sunuldu. Ve Planlanacak
+2 Haziran 2026: 1 Haziran çekimleri tamamı editlendi Sunuldu. Ve Planlandı
 
 # İÇERİK TAKVİMİ
 1 Haziran: Evinizin atmosferini değiştirecek avize reels
