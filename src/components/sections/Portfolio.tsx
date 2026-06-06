@@ -13,6 +13,8 @@ const LOGOS = [
   { name: "Ahenk",     sub: "Mobilya" },
   { name: "Retrocar",  sub: "" },
   { name: "Özçalık",   sub: "Dizayn" },
+  { name: "Balmodam",  sub: "Mobilya" },
+  { name: "Barış",     sub: "Aksesuar" },
 ];
 
 export default function Portfolio() {
