@@ -6,8 +6,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL") // pooled — uygulama çalışma zamanı
+  directUrl = env("DIRECT_URL")   // direct — migration'lar için
 }
 
 // ── Enumlar ──────────────────────────────────────────────
