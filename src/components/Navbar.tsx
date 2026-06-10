@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import Logo from "@/components/Logo";
 
 const NAV_LINKS = [
@@ -17,7 +17,6 @@ export default function Navbar() {
   const [open, setOpen]               = useState(false);
   const [loginOpen, setLoginOpen]     = useState(false);
   const pathname  = usePathname();
-  const router    = useRouter();
   const isHome    = pathname === "/";
 
   useEffect(() => {
@@ -191,14 +190,14 @@ export default function Navbar() {
 
       {/* Müşteri Girişi Modal */}
       {loginOpen && (
-        <LoginModal onClose={closeLogin} router={router} />
+        <LoginModal onClose={closeLogin} />
       )}
     </>
   );
 }
 
 // ── Müşteri Giriş Modalı ──────────────────────────────────────────────────────
-function LoginModal({ onClose, router }: { onClose: () => void; router: ReturnType<typeof useRouter> }) {
+function LoginModal({ onClose }: { onClose: () => void }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading]   = useState(false);
@@ -217,23 +216,16 @@ function LoginModal({ onClose, router }: { onClose: () => void; router: ReturnTy
     setLoading(true);
     setError("");
     try {
-      const res  = await fetch("/api/musteri/verify", {
+      const res  = await fetch("/api/musteri/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ slug: username.trim().toLowerCase(), password }),
+        body: JSON.stringify({ username: username.trim().toLowerCase(), password }),
       });
       const data = await res.json();
       if (data.ok) {
-        if (data.isAdmin) {
-          sessionStorage.setItem("mkz_admin", "1");
-          onClose();
-          router.push("/musteri/admin");
-        } else {
-          const slug = username.trim().toLowerCase();
-          sessionStorage.setItem(`mkz_auth_${slug}`, "1");
-          onClose();
-          router.push(`/musteri/${slug}`);
-        }
+        onClose();
+        // Tam sayfa yönlendirme → middleware yeni cookie ile çalışır
+        window.location.href = data.redirect;
       } else {
         setError(data.error ?? "Kullanıcı adı veya şifre hatalı.");
       }
