@@ -71,52 +71,67 @@ const STEPS: { id: string; show: (a: Answers) => boolean }[] = [
 ];
 
 /* ── Price algorithm ────────────────────────────────────
-   Kalibre: 60 IG post + 30 TikTok (farklı) + 6 çekim + Meta 300k + SEO = 80.000 TL
-            + Google reklam = 90.000 TL
+   Kalibrasyon noktaları (doğrulandı):
+   - Meta tek, 50k bütçe → 15.000 | 100k bütçe → 20.000
+   - Instagram tek, 30 post + 4 çekim günü → 25.000
+   - Instagram + Meta(75k), 15 post → 30-35k
+   - Tam müşteri (60 IG + 30 TikTok + 6 çekim + Meta 300k + SEO) → 80.000
+   - Tam müşteri + Google reklam → 90.000
+   Mantık: kademeli reklam bütçe ücreti + hizmet sayısı arttıkça
+   derinleşen paket indirimi (çok hizmet = daha uygun birim fiyat).
 */
+function tieredBudget(b: number): number {
+  if (!b || b < 0) return 0;
+  const t1 = Math.min(b, 50000) * 0.14;
+  const t2 = Math.max(0, Math.min(b, 150000) - 50000) * 0.1;
+  const t3 = Math.max(0, b - 150000) * 0.05;
+  return t1 + t2 + t3;
+}
+
 function calcPrice(a: Answers): { min: number; max: number; notes: string[] } {
   let base = 0;
   const notes: string[] = [];
+  const n = a.services.length;
 
   if (sv(a, "Instagram & Facebook İçerik")) {
     const posts = Math.max(1, a.instagramPosts || 12);
-    base += 12000 + Math.max(0, posts - 8) * 320;
+    base += 5900 + posts * 250;
     if (a.instagramContentTypes.includes("Yapay zeka videoları")) base += 2500;
   }
 
   if (sv(a, "TikTok İçerik")) {
     if (a.tiktokSameAsInstagram === "Evet") {
-      base += 4000;
+      base += 4000; // Instagram içerikleri repurpose ediliyor
     } else {
       const posts = Math.max(1, a.tiktokPosts || 16);
-      base += 8000 + Math.max(0, posts - 8) * 300;
-      if (a.tiktokContentTypes.includes("Yapay zeka videoları")) base += 2000;
+      base += 4000 + posts * 180;
+      if (a.tiktokContentTypes.includes("Yapay zeka videoları")) base += 1500;
     }
   }
 
   if (sv(a, "YouTube İçerik")) {
     const vids = Math.max(1, a.youtubePosts || 4);
-    base += 8000 + Math.max(0, vids - 4) * 1500;
+    base += 8000 + vids * 1500;
     if (a.youtubeFormat === "Uzun format" || a.youtubeFormat === "Her ikisi") base += 3000;
   }
 
   if (needsShoot(a) && a.shootingDays > 0) {
-    base += a.shootingDays * 3500;
+    base += a.shootingDays * 2900;
   }
 
   if (a.approvalProcess === "Paylaşım öncesi onay vermek istiyorum") base += 1500;
   if (a.approvalProcess === "Her içerikte revize süreci istiyorum") base += 3500;
 
   if (sv(a, "Meta Reklam Yönetimi")) {
-    base += 8000;
+    base += 8000 + tieredBudget(parseInt(a.metaBudget) || 0);
     if (a.metaBudget) notes.push(`Meta reklam bütçesi aylık ${a.metaBudget} TL — ayrıca ödenir.`);
   }
   if (sv(a, "Google Reklam Yönetimi")) {
-    base += 10000;
+    base += 15000 + tieredBudget(parseInt(a.googleBudget) || 0);
     if (a.googleBudget) notes.push(`Google reklam bütçesi aylık ${a.googleBudget} TL — ayrıca ödenir.`);
   }
   if (sv(a, "TikTok Reklam Yönetimi")) {
-    base += 5000;
+    base += 5000 + tieredBudget(parseInt(a.tiktokAdsBudget) || 0);
     if (a.tiktokAdsBudget) notes.push(`TikTok reklam bütçesi aylık ${a.tiktokAdsBudget} TL — ayrıca ödenir.`);
   }
 
@@ -131,6 +146,10 @@ function calcPrice(a: Answers): { min: number; max: number; notes: string[] } {
       notes.push("Web sitesi yapımı için ayrıca tek seferlik fiyat oluşturulacak.");
     }
   }
+
+  // Paket indirimi: hizmet sayısı arttıkça birim fiyat düşer
+  const discount = Math.max(0.78, 1 - (n - 1) * 0.0344);
+  base = base * discount;
 
   return {
     min: Math.round(base / 1000) * 1000,
@@ -237,7 +256,7 @@ export default function PriceCalculator() {
           <Multi
             label="İçerik türümüz ne olacak? (Instagram)"
             hint="Birden fazla seçebilirsiniz"
-            options={["Yalnızca görsel/post", "Yapay zeka videoları", "Yerinde video çekimi"]}
+            options={["Görsel/post tasarımı", "Yapay zeka videoları", "Yerinde video çekimi"]}
             selected={answers.instagramContentTypes}
             onToggle={(v) => toggleMulti("instagramContentTypes", v)}
           />
@@ -268,7 +287,7 @@ export default function PriceCalculator() {
           <Multi
             label="TikTok içerik türü ne olacak?"
             hint="Birden fazla seçebilirsiniz"
-            options={["Yalnızca görsel/post", "Yapay zeka videoları", "Yerinde video çekimi"]}
+            options={["Görsel/post tasarımı", "Yapay zeka videoları", "Yerinde video çekimi"]}
             selected={answers.tiktokContentTypes}
             onToggle={(v) => toggleMulti("tiktokContentTypes", v)}
           />
