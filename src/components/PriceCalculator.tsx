@@ -73,12 +73,17 @@ const STEPS: { id: string; show: (a: Answers) => boolean }[] = [
 /* ── Price algorithm ────────────────────────────────────
    Kalibrasyon noktaları (doğrulandı):
    - Meta tek, 50k bütçe → 15.000 | 100k bütçe → 20.000
-   - Instagram tek, 30 post + 4 çekim günü → 25.000
-   - Instagram + Meta(75k), 15 post → 30-35k
+   - Instagram tek, 30 post + 4 çekim günü (yalnız yerinde) → 25.000
+   - IG(15)+Meta(50k), 4 çekim: 3 içerik türü → ~30k | yalnız yerinde → ~33.5k
+   - Çekim günü alt-doğrusal: 4 gün = %100, 2 gün = %75 (0.5 + 0.125·gün)
    - Tam müşteri (60 IG + 30 TikTok + 6 çekim + Meta 300k + SEO) → 80.000
    - Tam müşteri + Google reklam → 90.000
-   Mantık: kademeli reklam bütçe ücreti + hizmet sayısı arttıkça
-   derinleşen paket indirimi (çok hizmet = daha uygun birim fiyat).
+   Mantık:
+   - Reklam ücreti bütçeye göre kademeli.
+   - İçerik türü çeşitliliği arttıkça (yapay zeka/post eklenince) çekim
+     iş yükü dağılır → çekim maliyeti düşer (mixFactor: 1→%100, 2→%79, 3→%57).
+   - Çekim günü alt-doğrusal ölçeklenir.
+   - Hizmet sayısı arttıkça paket indirimi derinleşir.
 */
 function tieredBudget(b: number): number {
   if (!b || b < 0) return 0;
@@ -88,6 +93,22 @@ function tieredBudget(b: number): number {
   return t1 + t2 + t3;
 }
 
+// Çekim günü çarpanı: 4 gün = 1.0, 2 gün = 0.75 (alt-doğrusal)
+const shootDayMult = (d: number) => 0.5 + 0.125 * d;
+
+// İçerik türü çeşitliliğine göre çekim maliyeti çarpanı
+const mixFactor = (typeCount: number) =>
+  typeCount >= 3 ? 0.573 : typeCount === 2 ? 0.787 : 1.0;
+
+// Çekim yapılan platformdaki içerik türü sayısı (çekim maliyetini belirler)
+function shootingTypeCount(a: Answers): number {
+  if (sv(a, "Instagram & Facebook İçerik") && a.instagramContentTypes.includes("Yerinde video çekimi"))
+    return a.instagramContentTypes.length;
+  if (sv(a, "TikTok İçerik") && a.tiktokSameAsInstagram !== "Evet" && a.tiktokContentTypes.includes("Yerinde video çekimi"))
+    return a.tiktokContentTypes.length;
+  return 1;
+}
+
 function calcPrice(a: Answers): { min: number; max: number; notes: string[] } {
   let base = 0;
   const notes: string[] = [];
@@ -95,8 +116,7 @@ function calcPrice(a: Answers): { min: number; max: number; notes: string[] } {
 
   if (sv(a, "Instagram & Facebook İçerik")) {
     const posts = Math.max(1, a.instagramPosts || 12);
-    base += 5900 + posts * 250;
-    if (a.instagramContentTypes.includes("Yapay zeka videoları")) base += 2500;
+    base += 6000 + posts * 350;
   }
 
   if (sv(a, "TikTok İçerik")) {
@@ -104,8 +124,7 @@ function calcPrice(a: Answers): { min: number; max: number; notes: string[] } {
       base += 4000; // Instagram içerikleri repurpose ediliyor
     } else {
       const posts = Math.max(1, a.tiktokPosts || 16);
-      base += 4000 + posts * 180;
-      if (a.tiktokContentTypes.includes("Yapay zeka videoları")) base += 1500;
+      base += 7000 + posts * 400;
     }
   }
 
@@ -115,8 +134,9 @@ function calcPrice(a: Answers): { min: number; max: number; notes: string[] } {
     if (a.youtubeFormat === "Uzun format" || a.youtubeFormat === "Her ikisi") base += 3000;
   }
 
+  // Çekim maliyeti: gün sayısı (alt-doğrusal) × içerik türü çeşitliliği
   if (needsShoot(a) && a.shootingDays > 0) {
-    base += a.shootingDays * 2900;
+    base += 8500 * shootDayMult(a.shootingDays) * mixFactor(shootingTypeCount(a));
   }
 
   if (a.approvalProcess === "Paylaşım öncesi onay vermek istiyorum") base += 1500;
@@ -127,7 +147,7 @@ function calcPrice(a: Answers): { min: number; max: number; notes: string[] } {
     if (a.metaBudget) notes.push(`Meta reklam bütçesi aylık ${a.metaBudget} TL — ayrıca ödenir.`);
   }
   if (sv(a, "Google Reklam Yönetimi")) {
-    base += 15000 + tieredBudget(parseInt(a.googleBudget) || 0);
+    base += 15500 + tieredBudget(parseInt(a.googleBudget) || 0);
     if (a.googleBudget) notes.push(`Google reklam bütçesi aylık ${a.googleBudget} TL — ayrıca ödenir.`);
   }
   if (sv(a, "TikTok Reklam Yönetimi")) {
@@ -148,7 +168,7 @@ function calcPrice(a: Answers): { min: number; max: number; notes: string[] } {
   }
 
   // Paket indirimi: hizmet sayısı arttıkça birim fiyat düşer
-  const discount = Math.max(0.78, 1 - (n - 1) * 0.0344);
+  const discount = Math.max(0.78, 1 - (n - 1) * 0.036);
   base = base * discount;
 
   return {
