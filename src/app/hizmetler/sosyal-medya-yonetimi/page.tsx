@@ -38,62 +38,7 @@ export default function SosyalMedyaPage() {
         { icon: "🔍", title: "Hashtag & SEO", desc: "Platformun arama algoritmalarına uygun hashtag ve açıklama stratejisi." },
         { icon: "📈", title: "Büyüme Stratejisi", desc: "Organik büyümeyi hızlandırmak için sürekli güncellenen içerik ve yayın stratejisi." },
       ]}
-      pricing={[
-        {
-          name: "Başlangıç",
-          price: "20.000",
-          desc: "Sosyal medyada ilk adımını atmak isteyen işletmeler için.",
-          features: [
-            "Instagram & Facebook yönetimi",
-            "Haftada 3 paylaşım",
-            "10.000 ₺'ye kadar reklam kampanyası yönetimi",
-            "Aylık raporlama",
-            "Topluluk yönetimi",
-          ],
-        },
-        {
-          name: "Büyüme",
-          price: "30.000",
-          desc: "Hızlı büyümek isteyen markalar için çok kanallı paket.",
-          featured: true,
-          features: [
-            "Instagram, Facebook & TikTok yönetimi",
-            "Haftada 5 paylaşım",
-            "50.000 ₺'ye kadar reklam kampanyası yönetimi",
-            "Google İşletme yönetimi",
-            "Giriş seviye Google Ads",
-            "Haftalık raporlama",
-          ],
-        },
-        {
-          name: "Kurumsal",
-          price: "40.000",
-          desc: "Dijital varlığını güçlendirmek isteyen kurumsal markalar için.",
-          features: [
-            "Instagram, Facebook & TikTok yönetimi",
-            "Haftada 7 paylaşım",
-            "100.000 ₺'ye kadar reklam yönetimi",
-            "Google İşletme yönetimi",
-            "Kapsamlı Google Ads yönetimi",
-            "Haftalık raporlama",
-          ],
-        },
-        {
-          name: "Elite",
-          price: "60.000",
-          desc: "Size özel çözümler, web desteği ve SEO avantajları.",
-          features: [
-            "Tüm platformlar tam yönetim",
-            "Haftada 7+ paylaşım",
-            "Sınırsız reklam bütçesi yönetimi",
-            "Kapsamlı Google Ads & İşletme",
-            "Web sitesi tasarım & desteği",
-            "SEO optimizasyonu",
-            "Özel dijital strateji & danışmanlık",
-          ],
-        },
-      ]}
-      pricingNote="Reklam bütçeniz 100.000 ₺ ve üzerinde ise paneldeki iş gücü artacağı için fiyatlarımız değişiklik gösterebilir. Detay için bizimle iletişime geçin."
+      calculatorCta
       faq={[
         {
           q: "Paylaşılacak içerikleri kim hazırlıyor?",

@@ -23,6 +23,7 @@ export interface ServicePageProps {
   pricing?: PricingPackage[];
   pricingNote?: string;   // fiyat tablosunun altında gösterilecek not
   noPricingNote?: string; // fiyat yoksa alt not
+  calculatorCta?: boolean; // fiyat tablosu yerine "Fiyatını Hesapla" yönlendirmesi
   faq?: FAQItem[]; // hizmete özel sıkça sorulan sorular
   icon: React.ReactNode;
   badge: string;
@@ -36,6 +37,7 @@ export default function ServicePageTemplate({
   pricing,
   pricingNote,
   noPricingNote,
+  calculatorCta,
   faq,
   icon,
   badge,
@@ -152,6 +154,30 @@ export default function ServicePageTemplate({
             </div>
           </div>
         </section>
+
+        {/* ── Fiyat Hesaplama Yönlendirmesi ── */}
+        {calculatorCta && (
+          <section className="py-20" style={{ background: "var(--bg)" }}>
+            <div className="max-w-[680px] mx-auto px-6 text-center">
+              <div
+                className="rounded-2xl p-10"
+                style={{ background: "var(--surface)", border: "1px solid rgba(168,85,247,0.25)", boxShadow: "var(--glow-sm)" }}
+              >
+                <div className="text-4xl mb-4">🧮</div>
+                <h2 className="font-black text-[28px] mb-3">
+                  Size Özel <span className="gradient-text">Fiyat Hesaplayın</span>
+                </h2>
+                <p className="text-[#8a8a9a] mb-8 leading-relaxed">
+                  Sabit paketler yerine ihtiyacınıza göre fiyat. Birkaç soruyu yanıtlayın,
+                  aylık tahmini ücretinizi anında görün.
+                </p>
+                <Link href="/fiyat-hesapla" className="btn btn-primary">
+                  Fiyatını Hesapla →
+                </Link>
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* ── Fiyatlandırma ── */}
         {pricing && pricing.length > 0 && (

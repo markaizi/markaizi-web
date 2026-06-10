@@ -36,36 +36,7 @@ export default function GoogleReklamlariPage() {
         { icon: "🗝️", title: "Anahtar Kelime Yönetimi", desc: "Doğru kelimelere teklif verin, yanlış aramalarda para kaybetmeyin." },
         { icon: "📊", title: "Dönüşüm Takibi", desc: "Formdan telefona, satıştan ziyarete kadar her dönüşümü ölçün." },
       ]}
-      pricing={[
-        {
-          name: "Basit Yönetim",
-          price: "15.000",
-          desc: "Tek kampanya, temel optimizasyon. Başlamak için ideal.",
-          features: [
-            "Google Ads hesabı kurulumu",
-            "Search reklam kampanyası",
-            "Anahtar kelime araştırması",
-            "Temel optimizasyon & negatif kelime yönetimi",
-            "Aylık performans raporu",
-            "Reklam bütçesi: müşteri tarafından belirlenir",
-          ],
-        },
-        {
-          name: "Tam Kapsamlı Yönetim",
-          price: "25.000",
-          desc: "Search + Display + YouTube, sürekli optimizasyon ve dönüşüm takibi.",
-          featured: true,
-          features: [
-            "Search, Display & YouTube kampanyaları",
-            "Google Shopping (uygulanabilirse)",
-            "Dönüşüm takibi & Google Analytics entegrasyonu",
-            "Haftalık optimizasyon & A/B test",
-            "Retargeting kampanyaları",
-            "Haftalık rapor & stratejik danışmanlık",
-          ],
-        },
-      ]}
-      pricingNote="Reklam bütçeniz 100.000 ₺ ve üzerinde ise paneldeki iş gücü artacağı için fiyatlarımız değişiklik gösterebilir. Detay için bizimle iletişime geçin."
+      calculatorCta
       faq={[
         {
           q: "Google Ads reklam bütçem ne kadar olmalı?",

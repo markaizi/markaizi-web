@@ -34,22 +34,7 @@ export default function TikTokReklamlariPage() {
         { icon: "🔥", title: "Trend Takibi", desc: "Güncel TikTok trendlerini reklamlarınıza entegre ederek viral potansiyel yaratıyoruz." },
         { icon: "📈", title: "Performans Takibi", desc: "Görüntülenme, tıklama ve dönüşüm verilerini düzenli raporluyoruz." },
       ]}
-      pricing={[
-        {
-          name: "TikTok Reklam Yönetimi",
-          price: "10.000",
-          desc: "TikTok Ads Manager'da kampanya kurulumu, optimizasyonu ve aylık raporlama.",
-          features: [
-            "TikTok Ads hesabı kurulumu",
-            "In-Feed reklam kampanyası",
-            "Hedef kitle tanımlama & optimizasyon",
-            "TikTok'a özel kreatif desteği",
-            "Aylık performans raporu",
-            "Reklam bütçesi: müşteri tarafından belirlenir",
-          ],
-        },
-      ]}
-      pricingNote="Reklam bütçeniz 100.000 ₺ ve üzerinde ise paneldeki iş gücü artacağı için fiyatlarımız değişiklik gösterebilir. Detay için bizimle iletişime geçin."
+      calculatorCta
       faq={[
         {
           q: "TikTok reklamları hangi işletmeler için uygun?",

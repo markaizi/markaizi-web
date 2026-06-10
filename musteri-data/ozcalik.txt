@@ -24,9 +24,19 @@ Paket: Başlangıç Paketi
 
 # AJANS GÜNCELLEMELERİ
 4 Haziran 2026: Mağazada Çekim yapıldı toplamda 9 içerik çekildi.
+7 Haziran 2026: Tüm Editler tamamlandı ve planlandı içerik takviminden görebilirsiniz.
 
 # İÇERİK TAKVİMİ
-
+8 Haziran : Roma masa takımı
+10 Haziran : Başkent Masa Takımı
+12 Haziran : Bilgilendirici paylaşım
+13 Haziran : Sandalyeler
+15 Haziran : Dan eden köpek
+17 Haziran : minik masa takımı
+18 Haziran : Bilgilendirici paylaşım
+20 Haziran : güven testi
+22 Haziran : Timbo masa takımı
+24 Haziran : Statü masa takımı
 
 
 # FATURALAR

@@ -34,36 +34,7 @@ export default function MetaReklamlariPage() {
         { icon: "💰", title: "Bütçe Optimizasyonu", desc: "En düşük maliyetle en fazla dönüşümü sağlayacak bütçe dağılımı." },
         { icon: "📊", title: "Haftalık Raporlama", desc: "Tıklama, dönüşüm, ROAS ve maliyet verilerini şeffaf raporlarla görün." },
       ]}
-      pricing={[
-        {
-          name: "Basit Yönetim",
-          price: "15.000",
-          desc: "Tek kampanya, tek platform. Başlamak için ideal.",
-          features: [
-            "1 reklam hesabı yönetimi",
-            "Instagram veya Facebook",
-            "Aylık kampanya kurulumu",
-            "Temel hedefleme optimizasyonu",
-            "Aylık performans raporu",
-            "Reklam bütçesi: müşteri tarafından belirlenir",
-          ],
-        },
-        {
-          name: "Tam Kapsamlı Yönetim",
-          price: "25.000",
-          desc: "Instagram + Facebook, çoklu kampanya, sürekli optimizasyon.",
-          featured: true,
-          features: [
-            "Instagram & Facebook tam yönetim",
-            "Çoklu kampanya kurulumu",
-            "Retargeting & lookalike kampanyaları",
-            "A/B test & kreatif optimizasyonu",
-            "Haftalık optimizasyon & rapor",
-            "Öncelikli destek & stratejik danışmanlık",
-          ],
-        },
-      ]}
-      pricingNote="Reklam bütçeniz 100.000 ₺ ve üzerinde ise paneldeki iş gücü artacağı için fiyatlarımız değişiklik gösterebilir. Detay için bizimle iletişime geçin."
+      calculatorCta
       faq={[
         {
           q: "Meta (Facebook & Instagram) reklamları için minimum bütçe nedir?",

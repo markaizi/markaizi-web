@@ -18,7 +18,6 @@ type Answers = {
   metaBudget: string;
   googleBudget: string;
   tiktokAdsBudget: string;
-  websiteOption: string;
 };
 
 const DEFAULT: Answers = {
@@ -36,7 +35,6 @@ const DEFAULT: Answers = {
   metaBudget: "",
   googleBudget: "",
   tiktokAdsBudget: "",
-  websiteOption: "",
 };
 
 /* ── Helpers ──────────────────────────────────────────── */
@@ -66,7 +64,6 @@ const STEPS: { id: string; show: (a: Answers) => boolean }[] = [
   { id: "metaBudget",            show: (a) => sv(a, "Meta Reklam Yönetimi") },
   { id: "googleBudget",          show: (a) => sv(a, "Google Reklam Yönetimi") },
   { id: "tiktokAdsBudget",       show: (a) => sv(a, "TikTok Reklam Yönetimi") },
-  { id: "websiteOption",         show: (a) => sv(a, "Web Sitesi") },
   { id: "result",                show: () => true },
 ];
 
@@ -155,18 +152,6 @@ function calcPrice(a: Answers): { min: number; max: number; notes: string[] } {
     if (a.tiktokAdsBudget) notes.push(`TikTok reklam bütçesi aylık ${a.tiktokAdsBudget} TL — ayrıca ödenir.`);
   }
 
-  if (sv(a, "Web Sitesi")) {
-    if (a.websiteOption === "Var, SEO + yönetim") base += 5000;
-    else if (a.websiteOption === "Var, yönetim (SEO yok)") base += 3000;
-    else if (a.websiteOption === "Yok, yapılacak + SEO") {
-      base += 5000;
-      notes.push("Web sitesi yapımı için ayrıca tek seferlik fiyat oluşturulacak.");
-    } else if (a.websiteOption === "Yok, yapılacak (SEO yok)") {
-      base += 3000;
-      notes.push("Web sitesi yapımı için ayrıca tek seferlik fiyat oluşturulacak.");
-    }
-  }
-
   // Paket indirimi: hizmet sayısı arttıkça birim fiyat düşer
   const discount = Math.max(0.78, 1 - (n - 1) * 0.036);
   base = base * discount;
@@ -214,7 +199,6 @@ export default function PriceCalculator() {
       case "youtubeNeedsShoot":     return answers.youtubeNeedsShoot !== "";
       case "shootingDays":          return answers.shootingDays > 0;
       case "approvalProcess":       return answers.approvalProcess !== "";
-      case "websiteOption":         return answers.websiteOption !== "";
       default:                      return true;
     }
   })();
@@ -257,7 +241,6 @@ export default function PriceCalculator() {
               "Meta Reklam Yönetimi",
               "Google Reklam Yönetimi",
               "TikTok Reklam Yönetimi",
-              "Web Sitesi",
             ]}
             selected={answers.services}
             onToggle={(v) => toggleMulti("services", v)}
@@ -388,20 +371,6 @@ export default function PriceCalculator() {
             hint="Bu tutar reklam platformuna ayrıca ödenir, yönetim ücretine dahil değildir."
             value={answers.tiktokAdsBudget}
             onChange={(v) => setAnswers((a) => ({ ...a, tiktokAdsBudget: v }))}
-          />
-        )}
-
-        {current?.id === "websiteOption" && (
-          <Single
-            label="Web sitesi durumunuz?"
-            options={[
-              "Var, SEO + yönetim",
-              "Var, yönetim (SEO yok)",
-              "Yok, yapılacak + SEO",
-              "Yok, yapılacak (SEO yok)",
-            ]}
-            selected={answers.websiteOption}
-            onSelect={(v) => setAnswers((a) => ({ ...a, websiteOption: v }))}
           />
         )}
 
