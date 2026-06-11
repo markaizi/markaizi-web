@@ -2,6 +2,7 @@
 
 import { useState, useRef } from "react";
 import type { ClientData, Campaign } from "@/lib/clients";
+import Calendar from "@/components/Calendar";
 
 type Tab = "meta" | "google" | "tiktok" | "website" | "updates" | "calendar" | "invoice";
 
@@ -170,7 +171,7 @@ function Dashboard({
           {activeTab === "tiktok"   && <TikTokTab   client={client} />}
           {activeTab === "website"  && <WebsiteTab  client={client} />}
           {activeTab === "updates"  && <UpdatesTab  client={client} />}
-          {activeTab === "calendar" && <CalendarTab client={client} />}
+          {activeTab === "calendar" && <CalendarTab />}
           {activeTab === "invoice"  && <InvoiceTab  client={client} />}
         </div>
 
@@ -276,31 +277,10 @@ function UpdatesTab({ client }: { client: ClientData }) {
 }
 
 // ── Tab: İçerik Takvimi ───────────────────────────────────────────────────────
-function CalendarTab({ client }: { client: ClientData }) {
-  if (!client.contentCalendar?.length) {
-    return <Empty text="İçerik takvimi henüz girilmedi." />;
-  }
+function CalendarTab() {
   return (
-    <Section title="İçerik Takvimi" subtitle="Yaklaşan içerik planınız">
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {client.contentCalendar.map((item, i) => (
-          <div
-            key={i}
-            className="rounded-xl p-4 flex gap-3 items-start"
-            style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
-          >
-            <span
-              className="text-[11px] font-bold px-3 py-1.5 rounded-lg flex-shrink-0 whitespace-nowrap"
-              style={{ background: "rgba(168,85,247,0.12)", color: "#c084fc" }}
-            >
-              {item.date}
-            </span>
-            <p className="text-[13px] text-[#c8c8d8] leading-snug">{item.content}</p>
-          </div>
-        ))}
-      </div>
-      {/* Sabit not */}
-      <SectionNote text="İçerik takvimi aylık olarak planlandıkça güncellenir. Ay bittiğinde raporunuz tarafınıza iletilir ve bu bölüm sıfırlanır." />
+    <Section title="İçerik Takvimi" subtitle="Planlanmış içerikleriniz">
+      <Calendar showClientName={false} />
     </Section>
   );
 }

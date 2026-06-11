@@ -69,7 +69,13 @@ export default function AdminPanel({
               Merhaba {adminName} · {clients.length} aktif müşteri
             </p>
           </div>
-          <div className="flex gap-2 flex-shrink-0">
+          <div className="flex gap-2 flex-shrink-0 flex-wrap justify-end">
+            <button
+              onClick={() => router.push("/musteri/admin/takvim")}
+              className="btn btn-outline text-sm px-4 py-2.5"
+            >
+              📅 Takvim
+            </button>
             <button
               onClick={() => router.push("/musteri/admin/calisanlar")}
               className="btn btn-outline text-sm px-4 py-2.5"
