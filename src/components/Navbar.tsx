@@ -4,6 +4,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Logo from "@/components/Logo";
 
+type SessionInfo = { name: string; redirect: string } | null;
+
 const NAV_LINKS = [
   { href: "/#hizmetler",  label: "Hizmetler",  section: "hizmetler" },
   { href: "/#hakkimizda", label: "Hakkımızda", section: "hakkimizda" },
@@ -16,8 +18,16 @@ export default function Navbar() {
   const [scrolled, setScrolled]       = useState(false);
   const [open, setOpen]               = useState(false);
   const [loginOpen, setLoginOpen]     = useState(false);
+  const [session, setSession]         = useState<SessionInfo>(undefined as unknown as SessionInfo);
   const pathname  = usePathname();
   const isHome    = pathname === "/";
+
+  useEffect(() => {
+    fetch("/api/musteri/auth/me")
+      .then((r) => r.json())
+      .then((d) => setSession(d.ok ? { name: d.name, redirect: d.redirect } : null))
+      .catch(() => setSession(null));
+  }, []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -92,18 +102,31 @@ export default function Navbar() {
               </li>
             ))}
 
-            {/* Müşteri Girişi */}
+            {/* Müşteri Girişi / Panel */}
             <li>
-              <button
-                onClick={() => setLoginOpen(true)}
-                className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-full transition-all hover:text-white hover:bg-white/[0.06] ml-1"
-                style={{ color: "#8a8a9a" }}
-              >
-                <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth="2">
-                  <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-                Müşteri Girişi
-              </button>
+              {session ? (
+                <a
+                  href={session.redirect}
+                  className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-full transition-all ml-1"
+                  style={{ color: "#c084fc", background: "rgba(168,85,247,0.1)", border: "1px solid rgba(168,85,247,0.2)" }}
+                >
+                  <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth="2">
+                    <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  {session.name.split(" ")[0]}
+                </a>
+              ) : session === null ? (
+                <button
+                  onClick={() => setLoginOpen(true)}
+                  className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-full transition-all hover:text-white hover:bg-white/[0.06] ml-1"
+                  style={{ color: "#8a8a9a" }}
+                >
+                  <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth="2">
+                    <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  Müşteri Girişi
+                </button>
+              ) : null}
             </li>
 
             <li>
@@ -119,17 +142,30 @@ export default function Navbar() {
 
           {/* Mobil: Müşteri Girişi ikonu + Hamburger */}
           <div className="md:hidden flex items-center gap-3">
-            <button
-              onClick={() => setLoginOpen(true)}
-              aria-label="Müşteri Girişi"
-              className="flex items-center gap-1.5 px-3 py-2 rounded-full transition-all hover:bg-white/[0.08] text-[13px] font-medium"
-              style={{ border: "1px solid var(--border)", color: "#c084fc" }}
-            >
-              <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 flex-shrink-0" stroke="currentColor" strokeWidth="2">
-                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-              Müşteri Girişi
-            </button>
+            {session ? (
+              <a
+                href={session.redirect}
+                className="flex items-center gap-1.5 px-3 py-2 rounded-full transition-all text-[13px] font-medium"
+                style={{ border: "1px solid rgba(168,85,247,0.3)", color: "#c084fc", background: "rgba(168,85,247,0.1)" }}
+              >
+                <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 flex-shrink-0" stroke="currentColor" strokeWidth="2">
+                  <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                {session.name.split(" ")[0]}
+              </a>
+            ) : session === null ? (
+              <button
+                onClick={() => setLoginOpen(true)}
+                aria-label="Müşteri Girişi"
+                className="flex items-center gap-1.5 px-3 py-2 rounded-full transition-all hover:bg-white/[0.08] text-[13px] font-medium"
+                style={{ border: "1px solid var(--border)", color: "#c084fc" }}
+              >
+                <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 flex-shrink-0" stroke="currentColor" strokeWidth="2">
+                  <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                Müşteri Girişi
+              </button>
+            ) : null}
           {/* Hamburger */}
           <button
             onClick={() => setOpen((v) => !v)}
