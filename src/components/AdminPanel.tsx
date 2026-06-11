@@ -61,11 +61,19 @@ export default function AdminPanel({
 
       <main className="max-w-[960px] mx-auto px-6 py-10">
         {/* Başlık */}
-        <div className="mb-10">
-          <h2 className="font-black text-[24px] text-white mb-1">Müşteri Panelleri</h2>
-          <p className="text-[14px] text-[#8a8a9a]">
-            Merhaba {adminName} · {clients.length} aktif müşteri · Bir panele tıklayarak erişebilirsiniz.
-          </p>
+        <div className="mb-10 flex items-start justify-between gap-4">
+          <div>
+            <h2 className="font-black text-[24px] text-white mb-1">Müşteri Panelleri</h2>
+            <p className="text-[14px] text-[#8a8a9a]">
+              Merhaba {adminName} · {clients.length} aktif müşteri
+            </p>
+          </div>
+          <button
+            onClick={() => router.push("/musteri/admin/yeni")}
+            className="btn btn-primary text-sm px-5 py-2.5 flex-shrink-0"
+          >
+            + Yeni Firma
+          </button>
         </div>
 
         {/* Müşteri Grid */}
@@ -123,13 +131,23 @@ export default function AdminPanel({
                 )}
               </div>
 
-              {/* Panel aç butonu */}
-              <button
-                onClick={(e) => { e.stopPropagation(); router.push(`/musteri/${client.slug}`); }}
-                className="btn btn-outline text-sm py-2.5 w-full mt-auto group-hover:border-purple-500/50 transition-colors"
-              >
-                Paneli Aç →
-              </button>
+              {/* Butonlar */}
+              <div className="flex gap-2 mt-auto">
+                <button
+                  onClick={(e) => { e.stopPropagation(); router.push(`/musteri/${client.slug}`); }}
+                  className="btn btn-outline text-sm py-2.5 flex-1 group-hover:border-purple-500/50 transition-colors"
+                >
+                  Paneli Aç →
+                </button>
+                <button
+                  onClick={(e) => { e.stopPropagation(); router.push(`/musteri/admin/${client.slug}`); }}
+                  className="btn btn-outline text-sm py-2.5 px-3 transition-colors"
+                  title="Yönet"
+                  style={{ color: "#c084fc", borderColor: "rgba(168,85,247,0.3)" }}
+                >
+                  ✎
+                </button>
+              </div>
             </div>
           ))}
         </div>
