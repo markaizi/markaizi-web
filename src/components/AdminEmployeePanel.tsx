@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 export interface EmployeeData {
@@ -12,20 +12,51 @@ export interface EmployeeData {
     id: string;
     client: { id: string; slug: string; name: string };
     canViewCampaigns: boolean;
+    canManageCampaigns: boolean;
+    canViewContent: boolean;
     canManageContent: boolean;
+    canViewUpdates: boolean;
     canManageUpdates: boolean;
     canViewInvoices: boolean;
+    canManageInvoices: boolean;
   }[];
 }
 
-const PERM_LABELS = [
-  { key: "canManageContent",  label: "İçerikler" },
-  { key: "canManageUpdates",  label: "Güncellemeler" },
-  { key: "canViewCampaigns",  label: "Kampanyalar" },
-  { key: "canViewInvoices",   label: "Faturalar" },
-] as const;
+const SECTIONS = [
+  { label: "Kampanyalar", viewKey: "canViewCampaigns" as const, manageKey: "canManageCampaigns" as const },
+  { label: "İçerikler",    viewKey: "canViewContent"   as const, manageKey: "canManageContent"   as const },
+  { label: "Güncellemeler",viewKey: "canViewUpdates"   as const, manageKey: "canManageUpdates"   as const },
+  { label: "Faturalar",    viewKey: "canViewInvoices"  as const, manageKey: "canManageInvoices"  as const },
+];
 
-type PermKey = typeof PERM_LABELS[number]["key"];
+type SectionState = "yok" | "goruntule" | "duzenle";
+type ViewKey = typeof SECTIONS[number]["viewKey"];
+type ManageKey = typeof SECTIONS[number]["manageKey"];
+
+function getState(view: boolean, manage: boolean): SectionState {
+  if (manage) return "duzenle";
+  if (view) return "goruntule";
+  return "yok";
+}
+
+type LocalAssign = {
+  id: string | null;
+  canViewCampaigns: boolean;
+  canManageCampaigns: boolean;
+  canViewContent: boolean;
+  canManageContent: boolean;
+  canViewUpdates: boolean;
+  canManageUpdates: boolean;
+  canViewInvoices: boolean;
+  canManageInvoices: boolean;
+};
+
+const DEFAULT_PERMS: Omit<LocalAssign, "id"> = {
+  canViewCampaigns: true, canManageCampaigns: false,
+  canViewContent: true,   canManageContent: true,
+  canViewUpdates: true,   canManageUpdates: true,
+  canViewInvoices: false, canManageInvoices: false,
+};
 
 export default function AdminEmployeePanel({
   employees,
@@ -137,26 +168,20 @@ function EmployeeCard({
   allClients: { id: string; slug: string; name: string }[];
   router: ReturnType<typeof useRouter>;
 }) {
-  // Mevcut atamalar map: clientId → assignment
-  const assignMap = new Map(employee.assignments.map((a) => [a.client.id, a]));
-
-  // Optimistik local state
-  const [localAssign, setLocalAssign] = useState<Map<string, {
-    id: string | null; // null = henüz kaydedilmedi
-    canViewCampaigns: boolean;
-    canManageContent: boolean;
-    canManageUpdates: boolean;
-    canViewInvoices: boolean;
-  }>>(
+  const [localAssign, setLocalAssign] = useState<Map<string, LocalAssign>>(
     () => {
-      const m = new Map<string, { id: string | null; canViewCampaigns: boolean; canManageContent: boolean; canManageUpdates: boolean; canViewInvoices: boolean }>();
+      const m = new Map<string, LocalAssign>();
       employee.assignments.forEach((a) => {
         m.set(a.client.id, {
           id: a.id,
           canViewCampaigns: a.canViewCampaigns,
+          canManageCampaigns: a.canManageCampaigns,
+          canViewContent: a.canViewContent,
           canManageContent: a.canManageContent,
+          canViewUpdates: a.canViewUpdates,
           canManageUpdates: a.canManageUpdates,
           canViewInvoices: a.canViewInvoices,
+          canManageInvoices: a.canManageInvoices,
         });
       });
       return m;
@@ -166,7 +191,6 @@ function EmployeeCard({
   async function handleToggleClient(client: { id: string; slug: string; name: string }) {
     const current = localAssign.get(client.id);
     if (current) {
-      // Atamayı kaldır
       const newMap = new Map(localAssign);
       newMap.delete(client.id);
       setLocalAssign(newMap);
@@ -175,35 +199,41 @@ function EmployeeCard({
         router.refresh();
       }
     } else {
-      // Varsayılan yetkilerle ata
-      const defaults = { canViewCampaigns: true, canManageContent: true, canManageUpdates: true, canViewInvoices: false };
       const newMap = new Map(localAssign);
-      newMap.set(client.id, { id: null, ...defaults });
+      newMap.set(client.id, { id: null, ...DEFAULT_PERMS });
       setLocalAssign(newMap);
       const res = await fetch("/api/musteri/admin/assignments", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: employee.id, clientSlug: client.slug, ...defaults }),
+        body: JSON.stringify({ userId: employee.id, clientSlug: client.slug, ...DEFAULT_PERMS }),
       });
       const json = await res.json();
       if (json.ok) {
-        newMap.set(client.id, { id: json.id, ...defaults });
+        newMap.set(client.id, { id: json.id, ...DEFAULT_PERMS });
         setLocalAssign(new Map(newMap));
         router.refresh();
       }
     }
   }
 
-  async function handlePermToggle(clientId: string, perm: PermKey, value: boolean) {
+  async function handleSectionChange(
+    clientId: string,
+    section: typeof SECTIONS[number],
+    state: SectionState
+  ) {
     const current = localAssign.get(clientId);
     if (!current) return;
-    const updated = { ...current, [perm]: value };
+    const updates: Partial<Record<ViewKey | ManageKey, boolean>> = {
+      [section.viewKey]: state !== "yok",
+      [section.manageKey]: state === "duzenle",
+    };
+    const updated = { ...current, ...updates };
     const newMap = new Map(localAssign);
     newMap.set(clientId, updated);
     setLocalAssign(newMap);
     if (current.id) {
       await fetch(`/api/musteri/admin/assignments/${current.id}`, {
         method: "PATCH", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ [perm]: value }),
+        body: JSON.stringify(updates),
       });
     }
   }
@@ -212,7 +242,6 @@ function EmployeeCard({
 
   return (
     <div className="rounded-2xl overflow-hidden" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
-      {/* Çalışan başlık */}
       <div className="px-5 py-4 flex items-center gap-3" style={{ borderBottom: "1px solid var(--border)" }}>
         <div className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-[16px] flex-shrink-0"
           style={{ background: "var(--grad-soft)", color: "#c084fc" }}>
@@ -228,13 +257,11 @@ function EmployeeCard({
         </span>
       </div>
 
-      {/* Firma listesi — checkbox */}
       <div className="divide-y" style={{ borderColor: "var(--border)" }}>
         {allClients.map((client) => {
           const assigned = localAssign.get(client.id);
           return (
             <div key={client.id}>
-              {/* Firma satırı */}
               <label className="flex items-center gap-3 px-5 py-3 cursor-pointer hover:bg-white/[0.02] transition-colors select-none">
                 <input
                   type="checkbox"
@@ -243,25 +270,38 @@ function EmployeeCard({
                   className="w-4 h-4 rounded accent-purple-500 cursor-pointer flex-shrink-0"
                 />
                 <span className="text-[14px] text-white font-medium flex-1">{client.name}</span>
-                {assigned && (
-                  <span className="text-[11px] text-[#c084fc]">atandı</span>
-                )}
+                {assigned && <span className="text-[11px] text-[#c084fc]">atandı</span>}
               </label>
 
-              {/* Yetki toggleları — sadece atanmışsa göster */}
               {assigned && (
-                <div className="px-5 pb-3 flex flex-wrap gap-x-5 gap-y-2" style={{ paddingLeft: "2.75rem" }}>
-                  {PERM_LABELS.map(({ key, label }) => (
-                    <label key={key} className="flex items-center gap-1.5 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={assigned[key]}
-                        onChange={(e) => handlePermToggle(client.id, key, e.target.checked)}
-                        className="w-3.5 h-3.5 rounded accent-blue-500 cursor-pointer"
-                      />
-                      <span className="text-[12px] text-[#8a8a9a]">{label}</span>
-                    </label>
-                  ))}
+                <div className="px-5 pb-4 grid grid-cols-2 gap-x-6 gap-y-3" style={{ paddingLeft: "2.75rem" }}>
+                  {SECTIONS.map((sec) => {
+                    const state = getState(assigned[sec.viewKey], assigned[sec.manageKey]);
+                    return (
+                      <div key={sec.label}>
+                        <p className="text-[10px] font-semibold text-[#555] uppercase tracking-wide mb-1.5">{sec.label}</p>
+                        <div className="flex rounded-lg overflow-hidden" style={{ border: "1px solid var(--border)" }}>
+                          {(["yok", "goruntule", "duzenle"] as SectionState[]).map((s) => (
+                            <button
+                              key={s}
+                              onClick={() => handleSectionChange(client.id, sec, s)}
+                              className="flex-1 text-[11px] py-1 transition-colors"
+                              style={{
+                                background: state === s
+                                  ? s === "yok" ? "rgba(138,138,154,0.2)" : s === "goruntule" ? "rgba(96,165,250,0.2)" : "rgba(168,85,247,0.2)"
+                                  : "transparent",
+                                color: state === s
+                                  ? s === "yok" ? "#8a8a9a" : s === "goruntule" ? "#60a5fa" : "#c084fc"
+                                  : "#555",
+                                fontWeight: state === s ? 600 : 400,
+                              }}>
+                              {s === "yok" ? "Yok" : s === "goruntule" ? "Görüntüle" : "Düzenle"}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
                 </div>
               )}
             </div>

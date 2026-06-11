@@ -50,9 +50,13 @@ export default async function CalisanClientPage({
     package: client.package,
     perms: {
       canViewCampaigns: assignment.canViewCampaigns,
+      canManageCampaigns: assignment.canManageCampaigns,
+      canViewContent: assignment.canViewContent,
       canManageContent: assignment.canManageContent,
+      canViewUpdates: assignment.canViewUpdates,
       canManageUpdates: assignment.canManageUpdates,
       canViewInvoices: assignment.canViewInvoices,
+      canManageInvoices: assignment.canManageInvoices,
     },
     campaigns: client.campaigns.map((c) => ({
       id: c.id,

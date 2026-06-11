@@ -7,9 +7,13 @@ export const runtime = "nodejs";
 
 const patchSchema = z.object({
   canViewCampaigns: z.boolean().optional(),
+  canManageCampaigns: z.boolean().optional(),
+  canViewContent: z.boolean().optional(),
   canManageContent: z.boolean().optional(),
+  canViewUpdates: z.boolean().optional(),
   canManageUpdates: z.boolean().optional(),
   canViewInvoices: z.boolean().optional(),
+  canManageInvoices: z.boolean().optional(),
 });
 
 export async function PATCH(

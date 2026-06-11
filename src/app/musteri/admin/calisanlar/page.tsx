@@ -39,9 +39,13 @@ export default async function CalisanlarPage() {
       id: a.id,
       client: a.client,
       canViewCampaigns: a.canViewCampaigns,
+      canManageCampaigns: a.canManageCampaigns,
+      canViewContent: a.canViewContent,
       canManageContent: a.canManageContent,
+      canViewUpdates: a.canViewUpdates,
       canManageUpdates: a.canManageUpdates,
       canViewInvoices: a.canViewInvoices,
+      canManageInvoices: a.canManageInvoices,
     })),
   }));
 

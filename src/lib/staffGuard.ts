@@ -3,14 +3,18 @@ import { prisma } from "@/lib/db";
 import { NextResponse } from "next/server";
 
 const unauth = () => NextResponse.json({ error: "Yetkisiz." }, { status: 401 });
-const forbidden = () => NextResponse.json({ error: "Bu firmaya erişim yetkiniz yok." }, { status: 403 });
+const forbidden = () => NextResponse.json({ error: "Bu işlem için yetkiniz yok." }, { status: 403 });
 
 export type AssignmentPerms = {
   id: string;
   canViewCampaigns: boolean;
+  canManageCampaigns: boolean;
+  canViewContent: boolean;
   canManageContent: boolean;
+  canViewUpdates: boolean;
   canManageUpdates: boolean;
   canViewInvoices: boolean;
+  canManageInvoices: boolean;
 };
 
 /** ADMIN veya ilgili firmaya atanmış EMPLOYEE için geçer. Yetkiler döner. */
@@ -21,14 +25,71 @@ export async function requireStaffForSlug(slug: string) {
   if (session.role === "EMPLOYEE") {
     const hit = await prisma.assignment.findFirst({
       where: { userId: session.uid, client: { slug } },
-      select: { id: true, canViewCampaigns: true, canManageContent: true, canManageUpdates: true, canViewInvoices: true },
     });
     if (hit) return { session, perms: hit as AssignmentPerms, err: null };
   }
   return { session: null, perms: null, err: forbidden() };
 }
 
-/** ADMIN veya ilgili içeriğin firmasına atanmış ve canManageContent=true olan EMPLOYEE. */
+/** ADMIN veya firma'ya canManageCampaigns=true atanmış EMPLOYEE. */
+export async function requireCampaignManageForSlug(slug: string) {
+  const session = await getSession();
+  if (!session) return { session: null, err: unauth() };
+  if (session.role === "ADMIN") return { session, err: null };
+  if (session.role === "EMPLOYEE") {
+    const hit = await prisma.assignment.findFirst({
+      where: { userId: session.uid, client: { slug }, canManageCampaigns: true },
+    });
+    if (hit) return { session, err: null };
+  }
+  return { session: null, err: forbidden() };
+}
+
+/** ADMIN veya kampanyanın firmasına canManageCampaigns=true atanmış EMPLOYEE. */
+export async function requireCampaignManageById(id: string) {
+  const session = await getSession();
+  if (!session) return { session: null, err: unauth() };
+  if (session.role === "ADMIN") return { session, err: null };
+  if (session.role === "EMPLOYEE") {
+    const campaign = await prisma.campaign.findUnique({
+      where: { id },
+      select: { client: { select: { assignments: { where: { userId: session.uid, canManageCampaigns: true } } } } },
+    });
+    if (campaign?.client.assignments.length) return { session, err: null };
+  }
+  return { session: null, err: forbidden() };
+}
+
+/** ADMIN veya firma'ya canManageInvoices=true atanmış EMPLOYEE. */
+export async function requireInvoiceManageForSlug(slug: string) {
+  const session = await getSession();
+  if (!session) return { session: null, err: unauth() };
+  if (session.role === "ADMIN") return { session, err: null };
+  if (session.role === "EMPLOYEE") {
+    const hit = await prisma.assignment.findFirst({
+      where: { userId: session.uid, client: { slug }, canManageInvoices: true },
+    });
+    if (hit) return { session, err: null };
+  }
+  return { session: null, err: forbidden() };
+}
+
+/** ADMIN veya faturanın firmasına canManageInvoices=true atanmış EMPLOYEE. */
+export async function requireInvoiceManageById(id: string) {
+  const session = await getSession();
+  if (!session) return { session: null, err: unauth() };
+  if (session.role === "ADMIN") return { session, err: null };
+  if (session.role === "EMPLOYEE") {
+    const invoice = await prisma.invoice.findUnique({
+      where: { id },
+      select: { client: { select: { assignments: { where: { userId: session.uid, canManageInvoices: true } } } } },
+    });
+    if (invoice?.client.assignments.length) return { session, err: null };
+  }
+  return { session: null, err: forbidden() };
+}
+
+/** ADMIN veya içeriğin firmasına canManageContent=true atanmış EMPLOYEE. */
 export async function requireStaffForContentItem(id: string) {
   const session = await getSession();
   if (!session) return { session: null, err: unauth() };
@@ -43,7 +104,7 @@ export async function requireStaffForContentItem(id: string) {
   return { session: null, err: forbidden() };
 }
 
-/** ADMIN veya ilgili güncellemenin firmasına atanmış ve canManageUpdates=true olan EMPLOYEE. */
+/** ADMIN veya güncellemenin firmasına canManageUpdates=true atanmış EMPLOYEE. */
 export async function requireStaffForUpdate(id: string) {
   const session = await getSession();
   if (!session) return { session: null, err: unauth() };

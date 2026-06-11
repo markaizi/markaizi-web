@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
-import { requireAdmin } from "@/lib/adminGuard";
+import { requireInvoiceManageById } from "@/lib/staffGuard";
 import { InvoiceStatus } from "@prisma/client";
 
 export const runtime = "nodejs";
@@ -17,10 +17,10 @@ export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const { err } = await requireAdmin();
+  const { id } = await params;
+  const { err } = await requireInvoiceManageById(id);
   if (err) return err;
 
-  const { id } = await params;
   const body = await req.json();
   const parsed = patchSchema.safeParse(body);
   if (!parsed.success) {
@@ -43,10 +43,10 @@ export async function DELETE(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const { err } = await requireAdmin();
+  const { id } = await params;
+  const { err } = await requireInvoiceManageById(id);
   if (err) return err;
 
-  const { id } = await params;
   await prisma.invoice.delete({ where: { id } });
   return NextResponse.json({ ok: true });
 }
