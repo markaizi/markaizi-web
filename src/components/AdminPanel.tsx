@@ -50,10 +50,11 @@ export default function AdminPanel({
         </div>
         <button
           onClick={handleLogout}
-          className="text-[12px] text-[#8a8a9a] hover:text-white transition-colors flex items-center gap-1.5"
+          className="text-[12px] text-[#8a8a9a] hover:text-[#f87171] transition-colors flex items-center gap-1.5"
         >
           <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth="2">
-            <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M18.364 5.636A9 9 0 1 1 5.636 18.364" strokeLinecap="round"/>
+            <path d="M12 3v9" strokeLinecap="round"/>
           </svg>
           Çıkış
         </button>
