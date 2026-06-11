@@ -1,56 +1,20 @@
 /**
- * Ajans paneli kimlik & yetkilendirme yardımcıları.
+ * Ajans paneli kimlik & yetkilendirme yardımcıları (Node runtime).
  *
- * - JWT: jose ile imzalanır, httpOnly cookie `mkz_session`'da saklanır.
- * - getSession(): cookie'yi doğrular, oturum payload'ını döner.
- * - assertCanAccessClient(): rol bazlı firma erişim kontrolü (server-side).
- *
- * NOT: Edge (middleware) ile uyumlu olması için bu dosya `jose` kullanır,
- * Node-only API'ler (prisma) yalnızca assertCanAccessClient içinde çağrılır.
+ * Edge-güvenli JWT imzala/doğrula → src/lib/session.ts
+ * Bu dosya cookie (next/headers) ve prisma erişimi içerir.
  */
-import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
-import type { Role } from "@prisma/client";
+import {
+  SESSION_COOKIE,
+  SESSION_MAX_AGE,
+  signSession,
+  verifySession,
+  type SessionPayload,
+} from "./session";
 
-export const SESSION_COOKIE = "mkz_session";
-const SESSION_MAX_AGE = 60 * 60 * 24 * 7; // 7 gün (saniye)
-
-export interface SessionPayload {
-  uid: string;
-  role: Role;
-  clientId: string | null;
-  name: string;
-}
-
-function getSecret(): Uint8Array {
-  const secret = process.env.AUTH_SECRET;
-  if (!secret) throw new Error("AUTH_SECRET tanımlı değil.");
-  return new TextEncoder().encode(secret);
-}
-
-/** Oturum JWT'si üretir (login route'unda kullanılır). */
-export async function signSession(payload: SessionPayload): Promise<string> {
-  return new SignJWT({ ...payload })
-    .setProtectedHeader({ alg: "HS256" })
-    .setIssuedAt()
-    .setExpirationTime(`${SESSION_MAX_AGE}s`)
-    .sign(getSecret());
-}
-
-/** Bir JWT string'ini doğrular ve payload döner (yoksa null). */
-export async function verifySession(token: string): Promise<SessionPayload | null> {
-  try {
-    const { payload } = await jwtVerify(token, getSecret());
-    return {
-      uid: String(payload.uid),
-      role: payload.role as Role,
-      clientId: (payload.clientId as string | null) ?? null,
-      name: String(payload.name ?? ""),
-    };
-  } catch {
-    return null;
-  }
-}
+export { SESSION_COOKIE, signSession, verifySession };
+export type { SessionPayload };
 
 /** Cookie store'a oturum cookie'sini yazar. */
 export async function setSessionCookie(token: string) {
@@ -106,10 +70,9 @@ export async function assertCanAccessClient(
   throw new Error("Yetkisiz.");
 }
 
-/** Çalışanın atandığı firma id'leri (ADMIN için boş → tümü). */
+/** Rol bazlı erişilebilir firma filtresi (Prisma where). */
 export async function accessibleClientWhere(session: SessionPayload) {
   if (session.role === "ADMIN") return {};
   if (session.role === "CLIENT") return { id: session.clientId ?? "__none__" };
-  // EMPLOYEE
-  return { assignments: { some: { userId: session.uid } } };
+  return { assignments: { some: { userId: session.uid } } }; // EMPLOYEE
 }

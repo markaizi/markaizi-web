@@ -1,45 +1,33 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { CLIENTS } from "@/lib/clients";
 
-export default function AdminPanel() {
-  const router   = useRouter();
-  const [authed, setAuthed]     = useState(false);
-  const [checking, setChecking] = useState(true);
+export interface AdminClientSummary {
+  slug: string;
+  name: string;
+  package: string;
+  metaCount: number;
+  googleCount: number;
+  tiktokCount: number;
+  invoiceCount: number;
+}
 
-  useEffect(() => {
-    if (sessionStorage.getItem("mkz_admin") === "1") {
-      setAuthed(true);
+export default function AdminPanel({
+  clients,
+  adminName,
+}: {
+  clients: AdminClientSummary[];
+  adminName: string;
+}) {
+  const router = useRouter();
+
+  async function handleLogout() {
+    try {
+      await fetch("/api/musteri/auth/logout", { method: "POST" });
+    } catch {
+      /* yine de yönlendir */
     }
-    setChecking(false);
-  }, []);
-
-  function handleLogout() {
-    sessionStorage.removeItem("mkz_admin");
-    router.push("/");
-  }
-
-  function openClient(slug: string) {
-    // Admin tüm panellere şifresiz erişebilir
-    sessionStorage.setItem(`mkz_auth_${slug}`, "1");
-    router.push(`/musteri/${slug}`);
-  }
-
-  if (checking) return null;
-
-  if (!authed) {
-    return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: "var(--bg)" }}>
-        <div className="text-center px-6">
-          <div className="text-4xl mb-4">🔒</div>
-          <h1 className="text-white font-bold text-xl mb-2">Yetkisiz Erişim</h1>
-          <p className="text-[#8a8a9a] text-sm mb-6">Bu sayfaya erişmek için admin girişi yapmanız gerekiyor.</p>
-          <a href="/" className="btn btn-primary">Ana Sayfaya Dön</a>
-        </div>
-      </div>
-    );
+    window.location.href = "/musteri/giris";
   }
 
   return (
@@ -65,7 +53,7 @@ export default function AdminPanel() {
           className="text-[12px] text-[#8a8a9a] hover:text-white transition-colors flex items-center gap-1.5"
         >
           <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth="2">
-            <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
           Çıkış
         </button>
@@ -76,17 +64,18 @@ export default function AdminPanel() {
         <div className="mb-10">
           <h2 className="font-black text-[24px] text-white mb-1">Müşteri Panelleri</h2>
           <p className="text-[14px] text-[#8a8a9a]">
-            {CLIENTS.length} aktif müşteri · Bir panele tıklayarak şifresiz erişebilirsiniz.
+            Merhaba {adminName} · {clients.length} aktif müşteri · Bir panele tıklayarak erişebilirsiniz.
           </p>
         </div>
 
         {/* Müşteri Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {CLIENTS.map((client) => (
+          {clients.map((client) => (
             <div
               key={client.slug}
               className="rounded-2xl p-6 flex flex-col gap-4 cursor-pointer group transition-all duration-200"
               style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+              onClick={() => router.push(`/musteri/${client.slug}`)}
               onMouseEnter={(e) => {
                 (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(168,85,247,0.35)";
                 (e.currentTarget as HTMLDivElement).style.background = "var(--surface-2)";
@@ -112,26 +101,31 @@ export default function AdminPanel() {
 
               {/* Özet bilgiler */}
               <div className="flex flex-wrap gap-2 text-[11px]">
-                {(client.metaCampaigns?.length ?? 0) > 0 && (
+                {client.metaCount > 0 && (
                   <span className="px-2 py-1 rounded-full" style={{ background: "rgba(168,85,247,0.1)", color: "#c084fc" }}>
-                    {client.metaCampaigns!.length} Meta kampanya
+                    {client.metaCount} Meta kampanya
                   </span>
                 )}
-                {(client.googleCampaigns?.length ?? 0) > 0 && (
+                {client.googleCount > 0 && (
                   <span className="px-2 py-1 rounded-full" style={{ background: "rgba(59,130,246,0.1)", color: "#60a5fa" }}>
-                    {client.googleCampaigns!.length} Google kampanya
+                    {client.googleCount} Google kampanya
                   </span>
                 )}
-                {(client.invoices?.length ?? 0) > 0 && (
+                {client.tiktokCount > 0 && (
+                  <span className="px-2 py-1 rounded-full" style={{ background: "rgba(236,72,153,0.1)", color: "#f472b6" }}>
+                    {client.tiktokCount} TikTok kampanya
+                  </span>
+                )}
+                {client.invoiceCount > 0 && (
                   <span className="px-2 py-1 rounded-full" style={{ background: "rgba(52,211,153,0.1)", color: "#34d399" }}>
-                    {client.invoices!.length} fatura
+                    {client.invoiceCount} fatura
                   </span>
                 )}
               </div>
 
               {/* Panel aç butonu */}
               <button
-                onClick={() => openClient(client.slug)}
+                onClick={(e) => { e.stopPropagation(); router.push(`/musteri/${client.slug}`); }}
                 className="btn btn-outline text-sm py-2.5 w-full mt-auto group-hover:border-purple-500/50 transition-colors"
               >
                 Paneli Aç →

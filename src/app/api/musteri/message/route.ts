@@ -1,10 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 import { escapeHtml, cleanStr, rateLimit, getClientIp } from "@/lib/security";
-import { getClient } from "@/lib/clients";
+import { prisma } from "@/lib/db";
+import { getSession } from "@/lib/auth";
+
+export const runtime = "nodejs";
 
 export async function POST(req: NextRequest) {
   try {
+    // Yalnızca oturum açmış kullanıcılar mesaj gönderebilir
+    const session = await getSession();
+    if (!session) {
+      return NextResponse.json({ error: "Oturum gerekli." }, { status: 401 });
+    }
+
     // Rate limit: IP başına dakikada 5 istek
     const rl = rateLimit(`musteri-msg:${getClientIp(req)}`, 5, 60_000);
     if (!rl.ok) {
@@ -22,8 +31,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Mesaj boş olamaz." }, { status: 400 });
     }
 
-    // Müşteri adını slug'dan çek
-    const client = getClient(slug);
+    // Müşteri adını DB'den çek
+    const client = await prisma.client.findUnique({ where: { slug }, select: { name: true } });
     const clientName = client?.name ?? slug;
 
     const transporter = nodemailer.createTransport({
