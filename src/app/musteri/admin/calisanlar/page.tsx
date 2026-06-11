@@ -38,6 +38,10 @@ export default async function CalisanlarPage() {
     assignments: e.assignments.map((a) => ({
       id: a.id,
       client: a.client,
+      canViewCampaigns: a.canViewCampaigns,
+      canManageContent: a.canManageContent,
+      canManageUpdates: a.canManageUpdates,
+      canViewInvoices: a.canViewInvoices,
     })),
   }));
 

@@ -21,9 +21,10 @@ export default async function CalisanClientPage({
   const session = await getSession();
   if (!session) redirect("/musteri/giris");
   if (session.role === "CLIENT") redirect(session.slug ? `/musteri/${session.slug}` : "/musteri/giris");
-  if (session.role === "ADMIN") redirect(`/musteri/admin/${(await params).slug}`);
 
   const { slug } = await params;
+
+  if (session.role === "ADMIN") redirect(`/musteri/admin/${slug}`);
 
   // EMPLOYEE: sadece atanmış firmaya erişebilir
   const assignment = await prisma.assignment.findFirst({
@@ -37,6 +38,7 @@ export default async function CalisanClientPage({
       campaigns: { orderBy: [{ platform: "asc" }, { sortOrder: "asc" }] },
       updates: { orderBy: { date: "desc" }, take: 20 },
       contentItems: { orderBy: { scheduledDate: "desc" } },
+      invoices: { orderBy: { id: "desc" } },
     },
   });
 
@@ -46,6 +48,12 @@ export default async function CalisanClientPage({
     slug: client.slug,
     name: client.name,
     package: client.package,
+    perms: {
+      canViewCampaigns: assignment.canViewCampaigns,
+      canManageContent: assignment.canManageContent,
+      canManageUpdates: assignment.canManageUpdates,
+      canViewInvoices: assignment.canViewInvoices,
+    },
     campaigns: client.campaigns.map((c) => ({
       id: c.id,
       platform: c.platform,
@@ -67,6 +75,13 @@ export default async function CalisanClientPage({
       scheduledDate: ci.scheduledDate.toISOString().split("T")[0],
       status: ci.status,
       publishedAt: ci.publishedAt?.toISOString().split("T")[0] ?? null,
+    })),
+    invoices: client.invoices.map((i) => ({
+      id: i.id,
+      period: i.period,
+      amount: i.amount,
+      status: i.status,
+      dueDate: i.dueDate?.toISOString().split("T")[0] ?? null,
     })),
   };
 

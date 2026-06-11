@@ -8,6 +8,10 @@ export const runtime = "nodejs";
 const schema = z.object({
   userId: z.string().min(1),
   clientSlug: z.string().min(1),
+  canViewCampaigns: z.boolean().default(true),
+  canManageContent: z.boolean().default(true),
+  canManageUpdates: z.boolean().default(true),
+  canViewInvoices: z.boolean().default(false),
 });
 
 export async function POST(req: NextRequest) {
@@ -20,7 +24,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
   }
 
-  const { userId, clientSlug } = parsed.data;
+  const { userId, clientSlug, ...perms } = parsed.data;
 
   const client = await prisma.client.findUnique({ where: { slug: clientSlug } });
   if (!client) return NextResponse.json({ error: "Firma bulunamadı." }, { status: 404 });
@@ -32,8 +36,8 @@ export async function POST(req: NextRequest) {
 
   const assignment = await prisma.assignment.upsert({
     where: { userId_clientId: { userId, clientId: client.id } },
-    create: { userId, clientId: client.id },
-    update: {},
+    create: { userId, clientId: client.id, ...perms },
+    update: perms,
   });
 
   return NextResponse.json({ ok: true, id: assignment.id });

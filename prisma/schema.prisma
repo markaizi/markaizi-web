@@ -107,6 +107,12 @@ model Assignment {
   userId   String // EMPLOYEE
   clientId String
 
+  // Hangi sekmeleri görebilir / yönetebilir
+  canViewCampaigns Boolean @default(true)
+  canManageContent Boolean @default(true)
+  canManageUpdates Boolean @default(true)
+  canViewInvoices  Boolean @default(false)
+
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
 

@@ -7,6 +7,12 @@ export interface EmployeeClientData {
   slug: string;
   name: string;
   package: string;
+  perms: {
+    canViewCampaigns: boolean;
+    canManageContent: boolean;
+    canManageUpdates: boolean;
+    canViewInvoices: boolean;
+  };
   campaigns: {
     id: string;
     platform: "META" | "GOOGLE" | "TIKTOK";
@@ -17,12 +23,15 @@ export interface EmployeeClientData {
   }[];
   updates: { id: string; kind: "AJANS" | "WEBSITE"; text: string; date: string }[];
   contentItems: {
-    id: string;
-    title: string;
-    description: string;
+    id: string; title: string; description: string;
     scheduledDate: string;
     status: "PLANLANDI" | "DUZENLENIYOR" | "HAZIR" | "YAYINLANDI";
     publishedAt: string | null;
+  }[];
+  invoices: {
+    id: string; period: string; amount: string;
+    status: "ODENDI" | "BEKLIYOR" | "GUNU_GELMEDI";
+    dueDate: string | null;
   }[];
 }
 
@@ -31,21 +40,33 @@ const PLATFORM_BG: Record<string, string> = { META: "rgba(168,85,247,0.15)", GOO
 const STATUS_LABEL: Record<string, string> = {
   AKTIF: "Aktif", DURAKLATILDI: "Duraklatıldı", TAMAMLANDI: "Tamamlandı", ODEME_HATASI: "Ödeme Hatası",
   PLANLANDI: "Planlandı", DUZENLENIYOR: "Düzenleniyor", HAZIR: "Hazır", YAYINLANDI: "Yayınlandı",
+  ODENDI: "Ödendi", BEKLIYOR: "Bekliyor", GUNU_GELMEDI: "Günü Gelmedi",
 };
 const STATUS_COLOR: Record<string, string> = {
   AKTIF: "#34d399", DURAKLATILDI: "#fbbf24", TAMAMLANDI: "#8a8a9a", ODEME_HATASI: "#f87171",
   PLANLANDI: "#8a8a9a", DUZENLENIYOR: "#fbbf24", HAZIR: "#60a5fa", YAYINLANDI: "#34d399",
+  ODENDI: "#34d399", BEKLIYOR: "#fbbf24", GUNU_GELMEDI: "#8a8a9a",
 };
 const CONTENT_STATUS_BG: Record<string, string> = {
   PLANLANDI: "rgba(138,138,154,0.12)", DUZENLENIYOR: "rgba(251,191,36,0.12)",
   HAZIR: "rgba(96,165,250,0.12)", YAYINLANDI: "rgba(52,211,153,0.12)",
 };
-
 type ContentStatus = EmployeeClientData["contentItems"][number]["status"];
+
+type TabKey = "icerikler" | "guncellemeler" | "kampanyalar" | "faturalar";
 
 export default function EmployeeClientDetail({ data }: { data: EmployeeClientData }) {
   const router = useRouter();
-  const [tab, setTab] = useState<"icerikler" | "guncellemeler" | "kampanyalar">("icerikler");
+  const { perms } = data;
+
+  const tabs = [
+    perms.canManageContent && { key: "icerikler" as TabKey, label: "İçerikler" },
+    perms.canManageUpdates && { key: "guncellemeler" as TabKey, label: "Güncellemeler" },
+    perms.canViewCampaigns && { key: "kampanyalar" as TabKey, label: "Kampanyalar" },
+    perms.canViewInvoices && { key: "faturalar" as TabKey, label: "Faturalar" },
+  ].filter(Boolean) as { key: TabKey; label: string }[];
+
+  const [tab, setTab] = useState<TabKey>(tabs[0]?.key ?? "icerikler");
 
   async function handleLogout() {
     try { await fetch("/api/musteri/auth/logout", { method: "POST" }); } catch { /* ignore */ }
@@ -54,10 +75,8 @@ export default function EmployeeClientDetail({ data }: { data: EmployeeClientDat
 
   return (
     <div className="min-h-screen" style={{ background: "var(--bg)" }}>
-      <header
-        className="sticky top-0 z-50 px-6 py-4 flex items-center justify-between"
-        style={{ background: "rgba(5,5,5,0.9)", backdropFilter: "blur(20px)", borderBottom: "1px solid var(--border)" }}
-      >
+      <header className="sticky top-0 z-50 px-6 py-4 flex items-center justify-between"
+        style={{ background: "rgba(5,5,5,0.9)", backdropFilter: "blur(20px)", borderBottom: "1px solid var(--border)" }}>
         <div className="flex items-center gap-2 min-w-0">
           <a href="/" className="font-black text-[18px] gradient-text flex-shrink-0">markaizi</a>
           <span className="text-[#555]">/</span>
@@ -65,7 +84,7 @@ export default function EmployeeClientDetail({ data }: { data: EmployeeClientDat
           <span className="text-[#555]">/</span>
           <span className="text-[14px] font-semibold text-white truncate">{data.name}</span>
         </div>
-        <button onClick={handleLogout} className="text-[12px] text-[#8a8a9a] hover:text-white transition-colors flex items-center gap-1.5 flex-shrink-0">
+        <button onClick={handleLogout} className="text-[12px] text-[#8a8a9a] hover:text-white flex items-center gap-1.5 flex-shrink-0">
           <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth="2">
             <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
@@ -85,41 +104,47 @@ export default function EmployeeClientDetail({ data }: { data: EmployeeClientDat
           </div>
         </div>
 
-        <div className="flex gap-1 mb-7 flex-wrap">
-          {(["icerikler", "guncellemeler", "kampanyalar"] as const).map((t) => {
-            const labels = { icerikler: "İçerikler", guncellemeler: "Güncellemeler", kampanyalar: "Kampanyalar" };
-            return (
-              <button key={t} onClick={() => setTab(t)}
-                className="px-4 py-2 rounded-full text-[13px] font-medium transition-all"
-                style={{
-                  background: tab === t ? "rgba(96,165,250,0.2)" : "var(--surface)",
-                  border: `1px solid ${tab === t ? "rgba(96,165,250,0.4)" : "var(--border)"}`,
-                  color: tab === t ? "#60a5fa" : "#8a8a9a",
-                }}>
-                {labels[t]}
-              </button>
-            );
-          })}
-        </div>
+        {tabs.length === 0 ? (
+          <p className="text-[14px] text-[#8a8a9a] text-center py-16">Bu firmada henüz görüntüleme yetkiniz yok.</p>
+        ) : (
+          <>
+            <div className="flex gap-1 mb-7 flex-wrap">
+              {tabs.map((t) => (
+                <button key={t.key} onClick={() => setTab(t.key)}
+                  className="px-4 py-2 rounded-full text-[13px] font-medium transition-all"
+                  style={{
+                    background: tab === t.key ? "rgba(96,165,250,0.2)" : "var(--surface)",
+                    border: `1px solid ${tab === t.key ? "rgba(96,165,250,0.4)" : "var(--border)"}`,
+                    color: tab === t.key ? "#60a5fa" : "#8a8a9a",
+                  }}>
+                  {t.label}
+                </button>
+              ))}
+            </div>
 
-        {tab === "icerikler" && <EmpIceriklerTab slug={data.slug} contentItems={data.contentItems} router={router} />}
-        {tab === "guncellemeler" && <EmpGuncellemelerTab slug={data.slug} updates={data.updates} router={router} />}
-        {tab === "kampanyalar" && <EmpKampanyalarTab campaigns={data.campaigns} />}
+            {tab === "icerikler" && perms.canManageContent && (
+              <EmpIceriklerTab slug={data.slug} contentItems={data.contentItems} router={router} />
+            )}
+            {tab === "guncellemeler" && perms.canManageUpdates && (
+              <EmpGuncellemelerTab slug={data.slug} updates={data.updates} router={router} />
+            )}
+            {tab === "kampanyalar" && perms.canViewCampaigns && (
+              <EmpKampanyalarTab campaigns={data.campaigns} />
+            )}
+            {tab === "faturalar" && perms.canViewInvoices && (
+              <EmpFaturalarTab invoices={data.invoices} />
+            )}
+          </>
+        )}
       </main>
     </div>
   );
 }
 
-// ── İçerikler (çalışan) ───────────────────────────────────────────────────────
+// ── İçerikler ─────────────────────────────────────────────────────────────────
 
-function EmpIceriklerTab({
-  slug,
-  contentItems,
-  router,
-}: {
-  slug: string;
-  contentItems: EmployeeClientData["contentItems"];
-  router: ReturnType<typeof useRouter>;
+function EmpIceriklerTab({ slug, contentItems, router }: {
+  slug: string; contentItems: EmployeeClientData["contentItems"]; router: ReturnType<typeof useRouter>;
 }) {
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ title: "", description: "", scheduledDate: "", status: "PLANLANDI" as ContentStatus });
@@ -127,31 +152,20 @@ function EmpIceriklerTab({
   const [err, setErr] = useState("");
 
   async function handleAdd(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-    setErr("");
+    e.preventDefault(); setLoading(true); setErr("");
     const res = await fetch(`/api/musteri/admin/clients/${slug}/content`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+      method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ...form, description: form.description || undefined }),
     });
-    const json = await res.json();
-    setLoading(false);
-    if (json.ok) {
-      setShowForm(false);
-      setForm({ title: "", description: "", scheduledDate: "", status: "PLANLANDI" });
-      router.refresh();
-    } else setErr(json.error ?? "Hata.");
+    const json = await res.json(); setLoading(false);
+    if (json.ok) { setShowForm(false); setForm({ title: "", description: "", scheduledDate: "", status: "PLANLANDI" }); router.refresh(); }
+    else setErr(json.error ?? "Hata.");
   }
 
   async function handleStatusChange(id: string, status: ContentStatus) {
     const body: Record<string, string | null> = { status };
     if (status === "YAYINLANDI") body.publishedAt = new Date().toISOString();
-    await fetch(`/api/musteri/admin/content/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
+    await fetch(`/api/musteri/admin/content/${id}`, { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
     router.refresh();
   }
 
@@ -161,8 +175,8 @@ function EmpIceriklerTab({
         <div key={ci.id} className="rounded-xl p-4" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
           <div className="flex items-start justify-between gap-3">
             <div className="min-w-0 flex-1">
-              <p className="text-white text-[14px] font-semibold leading-snug">{ci.title}</p>
-              {ci.description && <p className="text-[12px] text-[#8a8a9a] mt-0.5 leading-relaxed">{ci.description}</p>}
+              <p className="text-white text-[14px] font-semibold">{ci.title}</p>
+              {ci.description && <p className="text-[12px] text-[#8a8a9a] mt-0.5">{ci.description}</p>}
               <p className="text-[11px] text-[#555] mt-1">{ci.scheduledDate}{ci.publishedAt ? ` · Yayınlandı: ${ci.publishedAt}` : ""}</p>
             </div>
             <div className="flex items-center gap-2 flex-shrink-0">
@@ -182,9 +196,7 @@ function EmpIceriklerTab({
           </div>
         </div>
       ))}
-
       {contentItems.length === 0 && <p className="text-[13px] text-[#8a8a9a] text-center py-8">Henüz içerik yok.</p>}
-
       {!showForm ? (
         <button onClick={() => setShowForm(true)} className="btn btn-outline text-sm w-full py-3 mt-2">+ İçerik Ekle</button>
       ) : (
@@ -192,16 +204,14 @@ function EmpIceriklerTab({
           <p className="font-semibold text-white text-[14px]">Yeni İçerik</p>
           <div>
             <label className="block text-[11px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1.5">Başlık</label>
-            <input required value={form.title} onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))}
-              placeholder="Mayıs Tanıtım Videosu"
+            <input required value={form.title} onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))} placeholder="Mayıs Tanıtım Videosu"
               className="w-full px-3 py-2 rounded-lg text-[14px] text-white placeholder-[#555] outline-none focus:ring-1 focus:ring-blue-500/50"
               style={{ background: "var(--bg)", border: "1px solid var(--border)" }} />
           </div>
           <div>
             <label className="block text-[11px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1.5">Açıklama (opsiyonel)</label>
-            <textarea rows={2} value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
-              placeholder="İçerik detayları..."
-              className="w-full px-3 py-2 rounded-lg text-[14px] text-white placeholder-[#555] outline-none focus:ring-1 focus:ring-blue-500/50 resize-none"
+            <textarea rows={2} value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} placeholder="İçerik detayları..."
+              className="w-full px-3 py-2 rounded-lg text-[14px] text-white placeholder-[#555] outline-none resize-none"
               style={{ background: "var(--bg)", border: "1px solid var(--border)" }} />
           </div>
           <div className="grid grid-cols-2 gap-3">
@@ -234,16 +244,10 @@ function EmpIceriklerTab({
   );
 }
 
-// ── Güncellemeler (çalışan) ───────────────────────────────────────────────────
+// ── Güncellemeler ─────────────────────────────────────────────────────────────
 
-function EmpGuncellemelerTab({
-  slug,
-  updates,
-  router,
-}: {
-  slug: string;
-  updates: EmployeeClientData["updates"];
-  router: ReturnType<typeof useRouter>;
+function EmpGuncellemelerTab({ slug, updates, router }: {
+  slug: string; updates: EmployeeClientData["updates"]; router: ReturnType<typeof useRouter>;
 }) {
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ kind: "AJANS" as "AJANS" | "WEBSITE", text: "", date: new Date().toISOString().split("T")[0] });
@@ -251,21 +255,13 @@ function EmpGuncellemelerTab({
   const [err, setErr] = useState("");
 
   async function handleAdd(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-    setErr("");
+    e.preventDefault(); setLoading(true); setErr("");
     const res = await fetch(`/api/musteri/admin/clients/${slug}/updates`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form),
     });
-    const json = await res.json();
-    setLoading(false);
-    if (json.ok) {
-      setShowForm(false);
-      setForm({ kind: "AJANS", text: "", date: new Date().toISOString().split("T")[0] });
-      router.refresh();
-    } else setErr(json.error ?? "Hata.");
+    const json = await res.json(); setLoading(false);
+    if (json.ok) { setShowForm(false); setForm({ kind: "AJANS", text: "", date: new Date().toISOString().split("T")[0] }); router.refresh(); }
+    else setErr(json.error ?? "Hata.");
   }
 
   return (
@@ -273,10 +269,7 @@ function EmpGuncellemelerTab({
       {updates.map((u) => (
         <div key={u.id} className="rounded-xl p-4 flex items-start gap-3" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
           <span className="text-[11px] font-bold px-2.5 py-1 rounded-full flex-shrink-0 mt-0.5"
-            style={{
-              background: u.kind === "AJANS" ? "rgba(168,85,247,0.15)" : "rgba(59,130,246,0.15)",
-              color: u.kind === "AJANS" ? "#c084fc" : "#60a5fa",
-            }}>
+            style={{ background: u.kind === "AJANS" ? "rgba(168,85,247,0.15)" : "rgba(59,130,246,0.15)", color: u.kind === "AJANS" ? "#c084fc" : "#60a5fa" }}>
             {u.kind === "AJANS" ? "Ajans" : "Web Site"}
           </span>
           <div className="flex-1 min-w-0">
@@ -285,9 +278,7 @@ function EmpGuncellemelerTab({
           </div>
         </div>
       ))}
-
       {updates.length === 0 && <p className="text-[13px] text-[#8a8a9a] text-center py-8">Henüz güncelleme yok.</p>}
-
       {!showForm ? (
         <button onClick={() => setShowForm(true)} className="btn btn-outline text-sm w-full py-3 mt-2">+ Güncelleme Ekle</button>
       ) : (
@@ -312,9 +303,8 @@ function EmpGuncellemelerTab({
           </div>
           <div>
             <label className="block text-[11px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1.5">Metin</label>
-            <textarea required rows={3} value={form.text} onChange={(e) => setForm((f) => ({ ...f, text: e.target.value }))}
-              placeholder="Yapılan çalışmayı açıklayın..."
-              className="w-full px-3 py-2 rounded-lg text-[14px] text-white placeholder-[#555] outline-none focus:ring-1 focus:ring-blue-500/50 resize-none"
+            <textarea required rows={3} value={form.text} onChange={(e) => setForm((f) => ({ ...f, text: e.target.value }))} placeholder="Yapılan çalışmayı açıklayın..."
+              className="w-full px-3 py-2 rounded-lg text-[14px] text-white placeholder-[#555] outline-none resize-none"
               style={{ background: "var(--bg)", border: "1px solid var(--border)" }} />
           </div>
           {err && <p className="text-[12px] text-red-400">{err}</p>}
@@ -328,7 +318,7 @@ function EmpGuncellemelerTab({
   );
 }
 
-// ── Kampanyalar (çalışan, sadece okuma) ──────────────────────────────────────
+// ── Kampanyalar (salt-okunur) ─────────────────────────────────────────────────
 
 function EmpKampanyalarTab({ campaigns }: { campaigns: EmployeeClientData["campaigns"] }) {
   return (
@@ -350,6 +340,30 @@ function EmpKampanyalarTab({ campaigns }: { campaigns: EmployeeClientData["campa
         </div>
       ))}
       {campaigns.length === 0 && <p className="text-[13px] text-[#8a8a9a] text-center py-8">Kampanya yok.</p>}
+    </div>
+  );
+}
+
+// ── Faturalar (salt-okunur) ───────────────────────────────────────────────────
+
+function EmpFaturalarTab({ invoices }: { invoices: EmployeeClientData["invoices"] }) {
+  return (
+    <div className="space-y-3">
+      {invoices.map((inv) => (
+        <div key={inv.id} className="rounded-xl p-4" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="text-white text-[14px] font-semibold">{inv.period}</p>
+              <p className="text-[13px] text-[#8a8a9a] mt-0.5">{inv.amount}{inv.dueDate ? ` · Vade: ${inv.dueDate}` : ""}</p>
+            </div>
+            <span className="text-[11px] px-2.5 py-1 rounded-full flex-shrink-0"
+              style={{ background: "rgba(138,138,154,0.12)", color: STATUS_COLOR[inv.status] }}>
+              {STATUS_LABEL[inv.status]}
+            </span>
+          </div>
+        </div>
+      ))}
+      {invoices.length === 0 && <p className="text-[13px] text-[#8a8a9a] text-center py-8">Fatura yok.</p>}
     </div>
   );
 }
