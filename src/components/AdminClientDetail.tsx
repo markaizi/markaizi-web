@@ -578,21 +578,25 @@ function FaturalarTab({ slug, invoices, router }: { slug: string; invoices: Invo
   return (
     <div className="space-y-3">
       {invoices.map((inv) => (
-        <div key={inv.id} className="rounded-xl p-4 flex items-center gap-3" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
-          <div className="flex-1 min-w-0">
-            <p className="text-white text-[14px] font-semibold">{inv.period}</p>
-            <p className="text-[13px] text-[#8a8a9a]">{inv.amount}{inv.dueDate ? ` · Vade: ${inv.dueDate}` : ""}</p>
+        <div key={inv.id} className="rounded-xl p-4" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="text-white text-[14px] font-semibold leading-snug">{inv.period}</p>
+              <p className="text-[13px] text-[#8a8a9a] mt-0.5">{inv.amount}{inv.dueDate ? ` · Vade: ${inv.dueDate}` : ""}</p>
+            </div>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <Select
+                value={inv.status}
+                onChange={(e) => handleStatusChange(inv.id, e.target.value as Invoice["status"])}
+                style={{ width: "auto", fontSize: "12px", padding: "4px 8px", color: STATUS_COLOR[inv.status] }}
+              >
+                <option value="ODENDI">Ödendi</option>
+                <option value="BEKLIYOR">Bekliyor</option>
+                <option value="GUNU_GELMEDI">Günü Gelmedi</option>
+              </Select>
+              <DeleteBtn onClick={() => handleDelete(inv.id)} loading={deleting === inv.id} />
+            </div>
           </div>
-          <Select
-            value={inv.status}
-            onChange={(e) => handleStatusChange(inv.id, e.target.value as Invoice["status"])}
-            style={{ width: "auto", fontSize: "12px", padding: "4px 8px", color: STATUS_COLOR[inv.status] }}
-          >
-            <option value="ODENDI">Ödendi</option>
-            <option value="BEKLIYOR">Bekliyor</option>
-            <option value="GUNU_GELMEDI">Günü Gelmedi</option>
-          </Select>
-          <DeleteBtn onClick={() => handleDelete(inv.id)} loading={deleting === inv.id} />
         </div>
       ))}
 
