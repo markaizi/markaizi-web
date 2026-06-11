@@ -33,6 +33,7 @@ export default async function AdminClientPage({
       campaigns: { orderBy: [{ platform: "asc" }, { sortOrder: "asc" }] },
       updates: { orderBy: { date: "desc" } },
       invoices: { orderBy: { id: "desc" } },
+      contentItems: { orderBy: { scheduledDate: "desc" } },
       users: { where: { role: "CLIENT" }, select: { id: true, username: true, name: true, email: true } },
     },
   });
@@ -68,6 +69,14 @@ export default async function AdminClientPage({
       amount: i.amount,
       status: i.status,
       dueDate: i.dueDate?.toISOString().split("T")[0] ?? null,
+    })),
+    contentItems: client.contentItems.map((ci) => ({
+      id: ci.id,
+      title: ci.title,
+      description: ci.description ?? "",
+      scheduledDate: ci.scheduledDate.toISOString().split("T")[0],
+      status: ci.status,
+      publishedAt: ci.publishedAt?.toISOString().split("T")[0] ?? null,
     })),
     users: client.users,
   };

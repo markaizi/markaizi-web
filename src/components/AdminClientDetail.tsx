@@ -35,6 +35,14 @@ export interface ClientDetailData {
     status: "ODENDI" | "BEKLIYOR" | "GUNU_GELMEDI";
     dueDate: string | null;
   }[];
+  contentItems: {
+    id: string;
+    title: string;
+    description: string;
+    scheduledDate: string;
+    status: "PLANLANDI" | "DUZENLENIYOR" | "HAZIR" | "YAYINLANDI";
+    publishedAt: string | null;
+  }[];
   users: { id: string; username: string | null; name: string; email: string }[];
 }
 
@@ -68,6 +76,17 @@ const STATUS_COLOR: Record<string, string> = {
   ODENDI: "#34d399",
   BEKLIYOR: "#fbbf24",
   GUNU_GELMEDI: "#8a8a9a",
+  PLANLANDI: "#8a8a9a",
+  DUZENLENIYOR: "#fbbf24",
+  HAZIR: "#60a5fa",
+  YAYINLANDI: "#34d399",
+};
+
+const CONTENT_STATUS_BG: Record<string, string> = {
+  PLANLANDI: "rgba(138,138,154,0.12)",
+  DUZENLENIYOR: "rgba(251,191,36,0.12)",
+  HAZIR: "rgba(96,165,250,0.12)",
+  YAYINLANDI: "rgba(52,211,153,0.12)",
 };
 
 // ── Paylaşılan UI ─────────────────────────────────────────────────────────────
@@ -153,7 +172,7 @@ function DeleteBtn({ onClick, loading }: { onClick: () => void; loading: boolean
 
 export default function AdminClientDetail({ data }: { data: ClientDetailData }) {
   const router = useRouter();
-  const [tab, setTab] = useState<"genel" | "kampanyalar" | "guncellemeler" | "faturalar" | "kullanici">("genel");
+  const [tab, setTab] = useState<"genel" | "kampanyalar" | "icerikler" | "guncellemeler" | "faturalar" | "kullanici">("genel");
 
   async function handleLogout() {
     try { await fetch("/api/musteri/auth/logout", { method: "POST" }); } catch { /* ignore */ }
@@ -202,10 +221,11 @@ export default function AdminClientDetail({ data }: { data: ClientDetailData }) 
 
         {/* Sekmeler */}
         <div className="flex gap-1 mb-7 flex-wrap">
-          {(["genel", "kampanyalar", "guncellemeler", "faturalar", "kullanici"] as const).map((t) => {
+          {(["genel", "kampanyalar", "icerikler", "guncellemeler", "faturalar", "kullanici"] as const).map((t) => {
             const labels: Record<typeof t, string> = {
               genel: "Genel",
               kampanyalar: "Kampanyalar",
+              icerikler: "İçerikler",
               guncellemeler: "Güncellemeler",
               faturalar: "Faturalar",
               kullanici: "Kullanıcı",
@@ -230,6 +250,7 @@ export default function AdminClientDetail({ data }: { data: ClientDetailData }) 
         {/* İçerik */}
         {tab === "genel" && <GenelTab data={data} router={router} />}
         {tab === "kampanyalar" && <KampanyalarTab slug={data.slug} campaigns={data.campaigns} router={router} />}
+        {tab === "icerikler" && <IceriklerTab slug={data.slug} contentItems={data.contentItems} router={router} />}
         {tab === "guncellemeler" && <GuncellemelerTab slug={data.slug} updates={data.updates} router={router} />}
         {tab === "faturalar" && <FaturalarTab slug={data.slug} invoices={data.invoices} router={router} />}
         {tab === "kullanici" && <KullaniciTab slug={data.slug} users={data.users} router={router} />}
@@ -629,6 +650,156 @@ function FaturalarTab({ slug, invoices, router }: { slug: string; invoices: Invo
             </Field>
             <Field label="Vade Tarihi (opsiyonel)">
               <Input type="date" value={form.dueDate} onChange={(e) => setForm((f) => ({ ...f, dueDate: e.target.value }))} />
+            </Field>
+          </div>
+          <ErrMsg msg={err} />
+          <div className="flex gap-2">
+            <SaveBtn loading={loading} label="Ekle" />
+            <button type="button" onClick={() => setShowForm(false)} className="btn btn-outline text-sm px-5 py-2">İptal</button>
+          </div>
+        </form>
+      )}
+    </div>
+  );
+}
+
+// ── İçerikler sekmesi ────────────────────────────────────────────────────────
+
+type ContentItem = ClientDetailData["contentItems"][number];
+
+const CONTENT_STATUS_LABEL: Record<ContentItem["status"], string> = {
+  PLANLANDI: "Planlandı",
+  DUZENLENIYOR: "Düzenleniyor",
+  HAZIR: "Hazır",
+  YAYINLANDI: "Yayınlandı",
+};
+
+function IceriklerTab({
+  slug,
+  contentItems,
+  router,
+}: {
+  slug: string;
+  contentItems: ContentItem[];
+  router: ReturnType<typeof useRouter>;
+}) {
+  const [showForm, setShowForm] = useState(false);
+  const [form, setForm] = useState({
+    title: "",
+    description: "",
+    scheduledDate: "",
+    status: "PLANLANDI" as ContentItem["status"],
+  });
+  const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState("");
+  const [deleting, setDeleting] = useState<string | null>(null);
+
+  async function handleAdd(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    setErr("");
+    const res = await fetch(`/api/musteri/admin/clients/${slug}/content`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...form, description: form.description || undefined }),
+    });
+    const json = await res.json();
+    setLoading(false);
+    if (json.ok) {
+      setShowForm(false);
+      setForm({ title: "", description: "", scheduledDate: "", status: "PLANLANDI" });
+      router.refresh();
+    } else setErr(json.error ?? "Hata.");
+  }
+
+  async function handleStatusChange(id: string, status: ContentItem["status"]) {
+    const data: Record<string, string | null> = { status };
+    if (status === "YAYINLANDI") data.publishedAt = new Date().toISOString();
+    await fetch(`/api/musteri/admin/content/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    router.refresh();
+  }
+
+  async function handleDelete(id: string) {
+    if (!confirm("Bu içeriği sil?")) return;
+    setDeleting(id);
+    await fetch(`/api/musteri/admin/content/${id}`, { method: "DELETE" });
+    setDeleting(null);
+    router.refresh();
+  }
+
+  return (
+    <div className="space-y-3">
+      {contentItems.map((ci) => (
+        <div key={ci.id} className="rounded-xl p-4" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0 flex-1">
+              <p className="text-white text-[14px] font-semibold leading-snug">{ci.title}</p>
+              {ci.description && (
+                <p className="text-[12px] text-[#8a8a9a] mt-0.5 leading-relaxed">{ci.description}</p>
+              )}
+              <p className="text-[11px] text-[#555] mt-1">
+                {ci.scheduledDate}
+                {ci.publishedAt ? ` · Yayınlandı: ${ci.publishedAt}` : ""}
+              </p>
+            </div>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <span
+                className="text-[11px] font-semibold px-2.5 py-1 rounded-full"
+                style={{
+                  background: CONTENT_STATUS_BG[ci.status],
+                  color: STATUS_COLOR[ci.status],
+                }}
+              >
+                {CONTENT_STATUS_LABEL[ci.status]}
+              </span>
+              <Select
+                value={ci.status}
+                onChange={(e) => handleStatusChange(ci.id, e.target.value as ContentItem["status"])}
+                style={{ width: "auto", fontSize: "11px", padding: "3px 6px", color: STATUS_COLOR[ci.status] }}
+              >
+                <option value="PLANLANDI">Planlandı</option>
+                <option value="DUZENLENIYOR">Düzenleniyor</option>
+                <option value="HAZIR">Hazır</option>
+                <option value="YAYINLANDI">Yayınlandı</option>
+              </Select>
+              <DeleteBtn onClick={() => handleDelete(ci.id)} loading={deleting === ci.id} />
+            </div>
+          </div>
+        </div>
+      ))}
+
+      {contentItems.length === 0 && (
+        <p className="text-[13px] text-[#8a8a9a] text-center py-8">Henüz içerik yok.</p>
+      )}
+
+      {!showForm ? (
+        <button onClick={() => setShowForm(true)} className="btn btn-outline text-sm w-full py-3 mt-2">
+          + İçerik Ekle
+        </button>
+      ) : (
+        <form onSubmit={handleAdd} className="rounded-2xl p-5 space-y-4 mt-2" style={{ background: "var(--surface)", border: "1px solid rgba(168,85,247,0.3)" }}>
+          <p className="font-semibold text-white text-[14px]">Yeni İçerik</p>
+          <Field label="Başlık">
+            <Input required value={form.title} onChange={(e) => setForm((f) => ({ ...f, title: e.target.value }))} placeholder="Örn: Mayıs Tanıtım Videosu" />
+          </Field>
+          <Field label="Açıklama (opsiyonel)">
+            <Textarea value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} placeholder="İçerik detayları, notlar..." />
+          </Field>
+          <div className="grid grid-cols-2 gap-3">
+            <Field label="Yayın Tarihi">
+              <Input type="date" required value={form.scheduledDate} onChange={(e) => setForm((f) => ({ ...f, scheduledDate: e.target.value }))} />
+            </Field>
+            <Field label="Durum">
+              <Select value={form.status} onChange={(e) => setForm((f) => ({ ...f, status: e.target.value as ContentItem["status"] }))}>
+                <option value="PLANLANDI">Planlandı</option>
+                <option value="DUZENLENIYOR">Düzenleniyor</option>
+                <option value="HAZIR">Hazır</option>
+                <option value="YAYINLANDI">Yayınlandı</option>
+              </Select>
             </Field>
           </div>
           <ErrMsg msg={err} />
