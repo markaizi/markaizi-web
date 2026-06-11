@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
-import { requireAdmin } from "@/lib/adminGuard";
+import { requireStaffForSlug } from "@/lib/staffGuard";
 import { UpdateKind } from "@prisma/client";
 
 export const runtime = "nodejs";
@@ -16,10 +16,9 @@ export async function POST(
   req: NextRequest,
   { params }: { params: Promise<{ slug: string }> }
 ) {
-  const { err, session } = await requireAdmin();
-  if (err) return err;
-
   const { slug } = await params;
+  const { session, err } = await requireStaffForSlug(slug);
+  if (err) return err;
   const client = await prisma.client.findUnique({ where: { slug } });
   if (!client) return NextResponse.json({ error: "Firma bulunamadı." }, { status: 404 });
 

@@ -66,9 +66,11 @@ export async function POST(req: NextRequest) {
   const redirect =
     user.role === "ADMIN"
       ? "/musteri/admin"
-      : user.client?.slug
-        ? `/musteri/${user.client.slug}`
-        : "/musteri/giris";
+      : user.role === "EMPLOYEE"
+        ? "/musteri/calisan"
+        : user.client?.slug
+          ? `/musteri/${user.client.slug}`
+          : "/musteri/giris";
 
   return NextResponse.json({ ok: true, redirect });
 }

@@ -68,12 +68,20 @@ export default function AdminPanel({
               Merhaba {adminName} · {clients.length} aktif müşteri
             </p>
           </div>
-          <button
-            onClick={() => router.push("/musteri/admin/yeni")}
-            className="btn btn-primary text-sm px-5 py-2.5 flex-shrink-0"
-          >
-            + Yeni Firma
-          </button>
+          <div className="flex gap-2 flex-shrink-0">
+            <button
+              onClick={() => router.push("/musteri/admin/calisanlar")}
+              className="btn btn-outline text-sm px-4 py-2.5"
+            >
+              Çalışanlar
+            </button>
+            <button
+              onClick={() => router.push("/musteri/admin/yeni")}
+              className="btn btn-primary text-sm px-5 py-2.5"
+            >
+              + Yeni Firma
+            </button>
+          </div>
         </div>
 
         {/* Müşteri Grid */}

@@ -33,6 +33,13 @@ export async function proxy(req: NextRequest) {
     return NextResponse.redirect(url);
   }
 
+  // Çalışan alanı yalnızca ADMIN veya EMPLOYEE
+  if (pathname.startsWith("/musteri/calisan") && session.role === "CLIENT") {
+    const url = req.nextUrl.clone();
+    url.pathname = session.slug ? `/musteri/${session.slug}` : "/musteri/giris";
+    return NextResponse.redirect(url);
+  }
+
   return NextResponse.next();
 }
 

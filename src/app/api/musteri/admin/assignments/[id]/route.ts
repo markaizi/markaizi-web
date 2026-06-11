@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { requireStaffForUpdate } from "@/lib/staffGuard";
+import { requireAdmin } from "@/lib/adminGuard";
 
 export const runtime = "nodejs";
 
@@ -8,10 +8,10 @@ export async function DELETE(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = await params;
-  const { err } = await requireStaffForUpdate(id);
+  const { err } = await requireAdmin();
   if (err) return err;
 
-  await prisma.update.delete({ where: { id } });
+  const { id } = await params;
+  await prisma.assignment.delete({ where: { id } });
   return NextResponse.json({ ok: true });
 }
