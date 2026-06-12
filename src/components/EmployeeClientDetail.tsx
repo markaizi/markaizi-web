@@ -309,7 +309,7 @@ function EmpGuncellemelerTab({ slug, updates, canManage, router }: {
             {u.kind === "AJANS" ? "Ajans" : "Web Site"}
           </span>
           <div className="flex-1 min-w-0">
-            <p className="text-white text-[13px] leading-relaxed">{u.text}</p>
+            <p className="text-white text-[13px] leading-relaxed whitespace-pre-wrap">{u.text}</p>
             <p className="text-[11px] text-[#555] mt-1">{u.date}</p>
           </div>
         </div>

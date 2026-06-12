@@ -385,7 +385,7 @@ function WebsiteTab({ client }: { client: ClientData }) {
             >
               {u.date}
             </span>
-            <p className="text-[14px] text-[#c8c8d8] leading-relaxed">{u.text}</p>
+            <p className="text-[14px] text-[#c8c8d8] leading-relaxed whitespace-pre-wrap">{u.text}</p>
           </div>
         ))}
       </div>
@@ -413,7 +413,7 @@ function UpdatesTab({ client }: { client: ClientData }) {
             >
               {u.date}
             </span>
-            <p className="text-[14px] text-[#c8c8d8] leading-relaxed">{u.text}</p>
+            <p className="text-[14px] text-[#c8c8d8] leading-relaxed whitespace-pre-wrap">{u.text}</p>
           </div>
         ))}
       </div>
