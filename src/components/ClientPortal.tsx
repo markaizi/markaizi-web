@@ -196,11 +196,12 @@ function QuickSummary({ client, onNavigate }: { client: ClientData; onNavigate: 
     const updates = client.updates ?? [];
     if (updates.length > 0) {
       const latest = updates[0];
-      const seenKey = `seen_update_${client.slug}_${latest.date}`;
-      if (!localStorage.getItem(seenKey)) {
+      const seenKey = `seen_update_${client.slug}`;
+      const lastSeen = localStorage.getItem(seenKey);
+      // Kaydedilen son görülen tarih farklıysa (veya hiç yoksa) bildirim göster
+      if (lastSeen !== latest.date) {
         setLatestUpdate(latest);
         setUnseenUpdate(true);
-        localStorage.setItem(seenKey, "1");
       }
     }
   }, [client.slug, client.updates]);
@@ -229,7 +230,11 @@ function QuickSummary({ client, onNavigate }: { client: ClientData; onNavigate: 
           unseenUpdate && latestUpdate
             ? {
                 key: "update",
-                onClick: () => { setUnseenUpdate(false); onNavigate("updates"); },
+                onClick: () => {
+                  localStorage.setItem(`seen_update_${client.slug}`, latestUpdate.date);
+                  setUnseenUpdate(false);
+                  onNavigate("updates");
+                },
                 icon: "📝",
                 iconBg: "rgba(96,165,250,0.15)",
                 border: "rgba(96,165,250,0.45)",
