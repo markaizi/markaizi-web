@@ -223,38 +223,62 @@ function QuickSummary({ client, onNavigate }: { client: ClientData; onNavigate: 
   return (
     <div className="space-y-3">
       {/* Bildirimler */}
-      {hasNotifications && (
-        <div className="flex flex-col sm:flex-row gap-2">
-          {unseenUpdate && latestUpdate && (
-            <button
-              onClick={() => onNavigate("updates")}
-              className="flex-1 text-left rounded-xl px-4 py-3 flex items-center gap-3 transition-opacity hover:opacity-80"
-              style={{ background: "rgba(96,165,250,0.07)", border: "1px solid rgba(96,165,250,0.2)" }}
-            >
-              <span className="text-[15px] flex-shrink-0">📝</span>
-              <div className="min-w-0">
-                <p className="text-[12px] font-semibold" style={{ color: "#60a5fa" }}>Yeni ajans güncellemesi</p>
-                <p className="text-[11px] text-[#8a8a9a] truncate">{latestUpdate.date} — {latestUpdate.text}</p>
-              </div>
-              <span className="ml-auto text-[10px] text-[#555] flex-shrink-0">→</span>
-            </button>
-          )}
-          {unreadCount !== null && unreadCount > 0 && (
-            <button
-              onClick={() => onNavigate("notlar")}
-              className="flex-1 text-left rounded-xl px-4 py-3 flex items-center gap-3 transition-opacity hover:opacity-80"
-              style={{ background: "rgba(251,146,60,0.07)", border: "1px solid rgba(251,146,60,0.2)" }}
-            >
-              <span className="text-[15px] flex-shrink-0">🔔</span>
-              <div>
-                <p className="text-[12px] font-semibold" style={{ color: "#fb923c" }}>{unreadCount} okunmamış not</p>
-                <p className="text-[11px] text-[#8a8a9a]">Ajansınızdan yeni notlar var.</p>
-              </div>
-              <span className="ml-auto text-[10px] text-[#555] flex-shrink-0">→</span>
-            </button>
-          )}
-        </div>
-      )}
+      {hasNotifications && (() => {
+        type NotifItem = { key: string; onClick: () => void; icon: string; iconBg: string; border: string; bg: string; labelColor: string; label: string; sub: string };
+        const items: NotifItem[] = [
+          unseenUpdate && latestUpdate
+            ? {
+                key: "update",
+                onClick: () => onNavigate("updates"),
+                icon: "📝",
+                iconBg: "rgba(96,165,250,0.15)",
+                border: "rgba(96,165,250,0.45)",
+                bg: "rgba(96,165,250,0.08)",
+                labelColor: "#93c5fd",
+                label: "Yeni ajans güncellemesi",
+                sub: `${latestUpdate.date} — ${latestUpdate.text}`,
+              }
+            : null,
+          unreadCount !== null && unreadCount > 0
+            ? {
+                key: "notes",
+                onClick: () => onNavigate("notlar"),
+                icon: "🔔",
+                iconBg: "rgba(251,146,60,0.15)",
+                border: "rgba(251,146,60,0.45)",
+                bg: "rgba(251,146,60,0.08)",
+                labelColor: "#fdba74",
+                label: `${unreadCount} okunmamış not`,
+                sub: "Ajansınızdan size yeni notlar var.",
+              }
+            : null,
+        ].filter((x): x is NotifItem => x !== null);
+
+        return (
+          <div className={`grid gap-2 ${items.length > 1 ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1"}`}>
+            {items.map((item) => (
+              <button
+                key={item.key}
+                onClick={item.onClick}
+                className="text-left rounded-xl px-4 py-3.5 flex items-center gap-3 transition-all hover:brightness-110"
+                style={{ background: item.bg, border: `1.5px solid ${item.border}` }}
+              >
+                <span
+                  className="w-9 h-9 rounded-lg flex items-center justify-center text-[17px] flex-shrink-0"
+                  style={{ background: item.iconBg }}
+                >
+                  {item.icon}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="text-[13px] font-bold" style={{ color: item.labelColor }}>{item.label}</p>
+                  <p className="text-[11px] text-[#8a8a9a] truncate mt-0.5">{item.sub}</p>
+                </div>
+                <span className="text-[12px] font-bold flex-shrink-0" style={{ color: item.labelColor }}>→</span>
+              </button>
+            ))}
+          </div>
+        );
+      })()}
 
       {/* Platform bazlı kampanya özeti */}
       {hasCampaigns && (
