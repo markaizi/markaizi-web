@@ -100,66 +100,59 @@ function Dashboard({
         {/* Hoş geldin */}
         <div className="mb-8">
           <h2 className="font-black text-[22px] text-white mb-1">Merhaba, {client.name} 👋</h2>
-          <p className="text-[14px] text-[#8a8a9a]">
-            {isAdminView ? "Görmek istediğiniz bölümü seçin." : "Ajansınızla notlarınızı buradan paylaşabilirsiniz."}
-          </p>
+          <p className="text-[14px] text-[#8a8a9a]">Görmek istediğiniz bölümü seçin.</p>
         </div>
 
-        {/* Müşteri rolü: sadece Notlar */}
-        {!isAdminView && (
-          <Notes clientSlug={client.slug} canWrite={canWriteNotes} isAjans={false} />
-        )}
+        {/* Sekmeler — tüm roller */}
+        <div className="grid grid-cols-4 gap-2 sm:gap-3 mb-6 sm:mb-8">
+          {TABS.map((tab) => {
+            const isActive = activeTab === tab.id;
+            return (
+              <button
+                key={tab.id}
+                onClick={() => setActiveTab(tab.id)}
+                className="flex flex-col items-center gap-1.5 rounded-xl sm:rounded-2xl px-1 py-3 sm:py-5 transition-all duration-200 text-center"
+                style={
+                  isActive
+                    ? {
+                        background: "linear-gradient(135deg, rgba(124,58,237,0.25), rgba(236,72,153,0.15))",
+                        border: "1.5px solid rgba(168,85,247,0.6)",
+                        boxShadow: "0 0 20px rgba(124,58,237,0.2)",
+                      }
+                    : {
+                        background: "var(--surface)",
+                        border: "1.5px solid var(--border)",
+                      }
+                }
+              >
+                <span className="text-xl sm:text-2xl">{tab.emoji}</span>
+                <span
+                  className="text-[10px] sm:text-[11px] font-semibold leading-tight"
+                  style={{ color: isActive ? "#e2d0ff" : "#8a8a9a" }}
+                >
+                  {tab.label}
+                </span>
+              </button>
+            );
+          })}
+        </div>
 
-        {/* Admin/çalışan görünümü: tüm sekmeler */}
-        {isAdminView && (
-          <>
-            <div className="grid grid-cols-4 gap-2 sm:gap-3 mb-6 sm:mb-8">
-              {TABS.map((tab) => {
-                const isActive = activeTab === tab.id;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className="flex flex-col items-center gap-1.5 rounded-xl sm:rounded-2xl px-1 py-3 sm:py-5 transition-all duration-200 text-center"
-                    style={
-                      isActive
-                        ? {
-                            background: "linear-gradient(135deg, rgba(124,58,237,0.25), rgba(236,72,153,0.15))",
-                            border: "1.5px solid rgba(168,85,247,0.6)",
-                            boxShadow: "0 0 20px rgba(124,58,237,0.2)",
-                          }
-                        : {
-                            background: "var(--surface)",
-                            border: "1.5px solid var(--border)",
-                          }
-                    }
-                  >
-                    <span className="text-xl sm:text-2xl">{tab.emoji}</span>
-                    <span
-                      className="text-[10px] sm:text-[11px] font-semibold leading-tight"
-                      style={{ color: isActive ? "#e2d0ff" : "#8a8a9a" }}
-                    >
-                      {tab.label}
-                    </span>
-                  </button>
-                );
-              })}
-            </div>
-
-            <div>
-              {activeTab === "meta"     && <MetaTab     client={client} />}
-              {activeTab === "google"   && <GoogleTab   client={client} />}
-              {activeTab === "tiktok"   && <TikTokTab   client={client} />}
-              {activeTab === "website"  && <WebsiteTab  client={client} />}
-              {activeTab === "updates"  && <UpdatesTab  client={client} />}
-              {activeTab === "calendar" && <CalendarTab />}
-              {activeTab === "invoice"  && <InvoiceTab  client={client} />}
-              {activeTab === "notlar"   && (
-                <Notes clientSlug={client.slug} canWrite isAjans />
-              )}
-            </div>
-          </>
-        )}
+        <div>
+          {activeTab === "meta"     && <MetaTab     client={client} />}
+          {activeTab === "google"   && <GoogleTab   client={client} />}
+          {activeTab === "tiktok"   && <TikTokTab   client={client} />}
+          {activeTab === "website"  && <WebsiteTab  client={client} />}
+          {activeTab === "updates"  && <UpdatesTab  client={client} />}
+          {activeTab === "calendar" && <CalendarTab />}
+          {activeTab === "invoice"  && <InvoiceTab  client={client} />}
+          {activeTab === "notlar"   && (
+            <Notes
+              clientSlug={client.slug}
+              canWrite={isAdminView || canWriteNotes}
+              isAjans={isAdminView}
+            />
+          )}
+        </div>
 
         {/* Alt iletişim */}
         <SupportBox slug={client.slug} />
