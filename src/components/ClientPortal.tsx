@@ -137,7 +137,7 @@ function Dashboard({
         </div>
 
         {/* Masaüstü */}
-        <div className="hidden md:grid md:grid-cols-4 lg:grid-cols-7 gap-3 mb-8">
+        <div className="hidden md:grid md:grid-cols-4 gap-3 mb-8">
           {TABS.map((tab) => {
             const isActive = activeTab === tab.id;
             return (
