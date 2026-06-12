@@ -103,48 +103,15 @@ function Dashboard({
           <p className="text-[14px] text-[#8a8a9a]">Görmek istediğiniz bölümü seçin.</p>
         </div>
 
-        {/* Tab Butonları — mobilde yatay kaydır, masaüstünde grid */}
-        {/* Mobil */}
-        <div className="md:hidden -mx-6 px-6 mb-6">
-          <div className="flex gap-2 overflow-x-auto pb-2" style={{ scrollbarWidth: "none" }}>
-            {TABS.map((tab) => {
-              const isActive = activeTab === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className="flex items-center gap-1.5 flex-shrink-0 px-4 py-2.5 rounded-full text-[13px] font-semibold transition-all duration-200"
-                  style={
-                    isActive
-                      ? {
-                          background: "linear-gradient(135deg, #7c3aed, #a855f7)",
-                          color: "#fff",
-                          boxShadow: "0 2px 12px rgba(124,58,237,0.4)",
-                        }
-                      : {
-                          background: "var(--surface)",
-                          border: "1px solid var(--border)",
-                          color: "#8a8a9a",
-                        }
-                  }
-                >
-                  <span>{tab.emoji}</span>
-                  <span>{tab.label}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Masaüstü */}
-        <div className="hidden md:grid md:grid-cols-4 gap-3 mb-8">
+        {/* Tab Butonları — 4 sütunlu grid */}
+        <div className="grid grid-cols-4 gap-2 sm:gap-3 mb-6 sm:mb-8">
           {TABS.map((tab) => {
             const isActive = activeTab === tab.id;
             return (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className="flex flex-col items-center gap-2 rounded-2xl px-3 py-5 transition-all duration-200 text-center"
+                className="flex flex-col items-center gap-1.5 rounded-xl sm:rounded-2xl px-1 py-3 sm:py-5 transition-all duration-200 text-center"
                 style={
                   isActive
                     ? {
@@ -158,9 +125,9 @@ function Dashboard({
                       }
                 }
               >
-                <span className="text-2xl">{tab.emoji}</span>
+                <span className="text-xl sm:text-2xl">{tab.emoji}</span>
                 <span
-                  className="text-[11px] font-semibold leading-tight"
+                  className="text-[10px] sm:text-[11px] font-semibold leading-tight"
                   style={{ color: isActive ? "#e2d0ff" : "#8a8a9a" }}
                 >
                   {tab.label}
