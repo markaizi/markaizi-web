@@ -171,7 +171,7 @@ function DeleteBtn({ onClick, loading }: { onClick: () => void; loading: boolean
 
 // ── Ana bileşen ───────────────────────────────────────────────────────────────
 
-export default function AdminClientDetail({ data }: { data: ClientDetailData }) {
+export default function AdminClientDetail({ data, unreadNoteCount = 0 }: { data: ClientDetailData; unreadNoteCount?: number }) {
   const router = useRouter();
   const [tab, setTab] = useState<"genel" | "kampanyalar" | "icerikler" | "guncellemeler" | "faturalar" | "notlar" | "kullanici">("genel");
 
@@ -244,7 +244,7 @@ export default function AdminClientDetail({ data }: { data: ClientDetailData }) 
               <button
                 key={t}
                 onClick={() => setTab(t)}
-                className="px-4 py-2 rounded-full text-[13px] font-medium transition-all"
+                className="px-4 py-2 rounded-full text-[13px] font-medium transition-all flex items-center gap-1.5"
                 style={{
                   background: tab === t ? "rgba(168,85,247,0.2)" : "var(--surface)",
                   border: `1px solid ${tab === t ? "rgba(168,85,247,0.4)" : "var(--border)"}`,
@@ -252,6 +252,12 @@ export default function AdminClientDetail({ data }: { data: ClientDetailData }) 
                 }}
               >
                 {labels[t]}
+                {t === "notlar" && unreadNoteCount > 0 && tab !== "notlar" && (
+                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
+                    style={{ background: "rgba(251,146,60,0.2)", color: "#fb923c" }}>
+                    {unreadNoteCount}
+                  </span>
+                )}
               </button>
             );
           })}

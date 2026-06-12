@@ -64,7 +64,7 @@ type Platform = EmployeeClientData["campaigns"][number]["platform"];
 
 type TabKey = "icerikler" | "guncellemeler" | "kampanyalar" | "faturalar" | "notlar";
 
-export default function EmployeeClientDetail({ data }: { data: EmployeeClientData }) {
+export default function EmployeeClientDetail({ data, unreadNoteCount = 0 }: { data: EmployeeClientData; unreadNoteCount?: number }) {
   const router = useRouter();
   const { perms } = data;
 
@@ -129,13 +129,19 @@ export default function EmployeeClientDetail({ data }: { data: EmployeeClientDat
             <div className="flex gap-1 mb-7 flex-wrap">
               {tabs.map((t) => (
                 <button key={t.key} onClick={() => setTab(t.key)}
-                  className="px-4 py-2 rounded-full text-[13px] font-medium transition-all"
+                  className="px-4 py-2 rounded-full text-[13px] font-medium transition-all flex items-center gap-1.5"
                   style={{
                     background: tab === t.key ? "rgba(96,165,250,0.2)" : "var(--surface)",
                     border: `1px solid ${tab === t.key ? "rgba(96,165,250,0.4)" : "var(--border)"}`,
                     color: tab === t.key ? "#60a5fa" : "#8a8a9a",
                   }}>
                   {t.label}
+                  {t.key === "notlar" && unreadNoteCount > 0 && tab !== "notlar" && (
+                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full"
+                      style={{ background: "rgba(251,146,60,0.2)", color: "#fb923c" }}>
+                      {unreadNoteCount}
+                    </span>
+                  )}
                 </button>
               ))}
             </div>

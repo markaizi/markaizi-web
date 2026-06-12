@@ -27,16 +27,25 @@ export default async function AdminClientPage({
 
   const { slug } = await params;
 
-  const client = await prisma.client.findUnique({
-    where: { slug },
-    include: {
-      campaigns: { orderBy: [{ platform: "asc" }, { sortOrder: "asc" }] },
-      updates: { orderBy: { date: "desc" } },
-      invoices: { orderBy: { id: "desc" } },
-      contentItems: { orderBy: { scheduledDate: "desc" } },
-      users: { where: { role: "CLIENT" }, select: { id: true, username: true, name: true, email: true, canWriteNotes: true } },
-    },
-  });
+  const [client, unreadCount] = await Promise.all([
+    prisma.client.findUnique({
+      where: { slug },
+      include: {
+        campaigns: { orderBy: [{ platform: "asc" }, { sortOrder: "asc" }] },
+        updates: { orderBy: { date: "desc" } },
+        invoices: { orderBy: { id: "desc" } },
+        contentItems: { orderBy: { scheduledDate: "desc" } },
+        users: { where: { role: "CLIENT" }, select: { id: true, username: true, name: true, email: true, canWriteNotes: true } },
+      },
+    }),
+    prisma.note.count({
+      where: {
+        client: { slug },
+        authorId: { not: session.uid },
+        reads: { none: { userId: session.uid } },
+      },
+    }),
+  ]);
 
   if (!client) notFound();
 
@@ -81,5 +90,5 @@ export default async function AdminClientPage({
     users: client.users.map((u) => ({ ...u, username: u.username ?? null })),
   };
 
-  return <AdminClientDetail data={data} />;
+  return <AdminClientDetail data={data} unreadNoteCount={unreadCount} />;
 }

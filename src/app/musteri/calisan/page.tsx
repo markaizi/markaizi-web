@@ -18,20 +18,33 @@ export default async function CalisanPage() {
   // Admin ise admin paneline yönlendir
   if (session.role === "ADMIN") redirect("/musteri/admin");
 
-  const assignments = await prisma.assignment.findMany({
-    where: { userId: session.uid },
-    include: {
-      client: {
-        include: {
-          campaigns: { select: { platform: true } },
-          contentItems: {
-            where: { status: { in: ["PLANLANDI", "DUZENLENIYOR"] } },
-            select: { id: true },
+  const [assignments, unreadNotes] = await Promise.all([
+    prisma.assignment.findMany({
+      where: { userId: session.uid },
+      include: {
+        client: {
+          include: {
+            campaigns: { select: { platform: true } },
+            contentItems: {
+              where: { status: { in: ["PLANLANDI", "DUZENLENIYOR"] } },
+              select: { id: true },
+            },
           },
         },
       },
-    },
-  });
+    }),
+    prisma.note.groupBy({
+      by: ["clientId"],
+      where: {
+        client: { assignments: { some: { userId: session.uid } } },
+        authorId: { not: session.uid },
+        reads: { none: { userId: session.uid } },
+      },
+      _count: { id: true },
+    }),
+  ]);
+
+  const unreadMap = new Map(unreadNotes.map((u) => [u.clientId, u._count.id]));
 
   const clients: AssignedClient[] = assignments.map((a) => ({
     slug: a.client.slug,
@@ -41,6 +54,7 @@ export default async function CalisanPage() {
     metaCount: a.client.campaigns.filter((c) => c.platform === "META").length,
     googleCount: a.client.campaigns.filter((c) => c.platform === "GOOGLE").length,
     tiktokCount: a.client.campaigns.filter((c) => c.platform === "TIKTOK").length,
+    unreadNoteCount: unreadMap.get(a.clientId) ?? 0,
   }));
 
   return <EmployeeDashboard clients={clients} employeeName={session.name} />;

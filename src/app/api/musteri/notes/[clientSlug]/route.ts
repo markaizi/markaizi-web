@@ -32,6 +32,14 @@ export async function GET(
     orderBy: { createdAt: "desc" },
   });
 
+  // Görüntülenen notları okundu olarak işaretle
+  if (notes.length > 0) {
+    await prisma.noteRead.createMany({
+      data: notes.map((n) => ({ userId: session.uid, noteId: n.id })),
+      skipDuplicates: true,
+    });
+  }
+
   return NextResponse.json({
     notes: notes.map((n) => ({
       id: n.id,

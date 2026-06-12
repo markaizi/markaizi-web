@@ -77,6 +77,7 @@ model User {
   authoredUpdates Update[]      @relation("UpdateAuthor")
   authoredContent ContentItem[] @relation("ContentAssignee")
   authoredNotes   Note[]        @relation("NoteAuthor")
+  noteReads       NoteRead[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -190,9 +191,22 @@ model Note {
   text       String
   visibility NoteVisibility @default(ICERIK)
 
-  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  author User?  @relation("NoteAuthor", fields: [authorId], references: [id], onDelete: SetNull)
+  client Client     @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  author User?      @relation("NoteAuthor", fields: [authorId], references: [id], onDelete: SetNull)
+  reads  NoteRead[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model NoteRead {
+  userId String
+  noteId String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  note Note @relation(fields: [noteId], references: [id], onDelete: Cascade)
+
+  readAt DateTime @default(now())
+
+  @@id([userId, noteId])
 }

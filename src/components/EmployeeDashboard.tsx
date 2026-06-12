@@ -10,6 +10,7 @@ export interface AssignedClient {
   metaCount: number;
   googleCount: number;
   tiktokCount: number;
+  unreadNoteCount: number;
 }
 
 export default function EmployeeDashboard({
@@ -64,6 +65,28 @@ export default function EmployeeDashboard({
           </button>
         </div>
 
+        {/* Okunmamış not özeti */}
+        {clients.some((c) => c.unreadNoteCount > 0) && (
+          <div className="mb-6 px-4 py-3 rounded-xl flex items-start gap-3"
+            style={{ background: "rgba(251,146,60,0.07)", border: "1px solid rgba(251,146,60,0.2)" }}>
+            <span className="text-[16px] flex-shrink-0">🔔</span>
+            <div className="text-[13px]" style={{ color: "#fb923c" }}>
+              <span className="font-semibold">Okunmamış not: </span>
+              {clients.filter((c) => c.unreadNoteCount > 0).map((c, i, arr) => (
+                <span key={c.slug}>
+                  <button
+                    onClick={() => router.push(`/musteri/calisan/${c.slug}`)}
+                    className="underline underline-offset-2 font-medium hover:opacity-80 transition-opacity"
+                  >
+                    {c.name} ({c.unreadNoteCount})
+                  </button>
+                  {i < arr.length - 1 ? ", " : ""}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
         {clients.length === 0 && (
           <div className="text-center py-16">
             <p className="text-[#8a8a9a] text-[15px]">Henüz sana atanmış firma yok.</p>
@@ -92,8 +115,19 @@ export default function EmployeeDashboard({
                   style={{ background: "var(--grad-soft)", border: "1px solid rgba(168,85,247,0.25)", color: "#c084fc" }}>
                   {client.name.charAt(0).toUpperCase()}
                 </div>
-                <div className="min-w-0">
-                  <p className="text-white font-bold text-[15px] truncate">{client.name}</p>
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <p className="text-white font-bold text-[15px] truncate">{client.name}</p>
+                    {client.unreadNoteCount > 0 && (
+                      <span
+                        className="flex-shrink-0 text-[10px] font-bold px-1.5 py-0.5 rounded-full"
+                        style={{ background: "rgba(251,146,60,0.15)", color: "#fb923c", border: "1px solid rgba(251,146,60,0.3)" }}
+                        title={`${client.unreadNoteCount} okunmamış not`}
+                      >
+                        {client.unreadNoteCount}
+                      </span>
+                    )}
+                  </div>
                   <p className="text-[12px] text-[#8a8a9a] truncate">{client.package}</p>
                 </div>
               </div>

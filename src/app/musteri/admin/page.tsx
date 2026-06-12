@@ -19,14 +19,26 @@ export default async function AdminPage() {
     redirect(session.slug ? `/musteri/${session.slug}` : "/musteri/giris");
   }
 
-  const rows = await prisma.client.findMany({
-    where: { active: true },
-    orderBy: { name: "asc" },
-    include: {
-      campaigns: { select: { platform: true } },
-      _count: { select: { invoices: true } },
-    },
-  });
+  const [rows, unreadNotes] = await Promise.all([
+    prisma.client.findMany({
+      where: { active: true },
+      orderBy: { name: "asc" },
+      include: {
+        campaigns: { select: { platform: true } },
+        _count: { select: { invoices: true } },
+      },
+    }),
+    prisma.note.groupBy({
+      by: ["clientId"],
+      where: {
+        authorId: { not: session.uid },
+        reads: { none: { userId: session.uid } },
+      },
+      _count: { id: true },
+    }),
+  ]);
+
+  const unreadMap = new Map(unreadNotes.map((u) => [u.clientId, u._count.id]));
 
   const clients: AdminClientSummary[] = rows.map((c) => ({
     slug: c.slug,
@@ -36,6 +48,7 @@ export default async function AdminPage() {
     googleCount: c.campaigns.filter((x) => x.platform === Platform.GOOGLE).length,
     tiktokCount: c.campaigns.filter((x) => x.platform === Platform.TIKTOK).length,
     invoiceCount: c._count.invoices,
+    unreadNoteCount: unreadMap.get(c.id) ?? 0,
   }));
 
   return <AdminPanel clients={clients} adminName={session.name} />;
