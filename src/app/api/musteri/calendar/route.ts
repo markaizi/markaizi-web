@@ -9,15 +9,27 @@ export async function GET(req: NextRequest) {
   if (!session) return NextResponse.json({ error: "Yetkisiz." }, { status: 401 });
 
   const { searchParams } = new URL(req.url);
-  const year  = parseInt(searchParams.get("year")  ?? String(new Date().getFullYear()), 10);
-  const month = parseInt(searchParams.get("month") ?? String(new Date().getMonth() + 1), 10);
+  const fromParam  = searchParams.get("from");
+  const toParam    = searchParams.get("to");
+  const yearParam  = searchParams.get("year");
+  const monthParam = searchParams.get("month");
 
-  if (isNaN(year) || isNaN(month) || month < 1 || month > 12) {
-    return NextResponse.json({ error: "Geçersiz tarih." }, { status: 400 });
+  let from: Date, to: Date;
+  if (fromParam && toParam) {
+    from = new Date(fromParam);
+    to   = new Date(toParam);
+    if (isNaN(from.getTime()) || isNaN(to.getTime())) {
+      return NextResponse.json({ error: "Geçersiz tarih." }, { status: 400 });
+    }
+  } else {
+    const year  = parseInt(yearParam  ?? String(new Date().getFullYear()), 10);
+    const month = parseInt(monthParam ?? String(new Date().getMonth() + 1), 10);
+    if (isNaN(year) || isNaN(month) || month < 1 || month > 12) {
+      return NextResponse.json({ error: "Geçersiz tarih." }, { status: 400 });
+    }
+    from = new Date(year, month - 1, 1);
+    to   = new Date(year, month, 1);
   }
-
-  const from = new Date(year, month - 1, 1);
-  const to   = new Date(year, month, 1);
 
   // Role-scoped where clause for client
   let clientWhere = {};
