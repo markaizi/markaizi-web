@@ -179,6 +179,34 @@ function EmployeeCard({
 }) {
   const [canWriteNotes, setCanWriteNotes] = useState(employee.canWriteNotes);
   const [notesLoading, setNotesLoading] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
+  const [editForm, setEditForm] = useState({ name: employee.name, email: employee.email, username: employee.username, password: "" });
+  const [editLoading, setEditLoading] = useState(false);
+  const [editErr, setEditErr] = useState("");
+  const [deleted, setDeleted] = useState(false);
+
+  async function handleEdit(e: React.FormEvent) {
+    e.preventDefault();
+    setEditLoading(true); setEditErr("");
+    const body: Record<string, string> = {
+      name: editForm.name, email: editForm.email, username: editForm.username,
+    };
+    if (editForm.password) body.password = editForm.password;
+    const res  = await fetch(`/api/musteri/admin/employees/${employee.id}`, {
+      method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body),
+    });
+    const json = await res.json();
+    setEditLoading(false);
+    if (json.ok) { setShowEdit(false); router.refresh(); }
+    else setEditErr(json.error ?? "Hata.");
+  }
+
+  async function handleDelete() {
+    if (!confirm(`"${employee.name}" çalışanı sil? Bu işlem geri alınamaz.`)) return;
+    await fetch(`/api/musteri/admin/employees/${employee.id}`, { method: "DELETE" });
+    setDeleted(true);
+    router.refresh();
+  }
 
   async function handleNotesToggle(val: boolean) {
     setNotesLoading(true);
@@ -263,9 +291,12 @@ function EmployeeCard({
 
   const assignedCount = localAssign.size;
 
+  if (deleted) return null;
+
   return (
     <div className="rounded-2xl overflow-hidden" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
-      <div className="px-5 py-4 flex items-center gap-3" style={{ borderBottom: "1px solid var(--border)" }}>
+      {/* Başlık */}
+      <div className="px-5 py-4 flex items-center gap-3 flex-wrap" style={{ borderBottom: "1px solid var(--border)" }}>
         <div className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-[16px] flex-shrink-0"
           style={{ background: "var(--grad-soft)", color: "#c084fc" }}>
           {employee.name.charAt(0).toUpperCase()}
@@ -291,7 +322,54 @@ function EmployeeCard({
         >
           {notesLoading ? "..." : canWriteNotes ? "🗒 Not: Açık" : "🗒 Not: Kapalı"}
         </button>
+        <button onClick={() => setShowEdit((v) => !v)}
+          className="text-[11px] px-2.5 py-1 rounded-full transition-all flex-shrink-0"
+          style={{ background: "rgba(96,165,250,0.1)", border: "1px solid rgba(96,165,250,0.25)", color: "#60a5fa" }}>
+          Düzenle
+        </button>
+        <button onClick={handleDelete}
+          className="text-[11px] px-2.5 py-1 rounded-full transition-all flex-shrink-0"
+          style={{ background: "rgba(248,113,113,0.1)", border: "1px solid rgba(248,113,113,0.25)", color: "#f87171" }}>
+          Sil
+        </button>
       </div>
+
+      {/* Düzenle formu */}
+      {showEdit && (
+        <form onSubmit={handleEdit} className="px-5 py-5 space-y-3"
+          style={{ background: "rgba(96,165,250,0.03)", borderBottom: "1px solid var(--border)" }}>
+          <p className="text-[13px] font-semibold text-[#60a5fa]">Çalışanı Düzenle</p>
+          <div className="grid grid-cols-2 gap-3">
+            {[
+              { key: "name",     label: "Ad Soyad",       placeholder: "" },
+              { key: "username", label: "Kullanıcı Adı",  placeholder: "" },
+              { key: "email",    label: "E-posta",         placeholder: "" },
+              { key: "password", label: "Yeni Şifre",     placeholder: "Boş bırakırsan değişmez" },
+            ].map(({ key, label, placeholder }) => (
+              <div key={key}>
+                <label className="block text-[10px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1">{label}</label>
+                <input
+                  type={key === "password" ? "password" : "text"}
+                  value={editForm[key as keyof typeof editForm]}
+                  onChange={(e) => setEditForm((f) => ({ ...f, [key]: e.target.value }))}
+                  placeholder={placeholder}
+                  required={key !== "password"}
+                  className="w-full px-3 py-2 rounded-lg text-[13px] text-white placeholder-[#555] outline-none focus:ring-1 focus:ring-blue-500/50"
+                  style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
+                />
+              </div>
+            ))}
+          </div>
+          {editErr && <p className="text-[12px] text-red-400">{editErr}</p>}
+          <div className="flex gap-2">
+            <button type="submit" disabled={editLoading}
+              className="btn btn-primary text-sm px-4 py-1.5">{editLoading ? "..." : "Kaydet"}</button>
+            <button type="button" onClick={() => setShowEdit(false)}
+              className="btn btn-outline text-sm px-4 py-1.5">İptal</button>
+          </div>
+        </form>
+      )}
+
 
       <div className="divide-y" style={{ borderColor: "var(--border)" }}>
         {allClients.map((client) => {

@@ -83,6 +83,12 @@ export default function AdminPanel({
               Çalışanlar
             </button>
             <button
+              onClick={() => router.push("/musteri/admin/profil")}
+              className="btn btn-outline text-sm px-4 py-2.5"
+            >
+              Profilim
+            </button>
+            <button
               onClick={() => router.push("/musteri/admin/yeni")}
               className="btn btn-primary text-sm px-5 py-2.5"
             >
