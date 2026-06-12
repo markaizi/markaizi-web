@@ -163,7 +163,7 @@ function Dashboard({
           {activeTab === "tiktok"   && <TikTokTab   client={client} />}
           {activeTab === "website"  && <WebsiteTab  client={client} />}
           {activeTab === "updates"  && <UpdatesTab  client={client} />}
-          {activeTab === "calendar" && <CalendarTab />}
+          {activeTab === "calendar" && <CalendarTab clientSlug={client.slug} />}
           {activeTab === "invoice"  && <InvoiceTab  client={client} />}
           {activeTab === "notlar"   && (
             <Notes
@@ -427,10 +427,10 @@ function UpdatesTab({ client }: { client: ClientData }) {
 }
 
 // ── Tab: İçerik Takvimi ───────────────────────────────────────────────────────
-function CalendarTab() {
+function CalendarTab({ clientSlug }: { clientSlug: string }) {
   return (
     <Section title="İçerik Takvimi" subtitle="Planlanan ve yayınlanan içerikleriniz">
-      <Calendar />
+      <Calendar clientSlug={clientSlug} />
     </Section>
   );
 }

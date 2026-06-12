@@ -71,12 +71,14 @@ function firstWeekday(y: number, m: number) { return (new Date(y, m - 1, 1).getD
 type ViewMode = "monthly" | "weekly" | "daily";
 
 export interface CalendarProps {
+  /** Belirli bir firmaya kısıtla (admin firma panelinden açıldığında gerekli) */
+  clientSlug?: string;
   showClientName?: boolean;
 }
 
 // ── Ana bileşen ───────────────────────────────────────────────────────────────
 
-export default function Calendar({ showClientName = false }: CalendarProps) {
+export default function Calendar({ showClientName = false, clientSlug }: CalendarProps) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
@@ -92,12 +94,13 @@ export default function Calendar({ showClientName = false }: CalendarProps) {
   const fetchItems = useCallback(async (from: string, to: string) => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/musteri/calendar?from=${from}&to=${to}`);
+      const slug = clientSlug ? `&clientSlug=${encodeURIComponent(clientSlug)}` : "";
+      const res = await fetch(`/api/musteri/calendar?from=${from}&to=${to}${slug}`);
       const data = await res.json();
       setItems(data.items ?? []);
     } catch { setItems([]); }
     finally { setLoading(false); }
-  }, []);
+  }, [clientSlug]);
 
   useEffect(() => {
     if (view === "monthly") {

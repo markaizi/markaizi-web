@@ -31,12 +31,17 @@ export async function GET(req: NextRequest) {
     to   = new Date(year, month, 1);
   }
 
+  const clientSlugParam = searchParams.get("clientSlug");
+
   // Role-scoped where clause for client
   let clientWhere = {};
   if (session.role === "CLIENT") {
     clientWhere = { id: session.clientId ?? "__none__" };
   } else if (session.role === "EMPLOYEE") {
     clientWhere = { assignments: { some: { userId: session.uid } } };
+  } else if (session.role === "ADMIN" && clientSlugParam) {
+    // Admin belirli bir firma panelinden bakıyorsa sadece o firmayı göster
+    clientWhere = { slug: clientSlugParam };
   }
 
   const items = await prisma.contentItem.findMany({
