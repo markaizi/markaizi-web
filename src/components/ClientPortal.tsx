@@ -15,6 +15,14 @@ function fmtAmount(raw: string): string {
   return num.toLocaleString("tr-TR") + " ₺";
 }
 
+function fmtBudget(raw: string): string {
+  const digits = raw.replace(/[^\d]/g, "");
+  if (!digits) return raw;
+  const num = parseInt(digits, 10);
+  if (isNaN(num)) return raw;
+  return num.toLocaleString("tr-TR") + " ₺/gün";
+}
+
 const TABS: { id: Tab; label: string; emoji: string }[] = [
   { id: "meta",     label: "Meta Ads",             emoji: "📣" },
   { id: "google",   label: "Google Ads",            emoji: "🔍" },
@@ -410,7 +418,7 @@ function CampaignTable({ campaigns }: { campaigns: Campaign[] }) {
               </div>
               <div className="rounded-xl px-3 py-2.5" style={{ background: "var(--bg)" }}>
                 <p className="text-[10px] text-[#8a8a9a] mb-1 uppercase tracking-wide">Günlük</p>
-                <p className="text-[12px] text-white font-medium">{c.dailyBudget}</p>
+                <p className="text-[12px] text-white font-medium">{fmtBudget(c.dailyBudget)}</p>
               </div>
             </div>
           </div>
@@ -441,7 +449,7 @@ function CampaignTable({ campaigns }: { campaigns: Campaign[] }) {
             <span className="text-[13px] text-[#8a8a9a]">{c.endDate}</span>
             <span className="text-[13px] text-[#c8c8d8] truncate pr-3">{c.name}</span>
             <div className="flex flex-col items-end gap-1">
-              <span className="text-[13px] font-semibold text-white">{c.dailyBudget}</span>
+              <span className="text-[13px] font-semibold text-white">{fmtBudget(c.dailyBudget)}</span>
               <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={statusStyle(c.status)}>
                 {c.status}
               </span>

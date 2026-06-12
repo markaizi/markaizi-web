@@ -98,6 +98,14 @@ function fmtAmount(raw: string): string {
   return num.toLocaleString("tr-TR") + " ₺";
 }
 
+function fmtBudget(raw: string): string {
+  const digits = raw.replace(/[^\d]/g, "");
+  if (!digits) return raw;
+  const num = parseInt(digits, 10);
+  if (isNaN(num)) return raw;
+  return num.toLocaleString("tr-TR") + " ₺/gün";
+}
+
 // ── Paylaşılan UI ─────────────────────────────────────────────────────────────
 
 function Field({
@@ -405,7 +413,7 @@ function KampanyalarTab({ slug, campaigns, router }: { slug: string; campaigns: 
           </span>
           <div className="flex-1 min-w-0">
             <p className="text-white text-[14px] font-semibold truncate">{c.name}</p>
-            <p className="text-[12px] text-[#8a8a9a] mt-0.5">{c.dailyBudget} · {c.ongoing ? "Devam ediyor" : `${c.startDate ?? "?"} → ${c.endDate ?? "?"}`}</p>
+            <p className="text-[12px] text-[#8a8a9a] mt-0.5">{fmtBudget(c.dailyBudget)} · {c.ongoing ? "Devam ediyor" : `${c.startDate ?? "?"} → ${c.endDate ?? "?"}`}</p>
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
             <Select
@@ -454,7 +462,13 @@ function KampanyalarTab({ slug, campaigns, router }: { slug: string; campaigns: 
             <Input required value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder="Örn: Yaz Kampanyası 2026" />
           </Field>
           <Field label="Günlük Bütçe">
-            <Input required value={form.dailyBudget} onChange={(e) => setForm((f) => ({ ...f, dailyBudget: e.target.value }))} placeholder="Örn: 200 ₺/gün" />
+            <Input
+              required
+              value={form.dailyBudget}
+              onChange={(e) => setForm((f) => ({ ...f, dailyBudget: e.target.value }))}
+              onBlur={(e) => setForm((f) => ({ ...f, dailyBudget: fmtBudget(e.target.value) }))}
+              placeholder="100"
+            />
           </Field>
           <div className="flex items-center gap-2">
             <input type="checkbox" id="ongoing" checked={form.ongoing} onChange={(e) => setForm((f) => ({ ...f, ongoing: e.target.checked }))} className="accent-purple-500" />
