@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { getSession, assertCanAccessClient } from "@/lib/auth";
 import { getClientView } from "@/lib/clientView";
+import { prisma } from "@/lib/db";
 import ClientPortal from "@/components/ClientPortal";
 
 export const dynamic = "force-dynamic";
@@ -33,5 +34,13 @@ export default async function MusteriPage({
   }
 
   const isAdminView = session.role === "ADMIN" || session.role === "EMPLOYEE";
-  return <ClientPortal client={view.data} isAdminView={isAdminView} />;
+
+  // Müşteri rolünde canWriteNotes DB'den alınır; admin/çalışan her zaman yazabilir
+  let canWriteNotes = false;
+  if (!isAdminView) {
+    const user = await prisma.user.findUnique({ where: { id: session.uid }, select: { canWriteNotes: true } });
+    canWriteNotes = user?.canWriteNotes ?? false;
+  }
+
+  return <ClientPortal client={view.data} isAdminView={isAdminView} canWriteNotes={canWriteNotes} />;
 }

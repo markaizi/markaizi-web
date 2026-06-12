@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Notes from "@/components/Notes";
 
 export interface EmployeeClientData {
   slug: string;
   name: string;
   package: string;
+  canWriteNotes: boolean;
   perms: {
     canViewCampaigns: boolean;
     canManageCampaigns: boolean;
@@ -60,7 +62,7 @@ type CampaignStatus = EmployeeClientData["campaigns"][number]["status"];
 type InvoiceStatus = EmployeeClientData["invoices"][number]["status"];
 type Platform = EmployeeClientData["campaigns"][number]["platform"];
 
-type TabKey = "icerikler" | "guncellemeler" | "kampanyalar" | "faturalar";
+type TabKey = "icerikler" | "guncellemeler" | "kampanyalar" | "faturalar" | "notlar";
 
 export default function EmployeeClientDetail({ data }: { data: EmployeeClientData }) {
   const router = useRouter();
@@ -71,6 +73,7 @@ export default function EmployeeClientDetail({ data }: { data: EmployeeClientDat
     (perms.canViewUpdates || perms.canManageUpdates) && { key: "guncellemeler" as TabKey, label: "Güncellemeler" },
     perms.canViewCampaigns && { key: "kampanyalar" as TabKey, label: "Kampanyalar" },
     perms.canViewInvoices && { key: "faturalar" as TabKey, label: "Faturalar" },
+    { key: "notlar" as TabKey, label: "Notlar" },
   ].filter(Boolean) as { key: TabKey; label: string }[];
 
   const [tab, setTab] = useState<TabKey>(tabs[0]?.key ?? "icerikler");
@@ -152,6 +155,9 @@ export default function EmployeeClientDetail({ data }: { data: EmployeeClientDat
             {tab === "faturalar" && perms.canViewInvoices && (
               <EmpFaturalarTab slug={data.slug} invoices={data.invoices}
                 canManage={perms.canManageInvoices} router={router} />
+            )}
+            {tab === "notlar" && (
+              <Notes clientSlug={data.slug} canWrite={data.canWriteNotes} isAjans />
             )}
           </>
         )}

@@ -8,6 +8,7 @@ export interface EmployeeData {
   username: string;
   name: string;
   email: string;
+  canWriteNotes: boolean;
   assignments: {
     id: string;
     client: { id: string; slug: string; name: string };
@@ -176,6 +177,20 @@ function EmployeeCard({
   allClients: { id: string; slug: string; name: string }[];
   router: ReturnType<typeof useRouter>;
 }) {
+  const [canWriteNotes, setCanWriteNotes] = useState(employee.canWriteNotes);
+  const [notesLoading, setNotesLoading] = useState(false);
+
+  async function handleNotesToggle(val: boolean) {
+    setNotesLoading(true);
+    setCanWriteNotes(val);
+    await fetch(`/api/musteri/admin/employees/${employee.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ canWriteNotes: val }),
+    });
+    setNotesLoading(false);
+  }
+
   const [localAssign, setLocalAssign] = useState<Map<string, LocalAssign>>(
     () => {
       const m = new Map<string, LocalAssign>();
@@ -263,6 +278,19 @@ function EmployeeCard({
           style={{ background: assignedCount > 0 ? "rgba(168,85,247,0.12)" : "rgba(138,138,154,0.1)", color: assignedCount > 0 ? "#c084fc" : "#555" }}>
           {assignedCount} firma
         </span>
+        <button
+          onClick={() => handleNotesToggle(!canWriteNotes)}
+          disabled={notesLoading}
+          title="Not yazma yetkisi"
+          className="text-[11px] px-2.5 py-1 rounded-full transition-all flex-shrink-0"
+          style={{
+            background: canWriteNotes ? "rgba(52,211,153,0.12)" : "rgba(138,138,154,0.1)",
+            border: `1px solid ${canWriteNotes ? "rgba(52,211,153,0.3)" : "var(--border)"}`,
+            color: canWriteNotes ? "#34d399" : "#555",
+          }}
+        >
+          {notesLoading ? "..." : canWriteNotes ? "🗒 Not: Açık" : "🗒 Not: Kapalı"}
+        </button>
       </div>
 
       <div className="divide-y" style={{ borderColor: "var(--border)" }}>

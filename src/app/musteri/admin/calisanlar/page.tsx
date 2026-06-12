@@ -35,6 +35,7 @@ export default async function CalisanlarPage() {
     username: e.username ?? "",
     name: e.name,
     email: e.email,
+    canWriteNotes: e.canWriteNotes,
     assignments: e.assignments.map((a) => ({
       id: a.id,
       client: a.client,

@@ -3,8 +3,9 @@
 import { useState, useRef } from "react";
 import type { ClientData, Campaign } from "@/lib/clients";
 import Calendar from "@/components/Calendar";
+import Notes from "@/components/Notes";
 
-type Tab = "meta" | "google" | "tiktok" | "website" | "updates" | "calendar" | "invoice";
+type Tab = "meta" | "google" | "tiktok" | "website" | "updates" | "calendar" | "invoice" | "notlar";
 
 const TABS: { id: Tab; label: string; emoji: string }[] = [
   { id: "meta",     label: "Meta Ads",             emoji: "📣" },
@@ -14,6 +15,7 @@ const TABS: { id: Tab; label: string; emoji: string }[] = [
   { id: "updates",  label: "Ajans Güncellemeleri",  emoji: "📝" },
   { id: "calendar", label: "İçerik Takvimi",        emoji: "📅" },
   { id: "invoice",  label: "Fatura Bilgisi",        emoji: "💳" },
+  { id: "notlar",   label: "Notlar",                emoji: "🗒️" },
 ];
 
 // ── Ana bileşen ──────────────────────────────────────────────────────────────
@@ -22,9 +24,11 @@ const TABS: { id: Tab; label: string; emoji: string }[] = [
 export default function ClientPortal({
   client,
   isAdminView = false,
+  canWriteNotes = false,
 }: {
   client: ClientData;
   isAdminView?: boolean;
+  canWriteNotes?: boolean;
 }) {
   async function handleLogout() {
     try {
@@ -35,7 +39,7 @@ export default function ClientPortal({
     window.location.href = isAdminView ? "/musteri/admin" : "/musteri/giris";
   }
 
-  return <Dashboard client={client} onLogout={handleLogout} isAdminView={isAdminView} />;
+  return <Dashboard client={client} onLogout={handleLogout} isAdminView={isAdminView} canWriteNotes={canWriteNotes} />;
 }
 
 // ── Dashboard ─────────────────────────────────────────────────────────────────
@@ -43,10 +47,12 @@ function Dashboard({
   client,
   onLogout,
   isAdminView,
+  canWriteNotes,
 }: {
   client: ClientData;
   onLogout: () => void;
   isAdminView: boolean;
+  canWriteNotes: boolean;
 }) {
   const [activeTab, setActiveTab] = useState<Tab>("meta");
 
@@ -173,6 +179,13 @@ function Dashboard({
           {activeTab === "updates"  && <UpdatesTab  client={client} />}
           {activeTab === "calendar" && <CalendarTab />}
           {activeTab === "invoice"  && <InvoiceTab  client={client} />}
+          {activeTab === "notlar"   && (
+            <Notes
+              clientSlug={client.slug}
+              canWrite={isAdminView || canWriteNotes}
+              isAjans={isAdminView}
+            />
+          )}
         </div>
 
         {/* Alt iletişim */}

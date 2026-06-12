@@ -34,7 +34,7 @@ export default async function AdminClientPage({
       updates: { orderBy: { date: "desc" } },
       invoices: { orderBy: { id: "desc" } },
       contentItems: { orderBy: { scheduledDate: "desc" } },
-      users: { where: { role: "CLIENT" }, select: { id: true, username: true, name: true, email: true } },
+      users: { where: { role: "CLIENT" }, select: { id: true, username: true, name: true, email: true, canWriteNotes: true } },
     },
   });
 
@@ -78,7 +78,7 @@ export default async function AdminClientPage({
       status: ci.status,
       publishedAt: ci.publishedAt?.toISOString().split("T")[0] ?? null,
     })),
-    users: client.users,
+    users: client.users.map((u) => ({ ...u, username: u.username ?? null })),
   };
 
   return <AdminClientDetail data={data} />;

@@ -63,3 +63,30 @@ export async function POST(
 
   return NextResponse.json({ ok: true, created: true });
 }
+
+const patchSchema = z.object({
+  canWriteNotes: z.boolean(),
+});
+
+// PATCH: müşteri kullanıcısının canWriteNotes bayrağını güncelle
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: Promise<{ slug: string }> }
+) {
+  const { err } = await requireAdmin();
+  if (err) return err;
+
+  const { slug } = await params;
+  const client = await prisma.client.findUnique({ where: { slug }, select: { id: true } });
+  if (!client) return NextResponse.json({ error: "Firma bulunamadı." }, { status: 404 });
+
+  const user = await prisma.user.findFirst({ where: { clientId: client.id, role: "CLIENT" } });
+  if (!user) return NextResponse.json({ error: "Müşteri kullanıcısı bulunamadı." }, { status: 404 });
+
+  const body = await req.json().catch(() => ({}));
+  const parsed = patchSchema.safeParse(body);
+  if (!parsed.success) return NextResponse.json({ error: "Geçersiz veri." }, { status: 400 });
+
+  await prisma.user.update({ where: { id: user.id }, data: parsed.data });
+  return NextResponse.json({ ok: true });
+}

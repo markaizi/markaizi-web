@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import Notes from "@/components/Notes";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -43,7 +44,7 @@ export interface ClientDetailData {
     status: "PLANLANDI" | "DUZENLENIYOR" | "HAZIR" | "YAYINLANDI";
     publishedAt: string | null;
   }[];
-  users: { id: string; username: string | null; name: string; email: string }[];
+  users: { id: string; username: string | null; name: string; email: string; canWriteNotes: boolean }[];
 }
 
 // ── Yardımcılar ───────────────────────────────────────────────────────────────
@@ -172,7 +173,7 @@ function DeleteBtn({ onClick, loading }: { onClick: () => void; loading: boolean
 
 export default function AdminClientDetail({ data }: { data: ClientDetailData }) {
   const router = useRouter();
-  const [tab, setTab] = useState<"genel" | "kampanyalar" | "icerikler" | "guncellemeler" | "faturalar" | "kullanici">("genel");
+  const [tab, setTab] = useState<"genel" | "kampanyalar" | "icerikler" | "guncellemeler" | "faturalar" | "notlar" | "kullanici">("genel");
 
   async function handleLogout() {
     try { await fetch("/api/musteri/auth/logout", { method: "POST" }); } catch { /* ignore */ }
@@ -229,13 +230,14 @@ export default function AdminClientDetail({ data }: { data: ClientDetailData }) 
 
         {/* Sekmeler */}
         <div className="flex gap-1 mb-7 flex-wrap">
-          {(["genel", "kampanyalar", "icerikler", "guncellemeler", "faturalar", "kullanici"] as const).map((t) => {
+          {(["genel", "kampanyalar", "icerikler", "guncellemeler", "faturalar", "notlar", "kullanici"] as const).map((t) => {
             const labels: Record<typeof t, string> = {
               genel: "Genel",
               kampanyalar: "Kampanyalar",
               icerikler: "İçerikler",
               guncellemeler: "Güncellemeler",
               faturalar: "Faturalar",
+              notlar: "Notlar",
               kullanici: "Kullanıcı",
             };
             return (
@@ -261,6 +263,7 @@ export default function AdminClientDetail({ data }: { data: ClientDetailData }) 
         {tab === "icerikler" && <IceriklerTab slug={data.slug} contentItems={data.contentItems} router={router} />}
         {tab === "guncellemeler" && <GuncellemelerTab slug={data.slug} updates={data.updates} router={router} />}
         {tab === "faturalar" && <FaturalarTab slug={data.slug} invoices={data.invoices} router={router} />}
+        {tab === "notlar" && <Notes clientSlug={data.slug} canWrite isAjans />}
         {tab === "kullanici" && <KullaniciTab slug={data.slug} users={data.users} router={router} />}
       </main>
     </div>
@@ -842,6 +845,8 @@ function KullaniciTab({
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
   const [ok, setOk] = useState("");
+  const [canWriteNotes, setCanWriteNotes] = useState(existing?.canWriteNotes ?? false);
+  const [notesLoading, setNotesLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -861,10 +866,22 @@ function KullaniciTab({
     } else setErr(json.error ?? "Hata.");
   }
 
+  async function handleNotesToggle(val: boolean) {
+    if (!existing) return;
+    setNotesLoading(true);
+    setCanWriteNotes(val);
+    await fetch(`/api/musteri/admin/clients/${slug}/users`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ canWriteNotes: val }),
+    });
+    setNotesLoading(false);
+  }
+
   return (
-    <div>
+    <div className="space-y-5">
       {existing && (
-        <div className="rounded-xl p-4 mb-5 flex items-center gap-3" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+        <div className="rounded-xl p-4 flex items-center gap-3" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
           <div className="w-9 h-9 rounded-xl flex items-center justify-center font-bold text-[14px]" style={{ background: "var(--grad-soft)", color: "#c084fc" }}>
             {existing.name.charAt(0).toUpperCase()}
           </div>
@@ -872,6 +889,31 @@ function KullaniciTab({
             <p className="text-white text-[14px] font-semibold">{existing.name}</p>
             <p className="text-[12px] text-[#8a8a9a]">@{existing.username} · {existing.email}</p>
           </div>
+        </div>
+      )}
+
+      {/* canWriteNotes toggle — yalnızca mevcut kullanıcı varsa */}
+      {existing && (
+        <div className="rounded-xl p-4 flex items-center justify-between gap-4"
+          style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+          <div>
+            <p className="text-white text-[14px] font-semibold">Not Yazma Yetkisi</p>
+            <p className="text-[12px] text-[#8a8a9a] mt-0.5">
+              Açıksa müşteri kendi firma sayfasına not bırakabilir (PAYLASIMLI).
+            </p>
+          </div>
+          <button
+            onClick={() => handleNotesToggle(!canWriteNotes)}
+            disabled={notesLoading}
+            className="flex items-center gap-2 px-4 py-2 rounded-lg text-[13px] font-semibold transition-all flex-shrink-0"
+            style={{
+              background: canWriteNotes ? "rgba(52,211,153,0.15)" : "rgba(138,138,154,0.1)",
+              border: `1px solid ${canWriteNotes ? "rgba(52,211,153,0.3)" : "var(--border)"}`,
+              color: canWriteNotes ? "#34d399" : "#8a8a9a",
+            }}
+          >
+            {notesLoading ? "..." : canWriteNotes ? "✓ Açık" : "Kapalı"}
+          </button>
         </div>
       )}
 

@@ -27,9 +27,10 @@ export default async function CalisanClientPage({
   if (session.role === "ADMIN") redirect(`/musteri/admin/${slug}`);
 
   // EMPLOYEE: sadece atanmış firmaya erişebilir
-  const assignment = await prisma.assignment.findFirst({
-    where: { userId: session.uid, client: { slug } },
-  });
+  const [assignment, employeeUser] = await Promise.all([
+    prisma.assignment.findFirst({ where: { userId: session.uid, client: { slug } } }),
+    prisma.user.findUnique({ where: { id: session.uid }, select: { canWriteNotes: true } }),
+  ]);
   if (!assignment) redirect("/musteri/calisan");
 
   const client = await prisma.client.findUnique({
@@ -48,6 +49,7 @@ export default async function CalisanClientPage({
     slug: client.slug,
     name: client.name,
     package: client.package,
+    canWriteNotes: employeeUser?.canWriteNotes ?? false,
     perms: {
       canViewCampaigns: assignment.canViewCampaigns,
       canManageCampaigns: assignment.canManageCampaigns,
