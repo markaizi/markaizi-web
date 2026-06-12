@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import type { ClientData, Campaign } from "@/lib/clients";
 import Calendar from "@/components/Calendar";
 import Notes from "@/components/Notes";
@@ -170,8 +170,6 @@ function Dashboard({
           )}
         </div>
 
-        {/* Alt iletişim */}
-        <SupportBox slug={client.slug} />
       </main>
     </div>
   );
@@ -494,151 +492,6 @@ function Empty({ text }: { text: string }) {
     >
       <p className="text-3xl mb-3">📭</p>
       <p className="text-[14px] text-[#8a8a9a]">{text}</p>
-    </div>
-  );
-}
-
-// ── Destek Kutusu ─────────────────────────────────────────────────────────────
-function SupportBox({ slug }: { slug: string }) {
-  const [msg, setMsg]       = useState("");
-  const [sending, setSending] = useState(false);
-  const [sent, setSent]     = useState(false);
-  const [err, setErr]       = useState("");
-  const textareaRef         = useRef<HTMLTextAreaElement>(null);
-
-  // textarea otomatik yükseklik
-  function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
-    setMsg(e.target.value);
-    const el = textareaRef.current;
-    if (el) { el.style.height = "auto"; el.style.height = `${el.scrollHeight}px`; }
-  }
-
-  async function handleSend() {
-    const trimmed = msg.trim();
-    if (!trimmed) return;
-    setSending(true);
-    setErr("");
-    try {
-      const res  = await fetch("/api/musteri/message", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ slug, message: trimmed }),
-      });
-      const data = await res.json();
-      if (data.success) {
-        setSent(true);
-        setMsg("");
-      } else {
-        setErr(data.error ?? "Gönderilemedi, tekrar deneyin.");
-      }
-    } catch {
-      setErr("Bağlantı hatası. Tekrar deneyin.");
-    } finally {
-      setSending(false);
-    }
-  }
-
-  return (
-    <div
-      className="mt-10 rounded-2xl p-5"
-      style={{ background: "var(--surface)", border: "1px solid rgba(168,85,247,0.15)" }}
-    >
-      {/* Başlık satırı + hızlı butonlar */}
-      <div className="flex items-center justify-between gap-4 flex-wrap mb-4">
-        <p className="font-semibold text-[15px] text-white">Bir sorunuz mu var?</p>
-        <div className="flex items-center gap-2">
-          {/* WhatsApp */}
-          <a
-            href="https://wa.me/905520772700"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-semibold transition-all hover:opacity-90"
-            style={{ background: "rgba(37,211,102,0.12)", border: "1px solid rgba(37,211,102,0.25)", color: "#25d366" }}
-          >
-            <svg viewBox="0 0 24 24" fill="currentColor" className="w-3.5 h-3.5">
-              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
-              <path d="M12 0C5.373 0 0 5.373 0 12c0 2.113.548 4.099 1.504 5.832L.057 23.667a.75.75 0 00.925.914l5.957-1.562A11.945 11.945 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.853 0-3.598-.498-5.103-1.368l-.362-.213-3.753.985.946-3.661-.235-.376A9.956 9.956 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
-            </svg>
-            WhatsApp
-          </a>
-          {/* E-posta */}
-          <a
-            href="mailto:markaizicom@gmail.com"
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-semibold transition-all hover:opacity-90"
-            style={{ background: "rgba(168,85,247,0.1)", border: "1px solid rgba(168,85,247,0.2)", color: "#c084fc" }}
-          >
-            <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5" stroke="currentColor" strokeWidth="2">
-              <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-            E-posta
-          </a>
-        </div>
-      </div>
-
-      {/* Mesaj alanı */}
-      {sent ? (
-        <div
-          className="flex items-center gap-2.5 rounded-xl px-4 py-3"
-          style={{ background: "rgba(52,211,153,0.08)", border: "1px solid rgba(52,211,153,0.2)" }}
-        >
-          <span className="text-[18px]">✓</span>
-          <p className="text-[13px] text-[#34d399] font-medium">Mesajınız iletildi, en kısa sürede geri döneceğiz.</p>
-          <button
-            onClick={() => setSent(false)}
-            className="ml-auto text-[11px] text-[#8a8a9a] hover:text-white transition-colors"
-          >
-            Tekrar yaz
-          </button>
-        </div>
-      ) : (
-        <div className="relative">
-          <textarea
-            ref={textareaRef}
-            value={msg}
-            onChange={handleChange}
-            placeholder="Mesajınızı buraya yazın…"
-            rows={2}
-            className="w-full resize-none rounded-xl px-4 py-3 text-[14px] text-white placeholder-[#555] transition-all outline-none"
-            style={{
-              background: "var(--bg)",
-              border: `1px solid ${err ? "rgba(239,68,68,0.4)" : "var(--border)"}`,
-              minHeight: "76px",
-              lineHeight: "1.6",
-            }}
-            onKeyDown={(e) => {
-              // Ctrl/Cmd + Enter ile gönder
-              if ((e.ctrlKey || e.metaKey) && e.key === "Enter") handleSend();
-            }}
-          />
-          {err && <p className="text-[11px] text-red-400 mt-1.5">{err}</p>}
-          <div className="flex items-center justify-between mt-2.5">
-            <span className="text-[11px] text-[#555]">{msg.length > 0 ? `${msg.length} / 2000` : "⌘↵ ile de gönderebilirsiniz"}</span>
-            <button
-              onClick={handleSend}
-              disabled={sending || !msg.trim()}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-full text-[13px] font-semibold transition-all disabled:opacity-40"
-              style={{ background: "linear-gradient(135deg,#7c3aed,#a855f7)", color: "#fff" }}
-            >
-              {sending ? (
-                <>
-                  <svg className="animate-spin w-3.5 h-3.5" viewBox="0 0 24 24" fill="none">
-                    <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" strokeOpacity=".3"/>
-                    <path d="M12 2a10 10 0 0110 10" stroke="currentColor" strokeWidth="3" strokeLinecap="round"/>
-                  </svg>
-                  Gönderiliyor
-                </>
-              ) : (
-                <>
-                  Gönder
-                  <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5" stroke="currentColor" strokeWidth="2.5">
-                    <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </>
-              )}
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }
