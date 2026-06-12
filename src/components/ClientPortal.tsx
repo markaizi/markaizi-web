@@ -431,9 +431,9 @@ function CampaignTable({ campaigns }: { campaigns: Campaign[] }) {
           className="grid grid-cols-4 px-5 py-3 text-[11px] font-bold uppercase tracking-wider text-[#8a8a9a]"
           style={{ background: "var(--surface-2)" }}
         >
+          <span>Kampanya Adı</span>
           <span>Başlangıç</span>
           <span>Bitiş</span>
-          <span>Kampanya Adı</span>
           <span className="text-right">Günlük Bütçe</span>
         </div>
         {campaigns.map((c, i) => (
@@ -445,9 +445,9 @@ function CampaignTable({ campaigns }: { campaigns: Campaign[] }) {
               borderTop: i > 0 ? "1px solid var(--border)" : "none",
             }}
           >
+            <span className="text-[13px] text-[#c8c8d8] truncate pr-3">{c.name}</span>
             <span className="text-[13px] text-white">{c.startDate}</span>
             <span className="text-[13px] text-[#8a8a9a]">{c.endDate}</span>
-            <span className="text-[13px] text-[#c8c8d8] truncate pr-3">{c.name}</span>
             <div className="flex flex-col items-end gap-1">
               <span className="text-[13px] font-semibold text-white">{fmtBudget(c.dailyBudget)}</span>
               <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={statusStyle(c.status)}>
