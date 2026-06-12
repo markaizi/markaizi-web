@@ -1,6 +1,6 @@
 # PROJE DURUM — markaizi.com.tr
 
-Son güncelleme: 7 Haziran 2026
+Son güncelleme: 12 Haziran 2026
 
 ---
 
@@ -15,41 +15,249 @@ Son güncelleme: 7 Haziran 2026
 
 ### Fiyatlandırma
 - Ana sayfa Pricing: Başlangıç 20k / Büyüme 30k / Kurumsal 40k / Elite 60k
-- Öne çıkan özellikler mor border ile highlight
-- Bütçe notu (100k TL üzeri)
 - `/fiyatlar` sayfası: tekil hizmet fiyat listesi (4 kategori)
-- Hizmet sayfalarında `pricingNote` uyarısı
 
 ### Hizmet Sayfaları
-- `/hizmetler/sosyal-medya-yonetimi` — 20/30/40/60k
-- `/hizmetler/meta-reklamlari` — 15k / 25k
-- `/hizmetler/google-reklamlari` — 15k / 25k
-- `/hizmetler/tiktok-reklamlari` — 10k
-- `/hizmetler/yapay-zeka-otomasyon`
-- `/hizmetler/web-tasarim-hosting` + `/teklif` formu
+- `/hizmetler/sosyal-medya-yonetimi`, `/hizmetler/meta-reklamlari`, `/hizmetler/google-reklamlari`
+- `/hizmetler/tiktok-reklamlari`, `/hizmetler/yapay-zeka-otomasyon`, `/hizmetler/web-tasarim-hosting`
 
 ### İK / CV Sayfası
-- `/cv` — Sadece logo + form
-- Sosyal medya tecrübesi toggle alanı
-- Meta/Google reklam tecrübesi textarea
-- Medeni durum + ücret beklentisi alanları
-- "Yok" deneyimi espri popup
-- API: `/api/cv` → Gmail SMTP ile mail
-
-### Müşteri Paneli
-- `/musteri/[slug]` — Auth (sessionStorage), kampanya listesi, güncellemeler
-- `/musteri/admin` — Tüm müşterileri görebilen admin paneli
-- Müşteriler: sahinavize, alanyapro, fitrina, retrocar, ozcalik
+- `/cv` — Form, toggle alanlar, Gmail SMTP mail
 
 ### PayTR Ödeme Sistemi (KOD HAZIR — AKTİF DEĞİL)
-- `/odeme/[paket]` — Checkout sayfası
-- `/odeme/basarili` ve `/odeme/iptal` sayfaları
-- `src/lib/paytr.ts` — Token hesaplama + callback doğrulama
-- `src/lib/packages.ts` — Paket tanımları (fiyatlar Pricing.tsx ile senkron)
-- `/api/paytr/token` — PayTR iFrame token alma
-- `/api/paytr/callback` — Ödeme sonucu webhook
-- `CheckoutForm.tsx` — iFrame form componenti
-- `.env.local` ve Vercel'de credentials kayıtlı
+- Bkz. altbölüm "Bekleyen / Yarım Kalanlar"
+
+---
+
+## ✅ Müşteri / Ajans Paneli (Tam Platform)
+
+`/musteri/**` altında tamamen işlevsel ajans iş-takip platformu.
+
+### Teknoloji
+| Katman | Seçim |
+|--------|-------|
+| Veritabanı | Neon Postgres (free tier) |
+| ORM | Prisma 6 |
+| Auth | Jose JWT → httpOnly cookie `mkz_session` (7 gün) |
+| Şifre | bcryptjs |
+| Doğrulama | zod |
+
+### Roller
+| Rol | Erişim |
+|-----|--------|
+| `ADMIN` | Tüm firmalar, tüm işlemler, kullanıcı/çalışan yönetimi |
+| `EMPLOYEE` | Yalnızca atandığı firmalar, yetki bazlı tab'lar |
+| `CLIENT` | Yalnızca kendi firması, sadece okuma + isteğe bağlı not yazma |
+
+### Giriş / Oturum
+- URL: `/musteri/giris` — kullanıcı adı + şifre
+- Cookie: `mkz_session` httpOnly, Secure, SameSite=Lax
+- Middleware (`src/middleware.ts`): tüm `/musteri/**` rotaları koruma altında
+- Logout: `POST /api/musteri/auth/logout`
+
+### Paneller
+| Panel | URL | Kimler |
+|-------|-----|--------|
+| Admin Paneli | `/musteri/admin` | ADMIN |
+| Firma Yönetimi | `/musteri/admin/[slug]` | ADMIN |
+| Yeni Firma | `/musteri/admin/yeni` | ADMIN |
+| Admin Profili | `/musteri/admin/profil` | ADMIN |
+| Çalışanlar | `/musteri/admin/calisanlar` | ADMIN |
+| Admin Takvim | `/musteri/admin/takvim` | ADMIN |
+| Çalışan Paneli | `/musteri/calisan` | EMPLOYEE |
+| Çalışan Firma | `/musteri/calisan/[slug]` | EMPLOYEE |
+| Çalışan Takvim | `/musteri/calisan/takvim` | EMPLOYEE |
+| Müşteri Paneli | `/musteri/[slug]` | CLIENT (kendi firması) + ADMIN + EMPLOYEE |
+
+---
+
+## 🗃️ Veritabanı Şeması (Prisma)
+
+Veritabanı: Neon Postgres — `neondb` schema  
+Migration'lar `prisma/migrations/` altında.
+
+### Modeller
+
+#### `User` — Kullanıcılar
+| Alan | Tip | Açıklama |
+|------|-----|----------|
+| id | String (cuid) | PK |
+| email | String (unique) | Giriş e-postası |
+| username | String? (unique) | Giriş kullanıcı adı |
+| passwordHash | String | bcryptjs hash |
+| role | `ADMIN / EMPLOYEE / CLIENT` | Rol |
+| name | String | Görünen ad |
+| active | Boolean | `false` = soft-delete (çalışan silindi) |
+| clientId | String? | Sadece CLIENT için — bağlı firma |
+| canWriteNotes | Boolean | Müşteri/çalışan not yazabilir mi (admin her zaman yazabilir) |
+
+#### `Client` — Firmalar
+| Alan | Tip | Açıklama |
+|------|-----|----------|
+| id | String (cuid) | PK |
+| slug | String (unique) | URL parçası (örn: `ahmet-nakliyat`) |
+| name | String | Firma adı |
+| package | String | Hizmet paketi adı |
+| invoiceNote | String? | Fatura notu |
+| active | Boolean | `false` = arşivlendi |
+
+#### `Assignment` — Çalışan → Firma Atamaları
+Bir çalışanın birden fazla firmaya atanabilir. Her atama bağımsız yetki seti taşır.
+
+| Alan | Tip | Açıklama |
+|------|-----|----------|
+| userId | String | EMPLOYEE kullanıcı |
+| clientId | String | Firma |
+| canViewCampaigns | Boolean | Kampanya görüntüleme |
+| canManageCampaigns | Boolean | Kampanya düzenleme |
+| canViewContent | Boolean | İçerik görüntüleme |
+| canManageContent | Boolean | İçerik düzenleme |
+| canViewUpdates | Boolean | Güncelleme görüntüleme |
+| canManageUpdates | Boolean | Güncelleme yazma |
+| canViewInvoices | Boolean | Fatura görüntüleme |
+| canManageInvoices | Boolean | Fatura düzenleme |
+
+Unique constraint: `[userId, clientId]`
+
+#### `Campaign` — Reklam Kampanyaları
+| Alan | Tip | Açıklama |
+|------|-----|----------|
+| platform | `META / GOOGLE / TIKTOK` | Platform |
+| name | String | Kampanya adı |
+| dailyBudget | String | Günlük bütçe (metin) |
+| status | `AKTIF / DURAKLATILDI / TAMAMLANDI / ODEME_HATASI` | |
+| ongoing | Boolean | "Devam ediyor" mu |
+| startDate / endDate | DateTime? | Tarihler |
+| sortOrder | Int | Sıralama |
+
+#### `ContentItem` — İçerik Takvimi
+| Alan | Tip | Açıklama |
+|------|-----|----------|
+| title | String | İçerik başlığı |
+| description | String? | Açıklama/not |
+| scheduledDate | DateTime | Planlanan tarih |
+| status | `PLANLANDI / DUZENLENIYOR / HAZIR / YAYINLANDI` | |
+| assigneeId | String? | Atanan çalışan |
+| completedAt | DateTime? | Tamamlanma zamanı |
+| publishedAt | DateTime? | Yayın zamanı |
+
+#### `Update` — Ajans/Website Güncellemeleri
+| Alan | Tip | Açıklama |
+|------|-----|----------|
+| kind | `AJANS / WEBSITE` | Güncelleme türü |
+| text | String | İçerik |
+| date | DateTime | Tarih |
+| authorId | String? | Yazan kullanıcı |
+
+#### `Invoice` — Faturalar
+| Alan | Tip | Açıklama |
+|------|-----|----------|
+| period | String | Dönem (örn: "Haziran 2026") |
+| amount | String | Tutar (metin) |
+| status | `ODENDI / BEKLIYOR / GUNU_GELMEDI` | |
+| dueDate | DateTime? | Son ödeme tarihi |
+
+#### `Note` — Firma Not Defteri
+| Alan | Tip | Açıklama |
+|------|-----|----------|
+| clientId | String | Firma |
+| authorId | String? | Yazan kullanıcı (SetNull on delete) |
+| authorRole | `ADMIN / EMPLOYEE / CLIENT` | Yazanın rolü |
+| text | String | Not içeriği |
+| visibility | `ICERIK / PAYLASIMLI` | `ICERIK` = sadece ajans görür; `PAYLASIMLI` = müşteri de görür |
+
+#### `NoteRead` — Not Okundu Takibi
+| Alan | Tip | Açıklama |
+|------|-----|----------|
+| userId | String | Okuyan kullanıcı |
+| noteId | String | Not |
+| readAt | DateTime | Okunma zamanı |
+
+Composite PK: `[userId, noteId]`  
+Notlar sekmesi açıldığında (GET isteği) tüm notlar bu tabloya `createMany skipDuplicates` ile işlenir.
+
+---
+
+## 🔌 API Route'ları
+
+### Auth
+| Route | Method | Açıklama |
+|-------|--------|----------|
+| `/api/musteri/auth/login` | POST | Giriş → cookie set |
+| `/api/musteri/auth/logout` | POST | Cookie temizle |
+
+### Admin — Firma Yönetimi
+| Route | Method | Açıklama |
+|-------|--------|----------|
+| `/api/musteri/admin/clients` | POST | Yeni firma oluştur (isteğe bağlı kullanıcı ile birlikte) |
+| `/api/musteri/admin/clients/[slug]` | PATCH | Firma bilgilerini güncelle |
+| `/api/musteri/admin/clients/[slug]/campaigns` | POST | Kampanya ekle |
+| `/api/musteri/admin/clients/[slug]/campaigns/[id]` | PATCH/DELETE | Kampanya güncelle/sil |
+| `/api/musteri/admin/clients/[slug]/updates` | POST | Güncelleme ekle |
+| `/api/musteri/admin/clients/[slug]/updates/[id]` | PATCH/DELETE | |
+| `/api/musteri/admin/clients/[slug]/invoices` | POST | Fatura ekle |
+| `/api/musteri/admin/clients/[slug]/invoices/[id]` | PATCH/DELETE | |
+| `/api/musteri/admin/clients/[slug]/content` | POST | İçerik öğesi ekle |
+| `/api/musteri/admin/clients/[slug]/content/[id]` | PATCH/DELETE | |
+| `/api/musteri/admin/clients/[slug]/users` | GET/PATCH | Müşteri kullanıcısı listele / canWriteNotes toggle |
+
+### Admin — Çalışan Yönetimi
+| Route | Method | Açıklama |
+|-------|--------|----------|
+| `/api/musteri/admin/employees` | GET/POST | Çalışan listesi / yeni çalışan |
+| `/api/musteri/admin/employees/[id]` | PATCH/DELETE | Çalışan düzenle (ad/email/şifre) / soft-delete |
+| `/api/musteri/admin/employees/[id]/assignments` | GET/POST/DELETE | Çalışan atama yönetimi |
+
+### Admin — Profil
+| Route | Method | Açıklama |
+|-------|--------|----------|
+| `/api/musteri/admin/profile` | PATCH | Admin kendi adını/emailini/şifresini günceller |
+
+### Notlar
+| Route | Method | Açıklama |
+|-------|--------|----------|
+| `/api/musteri/notes/[clientSlug]` | GET | Notları getir (rol bazlı filtre) + otomatik okundu işaretle |
+| `/api/musteri/notes/[clientSlug]` | POST | Not yaz |
+| `/api/musteri/notes/note/[id]` | DELETE | Not sil (kendi notu veya admin) |
+| `/api/musteri/notes/note/[id]` | PATCH | Not güncelle (görünürlük değiştirme sadece admin) |
+
+### Bildirimler
+| Route | Method | Açıklama |
+|-------|--------|----------|
+| `/api/musteri/notifications` | GET | Okunmamış not sayılarını firma bazında döner |
+
+---
+
+## 🏗️ Önemli Kod Dosyaları
+
+| Dosya | Açıklama |
+|-------|----------|
+| `prisma/schema.prisma` | Tüm DB modelleri ve ilişkiler |
+| `prisma/seed.ts` | DB seed (5 firma, kullanıcılar) |
+| `src/lib/db.ts` | Prisma singleton |
+| `src/lib/auth.ts` | `getSession()`, `assertCanAccessClient()`, JWT yardımcıları |
+| `src/lib/adminGuard.ts` | Admin route'ları için `requireAdmin()` |
+| `src/lib/staffGuard.ts` | Admin+çalışan route'ları için |
+| `src/middleware.ts` | `/musteri/**` kaba kapı (JWT kontrol + rol yönlendirme) |
+| `src/lib/clientView.ts` | DB → ClientPortal UI veri dönüşümü |
+| `src/components/AdminPanel.tsx` | Admin dashboard (firma grid + okunmamış badge) |
+| `src/components/AdminClientDetail.tsx` | Firma yönetim ekranı (7 sekme) |
+| `src/components/AdminEmployeePanel.tsx` | Çalışan listesi + düzenle/sil |
+| `src/components/EmployeeDashboard.tsx` | Çalışan dashboard (atanan firmalar + badge) |
+| `src/components/EmployeeClientDetail.tsx` | Çalışan firma detayı (yetki bazlı sekmeler) |
+| `src/components/ClientPortal.tsx` | Müşteri paneli (tüm sekmeler, salt okunur) |
+| `src/components/Calendar.tsx` | Özel ay-grid takvim (3 rol için) |
+| `src/components/Notes.tsx` | Not defteri bileşeni (tüm portallerde kullanılır) |
+
+---
+
+## 🔔 Bildirim Sistemi (Not Bildirimleri)
+
+- Başkası not yazdığında dashboard'da turuncu badge + "🔔 Okunmamış not: Firma A (2)" banner çıkar
+- Notlar sekmesi açılınca o firmanın tüm notları okundu işaretlenir (sayfa yenilenince banner kalkar)
+- Admin: tüm firmalar için bildirim alır
+- Çalışan: yalnızca atandığı firmalar için bildirim alır
+- Müşteri: bildirim yok (client portale bildirim eklenmedi)
 
 ---
 
@@ -60,28 +268,18 @@ Son güncelleme: 7 Haziran 2026
 **Sorun:** PayTR hesabında **iFrame Ödeme** entegrasyonu aktif değil.
 **Yapılacak:**
 1. PayTR paneli → Entegrasyonlar → iFrame Ödeme'yi aktif et
-2. `markaizi.com.tr` domainini PayTR panelinde kaydet (zaten yapıldı)
-3. `PAYTR_TEST_MODE=1` ile test et (test kartı: 4355 0843 5508 4358, CVV: 000)
-4. Test başarılı olunca `PAYTR_TEST_MODE=0` yaparak canlıya al (Vercel env güncelle)
-5. Pricing sayfasındaki "Satın Al" butonlarını `/odeme/[slug]` linklerine bağla
+2. `PAYTR_TEST_MODE=1` ile test et
+3. Test başarılı olunca `PAYTR_TEST_MODE=0` yaparak canlıya al
+4. Pricing sayfasındaki "Satın Al" butonlarını `/odeme/[slug]` linklerine bağla
 
-**Credentials (.env.local + Vercel'de kayıtlı):**
-- PAYTR_MERCHANT_ID: 674958
-- PAYTR_TEST_MODE: 1 (şu an test modu)
-- NEXT_PUBLIC_BASE_URL: https://markaizi.com.tr
+**Credentials (.env.local + Vercel'de):**
+- PAYTR_MERCHANT_ID: 674958, TEST_MODE: 1, BASE_URL: https://markaizi.com.tr
 
----
-
-## 📁 Önemli Dosyalar
-
-| Dosya | Açıklama |
-|-------|----------|
-| `src/lib/clients.ts` | Müşteri paneli verileri (GERÇEK KAYNAK) |
-| `musteri-data/*.txt` | Müşteri verileri referans kopyaları |
-| `musteri-data/fiyatlar.txt` | Tekil hizmet fiyat listesi (düzenle → Claude'a söyle) |
-| `src/lib/packages.ts` | PayTR paket tanımları (Pricing.tsx ile senkron tutulmalı) |
-| `src/lib/paytr.ts` | PayTR token + callback logic |
-| `.env.local` | Tüm API credentials (git'e commit edilmez) |
+### Müşteri Paneli — Olası Geliştirmeler
+- [ ] Faz 5 Notlar: müşteri not yazınca ajansa bildirim (şu an sadece ajans→müşteri yönü bildirilir)
+- [ ] Çalışan profil sayfası (çalışan kendi şifresini değiştirebilsin)
+- [ ] Müşteri profil sayfası (müşteri kendi şifresini değiştirebilsin)
+- [ ] Fatura PDF oluşturma
 
 ---
 
@@ -90,3 +288,20 @@ Son güncelleme: 7 Haziran 2026
 - `git push origin main` → Vercel otomatik deploy
 - Manuel: `vercel --prod`
 - Canlı URL: https://markaizi.com.tr
+
+### Gerekli Env Değişkenleri (Vercel)
+| Değişken | Açıklama |
+|----------|----------|
+| DATABASE_URL | Neon pooled bağlantı |
+| AUTH_SECRET | JWT imzalama anahtarı |
+| SMTP_USER / SMTP_PASS | Gmail SMTP (CV formu için) |
+| PAYTR_* | PayTR credentials |
+
+> `DIRECT_URL` Vercel'de gerekmez — migration'lar lokalde çalıştırılır.
+
+### Migration Komutu (Lokal)
+```bash
+npm run prisma:migrate   # dotenv -e .env.local -- prisma migrate dev
+npm run db:seed          # dotenv -e .env.local -- ts-node prisma/seed.ts
+npm run prisma:studio    # DB görsel düzenleme
+```
