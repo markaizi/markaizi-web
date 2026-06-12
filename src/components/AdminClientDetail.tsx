@@ -425,7 +425,7 @@ function KampanyalarTab({ slug, campaigns, router }: { slug: string; campaigns: 
       ) : (
         <form onSubmit={handleAdd} className="rounded-2xl p-5 space-y-4 mt-2" style={{ background: "var(--surface)", border: "1px solid rgba(168,85,247,0.3)" }}>
           <p className="font-semibold text-white text-[14px]">Yeni Kampanya</p>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="Platform">
               <Select value={form.platform} onChange={(e) => setForm((f) => ({ ...f, platform: e.target.value as Campaign["platform"] }))}>
                 <option value="META">Meta</option>
@@ -453,7 +453,7 @@ function KampanyalarTab({ slug, campaigns, router }: { slug: string; campaigns: 
             <label htmlFor="ongoing" className="text-[13px] text-[#8a8a9a]">Devam ediyor (süresiz)</label>
           </div>
           {!form.ongoing && (
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <Field label="Başlangıç">
                 <Input type="date" value={form.startDate} onChange={(e) => setForm((f) => ({ ...f, startDate: e.target.value }))} />
               </Field>
@@ -542,7 +542,7 @@ function GuncellemelerTab({ slug, updates, router }: { slug: string; updates: Up
       ) : (
         <form onSubmit={handleAdd} className="rounded-2xl p-5 space-y-4 mt-2" style={{ background: "var(--surface)", border: "1px solid rgba(168,85,247,0.3)" }}>
           <p className="font-semibold text-white text-[14px]">Yeni Güncelleme</p>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="Tür">
               <Select value={form.kind} onChange={(e) => setForm((f) => ({ ...f, kind: e.target.value as Update["kind"] }))}>
                 <option value="AJANS">Ajans</option>
@@ -649,7 +649,7 @@ function FaturalarTab({ slug, invoices, router }: { slug: string; invoices: Invo
       ) : (
         <form onSubmit={handleAdd} className="rounded-2xl p-5 space-y-4 mt-2" style={{ background: "var(--surface)", border: "1px solid rgba(168,85,247,0.3)" }}>
           <p className="font-semibold text-white text-[14px]">Yeni Fatura</p>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="Dönem">
               <Input required value={form.period} onChange={(e) => setForm((f) => ({ ...f, period: e.target.value }))} placeholder="Haziran 2026" />
             </Field>
@@ -657,7 +657,7 @@ function FaturalarTab({ slug, invoices, router }: { slug: string; invoices: Invo
               <Input required value={form.amount} onChange={(e) => setForm((f) => ({ ...f, amount: e.target.value }))} placeholder="5.000 ₺" />
             </Field>
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="Durum">
               <Select value={form.status} onChange={(e) => setForm((f) => ({ ...f, status: e.target.value as Invoice["status"] }))}>
                 <option value="BEKLIYOR">Bekliyor</option>
@@ -806,7 +806,7 @@ function IceriklerTab({
           <Field label="Açıklama (opsiyonel)">
             <Textarea value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} placeholder="İçerik detayları, notlar..." />
           </Field>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="Yayın Tarihi">
               <Input type="date" required value={form.scheduledDate} onChange={(e) => setForm((f) => ({ ...f, scheduledDate: e.target.value }))} />
             </Field>
@@ -925,7 +925,7 @@ function KullaniciTab({
 
       <form onSubmit={handleSubmit} className="rounded-2xl p-5 space-y-4" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
         <p className="font-semibold text-white text-[14px]">{existing ? "Bilgileri Güncelle / Şifre Sıfırla" : "Müşteri Girişi Oluştur"}</p>
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <Field label="Kullanıcı Adı">
             <Input required value={form.username} onChange={(e) => setForm((f) => ({ ...f, username: e.target.value }))} placeholder={slug} />
           </Field>

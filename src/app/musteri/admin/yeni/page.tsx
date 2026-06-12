@@ -132,7 +132,7 @@ export default function YeniFirmaPage() {
             {withUser && (
               <div className="px-5 pb-5 pt-4 space-y-4"
                 style={{ background: "var(--surface)", borderTop: "1px solid var(--border)" }}>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <label className={labelCls}>Kullanıcı Adı</label>
                     <input required={withUser} value={form.username}

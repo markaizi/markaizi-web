@@ -249,7 +249,7 @@ function EmpIceriklerTab({ slug, contentItems, canManage, router }: {
               className="w-full px-3 py-2 rounded-lg text-[14px] text-white placeholder-[#555] outline-none resize-none"
               style={{ background: "var(--bg)", border: "1px solid var(--border)" }} />
           </div>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-[11px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1.5">Yayın Tarihi</label>
               <input type="date" required value={form.scheduledDate} onChange={(e) => setForm((f) => ({ ...f, scheduledDate: e.target.value }))}
@@ -321,7 +321,7 @@ function EmpGuncellemelerTab({ slug, updates, canManage, router }: {
       {canManage && showForm && (
         <form onSubmit={handleAdd} className="rounded-2xl p-5 space-y-4 mt-2" style={{ background: "var(--surface)", border: "1px solid rgba(96,165,250,0.3)" }}>
           <p className="font-semibold text-white text-[14px]">Yeni Güncelleme</p>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-[11px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1.5">Tür</label>
               <select value={form.kind} onChange={(e) => setForm((f) => ({ ...f, kind: e.target.value as "AJANS" | "WEBSITE" }))}
@@ -428,7 +428,7 @@ function EmpKampanyalarTab({ slug, campaigns, canManage, router }: {
       {canManage && showForm && (
         <form onSubmit={handleAdd} className="rounded-2xl p-5 space-y-4 mt-2" style={{ background: "var(--surface)", border: "1px solid rgba(96,165,250,0.3)" }}>
           <p className="font-semibold text-white text-[14px]">Yeni Kampanya</p>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-[11px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1.5">Platform</label>
               <select value={form.platform} onChange={(e) => setForm((f) => ({ ...f, platform: e.target.value as Platform }))}
@@ -558,7 +558,7 @@ function EmpFaturalarTab({ slug, invoices, canManage, router }: {
       {canManage && showForm && (
         <form onSubmit={handleAdd} className="rounded-2xl p-5 space-y-4 mt-2" style={{ background: "var(--surface)", border: "1px solid rgba(96,165,250,0.3)" }}>
           <p className="font-semibold text-white text-[14px]">Yeni Fatura</p>
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-[11px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1.5">Dönem</label>
               <input required value={form.period} onChange={(e) => setForm((f) => ({ ...f, period: e.target.value }))} placeholder="Haziran 2026"

@@ -116,19 +116,19 @@ export default function AdminEmployeePanel({
       </header>
 
       <main className="max-w-[860px] mx-auto px-6 py-10">
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
           <div>
             <h1 className="font-black text-[24px] text-white mb-1">Çalışanlar</h1>
             <p className="text-[14px] text-[#8a8a9a]">{employees.length} çalışan</p>
           </div>
-          <button onClick={() => setShowForm(true)} className="btn btn-primary text-sm px-5 py-2.5">+ Yeni Çalışan</button>
+          <button onClick={() => setShowForm(true)} className="btn btn-primary text-sm px-5 py-2.5 self-start sm:self-auto">+ Yeni Çalışan</button>
         </div>
 
         {showForm && (
           <form onSubmit={handleCreate} className="rounded-2xl p-6 mb-8 space-y-4"
             style={{ background: "var(--surface)", border: "1px solid rgba(168,85,247,0.3)" }}>
             <p className="font-semibold text-white text-[15px]">Yeni Çalışan</p>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {[
                 { key: "username", label: "Kullanıcı Adı", placeholder: "ali.yilmaz", type: "text" },
                 { key: "name",     label: "Ad Soyad",       placeholder: "Ali Yılmaz",  type: "text" },

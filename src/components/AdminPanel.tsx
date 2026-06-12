@@ -63,14 +63,14 @@ export default function AdminPanel({
 
       <main className="max-w-[960px] mx-auto px-6 py-10">
         {/* Başlık */}
-        <div className="mb-10 flex items-start justify-between gap-4">
+        <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <h2 className="font-black text-[24px] text-white mb-1">Müşteri Panelleri</h2>
             <p className="text-[14px] text-[#8a8a9a]">
               Merhaba {adminName} · {clients.length} aktif müşteri
             </p>
           </div>
-          <div className="flex gap-2 flex-shrink-0 flex-wrap justify-end">
+          <div className="flex gap-2 flex-wrap">
             <button
               onClick={() => router.push("/musteri/admin/takvim")}
               className="btn btn-outline text-sm px-4 py-2.5"
