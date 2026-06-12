@@ -269,7 +269,7 @@ export default function AdminClientDetail({ data, unreadNoteCount = 0 }: { data:
         {tab === "icerikler" && <IceriklerTab slug={data.slug} contentItems={data.contentItems} router={router} />}
         {tab === "guncellemeler" && <GuncellemelerTab slug={data.slug} updates={data.updates} router={router} />}
         {tab === "faturalar" && <FaturalarTab slug={data.slug} invoices={data.invoices} router={router} />}
-        {tab === "notlar" && <Notes clientSlug={data.slug} canWrite isAjans />}
+        {tab === "notlar" && <Notes clientSlug={data.slug} canWrite isAjans isAdmin />}
         {tab === "kullanici" && <KullaniciTab slug={data.slug} users={data.users} router={router} />}
       </main>
     </div>

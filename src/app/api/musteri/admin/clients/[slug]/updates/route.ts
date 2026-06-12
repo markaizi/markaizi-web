@@ -9,7 +9,7 @@ export const runtime = "nodejs";
 const schema = z.object({
   kind: z.nativeEnum(UpdateKind),
   text: z.string().min(1).max(2000),
-  date: z.string(),
+  date: z.string().refine((v) => !isNaN(new Date(v).getTime()), { message: "Geçersiz tarih." }),
 });
 
 export async function POST(
@@ -17,8 +17,14 @@ export async function POST(
   { params }: { params: Promise<{ slug: string }> }
 ) {
   const { slug } = await params;
-  const { session, err } = await requireStaffForSlug(slug);
+  const { session, perms, err } = await requireStaffForSlug(slug);
   if (err) return err;
+
+  // Çalışan için canManageUpdates yetkisi gerekir
+  if (session!.role === "EMPLOYEE" && !perms?.canManageUpdates) {
+    return NextResponse.json({ error: "Güncelleme ekleme yetkiniz yok." }, { status: 403 });
+  }
+
   const client = await prisma.client.findUnique({ where: { slug } });
   if (!client) return NextResponse.json({ error: "Firma bulunamadı." }, { status: 404 });
 

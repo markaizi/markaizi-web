@@ -4,6 +4,7 @@ import { NextResponse } from "next/server";
 
 const unauth = () => NextResponse.json({ error: "Yetkisiz." }, { status: 401 });
 const forbidden = () => NextResponse.json({ error: "Bu işlem için yetkiniz yok." }, { status: 403 });
+const disabled = () => NextResponse.json({ error: "Hesabınız devre dışı." }, { status: 403 });
 
 export type AssignmentPerms = {
   id: string;
@@ -17,10 +18,16 @@ export type AssignmentPerms = {
   canManageInvoices: boolean;
 };
 
+async function checkActive(uid: string): Promise<boolean> {
+  const u = await prisma.user.findUnique({ where: { id: uid }, select: { active: true } });
+  return u?.active ?? false;
+}
+
 /** ADMIN veya ilgili firmaya atanmış EMPLOYEE için geçer. Yetkiler döner. */
 export async function requireStaffForSlug(slug: string) {
   const session = await getSession();
   if (!session) return { session: null, perms: null, err: unauth() };
+  if (!(await checkActive(session.uid))) return { session: null, perms: null, err: disabled() };
   if (session.role === "ADMIN") return { session, perms: null, err: null };
   if (session.role === "EMPLOYEE") {
     const hit = await prisma.assignment.findFirst({
@@ -35,6 +42,7 @@ export async function requireStaffForSlug(slug: string) {
 export async function requireCampaignManageForSlug(slug: string) {
   const session = await getSession();
   if (!session) return { session: null, err: unauth() };
+  if (!(await checkActive(session.uid))) return { session: null, err: disabled() };
   if (session.role === "ADMIN") return { session, err: null };
   if (session.role === "EMPLOYEE") {
     const hit = await prisma.assignment.findFirst({
@@ -49,6 +57,7 @@ export async function requireCampaignManageForSlug(slug: string) {
 export async function requireCampaignManageById(id: string) {
   const session = await getSession();
   if (!session) return { session: null, err: unauth() };
+  if (!(await checkActive(session.uid))) return { session: null, err: disabled() };
   if (session.role === "ADMIN") return { session, err: null };
   if (session.role === "EMPLOYEE") {
     const campaign = await prisma.campaign.findUnique({
@@ -64,6 +73,7 @@ export async function requireCampaignManageById(id: string) {
 export async function requireInvoiceManageForSlug(slug: string) {
   const session = await getSession();
   if (!session) return { session: null, err: unauth() };
+  if (!(await checkActive(session.uid))) return { session: null, err: disabled() };
   if (session.role === "ADMIN") return { session, err: null };
   if (session.role === "EMPLOYEE") {
     const hit = await prisma.assignment.findFirst({
@@ -78,6 +88,7 @@ export async function requireInvoiceManageForSlug(slug: string) {
 export async function requireInvoiceManageById(id: string) {
   const session = await getSession();
   if (!session) return { session: null, err: unauth() };
+  if (!(await checkActive(session.uid))) return { session: null, err: disabled() };
   if (session.role === "ADMIN") return { session, err: null };
   if (session.role === "EMPLOYEE") {
     const invoice = await prisma.invoice.findUnique({
@@ -93,6 +104,7 @@ export async function requireInvoiceManageById(id: string) {
 export async function requireStaffForContentItem(id: string) {
   const session = await getSession();
   if (!session) return { session: null, err: unauth() };
+  if (!(await checkActive(session.uid))) return { session: null, err: disabled() };
   if (session.role === "ADMIN") return { session, err: null };
   if (session.role === "EMPLOYEE") {
     const item = await prisma.contentItem.findUnique({
@@ -108,6 +120,7 @@ export async function requireStaffForContentItem(id: string) {
 export async function requireStaffForUpdate(id: string) {
   const session = await getSession();
   if (!session) return { session: null, err: unauth() };
+  if (!(await checkActive(session.uid))) return { session: null, err: disabled() };
   if (session.role === "ADMIN") return { session, err: null };
   if (session.role === "EMPLOYEE") {
     const upd = await prisma.update.findUnique({

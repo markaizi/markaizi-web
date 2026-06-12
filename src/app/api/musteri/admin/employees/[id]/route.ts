@@ -31,8 +31,22 @@ export async function PATCH(
   const parsed = patchSchema.safeParse(body);
   if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
 
-  const { password, ...rest } = parsed.data;
+  const { password, email, username, ...rest } = parsed.data;
+
+  // Unique çakışma kontrolü
+  if (email || username) {
+    const conditions = [];
+    if (email)    conditions.push({ email });
+    if (username) conditions.push({ username });
+    const conflict = await prisma.user.findFirst({ where: { OR: conditions, NOT: { id } } });
+    if (conflict) {
+      return NextResponse.json({ error: "Bu e-posta veya kullanıcı adı başka kullanıcıya ait." }, { status: 409 });
+    }
+  }
+
   const data: Record<string, unknown> = { ...rest };
+  if (email)    data.email = email;
+  if (username) data.username = username;
   if (password) data.passwordHash = await bcrypt.hash(password, 12);
 
   await prisma.user.update({ where: { id }, data });
@@ -47,12 +61,20 @@ export async function DELETE(
   if (err) return err;
 
   const { id } = await params;
-  const user = await prisma.user.findUnique({ where: { id }, select: { role: true } });
+  const user = await prisma.user.findUnique({ where: { id }, select: { role: true, username: true, email: true } });
   if (!user || user.role !== "EMPLOYEE") {
     return NextResponse.json({ error: "Çalışan bulunamadı." }, { status: 404 });
   }
 
-  // Soft delete — atamalar ve notlar korunur
-  await prisma.user.update({ where: { id }, data: { active: false } });
+  // Soft delete — username/email'i serbest bırak, atama ve notlar korunur
+  const suffix = `_deleted_${Date.now()}`;
+  await prisma.user.update({
+    where: { id },
+    data: {
+      active: false,
+      username: user.username ? `${user.username}${suffix}` : null,
+      email: `${user.email}${suffix}`,
+    },
+  });
   return NextResponse.json({ ok: true });
 }

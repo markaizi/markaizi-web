@@ -29,6 +29,12 @@ export async function POST(req: NextRequest) {
 
   const { name, slug, package: pkg, invoiceNote, username, email, password } = parsed.data;
 
+  // Sistem rotalarıyla çakışmayı engelle
+  const RESERVED = ["admin", "calisan", "giris", "takvim", "profil"];
+  if (RESERVED.some((r) => slug === r || slug.startsWith(r + "-"))) {
+    return NextResponse.json({ error: `"${slug}" rezerve bir slug. Farklı bir slug deneyin.` }, { status: 400 });
+  }
+
   const existing = await prisma.client.findUnique({ where: { slug } });
   if (existing) {
     return NextResponse.json({ error: "Bu slug zaten kullanımda." }, { status: 409 });

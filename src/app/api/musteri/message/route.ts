@@ -31,9 +31,18 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Mesaj boş olamaz." }, { status: 400 });
     }
 
-    // Müşteri adını DB'den çek
-    const client = await prisma.client.findUnique({ where: { slug }, select: { name: true } });
-    const clientName = client?.name ?? slug;
+    // Müşteri adını DB'den çek ve sahiplik doğrula
+    const client = await prisma.client.findUnique({ where: { slug }, select: { id: true, name: true } });
+    if (!client) {
+      return NextResponse.json({ error: "Firma bulunamadı." }, { status: 404 });
+    }
+
+    // CLIENT rolü sadece kendi firmasına mesaj gönderebilir
+    if (session.role === "CLIENT" && session.clientId !== client.id) {
+      return NextResponse.json({ error: "Yetkisiz." }, { status: 403 });
+    }
+
+    const clientName = client.name;
 
     const transporter = nodemailer.createTransport({
       service: "gmail",

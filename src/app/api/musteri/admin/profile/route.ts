@@ -27,6 +27,12 @@ export async function PATCH(req: NextRequest) {
 
   const { name, email, password, oldPassword } = parsed.data;
 
+  // Email unique çakışma kontrolü
+  if (email) {
+    const conflict = await prisma.user.findFirst({ where: { email, NOT: { id: session.uid } } });
+    if (conflict) return NextResponse.json({ error: "Bu e-posta başka kullanıcıya ait." }, { status: 409 });
+  }
+
   // Şifre değişikliği varsa eski şifre doğrulanmalı
   if (password) {
     if (!oldPassword) return NextResponse.json({ error: "Mevcut şifrenizi girin." }, { status: 400 });

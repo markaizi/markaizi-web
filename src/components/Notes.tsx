@@ -19,11 +19,14 @@ export default function Notes({
   clientSlug,
   canWrite,
   isAjans,
+  isAdmin = false,
 }: {
   clientSlug: string;
   canWrite: boolean;
   /** Admin veya çalışan ise true: görünürlük seçimi + ajans-içi notları görme */
   isAjans: boolean;
+  /** Sadece admin ise true: başkasının notunu silebilir */
+  isAdmin?: boolean;
 }) {
   const [notes, setNotes] = useState<NoteItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -66,8 +69,13 @@ export default function Notes({
   async function handleDelete(id: string) {
     if (!confirm("Bu notu sil?")) return;
     setDeletingId(id);
-    await fetch(`/api/musteri/notes/note/${id}`, { method: "DELETE" });
-    setNotes((prev) => prev.filter((n) => n.id !== id));
+    const res = await fetch(`/api/musteri/notes/note/${id}`, { method: "DELETE" });
+    if (res.ok) {
+      setNotes((prev) => prev.filter((n) => n.id !== id));
+    } else {
+      const json = await res.json().catch(() => ({}));
+      setErr(json.error ?? "Not silinemedi.");
+    }
     setDeletingId(null);
   }
 
@@ -208,7 +216,7 @@ export default function Notes({
                   {note.text}
                 </p>
 
-                {(note.isOwn || isAjans) && (
+                {(note.isOwn || isAdmin) && (
                   <button
                     onClick={() => handleDelete(note.id)}
                     disabled={deletingId === note.id}
