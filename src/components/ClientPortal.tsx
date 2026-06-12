@@ -5,7 +5,7 @@ import type { ClientData, Campaign } from "@/lib/clients";
 import Calendar from "@/components/Calendar";
 import Notes from "@/components/Notes";
 
-type Tab = "dashboard" | "meta" | "google" | "tiktok" | "website" | "updates" | "calendar" | "invoice" | "notlar";
+type Tab = "meta" | "google" | "tiktok" | "website" | "updates" | "calendar" | "invoice" | "notlar";
 
 function fmtAmount(raw: string): string {
   const digits = raw.replace(/[^\d]/g, "");
@@ -23,21 +23,24 @@ function fmtBudget(raw: string): string {
   return num.toLocaleString("tr-TR") + " ₺/gün";
 }
 
+function parseBudgetNum(raw: string): number {
+  const digits = raw.replace(/[^\d]/g, "");
+  if (!digits) return 0;
+  return parseInt(digits, 10) || 0;
+}
+
 const TABS: { id: Tab; label: string; emoji: string }[] = [
-  { id: "dashboard", label: "Genel Bakış",           emoji: "🏠" },
-  { id: "meta",      label: "Meta Ads",              emoji: "📣" },
-  { id: "google",    label: "Google Ads",             emoji: "🔍" },
-  { id: "tiktok",    label: "TikTok Ads",             emoji: "🎵" },
-  { id: "website",   label: "Website",                emoji: "🌐" },
-  { id: "updates",   label: "Güncellemeler",          emoji: "📝" },
-  { id: "calendar",  label: "İçerik Takvimi",         emoji: "📅" },
-  { id: "invoice",   label: "Fatura",                 emoji: "💳" },
-  { id: "notlar",    label: "Notlar",                 emoji: "🗒️" },
+  { id: "meta",     label: "Meta Ads",           emoji: "📣" },
+  { id: "google",   label: "Google Ads",          emoji: "🔍" },
+  { id: "tiktok",   label: "TikTok Ads",          emoji: "🎵" },
+  { id: "website",  label: "Website",             emoji: "🌐" },
+  { id: "updates",  label: "Güncellemeler",        emoji: "📝" },
+  { id: "calendar", label: "İçerik Takvimi",       emoji: "📅" },
+  { id: "invoice",  label: "Fatura",               emoji: "💳" },
+  { id: "notlar",   label: "Notlar",               emoji: "🗒️" },
 ];
 
 // ── Ana bileşen ──────────────────────────────────────────────────────────────
-// Kimlik doğrulama artık middleware + httpOnly cookie ile yapılır.
-// Bu bileşen yalnızca yetkili oturuma render edilir.
 export default function ClientPortal({
   client,
   isAdminView = false,
@@ -50,9 +53,7 @@ export default function ClientPortal({
   async function handleLogout() {
     try {
       await fetch("/api/musteri/auth/logout", { method: "POST" });
-    } catch {
-      /* yine de yönlendir */
-    }
+    } catch { /* yine de yönlendir */ }
     window.location.href = isAdminView ? "/musteri/admin" : "/musteri/giris";
   }
 
@@ -71,7 +72,7 @@ function Dashboard({
   isAdminView: boolean;
   canWriteNotes: boolean;
 }) {
-  const [activeTab, setActiveTab] = useState<Tab>("dashboard");
+  const [activeTab, setActiveTab] = useState<Tab>("meta");
 
   return (
     <div className="min-h-screen" style={{ background: "var(--bg)" }}>
@@ -80,12 +81,12 @@ function Dashboard({
         className="sticky top-0 z-50 px-6 py-4 flex items-center justify-between"
         style={{ background: "rgba(5,5,5,0.9)", backdropFilter: "blur(20px)", borderBottom: "1px solid var(--border)" }}
       >
-        <div className="flex items-center gap-3">
-          <a href="/" className="font-black text-[18px] gradient-text">markaizi</a>
-          <span className="text-[#555]">/</span>
-          <span className="text-[14px] font-semibold text-white">{client.name}</span>
+        <div className="flex items-center gap-3 min-w-0">
+          <a href="/" className="font-black text-[18px] gradient-text flex-shrink-0">markaizi</a>
+          <span className="text-[#555] flex-shrink-0">/</span>
+          <span className="text-[14px] font-semibold text-white truncate">{client.name}</span>
           <span
-            className="hidden sm:inline text-[11px] font-bold px-2.5 py-1 rounded-full"
+            className="hidden sm:inline text-[11px] font-bold px-2.5 py-1 rounded-full flex-shrink-0"
             style={{ background: "rgba(168,85,247,0.12)", color: "#c084fc", border: "1px solid rgba(168,85,247,0.2)" }}
           >
             {client.package}
@@ -93,7 +94,7 @@ function Dashboard({
         </div>
         {isAdminView ? (
           <a href="/musteri/admin"
-            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[13px] font-medium transition-all"
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[13px] font-medium transition-all flex-shrink-0"
             style={{ background: "rgba(168,85,247,0.1)", border: "1px solid rgba(168,85,247,0.2)", color: "#c084fc" }}
             onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(168,85,247,0.2)"; }}
             onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(168,85,247,0.1)"; }}>
@@ -103,7 +104,7 @@ function Dashboard({
             Admin Paneli
           </a>
         ) : (
-          <button onClick={onLogout} className="text-[12px] text-[#8a8a9a] hover:text-[#f87171] transition-colors flex items-center gap-1.5">
+          <button onClick={onLogout} className="text-[12px] text-[#8a8a9a] hover:text-[#f87171] transition-colors flex items-center gap-1.5 flex-shrink-0">
             <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth="2">
               <path d="M18.364 5.636A9 9 0 1 1 5.636 18.364" strokeLinecap="round"/>
               <path d="M12 3v9" strokeLinecap="round"/>
@@ -113,57 +114,58 @@ function Dashboard({
         )}
       </header>
 
-      <main className="max-w-[860px] mx-auto px-6 py-10">
-        {/* Hoş geldin */}
-        <div className="mb-8">
-          <h2 className="font-black text-[22px] text-white mb-1">Merhaba, {client.name} 👋</h2>
-          <p className="text-[14px] text-[#8a8a9a]">Görmek istediğiniz bölümü seçin.</p>
+      <main className="max-w-[1080px] mx-auto px-6 py-10">
+        {/* Hoş geldin + özet */}
+        <div className="mb-7">
+          <div className="flex items-center gap-3 mb-5">
+            <div>
+              <h2 className="font-black text-[22px] text-white">Merhaba, {client.name} 👋</h2>
+              <p className="text-[13px] text-[#8a8a9a] mt-0.5">Aşağıdan dilediğiniz bölüme geçebilirsiniz.</p>
+            </div>
+          </div>
+          {/* Inline özet */}
+          <QuickSummary client={client} onNavigate={setActiveTab} />
         </div>
 
-        {/* Sekmeler — tüm roller */}
-        <div className="grid grid-cols-4 gap-2 sm:gap-3 mb-6 sm:mb-8">
+        {/* Sekmeler — yatay pill bar */}
+        <div className="flex gap-1.5 overflow-x-auto pb-1 mb-7 -mx-6 px-6 sm:mx-0 sm:px-0" style={{ scrollbarWidth: "none" }}>
           {TABS.map((tab) => {
             const isActive = activeTab === tab.id;
             return (
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className="flex flex-col items-center gap-1.5 rounded-xl sm:rounded-2xl px-1 py-3 sm:py-5 transition-all duration-200 text-center"
+                className="flex items-center gap-1.5 px-3.5 py-2 rounded-full text-[12px] font-semibold whitespace-nowrap transition-all flex-shrink-0"
                 style={
                   isActive
                     ? {
-                        background: "linear-gradient(135deg, rgba(124,58,237,0.25), rgba(236,72,153,0.15))",
-                        border: "1.5px solid rgba(168,85,247,0.6)",
-                        boxShadow: "0 0 20px rgba(124,58,237,0.2)",
+                        background: "linear-gradient(135deg, rgba(124,58,237,0.3), rgba(168,85,247,0.2))",
+                        border: "1px solid rgba(168,85,247,0.5)",
+                        color: "#e2d0ff",
                       }
                     : {
                         background: "var(--surface)",
-                        border: "1.5px solid var(--border)",
+                        border: "1px solid var(--border)",
+                        color: "#8a8a9a",
                       }
                 }
               >
-                <span className="text-xl sm:text-2xl">{tab.emoji}</span>
-                <span
-                  className="text-[10px] sm:text-[11px] font-semibold leading-tight"
-                  style={{ color: isActive ? "#e2d0ff" : "#8a8a9a" }}
-                >
-                  {tab.label}
-                </span>
+                <span className="text-[14px]">{tab.emoji}</span>
+                {tab.label}
               </button>
             );
           })}
         </div>
 
         <div>
-          {activeTab === "dashboard" && <DashboardTab client={client} onNavigate={setActiveTab} />}
-          {activeTab === "meta"      && <MetaTab     client={client} />}
-          {activeTab === "google"    && <GoogleTab   client={client} />}
-          {activeTab === "tiktok"    && <TikTokTab   client={client} />}
-          {activeTab === "website"   && <WebsiteTab  client={client} />}
-          {activeTab === "updates"   && <UpdatesTab  client={client} />}
-          {activeTab === "calendar"  && <CalendarTab />}
-          {activeTab === "invoice"   && <InvoiceTab  client={client} />}
-          {activeTab === "notlar"    && (
+          {activeTab === "meta"     && <MetaTab     client={client} />}
+          {activeTab === "google"   && <GoogleTab   client={client} />}
+          {activeTab === "tiktok"   && <TikTokTab   client={client} />}
+          {activeTab === "website"  && <WebsiteTab  client={client} />}
+          {activeTab === "updates"  && <UpdatesTab  client={client} />}
+          {activeTab === "calendar" && <CalendarTab />}
+          {activeTab === "invoice"  && <InvoiceTab  client={client} />}
+          {activeTab === "notlar"   && (
             <Notes
               clientSlug={client.slug}
               canWrite={isAdminView || canWriteNotes}
@@ -171,20 +173,18 @@ function Dashboard({
             />
           )}
         </div>
-
       </main>
     </div>
   );
 }
 
-// ── Tab: Genel Bakış (Dashboard) ──────────────────────────────────────────────
-function DashboardTab({ client, onNavigate }: { client: ClientData; onNavigate: (tab: Tab) => void }) {
+// ── Inline Özet (greeting altı) ───────────────────────────────────────────────
+function QuickSummary({ client, onNavigate }: { client: ClientData; onNavigate: (tab: Tab) => void }) {
   const [unreadCount, setUnreadCount] = useState<number | null>(null);
   const [latestUpdate, setLatestUpdate] = useState<{ date: string; text: string } | null>(null);
   const [unseenUpdate, setUnseenUpdate] = useState(false);
 
   useEffect(() => {
-    // Okunmamış not sayısını notifications endpoint'inden çek (notes fetch'i yapmaz, okundu işaretlemez)
     fetch("/api/musteri/notifications")
       .then((r) => r.json())
       .then((json: { items?: { clientSlug: string; unreadCount: number }[] }) => {
@@ -193,7 +193,6 @@ function DashboardTab({ client, onNavigate }: { client: ClientData; onNavigate: 
       })
       .catch(() => setUnreadCount(0));
 
-    // Son güncellemeyi kontrol et (localStorage ile "görüldü" takibi)
     const updates = client.updates ?? [];
     if (updates.length > 0) {
       const latest = updates[0];
@@ -206,128 +205,100 @@ function DashboardTab({ client, onNavigate }: { client: ClientData; onNavigate: 
     }
   }, [client.slug, client.updates]);
 
-  // Kampanya istatistikleri
   const meta   = client.metaCampaigns   ?? [];
   const google = client.googleCampaigns ?? [];
   const tiktok = client.tiktokCampaigns ?? [];
-  const allCampaigns = [...meta, ...google, ...tiktok];
 
-  const aktif      = allCampaigns.filter((c) => c.status === "Aktif").length;
-  const duraklatildi = allCampaigns.filter((c) => c.status === "Duraklatıldı").length;
-  const tamamlandi = allCampaigns.filter((c) => c.status === "Tamamlandı").length;
+  const platforms = [
+    { key: "meta"   as Tab, label: "Meta",    emoji: "📣", color: "#60a5fa", campaigns: meta   },
+    { key: "google" as Tab, label: "Google",  emoji: "🔍", color: "#34d399", campaigns: google },
+    { key: "tiktok" as Tab, label: "TikTok",  emoji: "🎵", color: "#fb923c", campaigns: tiktok },
+  ].filter((p) => p.campaigns.length > 0);
 
-  const stats = [
-    { label: "Toplam Kampanya", value: allCampaigns.length, color: "#c084fc" },
-    { label: "Aktif",           value: aktif,               color: "#34d399" },
-    ...(duraklatildi > 0 ? [{ label: "Duraklatılmış", value: duraklatildi, color: "#fbbf24" }] : []),
-    ...(tamamlandi   > 0 ? [{ label: "Tamamlanmış",  value: tamamlandi,   color: "#8a8a9a" }] : []),
-  ];
+  const hasNotifications = unseenUpdate || (unreadCount !== null && unreadCount > 0);
+  const hasCampaigns = platforms.length > 0;
 
-  const platformStats = [
-    { label: "Meta Reklamı",   value: meta.length,   emoji: "📣", color: "rgba(96,165,250,0.1)",   text: "#60a5fa" },
-    { label: "Google Reklamı", value: google.length, emoji: "🔍", color: "rgba(52,211,153,0.1)",   text: "#34d399" },
-    { label: "TikTok Reklamı", value: tiktok.length, emoji: "🎵", color: "rgba(251,146,60,0.1)",   text: "#fb923c" },
-  ].filter((p) => p.value > 0);
+  if (!hasNotifications && !hasCampaigns) return null;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-3">
       {/* Bildirimler */}
-      {(unseenUpdate || (unreadCount !== null && unreadCount > 0)) && (
-        <div className="space-y-2">
+      {hasNotifications && (
+        <div className="flex flex-col sm:flex-row gap-2">
           {unseenUpdate && latestUpdate && (
             <button
               onClick={() => onNavigate("updates")}
-              className="w-full text-left rounded-xl px-4 py-3 flex items-start gap-3 transition-opacity hover:opacity-80"
-              style={{ background: "rgba(96,165,250,0.08)", border: "1px solid rgba(96,165,250,0.2)" }}
+              className="flex-1 text-left rounded-xl px-4 py-3 flex items-center gap-3 transition-opacity hover:opacity-80"
+              style={{ background: "rgba(96,165,250,0.07)", border: "1px solid rgba(96,165,250,0.2)" }}
             >
-              <span className="text-[16px] flex-shrink-0">📝</span>
-              <div>
-                <p className="text-[13px] font-semibold" style={{ color: "#60a5fa" }}>Yeni ajans güncellemesi</p>
-                <p className="text-[12px] text-[#8a8a9a] mt-0.5 line-clamp-1">{latestUpdate.date} — {latestUpdate.text}</p>
+              <span className="text-[15px] flex-shrink-0">📝</span>
+              <div className="min-w-0">
+                <p className="text-[12px] font-semibold" style={{ color: "#60a5fa" }}>Yeni ajans güncellemesi</p>
+                <p className="text-[11px] text-[#8a8a9a] truncate">{latestUpdate.date} — {latestUpdate.text}</p>
               </div>
-              <span className="ml-auto text-[11px] text-[#555] flex-shrink-0 mt-0.5">Görüntüle →</span>
+              <span className="ml-auto text-[10px] text-[#555] flex-shrink-0">→</span>
             </button>
           )}
           {unreadCount !== null && unreadCount > 0 && (
             <button
               onClick={() => onNavigate("notlar")}
-              className="w-full text-left rounded-xl px-4 py-3 flex items-start gap-3 transition-opacity hover:opacity-80"
-              style={{ background: "rgba(251,146,60,0.08)", border: "1px solid rgba(251,146,60,0.2)" }}
+              className="flex-1 text-left rounded-xl px-4 py-3 flex items-center gap-3 transition-opacity hover:opacity-80"
+              style={{ background: "rgba(251,146,60,0.07)", border: "1px solid rgba(251,146,60,0.2)" }}
             >
-              <span className="text-[16px] flex-shrink-0">🔔</span>
+              <span className="text-[15px] flex-shrink-0">🔔</span>
               <div>
-                <p className="text-[13px] font-semibold" style={{ color: "#fb923c" }}>
-                  {unreadCount} okunmamış not
-                </p>
-                <p className="text-[12px] text-[#8a8a9a] mt-0.5">Ajansınızdan size yeni notlar var.</p>
+                <p className="text-[12px] font-semibold" style={{ color: "#fb923c" }}>{unreadCount} okunmamış not</p>
+                <p className="text-[11px] text-[#8a8a9a]">Ajansınızdan yeni notlar var.</p>
               </div>
-              <span className="ml-auto text-[11px] text-[#555] flex-shrink-0 mt-0.5">Görüntüle →</span>
+              <span className="ml-auto text-[10px] text-[#555] flex-shrink-0">→</span>
             </button>
           )}
         </div>
       )}
 
-      {/* Genel istatistikler */}
-      {allCampaigns.length > 0 && (
-        <div>
-          <p className="text-[12px] font-semibold uppercase tracking-wider text-[#555] mb-3">Kampanya Özeti</p>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {stats.map((s) => (
-              <div key={s.label} className="rounded-xl p-4 text-center" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
-                <p className="text-[26px] font-black" style={{ color: s.color }}>{s.value}</p>
-                <p className="text-[11px] text-[#8a8a9a] mt-1">{s.label}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Platform bazlı */}
-      {platformStats.length > 0 && (
-        <div>
-          <p className="text-[12px] font-semibold uppercase tracking-wider text-[#555] mb-3">Platformlar</p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            {platformStats.map((p) => (
-              <div key={p.label} className="rounded-xl p-4 flex items-center gap-3" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
-                <span className="text-2xl">{p.emoji}</span>
-                <div>
-                  <p className="text-[20px] font-black" style={{ color: p.text }}>{p.value}</p>
-                  <p className="text-[11px] text-[#8a8a9a]">{p.label}</p>
+      {/* Platform bazlı kampanya özeti */}
+      {hasCampaigns && (
+        <div className={`grid gap-3 ${platforms.length === 1 ? "grid-cols-1" : platforms.length === 2 ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1 sm:grid-cols-3"}`}>
+          {platforms.map(({ key, label, emoji, color, campaigns }) => {
+            const aktif = campaigns.filter((c) => c.status === "Aktif");
+            const duraklatildi = campaigns.filter((c) => c.status === "Duraklatıldı").length;
+            const aktivButce = aktif.reduce((s, c) => s + parseBudgetNum(c.dailyBudget), 0);
+            return (
+              <button
+                key={key}
+                onClick={() => onNavigate(key)}
+                className="text-left rounded-xl p-4 transition-all hover:opacity-90"
+                style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+              >
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="text-[15px]">{emoji}</span>
+                  <span className="text-[12px] font-bold uppercase tracking-wide" style={{ color }}>{label} Kampanyaları</span>
                 </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Hızlı erişim */}
-      <div>
-        <p className="text-[12px] font-semibold uppercase tracking-wider text-[#555] mb-3">Hızlı Erişim</p>
-        <div className="grid grid-cols-2 gap-3">
-          {[
-            { tab: "updates" as Tab,  emoji: "📝", label: "Ajans Güncellemeleri" },
-            { tab: "notlar"  as Tab,  emoji: "🗒️", label: "Notlar"               },
-            { tab: "invoice" as Tab,  emoji: "💳", label: "Fatura Bilgisi"        },
-            { tab: "calendar" as Tab, emoji: "📅", label: "İçerik Takvimi"        },
-          ].map(({ tab, emoji, label }) => (
-            <button
-              key={tab}
-              onClick={() => onNavigate(tab)}
-              className="rounded-xl p-4 flex items-center gap-3 transition-all hover:opacity-80 text-left"
-              style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
-            >
-              <span className="text-xl">{emoji}</span>
-              <span className="text-[13px] font-medium text-white">{label}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {allCampaigns.length === 0 && (
-        <div className="rounded-2xl p-10 text-center" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
-          <p className="text-3xl mb-3">👋</p>
-          <p className="text-[14px] text-white font-semibold mb-1">Hoş geldiniz!</p>
-          <p className="text-[13px] text-[#8a8a9a]">Kampanyalarınız hazır olduğunda burada görünecek.</p>
+                <div className="flex gap-4 mb-2">
+                  <div>
+                    <p className="text-[22px] font-black text-white leading-none">{campaigns.length}</p>
+                    <p className="text-[10px] text-[#555] mt-0.5">toplam</p>
+                  </div>
+                  <div>
+                    <p className="text-[22px] font-black leading-none" style={{ color: "#34d399" }}>{aktif.length}</p>
+                    <p className="text-[10px] text-[#555] mt-0.5">aktif</p>
+                  </div>
+                  {duraklatildi > 0 && (
+                    <div>
+                      <p className="text-[22px] font-black leading-none" style={{ color: "#fbbf24" }}>{duraklatildi}</p>
+                      <p className="text-[10px] text-[#555] mt-0.5">duraklatılmış</p>
+                    </div>
+                  )}
+                </div>
+                {aktivButce > 0 && (
+                  <p className="text-[11px] font-semibold" style={{ color: "#8a8a9a" }}>
+                    Toplam günlük bütçe:{" "}
+                    <span style={{ color }}>{aktivButce.toLocaleString("tr-TR")} ₺/gün</span>
+                  </p>
+                )}
+              </button>
+            );
+          })}
         </div>
       )}
     </div>
@@ -422,8 +393,6 @@ function UpdatesTab({ client }: { client: ClientData }) {
           </div>
         ))}
       </div>
-      {/* Sabit not */}
-      <SectionNote text="Ajans güncellemelerimiz ay sonu size raporunuz verildiğinde sıfırlanır." />
     </Section>
   );
 }
@@ -431,139 +400,105 @@ function UpdatesTab({ client }: { client: ClientData }) {
 // ── Tab: İçerik Takvimi ───────────────────────────────────────────────────────
 function CalendarTab() {
   return (
-    <Section title="İçerik Takvimi" subtitle="Planlanmış içerikleriniz">
-      <Calendar showClientName={false} />
+    <Section title="İçerik Takvimi" subtitle="Planlanan ve yayınlanan içerikleriniz">
+      <Calendar />
     </Section>
   );
 }
 
-// ── Tab: Fatura Bilgisi ───────────────────────────────────────────────────────
+// ── Tab: Fatura ───────────────────────────────────────────────────────────────
+const statusStyle = (s: string) => {
+  if (s === "Ödendi")       return { background: "rgba(52,211,153,0.12)",  color: "#34d399",  border: "1px solid rgba(52,211,153,0.25)"  };
+  if (s === "Bekliyor")     return { background: "rgba(251,191,36,0.12)",  color: "#fbbf24",  border: "1px solid rgba(251,191,36,0.25)"  };
+  if (s === "Günü Gelmedi") return { background: "rgba(99,102,241,0.12)",  color: "#818cf8",  border: "1px solid rgba(99,102,241,0.25)"  };
+  return {};
+};
+
 function InvoiceTab({ client }: { client: ClientData }) {
   if (!client.invoices?.length) {
-    return <Empty text="Fatura bilgisi henüz girilmedi." />;
+    return <Empty text="Henüz fatura bilgisi girilmedi." />;
   }
   return (
-    <Section title="Fatura Bilgisi" subtitle="Hizmet ödemelerinizin özeti">
-      {/* Mobil: kart */}
-      <div className="md:hidden space-y-3">
+    <Section title="Fatura Bilgisi" subtitle="Ödeme geçmişiniz ve bekleyen faturalarınız">
+      {client.invoiceNote && (
+        <SectionNote text={client.invoiceNote} />
+      )}
+
+      {/* Mobil: kart düzeni */}
+      <div className="md:hidden space-y-3 mt-4">
         {client.invoices.map((inv, i) => (
-          <div
-            key={i}
-            className="rounded-2xl p-5"
-            style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
-          >
-            <div className="flex items-start justify-between gap-3 mb-3">
+          <div key={i} className="rounded-xl p-4" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+            <div className="flex items-start justify-between gap-3 mb-2">
               <div>
-                <p className="text-[13px] font-semibold text-white">{inv.period}</p>
+                <p className="text-[13px] text-white font-medium">{inv.period}</p>
                 {inv.dueDate && (
                   <p className="text-[11px] text-[#8a8a9a] mt-0.5">Son ödeme: {inv.dueDate}</p>
                 )}
               </div>
-              <span
-                className="text-[11px] font-bold px-3 py-1 rounded-full flex-shrink-0"
-                style={
-                  inv.status === "Ödendi"
-                    ? { background: "rgba(52,211,153,0.12)", color: "#34d399" }
-                    : inv.status === "Günü Gelmedi"
-                    ? { background: "rgba(99,102,241,0.12)", color: "#818cf8" }
-                    : { background: "rgba(251,191,36,0.12)", color: "#fbbf24" }
-                }
-              >
+              <span className="text-[11px] font-bold px-2.5 py-1 rounded-full flex-shrink-0" style={statusStyle(inv.status)}>
                 {inv.status === "Ödendi" ? "✓ Ödendi" : inv.status === "Günü Gelmedi" ? "📅 Günü Gelmedi" : "⏳ Bekliyor"}
               </span>
             </div>
-            <p className="text-[26px] font-black gradient-text">{fmtAmount(inv.amount)}</p>
+            <p className="text-[15px] font-black gradient-text text-center">{fmtAmount(inv.amount)}</p>
           </div>
         ))}
       </div>
 
-      {/* Masaüstü: tablo */}
-      <div className="hidden md:block rounded-2xl overflow-hidden" style={{ border: "1px solid var(--border)" }}>
+      {/* Masaüstü: tablo düzeni */}
+      <div className="hidden md:block rounded-2xl overflow-hidden mt-4" style={{ border: "1px solid var(--border)" }}>
         <div
-          className="grid grid-cols-3 px-5 py-3 text-[11px] font-bold uppercase tracking-wider text-[#8a8a9a]"
+          className="grid grid-cols-4 px-5 py-3 text-[11px] font-bold uppercase tracking-wider text-[#8a8a9a]"
           style={{ background: "var(--surface-2)" }}
         >
           <span>Dönem</span>
+          <span>Son Ödeme</span>
           <span className="text-center">Tutar</span>
           <span className="text-right">Durum</span>
         </div>
         {client.invoices.map((inv, i) => (
           <div
             key={i}
-            className="grid grid-cols-3 px-5 py-4 items-center"
+            className="grid grid-cols-4 px-5 py-4 items-center"
             style={{
               background: i % 2 === 0 ? "var(--surface)" : "var(--bg)",
               borderTop: i > 0 ? "1px solid var(--border)" : "none",
             }}
           >
-            <div>
-              <p className="text-[13px] text-white font-medium">{inv.period}</p>
-              {inv.dueDate && (
-                <p className="text-[11px] text-[#8a8a9a] mt-0.5">Son ödeme: {inv.dueDate}</p>
-              )}
-            </div>
-            <p className="text-[15px] font-black gradient-text text-center">{fmtAmount(inv.amount)}</p>
+            <span className="text-[13px] text-white">{inv.period}</span>
+            <span className="text-[13px] text-[#8a8a9a]">{inv.dueDate ?? "—"}</span>
+            <span className="text-[15px] font-black gradient-text text-center">{fmtAmount(inv.amount)}</span>
             <div className="flex justify-end">
-              <span
-                className="text-[11px] font-bold px-3 py-1 rounded-full"
-                style={
-                  inv.status === "Ödendi"
-                    ? { background: "rgba(52,211,153,0.12)", color: "#34d399" }
-                    : inv.status === "Günü Gelmedi"
-                    ? { background: "rgba(99,102,241,0.12)", color: "#818cf8" }
-                    : { background: "rgba(251,191,36,0.12)", color: "#fbbf24" }
-                }
-              >
+              <span className="text-[11px] font-bold px-3 py-1 rounded-full" style={statusStyle(inv.status)}>
                 {inv.status === "Ödendi" ? "✓ Ödendi" : inv.status === "Günü Gelmedi" ? "📅 Günü Gelmedi" : "⏳ Bekliyor"}
               </span>
             </div>
           </div>
         ))}
       </div>
-
-      {/* Not */}
-      {client.invoiceNote && (
-        <div
-          className="mt-4 flex items-start gap-3 rounded-xl px-5 py-4"
-          style={{ background: "rgba(168,85,247,0.06)", border: "1px solid rgba(168,85,247,0.15)" }}
-        >
-          <span className="text-[16px] flex-shrink-0">📌</span>
-          <p className="text-[13px] text-[#8a8a9a] leading-relaxed">{client.invoiceNote}</p>
-        </div>
-      )}
     </Section>
   );
 }
 
-// ── Kampanya Tablosu / Kartlar ────────────────────────────────────────────────
-function CampaignTable({ campaigns }: { campaigns: Campaign[] }) {
-  const statusStyle = (status: string) =>
-    status === "Aktif"
-      ? { background: "rgba(52,211,153,0.12)", color: "#34d399" }
-      : status === "Duraklatıldı"
-      ? { background: "rgba(251,191,36,0.12)", color: "#fbbf24" }
-      : status === "Ödeme Hatası"
-      ? { background: "rgba(239,68,68,0.12)", color: "#f87171" }
-      : { background: "rgba(139,142,160,0.12)", color: "#8a8a9a" };
+// ── Kampanya Tablosu ──────────────────────────────────────────────────────────
+const statusStyle2 = (s: string) => {
+  if (s === "Aktif")        return { background: "rgba(52,211,153,0.1)",  color: "#34d399" };
+  if (s === "Duraklatıldı") return { background: "rgba(251,191,36,0.1)",  color: "#fbbf24" };
+  if (s === "Tamamlandı")   return { background: "rgba(139,142,160,0.1)", color: "#8a8a9a" };
+  if (s === "Ödeme Hatası") return { background: "rgba(239,68,68,0.1)",   color: "#f87171" };
+  return {};
+};
 
+function CampaignTable({ campaigns }: { campaigns: Campaign[] }) {
   return (
     <>
-      {/* Mobil: kart düzeni */}
+      {/* Mobil: kart */}
       <div className="md:hidden space-y-3">
         {campaigns.map((c, i) => (
-          <div
-            key={i}
-            className="rounded-2xl p-5"
-            style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
-          >
-            {/* Kampanya adı + durum */}
-            <div className="flex items-start justify-between gap-3 mb-4">
-              <p className="text-[14px] font-semibold text-white leading-snug flex-1">{c.name}</p>
-              <span className="text-[11px] font-bold px-2.5 py-1 rounded-full flex-shrink-0" style={statusStyle(c.status)}>
-                {c.status}
-              </span>
+          <div key={i} className="rounded-xl p-4" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+            <div className="flex items-start justify-between gap-2 mb-2">
+              <p className="text-[14px] text-white font-semibold">{c.name}</p>
+              <span className="text-[11px] font-bold px-2.5 py-1 rounded-full flex-shrink-0" style={statusStyle2(c.status)}>{c.status}</span>
             </div>
-            {/* Detaylar */}
             <div className="grid grid-cols-3 gap-2">
               <div className="rounded-xl px-3 py-2.5" style={{ background: "var(--bg)" }}>
                 <p className="text-[10px] text-[#8a8a9a] mb-1 uppercase tracking-wide">Başlangıç</p>
@@ -582,7 +517,7 @@ function CampaignTable({ campaigns }: { campaigns: Campaign[] }) {
         ))}
       </div>
 
-      {/* Masaüstü: tablo düzeni */}
+      {/* Masaüstü: tablo */}
       <div className="hidden md:block rounded-2xl overflow-hidden" style={{ border: "1px solid var(--border)" }}>
         <div
           className="grid grid-cols-4 px-5 py-3 text-[11px] font-bold uppercase tracking-wider text-[#8a8a9a]"
@@ -607,7 +542,7 @@ function CampaignTable({ campaigns }: { campaigns: Campaign[] }) {
             <span className="text-[13px] text-[#8a8a9a]">{c.endDate}</span>
             <div className="flex flex-col items-end gap-1">
               <span className="text-[13px] font-semibold text-white">{fmtBudget(c.dailyBudget)}</span>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={statusStyle(c.status)}>
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={statusStyle2(c.status)}>
                 {c.status}
               </span>
             </div>
