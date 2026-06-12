@@ -7,6 +7,14 @@ import Notes from "@/components/Notes";
 
 type Tab = "meta" | "google" | "tiktok" | "website" | "updates" | "calendar" | "invoice" | "notlar";
 
+function fmtAmount(raw: string): string {
+  const digits = raw.replace(/[^\d]/g, "");
+  if (!digits) return raw;
+  const num = parseInt(digits, 10);
+  if (isNaN(num)) return raw;
+  return num.toLocaleString("tr-TR") + " ₺";
+}
+
 const TABS: { id: Tab; label: string; emoji: string }[] = [
   { id: "meta",     label: "Meta Ads",             emoji: "📣" },
   { id: "google",   label: "Google Ads",            emoji: "🔍" },
@@ -299,7 +307,7 @@ function InvoiceTab({ client }: { client: ClientData }) {
                 {inv.status === "Ödendi" ? "✓ Ödendi" : inv.status === "Günü Gelmedi" ? "📅 Günü Gelmedi" : "⏳ Bekliyor"}
               </span>
             </div>
-            <p className="text-[26px] font-black gradient-text">{inv.amount}</p>
+            <p className="text-[26px] font-black gradient-text">{fmtAmount(inv.amount)}</p>
           </div>
         ))}
       </div>
@@ -329,7 +337,7 @@ function InvoiceTab({ client }: { client: ClientData }) {
                 <p className="text-[11px] text-[#8a8a9a] mt-0.5">Son ödeme: {inv.dueDate}</p>
               )}
             </div>
-            <p className="text-[15px] font-black gradient-text text-center">{inv.amount}</p>
+            <p className="text-[15px] font-black gradient-text text-center">{fmtAmount(inv.amount)}</p>
             <div className="flex justify-end">
               <span
                 className="text-[11px] font-bold px-3 py-1 rounded-full"

@@ -90,6 +90,14 @@ const CONTENT_STATUS_BG: Record<string, string> = {
   YAYINLANDI: "rgba(52,211,153,0.12)",
 };
 
+function fmtAmount(raw: string): string {
+  const digits = raw.replace(/[^\d]/g, "");
+  if (!digits) return raw;
+  const num = parseInt(digits, 10);
+  if (isNaN(num)) return raw;
+  return num.toLocaleString("tr-TR") + " ₺";
+}
+
 // ── Paylaşılan UI ─────────────────────────────────────────────────────────────
 
 function Field({
@@ -620,7 +628,7 @@ function FaturalarTab({ slug, invoices, router }: { slug: string; invoices: Invo
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="text-white text-[14px] font-semibold leading-snug">{inv.period}</p>
-              <p className="text-[13px] text-[#8a8a9a] mt-0.5">{inv.amount}{inv.dueDate ? ` · Vade: ${inv.dueDate}` : ""}</p>
+              <p className="text-[13px] text-[#8a8a9a] mt-0.5">{fmtAmount(inv.amount)}{inv.dueDate ? ` · Vade: ${inv.dueDate}` : ""}</p>
             </div>
             <div className="flex items-center gap-2 flex-shrink-0">
               <Select
@@ -654,7 +662,13 @@ function FaturalarTab({ slug, invoices, router }: { slug: string; invoices: Invo
               <Input required value={form.period} onChange={(e) => setForm((f) => ({ ...f, period: e.target.value }))} placeholder="Haziran 2026" />
             </Field>
             <Field label="Tutar">
-              <Input required value={form.amount} onChange={(e) => setForm((f) => ({ ...f, amount: e.target.value }))} placeholder="5.000 ₺" />
+              <Input
+                required
+                value={form.amount}
+                onChange={(e) => setForm((f) => ({ ...f, amount: e.target.value }))}
+                onBlur={(e) => setForm((f) => ({ ...f, amount: fmtAmount(e.target.value) }))}
+                placeholder="15.000 ₺"
+              />
             </Field>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
