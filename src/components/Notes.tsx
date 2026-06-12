@@ -88,7 +88,81 @@ export default function Notes({
 
   return (
     <div className="space-y-5">
-      {/* Yazma formu */}
+      {/* Not listesi — önce */}
+      {loading ? (
+        <div className="text-center py-10 text-[#555] text-[14px]">Yükleniyor...</div>
+      ) : notes.length === 0 ? (
+        <div className="text-center py-12">
+          <p className="text-[14px] text-[#555]">Henüz not yok.</p>
+          {canWrite && (
+            <p className="text-[12px] text-[#444] mt-1">Aşağıdaki formu kullanarak not ekleyebilirsiniz.</p>
+          )}
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {notes.map((note) => {
+            const isIcerik = note.visibility === "ICERIK";
+            return (
+              <div
+                key={note.id}
+                className="rounded-xl p-4 relative"
+                style={{
+                  background: "var(--surface)",
+                  border: `1px solid ${isIcerik ? "rgba(96,165,250,0.15)" : "rgba(52,211,153,0.15)"}`,
+                }}
+              >
+                <div className="flex items-start gap-2 mb-2 flex-wrap pr-8">
+                  {/* Görünürlük rozeti — yalnızca ajans */}
+                  {isAjans && (
+                    <span
+                      className="text-[11px] px-2 py-0.5 rounded-full font-medium flex-shrink-0"
+                      style={{
+                        background: isIcerik ? "rgba(96,165,250,0.1)" : "rgba(52,211,153,0.1)",
+                        color: isIcerik ? "#60a5fa" : "#34d399",
+                      }}
+                    >
+                      {isIcerik ? "🔒 Ajans İçi" : "👁 Paylaşımlı"}
+                    </span>
+                  )}
+
+                  {/* Yazar rozeti */}
+                  <span
+                    className="text-[11px] px-2 py-0.5 rounded-full font-medium flex-shrink-0"
+                    style={{ background: "rgba(168,85,247,0.1)", color: "#c084fc" }}
+                  >
+                    {note.authorRole === "ADMIN"
+                      ? "Yönetici"
+                      : note.authorRole === "EMPLOYEE"
+                      ? "Çalışan"
+                      : "Müşteri"}
+                    {note.authorName ? ` · ${note.authorName}` : ""}
+                  </span>
+
+                  <span className="text-[11px] text-[#555] ml-auto flex-shrink-0">
+                    {fmtDate(note.createdAt)}
+                  </span>
+                </div>
+
+                <p className="text-[14px] text-[#c8c8d0] whitespace-pre-wrap leading-relaxed">
+                  {note.text}
+                </p>
+
+                {(note.isOwn || isAdmin) && (
+                  <button
+                    onClick={() => handleDelete(note.id)}
+                    disabled={deletingId === note.id}
+                    className="absolute top-3 right-3 text-[11px] text-[#555] hover:text-red-400 transition-colors"
+                  >
+                    {deletingId === note.id ? "..." : "Sil"}
+                  </button>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Yazma formu — sonda */}
       {canWrite && (
         <form
           onSubmit={handleAdd}
@@ -155,80 +229,6 @@ export default function Notes({
         <p className="text-[11px] text-[#555] text-center">
           ⚠️ Şifre veya hassas kimlik bilgisi saklamayın — notlar şifrelenmeden tutulur.
         </p>
-      )}
-
-      {/* Not listesi */}
-      {loading ? (
-        <div className="text-center py-10 text-[#555] text-[14px]">Yükleniyor...</div>
-      ) : notes.length === 0 ? (
-        <div className="text-center py-12">
-          <p className="text-[14px] text-[#555]">Henüz not yok.</p>
-          {canWrite && (
-            <p className="text-[12px] text-[#444] mt-1">Yukarıdaki formu kullanarak not ekleyebilirsiniz.</p>
-          )}
-        </div>
-      ) : (
-        <div className="space-y-3">
-          {notes.map((note) => {
-            const isIcerik = note.visibility === "ICERIK";
-            return (
-              <div
-                key={note.id}
-                className="rounded-xl p-4 relative"
-                style={{
-                  background: "var(--surface)",
-                  border: `1px solid ${isIcerik ? "rgba(96,165,250,0.15)" : "rgba(52,211,153,0.15)"}`,
-                }}
-              >
-                <div className="flex items-start gap-2 mb-2 flex-wrap pr-8">
-                  {/* Görünürlük rozeti — yalnızca ajans */}
-                  {isAjans && (
-                    <span
-                      className="text-[11px] px-2 py-0.5 rounded-full font-medium flex-shrink-0"
-                      style={{
-                        background: isIcerik ? "rgba(96,165,250,0.1)" : "rgba(52,211,153,0.1)",
-                        color: isIcerik ? "#60a5fa" : "#34d399",
-                      }}
-                    >
-                      {isIcerik ? "🔒 Ajans İçi" : "👁 Paylaşımlı"}
-                    </span>
-                  )}
-
-                  {/* Yazar rozeti */}
-                  <span
-                    className="text-[11px] px-2 py-0.5 rounded-full font-medium flex-shrink-0"
-                    style={{ background: "rgba(168,85,247,0.1)", color: "#c084fc" }}
-                  >
-                    {note.authorRole === "ADMIN"
-                      ? "Yönetici"
-                      : note.authorRole === "EMPLOYEE"
-                      ? "Çalışan"
-                      : "Müşteri"}
-                    {note.authorName ? ` · ${note.authorName}` : ""}
-                  </span>
-
-                  <span className="text-[11px] text-[#555] ml-auto flex-shrink-0">
-                    {fmtDate(note.createdAt)}
-                  </span>
-                </div>
-
-                <p className="text-[14px] text-[#c8c8d0] whitespace-pre-wrap leading-relaxed">
-                  {note.text}
-                </p>
-
-                {(note.isOwn || isAdmin) && (
-                  <button
-                    onClick={() => handleDelete(note.id)}
-                    disabled={deletingId === note.id}
-                    className="absolute top-3 right-3 text-[11px] text-[#555] hover:text-red-400 transition-colors"
-                  >
-                    {deletingId === note.id ? "..." : "Sil"}
-                  </button>
-                )}
-              </div>
-            );
-          })}
-        </div>
       )}
     </div>
   );

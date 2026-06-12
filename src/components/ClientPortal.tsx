@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { ClientData, Campaign } from "@/lib/clients";
 import Calendar from "@/components/Calendar";
 import Notes from "@/components/Notes";
 
-type Tab = "meta" | "google" | "tiktok" | "website" | "updates" | "calendar" | "invoice" | "notlar";
+type Tab = "dashboard" | "meta" | "google" | "tiktok" | "website" | "updates" | "calendar" | "invoice" | "notlar";
 
 function fmtAmount(raw: string): string {
   const digits = raw.replace(/[^\d]/g, "");
@@ -24,14 +24,15 @@ function fmtBudget(raw: string): string {
 }
 
 const TABS: { id: Tab; label: string; emoji: string }[] = [
-  { id: "meta",     label: "Meta Ads",             emoji: "📣" },
-  { id: "google",   label: "Google Ads",            emoji: "🔍" },
-  { id: "tiktok",   label: "TikTok Ads",            emoji: "🎵" },
-  { id: "website",  label: "Website",               emoji: "🌐" },
-  { id: "updates",  label: "Ajans Güncellemeleri",  emoji: "📝" },
-  { id: "calendar", label: "İçerik Takvimi",        emoji: "📅" },
-  { id: "invoice",  label: "Fatura Bilgisi",        emoji: "💳" },
-  { id: "notlar",   label: "Notlar",                emoji: "🗒️" },
+  { id: "dashboard", label: "Genel Bakış",           emoji: "🏠" },
+  { id: "meta",      label: "Meta Ads",              emoji: "📣" },
+  { id: "google",    label: "Google Ads",             emoji: "🔍" },
+  { id: "tiktok",    label: "TikTok Ads",             emoji: "🎵" },
+  { id: "website",   label: "Website",                emoji: "🌐" },
+  { id: "updates",   label: "Güncellemeler",          emoji: "📝" },
+  { id: "calendar",  label: "İçerik Takvimi",         emoji: "📅" },
+  { id: "invoice",   label: "Fatura",                 emoji: "💳" },
+  { id: "notlar",    label: "Notlar",                 emoji: "🗒️" },
 ];
 
 // ── Ana bileşen ──────────────────────────────────────────────────────────────
@@ -70,7 +71,7 @@ function Dashboard({
   isAdminView: boolean;
   canWriteNotes: boolean;
 }) {
-  const [activeTab, setActiveTab] = useState<Tab>("meta");
+  const [activeTab, setActiveTab] = useState<Tab>("dashboard");
 
   return (
     <div className="min-h-screen" style={{ background: "var(--bg)" }}>
@@ -154,14 +155,15 @@ function Dashboard({
         </div>
 
         <div>
-          {activeTab === "meta"     && <MetaTab     client={client} />}
-          {activeTab === "google"   && <GoogleTab   client={client} />}
-          {activeTab === "tiktok"   && <TikTokTab   client={client} />}
-          {activeTab === "website"  && <WebsiteTab  client={client} />}
-          {activeTab === "updates"  && <UpdatesTab  client={client} />}
-          {activeTab === "calendar" && <CalendarTab />}
-          {activeTab === "invoice"  && <InvoiceTab  client={client} />}
-          {activeTab === "notlar"   && (
+          {activeTab === "dashboard" && <DashboardTab client={client} onNavigate={setActiveTab} />}
+          {activeTab === "meta"      && <MetaTab     client={client} />}
+          {activeTab === "google"    && <GoogleTab   client={client} />}
+          {activeTab === "tiktok"    && <TikTokTab   client={client} />}
+          {activeTab === "website"   && <WebsiteTab  client={client} />}
+          {activeTab === "updates"   && <UpdatesTab  client={client} />}
+          {activeTab === "calendar"  && <CalendarTab />}
+          {activeTab === "invoice"   && <InvoiceTab  client={client} />}
+          {activeTab === "notlar"    && (
             <Notes
               clientSlug={client.slug}
               canWrite={isAdminView || canWriteNotes}
@@ -171,6 +173,163 @@ function Dashboard({
         </div>
 
       </main>
+    </div>
+  );
+}
+
+// ── Tab: Genel Bakış (Dashboard) ──────────────────────────────────────────────
+function DashboardTab({ client, onNavigate }: { client: ClientData; onNavigate: (tab: Tab) => void }) {
+  const [unreadCount, setUnreadCount] = useState<number | null>(null);
+  const [latestUpdate, setLatestUpdate] = useState<{ date: string; text: string } | null>(null);
+  const [unseenUpdate, setUnseenUpdate] = useState(false);
+
+  useEffect(() => {
+    // Okunmamış not sayısını notifications endpoint'inden çek (notes fetch'i yapmaz, okundu işaretlemez)
+    fetch("/api/musteri/notifications")
+      .then((r) => r.json())
+      .then((json: { items?: { clientSlug: string; unreadCount: number }[] }) => {
+        const item = json.items?.find((i) => i.clientSlug === client.slug);
+        setUnreadCount(item?.unreadCount ?? 0);
+      })
+      .catch(() => setUnreadCount(0));
+
+    // Son güncellemeyi kontrol et (localStorage ile "görüldü" takibi)
+    const updates = client.updates ?? [];
+    if (updates.length > 0) {
+      const latest = updates[0];
+      const seenKey = `seen_update_${client.slug}_${latest.date}`;
+      if (!localStorage.getItem(seenKey)) {
+        setLatestUpdate(latest);
+        setUnseenUpdate(true);
+        localStorage.setItem(seenKey, "1");
+      }
+    }
+  }, [client.slug, client.updates]);
+
+  // Kampanya istatistikleri
+  const meta   = client.metaCampaigns   ?? [];
+  const google = client.googleCampaigns ?? [];
+  const tiktok = client.tiktokCampaigns ?? [];
+  const allCampaigns = [...meta, ...google, ...tiktok];
+
+  const aktif      = allCampaigns.filter((c) => c.status === "Aktif").length;
+  const duraklatildi = allCampaigns.filter((c) => c.status === "Duraklatıldı").length;
+  const tamamlandi = allCampaigns.filter((c) => c.status === "Tamamlandı").length;
+
+  const stats = [
+    { label: "Toplam Kampanya", value: allCampaigns.length, color: "#c084fc" },
+    { label: "Aktif",           value: aktif,               color: "#34d399" },
+    ...(duraklatildi > 0 ? [{ label: "Duraklatılmış", value: duraklatildi, color: "#fbbf24" }] : []),
+    ...(tamamlandi   > 0 ? [{ label: "Tamamlanmış",  value: tamamlandi,   color: "#8a8a9a" }] : []),
+  ];
+
+  const platformStats = [
+    { label: "Meta Reklamı",   value: meta.length,   emoji: "📣", color: "rgba(96,165,250,0.1)",   text: "#60a5fa" },
+    { label: "Google Reklamı", value: google.length, emoji: "🔍", color: "rgba(52,211,153,0.1)",   text: "#34d399" },
+    { label: "TikTok Reklamı", value: tiktok.length, emoji: "🎵", color: "rgba(251,146,60,0.1)",   text: "#fb923c" },
+  ].filter((p) => p.value > 0);
+
+  return (
+    <div className="space-y-6">
+      {/* Bildirimler */}
+      {(unseenUpdate || (unreadCount !== null && unreadCount > 0)) && (
+        <div className="space-y-2">
+          {unseenUpdate && latestUpdate && (
+            <button
+              onClick={() => onNavigate("updates")}
+              className="w-full text-left rounded-xl px-4 py-3 flex items-start gap-3 transition-opacity hover:opacity-80"
+              style={{ background: "rgba(96,165,250,0.08)", border: "1px solid rgba(96,165,250,0.2)" }}
+            >
+              <span className="text-[16px] flex-shrink-0">📝</span>
+              <div>
+                <p className="text-[13px] font-semibold" style={{ color: "#60a5fa" }}>Yeni ajans güncellemesi</p>
+                <p className="text-[12px] text-[#8a8a9a] mt-0.5 line-clamp-1">{latestUpdate.date} — {latestUpdate.text}</p>
+              </div>
+              <span className="ml-auto text-[11px] text-[#555] flex-shrink-0 mt-0.5">Görüntüle →</span>
+            </button>
+          )}
+          {unreadCount !== null && unreadCount > 0 && (
+            <button
+              onClick={() => onNavigate("notlar")}
+              className="w-full text-left rounded-xl px-4 py-3 flex items-start gap-3 transition-opacity hover:opacity-80"
+              style={{ background: "rgba(251,146,60,0.08)", border: "1px solid rgba(251,146,60,0.2)" }}
+            >
+              <span className="text-[16px] flex-shrink-0">🔔</span>
+              <div>
+                <p className="text-[13px] font-semibold" style={{ color: "#fb923c" }}>
+                  {unreadCount} okunmamış not
+                </p>
+                <p className="text-[12px] text-[#8a8a9a] mt-0.5">Ajansınızdan size yeni notlar var.</p>
+              </div>
+              <span className="ml-auto text-[11px] text-[#555] flex-shrink-0 mt-0.5">Görüntüle →</span>
+            </button>
+          )}
+        </div>
+      )}
+
+      {/* Genel istatistikler */}
+      {allCampaigns.length > 0 && (
+        <div>
+          <p className="text-[12px] font-semibold uppercase tracking-wider text-[#555] mb-3">Kampanya Özeti</p>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {stats.map((s) => (
+              <div key={s.label} className="rounded-xl p-4 text-center" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+                <p className="text-[26px] font-black" style={{ color: s.color }}>{s.value}</p>
+                <p className="text-[11px] text-[#8a8a9a] mt-1">{s.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Platform bazlı */}
+      {platformStats.length > 0 && (
+        <div>
+          <p className="text-[12px] font-semibold uppercase tracking-wider text-[#555] mb-3">Platformlar</p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {platformStats.map((p) => (
+              <div key={p.label} className="rounded-xl p-4 flex items-center gap-3" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+                <span className="text-2xl">{p.emoji}</span>
+                <div>
+                  <p className="text-[20px] font-black" style={{ color: p.text }}>{p.value}</p>
+                  <p className="text-[11px] text-[#8a8a9a]">{p.label}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Hızlı erişim */}
+      <div>
+        <p className="text-[12px] font-semibold uppercase tracking-wider text-[#555] mb-3">Hızlı Erişim</p>
+        <div className="grid grid-cols-2 gap-3">
+          {[
+            { tab: "updates" as Tab,  emoji: "📝", label: "Ajans Güncellemeleri" },
+            { tab: "notlar"  as Tab,  emoji: "🗒️", label: "Notlar"               },
+            { tab: "invoice" as Tab,  emoji: "💳", label: "Fatura Bilgisi"        },
+            { tab: "calendar" as Tab, emoji: "📅", label: "İçerik Takvimi"        },
+          ].map(({ tab, emoji, label }) => (
+            <button
+              key={tab}
+              onClick={() => onNavigate(tab)}
+              className="rounded-xl p-4 flex items-center gap-3 transition-all hover:opacity-80 text-left"
+              style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+            >
+              <span className="text-xl">{emoji}</span>
+              <span className="text-[13px] font-medium text-white">{label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {allCampaigns.length === 0 && (
+        <div className="rounded-2xl p-10 text-center" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+          <p className="text-3xl mb-3">👋</p>
+          <p className="text-[14px] text-white font-semibold mb-1">Hoş geldiniz!</p>
+          <p className="text-[13px] text-[#8a8a9a]">Kampanyalarınız hazır olduğunda burada görünecek.</p>
+        </div>
+      )}
     </div>
   );
 }
