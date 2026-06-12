@@ -229,7 +229,7 @@ function QuickSummary({ client, onNavigate }: { client: ClientData; onNavigate: 
           unseenUpdate && latestUpdate
             ? {
                 key: "update",
-                onClick: () => onNavigate("updates"),
+                onClick: () => { setUnseenUpdate(false); onNavigate("updates"); },
                 icon: "📝",
                 iconBg: "rgba(96,165,250,0.15)",
                 border: "rgba(96,165,250,0.45)",
@@ -242,7 +242,7 @@ function QuickSummary({ client, onNavigate }: { client: ClientData; onNavigate: 
           unreadCount !== null && unreadCount > 0
             ? {
                 key: "notes",
-                onClick: () => onNavigate("notlar"),
+                onClick: () => { setUnreadCount(0); onNavigate("notlar"); },
                 icon: "🔔",
                 iconBg: "rgba(251,146,60,0.15)",
                 border: "rgba(251,146,60,0.45)",
