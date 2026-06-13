@@ -174,13 +174,18 @@ function SaveBtn({ loading, label = "Kaydet" }: { loading: boolean; label?: stri
 
 function DeleteBtn({ onClick, loading }: { onClick: () => void; loading: boolean }) {
   return (
-    <button
-      type="button"
-      onClick={onClick}
-      disabled={loading}
-      className="text-[12px] text-red-400 hover:text-red-300 transition-colors px-2 py-1 rounded"
-    >
+    <button type="button" onClick={onClick} disabled={loading}
+      className="text-[12px] text-red-400 hover:text-red-300 transition-colors px-2 py-1 rounded">
       {loading ? "..." : "Sil"}
+    </button>
+  );
+}
+
+function EditBtn({ onClick }: { onClick: () => void }) {
+  return (
+    <button type="button" onClick={onClick}
+      className="text-[12px] text-[#8a8a9a] hover:text-purple-400 transition-colors px-2 py-1 rounded">
+      Düzenle
     </button>
   );
 }
@@ -352,19 +357,46 @@ function GenelTab({ data, router }: { data: ClientDetailData; router: ReturnType
 type Campaign = ClientDetailData["campaigns"][number];
 
 function KampanyalarTab({ slug, campaigns, router }: { slug: string; campaigns: Campaign[]; router: ReturnType<typeof useRouter> }) {
+  const emptyForm = { platform: "META" as Campaign["platform"], name: "", dailyBudget: "", status: "AKTIF" as Campaign["status"], ongoing: false, startDate: "", endDate: "" };
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({
-    platform: "META" as Campaign["platform"],
-    name: "",
-    dailyBudget: "",
-    status: "AKTIF" as Campaign["status"],
-    ongoing: false,
-    startDate: "",
-    endDate: "",
-  });
+  const [form, setForm] = useState(emptyForm);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
   const [deleting, setDeleting] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState(emptyForm);
+  const [editLoading, setEditLoading] = useState(false);
+  const [editErr, setEditErr] = useState("");
+
+  function startEdit(c: Campaign) {
+    setEditingId(c.id);
+    setEditForm({
+      platform: c.platform,
+      name: c.name,
+      dailyBudget: c.dailyBudget,
+      status: c.status,
+      ongoing: c.ongoing,
+      startDate: c.startDate ?? "",
+      endDate: c.endDate ?? "",
+    });
+    setEditErr("");
+  }
+
+  async function handleSave(e: React.FormEvent) {
+    e.preventDefault();
+    if (!editingId) return;
+    setEditLoading(true);
+    setEditErr("");
+    const res = await fetch(`/api/musteri/admin/campaigns/${editingId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...editForm, startDate: editForm.startDate || null, endDate: editForm.endDate || null }),
+    });
+    const json = await res.json();
+    setEditLoading(false);
+    if (json.ok) { setEditingId(null); router.refresh(); }
+    else setEditErr(json.error ?? "Hata.");
+  }
 
   async function handleAdd(e: React.FormEvent) {
     e.preventDefault();
@@ -377,11 +409,8 @@ function KampanyalarTab({ slug, campaigns, router }: { slug: string; campaigns: 
     });
     const json = await res.json();
     setLoading(false);
-    if (json.ok) {
-      setShowForm(false);
-      setForm({ platform: "META", name: "", dailyBudget: "", status: "AKTIF", ongoing: false, startDate: "", endDate: "" });
-      router.refresh();
-    } else setErr(json.error ?? "Hata.");
+    if (json.ok) { setShowForm(false); setForm(emptyForm); router.refresh(); }
+    else setErr(json.error ?? "Hata.");
   }
 
   async function handleDelete(id: string) {
@@ -392,23 +421,62 @@ function KampanyalarTab({ slug, campaigns, router }: { slug: string; campaigns: 
     router.refresh();
   }
 
-  async function handleStatusChange(id: string, status: Campaign["status"]) {
-    await fetch(`/api/musteri/admin/campaigns/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status }),
-    });
-    router.refresh();
-  }
+  const CampaignFormFields = ({ f, setF }: { f: typeof emptyForm; setF: React.Dispatch<React.SetStateAction<typeof emptyForm>> }) => (
+    <>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <Field label="Platform">
+          <Select value={f.platform} onChange={(e) => setF((x) => ({ ...x, platform: e.target.value as Campaign["platform"] }))}>
+            <option value="META">Meta</option>
+            <option value="GOOGLE">Google</option>
+            <option value="TIKTOK">TikTok</option>
+          </Select>
+        </Field>
+        <Field label="Durum">
+          <Select value={f.status} onChange={(e) => setF((x) => ({ ...x, status: e.target.value as Campaign["status"] }))}>
+            <option value="AKTIF">Aktif</option>
+            <option value="DURAKLATILDI">Duraklatıldı</option>
+            <option value="TAMAMLANDI">Tamamlandı</option>
+            <option value="ODEME_HATASI">Ödeme Hatası</option>
+          </Select>
+        </Field>
+      </div>
+      <Field label="Kampanya Adı">
+        <Input required value={f.name} onChange={(e) => setF((x) => ({ ...x, name: e.target.value }))} placeholder="Örn: Yaz Kampanyası 2026" />
+      </Field>
+      <Field label="Günlük Bütçe">
+        <Input required value={f.dailyBudget}
+          onChange={(e) => setF((x) => ({ ...x, dailyBudget: e.target.value }))}
+          onBlur={(e) => setF((x) => ({ ...x, dailyBudget: fmtBudget(e.target.value) }))}
+          placeholder="100" />
+      </Field>
+      <div className="flex items-center gap-2">
+        <input type="checkbox" id={`ongoing-${f.name}`} checked={f.ongoing} onChange={(e) => setF((x) => ({ ...x, ongoing: e.target.checked }))} className="accent-purple-500" />
+        <label htmlFor={`ongoing-${f.name}`} className="text-[13px] text-[#8a8a9a]">Devam ediyor (süresiz)</label>
+      </div>
+      {!f.ongoing && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <Field label="Başlangıç"><Input type="date" value={f.startDate} onChange={(e) => setF((x) => ({ ...x, startDate: e.target.value }))} /></Field>
+          <Field label="Bitiş"><Input type="date" value={f.endDate} onChange={(e) => setF((x) => ({ ...x, endDate: e.target.value }))} /></Field>
+        </div>
+      )}
+    </>
+  );
 
   return (
     <div className="space-y-4">
-      {campaigns.map((c) => (
+      {campaigns.map((c) => editingId === c.id ? (
+        <form key={c.id} onSubmit={handleSave} className="rounded-2xl p-5 space-y-4" style={{ background: "var(--surface)", border: "1px solid rgba(168,85,247,0.4)" }}>
+          <p className="font-semibold text-white text-[14px]">Kampanyayı Düzenle</p>
+          <CampaignFormFields f={editForm} setF={setEditForm} />
+          <ErrMsg msg={editErr} />
+          <div className="flex gap-2">
+            <SaveBtn loading={editLoading} label="Kaydet" />
+            <button type="button" onClick={() => setEditingId(null)} className="btn btn-outline text-sm px-5 py-2">İptal</button>
+          </div>
+        </form>
+      ) : (
         <div key={c.id} className="rounded-xl p-4 flex items-start gap-3" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
-          <span
-            className="text-[11px] font-bold px-2.5 py-1 rounded-full flex-shrink-0 mt-0.5"
-            style={{ background: PLATFORM_COLOR[c.platform], color: PLATFORM_TEXT[c.platform] }}
-          >
+          <span className="text-[11px] font-bold px-2.5 py-1 rounded-full flex-shrink-0 mt-0.5" style={{ background: PLATFORM_COLOR[c.platform], color: PLATFORM_TEXT[c.platform] }}>
             {PLATFORM_LABEL[c.platform]}
           </span>
           <div className="flex-1 min-w-0">
@@ -416,15 +484,8 @@ function KampanyalarTab({ slug, campaigns, router }: { slug: string; campaigns: 
             <p className="text-[12px] text-[#8a8a9a] mt-0.5">{fmtBudget(c.dailyBudget)} · {c.ongoing ? "Devam ediyor" : `${c.startDate ?? "?"} → ${c.endDate ?? "?"}`}</p>
           </div>
           <div className="flex items-center gap-2 flex-shrink-0">
-            <Select
-              value={c.status}
-              onChange={(e) => handleStatusChange(c.id, e.target.value as Campaign["status"])}
-              style={{ width: "auto", fontSize: "12px", padding: "4px 8px", color: STATUS_COLOR[c.status] }}
-            >
-              {["AKTIF", "DURAKLATILDI", "TAMAMLANDI", "ODEME_HATASI"].map((s) => (
-                <option key={s} value={s}>{STATUS_LABEL[s]}</option>
-              ))}
-            </Select>
+            <span className="text-[12px] font-medium px-2 py-1 rounded-full" style={{ color: STATUS_COLOR[c.status], background: `${STATUS_COLOR[c.status]}18` }}>{STATUS_LABEL[c.status]}</span>
+            <EditBtn onClick={() => startEdit(c)} />
             <DeleteBtn onClick={() => handleDelete(c.id)} loading={deleting === c.id} />
           </div>
         </div>
@@ -435,55 +496,11 @@ function KampanyalarTab({ slug, campaigns, router }: { slug: string; campaigns: 
       )}
 
       {!showForm ? (
-        <button onClick={() => setShowForm(true)} className="btn btn-outline text-sm w-full py-3 mt-2">
-          + Kampanya Ekle
-        </button>
+        <button onClick={() => setShowForm(true)} className="btn btn-outline text-sm w-full py-3 mt-2">+ Kampanya Ekle</button>
       ) : (
         <form onSubmit={handleAdd} className="rounded-2xl p-5 space-y-4 mt-2" style={{ background: "var(--surface)", border: "1px solid rgba(168,85,247,0.3)" }}>
           <p className="font-semibold text-white text-[14px]">Yeni Kampanya</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <Field label="Platform">
-              <Select value={form.platform} onChange={(e) => setForm((f) => ({ ...f, platform: e.target.value as Campaign["platform"] }))}>
-                <option value="META">Meta</option>
-                <option value="GOOGLE">Google</option>
-                <option value="TIKTOK">TikTok</option>
-              </Select>
-            </Field>
-            <Field label="Durum">
-              <Select value={form.status} onChange={(e) => setForm((f) => ({ ...f, status: e.target.value as Campaign["status"] }))}>
-                <option value="AKTIF">Aktif</option>
-                <option value="DURAKLATILDI">Duraklatıldı</option>
-                <option value="TAMAMLANDI">Tamamlandı</option>
-                <option value="ODEME_HATASI">Ödeme Hatası</option>
-              </Select>
-            </Field>
-          </div>
-          <Field label="Kampanya Adı">
-            <Input required value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder="Örn: Yaz Kampanyası 2026" />
-          </Field>
-          <Field label="Günlük Bütçe">
-            <Input
-              required
-              value={form.dailyBudget}
-              onChange={(e) => setForm((f) => ({ ...f, dailyBudget: e.target.value }))}
-              onBlur={(e) => setForm((f) => ({ ...f, dailyBudget: fmtBudget(e.target.value) }))}
-              placeholder="100"
-            />
-          </Field>
-          <div className="flex items-center gap-2">
-            <input type="checkbox" id="ongoing" checked={form.ongoing} onChange={(e) => setForm((f) => ({ ...f, ongoing: e.target.checked }))} className="accent-purple-500" />
-            <label htmlFor="ongoing" className="text-[13px] text-[#8a8a9a]">Devam ediyor (süresiz)</label>
-          </div>
-          {!form.ongoing && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <Field label="Başlangıç">
-                <Input type="date" value={form.startDate} onChange={(e) => setForm((f) => ({ ...f, startDate: e.target.value }))} />
-              </Field>
-              <Field label="Bitiş">
-                <Input type="date" value={form.endDate} onChange={(e) => setForm((f) => ({ ...f, endDate: e.target.value }))} />
-              </Field>
-            </div>
-          )}
+          <CampaignFormFields f={form} setF={setForm} />
           <ErrMsg msg={err} />
           <div className="flex gap-2">
             <SaveBtn loading={loading} label="Ekle" />
@@ -500,11 +517,38 @@ function KampanyalarTab({ slug, campaigns, router }: { slug: string; campaigns: 
 type Update = ClientDetailData["updates"][number];
 
 function GuncellemelerTab({ slug, updates, router }: { slug: string; updates: Update[]; router: ReturnType<typeof useRouter> }) {
+  const emptyForm = { kind: "AJANS" as Update["kind"], text: "", date: new Date().toISOString().split("T")[0] };
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ kind: "AJANS" as Update["kind"], text: "", date: new Date().toISOString().split("T")[0] });
+  const [form, setForm] = useState(emptyForm);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
   const [deleting, setDeleting] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState(emptyForm);
+  const [editLoading, setEditLoading] = useState(false);
+  const [editErr, setEditErr] = useState("");
+
+  function startEdit(u: Update) {
+    setEditingId(u.id);
+    setEditForm({ kind: u.kind, text: u.text, date: u.date });
+    setEditErr("");
+  }
+
+  async function handleSave(e: React.FormEvent) {
+    e.preventDefault();
+    if (!editingId) return;
+    setEditLoading(true);
+    setEditErr("");
+    const res = await fetch(`/api/musteri/admin/updates/${editingId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(editForm),
+    });
+    const json = await res.json();
+    setEditLoading(false);
+    if (json.ok) { setEditingId(null); router.refresh(); }
+    else setEditErr(json.error ?? "Hata.");
+  }
 
   async function handleAdd(e: React.FormEvent) {
     e.preventDefault();
@@ -517,11 +561,8 @@ function GuncellemelerTab({ slug, updates, router }: { slug: string; updates: Up
     });
     const json = await res.json();
     setLoading(false);
-    if (json.ok) {
-      setShowForm(false);
-      setForm({ kind: "AJANS", text: "", date: new Date().toISOString().split("T")[0] });
-      router.refresh();
-    } else setErr(json.error ?? "Hata.");
+    if (json.ok) { setShowForm(false); setForm(emptyForm); router.refresh(); }
+    else setErr(json.error ?? "Hata.");
   }
 
   async function handleDelete(id: string) {
@@ -532,24 +573,51 @@ function GuncellemelerTab({ slug, updates, router }: { slug: string; updates: Up
     router.refresh();
   }
 
+  const UpdateFormFields = ({ f, setF }: { f: typeof emptyForm; setF: React.Dispatch<React.SetStateAction<typeof emptyForm>> }) => (
+    <>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <Field label="Tür">
+          <Select value={f.kind} onChange={(e) => setF((x) => ({ ...x, kind: e.target.value as Update["kind"] }))}>
+            <option value="AJANS">Ajans</option>
+            <option value="WEBSITE">Web Site</option>
+          </Select>
+        </Field>
+        <Field label="Tarih">
+          <Input type="date" value={f.date} onChange={(e) => setF((x) => ({ ...x, date: e.target.value }))} />
+        </Field>
+      </div>
+      <Field label="Güncelleme Metni">
+        <Textarea required value={f.text} onChange={(e) => setF((x) => ({ ...x, text: e.target.value }))} placeholder="Yapılan çalışmayı açıklayın..." />
+      </Field>
+    </>
+  );
+
   return (
     <div className="space-y-3">
-      {updates.map((u) => (
+      {updates.map((u) => editingId === u.id ? (
+        <form key={u.id} onSubmit={handleSave} className="rounded-2xl p-5 space-y-4" style={{ background: "var(--surface)", border: "1px solid rgba(168,85,247,0.4)" }}>
+          <p className="font-semibold text-white text-[14px]">Güncellemeyi Düzenle</p>
+          <UpdateFormFields f={editForm} setF={setEditForm} />
+          <ErrMsg msg={editErr} />
+          <div className="flex gap-2">
+            <SaveBtn loading={editLoading} label="Kaydet" />
+            <button type="button" onClick={() => setEditingId(null)} className="btn btn-outline text-sm px-5 py-2">İptal</button>
+          </div>
+        </form>
+      ) : (
         <div key={u.id} className="rounded-xl p-4 flex items-start gap-3" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
-          <span
-            className="text-[11px] font-bold px-2.5 py-1 rounded-full flex-shrink-0 mt-0.5"
-            style={{
-              background: u.kind === "AJANS" ? "rgba(168,85,247,0.15)" : "rgba(59,130,246,0.15)",
-              color: u.kind === "AJANS" ? "#c084fc" : "#60a5fa",
-            }}
-          >
+          <span className="text-[11px] font-bold px-2.5 py-1 rounded-full flex-shrink-0 mt-0.5"
+            style={{ background: u.kind === "AJANS" ? "rgba(168,85,247,0.15)" : "rgba(59,130,246,0.15)", color: u.kind === "AJANS" ? "#c084fc" : "#60a5fa" }}>
             {u.kind === "AJANS" ? "Ajans" : "Web Site"}
           </span>
           <div className="flex-1 min-w-0">
-            <p className="text-white text-[13px] leading-relaxed">{u.text}</p>
+            <p className="text-white text-[13px] leading-relaxed whitespace-pre-wrap">{u.text}</p>
             <p className="text-[11px] text-[#555] mt-1">{u.date}</p>
           </div>
-          <DeleteBtn onClick={() => handleDelete(u.id)} loading={deleting === u.id} />
+          <div className="flex items-center gap-1.5 flex-shrink-0">
+            <EditBtn onClick={() => startEdit(u)} />
+            <DeleteBtn onClick={() => handleDelete(u.id)} loading={deleting === u.id} />
+          </div>
         </div>
       ))}
 
@@ -558,26 +626,11 @@ function GuncellemelerTab({ slug, updates, router }: { slug: string; updates: Up
       )}
 
       {!showForm ? (
-        <button onClick={() => setShowForm(true)} className="btn btn-outline text-sm w-full py-3 mt-2">
-          + Güncelleme Ekle
-        </button>
+        <button onClick={() => setShowForm(true)} className="btn btn-outline text-sm w-full py-3 mt-2">+ Güncelleme Ekle</button>
       ) : (
         <form onSubmit={handleAdd} className="rounded-2xl p-5 space-y-4 mt-2" style={{ background: "var(--surface)", border: "1px solid rgba(168,85,247,0.3)" }}>
           <p className="font-semibold text-white text-[14px]">Yeni Güncelleme</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <Field label="Tür">
-              <Select value={form.kind} onChange={(e) => setForm((f) => ({ ...f, kind: e.target.value as Update["kind"] }))}>
-                <option value="AJANS">Ajans</option>
-                <option value="WEBSITE">Web Site</option>
-              </Select>
-            </Field>
-            <Field label="Tarih">
-              <Input type="date" value={form.date} onChange={(e) => setForm((f) => ({ ...f, date: e.target.value }))} />
-            </Field>
-          </div>
-          <Field label="Güncelleme Metni">
-            <Textarea required value={form.text} onChange={(e) => setForm((f) => ({ ...f, text: e.target.value }))} placeholder="Yapılan çalışmayı açıklayın..." />
-          </Field>
+          <UpdateFormFields f={form} setF={setForm} />
           <ErrMsg msg={err} />
           <div className="flex gap-2">
             <SaveBtn loading={loading} label="Ekle" />
@@ -594,11 +647,38 @@ function GuncellemelerTab({ slug, updates, router }: { slug: string; updates: Up
 type Invoice = ClientDetailData["invoices"][number];
 
 function FaturalarTab({ slug, invoices, router }: { slug: string; invoices: Invoice[]; router: ReturnType<typeof useRouter> }) {
+  const emptyForm = { period: "", amount: "", status: "BEKLIYOR" as Invoice["status"], dueDate: "" };
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ period: "", amount: "", status: "BEKLIYOR" as Invoice["status"], dueDate: "" });
+  const [form, setForm] = useState(emptyForm);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
   const [deleting, setDeleting] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState(emptyForm);
+  const [editLoading, setEditLoading] = useState(false);
+  const [editErr, setEditErr] = useState("");
+
+  function startEdit(inv: Invoice) {
+    setEditingId(inv.id);
+    setEditForm({ period: inv.period, amount: inv.amount, status: inv.status, dueDate: inv.dueDate ?? "" });
+    setEditErr("");
+  }
+
+  async function handleSave(e: React.FormEvent) {
+    e.preventDefault();
+    if (!editingId) return;
+    setEditLoading(true);
+    setEditErr("");
+    const res = await fetch(`/api/musteri/admin/invoices/${editingId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...editForm, dueDate: editForm.dueDate || null }),
+    });
+    const json = await res.json();
+    setEditLoading(false);
+    if (json.ok) { setEditingId(null); router.refresh(); }
+    else setEditErr(json.error ?? "Hata.");
+  }
 
   async function handleAdd(e: React.FormEvent) {
     e.preventDefault();
@@ -611,20 +691,8 @@ function FaturalarTab({ slug, invoices, router }: { slug: string; invoices: Invo
     });
     const json = await res.json();
     setLoading(false);
-    if (json.ok) {
-      setShowForm(false);
-      setForm({ period: "", amount: "", status: "BEKLIYOR", dueDate: "" });
-      router.refresh();
-    } else setErr(json.error ?? "Hata.");
-  }
-
-  async function handleStatusChange(id: string, status: Invoice["status"]) {
-    await fetch(`/api/musteri/admin/invoices/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status }),
-    });
-    router.refresh();
+    if (json.ok) { setShowForm(false); setForm(emptyForm); router.refresh(); }
+    else setErr(json.error ?? "Hata.");
   }
 
   async function handleDelete(id: string) {
@@ -635,9 +703,47 @@ function FaturalarTab({ slug, invoices, router }: { slug: string; invoices: Invo
     router.refresh();
   }
 
+  const InvoiceFormFields = ({ f, setF }: { f: typeof emptyForm; setF: React.Dispatch<React.SetStateAction<typeof emptyForm>> }) => (
+    <>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <Field label="Dönem">
+          <Input required value={f.period} onChange={(e) => setF((x) => ({ ...x, period: e.target.value }))} placeholder="Haziran 2026" />
+        </Field>
+        <Field label="Tutar">
+          <Input required value={f.amount}
+            onChange={(e) => setF((x) => ({ ...x, amount: e.target.value }))}
+            onBlur={(e) => setF((x) => ({ ...x, amount: fmtAmount(e.target.value) }))}
+            placeholder="15.000 ₺" />
+        </Field>
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <Field label="Durum">
+          <Select value={f.status} onChange={(e) => setF((x) => ({ ...x, status: e.target.value as Invoice["status"] }))}>
+            <option value="BEKLIYOR">Bekliyor</option>
+            <option value="ODENDI">Ödendi</option>
+            <option value="GUNU_GELMEDI">Günü Gelmedi</option>
+          </Select>
+        </Field>
+        <Field label="Vade Tarihi (opsiyonel)">
+          <Input type="date" value={f.dueDate} onChange={(e) => setF((x) => ({ ...x, dueDate: e.target.value }))} />
+        </Field>
+      </div>
+    </>
+  );
+
   return (
     <div className="space-y-3">
-      {invoices.map((inv) => (
+      {invoices.map((inv) => editingId === inv.id ? (
+        <form key={inv.id} onSubmit={handleSave} className="rounded-2xl p-5 space-y-4" style={{ background: "var(--surface)", border: "1px solid rgba(168,85,247,0.4)" }}>
+          <p className="font-semibold text-white text-[14px]">Faturayı Düzenle</p>
+          <InvoiceFormFields f={editForm} setF={setEditForm} />
+          <ErrMsg msg={editErr} />
+          <div className="flex gap-2">
+            <SaveBtn loading={editLoading} label="Kaydet" />
+            <button type="button" onClick={() => setEditingId(null)} className="btn btn-outline text-sm px-5 py-2">İptal</button>
+          </div>
+        </form>
+      ) : (
         <div key={inv.id} className="rounded-xl p-4" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
           <div className="flex items-start justify-between gap-3">
             <div>
@@ -645,15 +751,8 @@ function FaturalarTab({ slug, invoices, router }: { slug: string; invoices: Invo
               <p className="text-[13px] text-[#8a8a9a] mt-0.5">{fmtAmount(inv.amount)}{inv.dueDate ? ` · Vade: ${inv.dueDate}` : ""}</p>
             </div>
             <div className="flex items-center gap-2 flex-shrink-0">
-              <Select
-                value={inv.status}
-                onChange={(e) => handleStatusChange(inv.id, e.target.value as Invoice["status"])}
-                style={{ width: "auto", fontSize: "12px", padding: "4px 8px", color: STATUS_COLOR[inv.status] }}
-              >
-                <option value="ODENDI">Ödendi</option>
-                <option value="BEKLIYOR">Bekliyor</option>
-                <option value="GUNU_GELMEDI">Günü Gelmedi</option>
-              </Select>
+              <span className="text-[12px] font-medium px-2 py-1 rounded-full" style={{ color: STATUS_COLOR[inv.status], background: `${STATUS_COLOR[inv.status]}18` }}>{STATUS_LABEL[inv.status]}</span>
+              <EditBtn onClick={() => startEdit(inv)} />
               <DeleteBtn onClick={() => handleDelete(inv.id)} loading={deleting === inv.id} />
             </div>
           </div>
@@ -665,38 +764,11 @@ function FaturalarTab({ slug, invoices, router }: { slug: string; invoices: Invo
       )}
 
       {!showForm ? (
-        <button onClick={() => setShowForm(true)} className="btn btn-outline text-sm w-full py-3 mt-2">
-          + Fatura Ekle
-        </button>
+        <button onClick={() => setShowForm(true)} className="btn btn-outline text-sm w-full py-3 mt-2">+ Fatura Ekle</button>
       ) : (
         <form onSubmit={handleAdd} className="rounded-2xl p-5 space-y-4 mt-2" style={{ background: "var(--surface)", border: "1px solid rgba(168,85,247,0.3)" }}>
           <p className="font-semibold text-white text-[14px]">Yeni Fatura</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <Field label="Dönem">
-              <Input required value={form.period} onChange={(e) => setForm((f) => ({ ...f, period: e.target.value }))} placeholder="Haziran 2026" />
-            </Field>
-            <Field label="Tutar">
-              <Input
-                required
-                value={form.amount}
-                onChange={(e) => setForm((f) => ({ ...f, amount: e.target.value }))}
-                onBlur={(e) => setForm((f) => ({ ...f, amount: fmtAmount(e.target.value) }))}
-                placeholder="15.000 ₺"
-              />
-            </Field>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <Field label="Durum">
-              <Select value={form.status} onChange={(e) => setForm((f) => ({ ...f, status: e.target.value as Invoice["status"] }))}>
-                <option value="BEKLIYOR">Bekliyor</option>
-                <option value="ODENDI">Ödendi</option>
-                <option value="GUNU_GELMEDI">Günü Gelmedi</option>
-              </Select>
-            </Field>
-            <Field label="Vade Tarihi (opsiyonel)">
-              <Input type="date" value={form.dueDate} onChange={(e) => setForm((f) => ({ ...f, dueDate: e.target.value }))} />
-            </Field>
-          </div>
+          <InvoiceFormFields f={form} setF={setForm} />
           <ErrMsg msg={err} />
           <div className="flex gap-2">
             <SaveBtn loading={loading} label="Ekle" />
