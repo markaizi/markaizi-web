@@ -1,6 +1,6 @@
 # PROJE DURUM — markaizi.com.tr
 
-Son güncelleme: 12 Haziran 2026
+Son güncelleme: 14 Haziran 2026
 
 ---
 
@@ -26,6 +26,12 @@ Son güncelleme: 12 Haziran 2026
 
 ### PayTR Ödeme Sistemi (KOD HAZIR — AKTİF DEĞİL)
 - Bkz. altbölüm "Bekleyen / Yarım Kalanlar"
+
+---
+
+## ✅ Genel Site — Son Eklemeler (14 Haz 2026)
+
+- **Dünya Kupası Pop-up** (`src/components/WorldCupPopup.tsx`): Site ilk açıldığında gösterilir, localStorage ile bir kez gösterilir. Kapat veya buton ile kapatılır.
 
 ---
 
@@ -275,11 +281,45 @@ Notlar sekmesi açıldığında (GET isteği) tüm notlar bu tabloya `createMany
 **Credentials (.env.local + Vercel'de):**
 - PAYTR_MERCHANT_ID: 674958, TEST_MODE: 1, BASE_URL: https://markaizi.com.tr
 
+### Müşteri Paneli — Son Düzeltmeler / İyileştirmeler (14 Haz 2026)
+
+#### UI / Mobil
+- Tüm admin ve çalışan paneli başlık satırları `flex-col sm:flex-row` ile mobilde dikey yığılır
+- Form grid'leri `grid-cols-2` → `grid-cols-1 sm:grid-cols-2` (mobil taşma düzeltildi)
+- `max-w-[860px]` → `max-w-[1080px]` müşteri paneli genişliği artırıldı
+- Tab bar büyük 4'lü grid'den yatay kaydırmalı pill'e döndürüldü
+
+#### Veri Formatlama
+- `fmtAmount(raw)`: "15000" → "15.000 ₺" — fatura tutarı input onBlur + görüntüleme
+- `fmtBudget(raw)`: "100" → "100 ₺/gün" — kampanya bütçesi input onBlur + görüntüleme
+- `parseBudgetNum(raw)`: bütçe toplamı hesabında ₺/gün suffix'ini sıyırır
+
+#### Müşteri Paneli (ClientPortal.tsx)
+- `SupportBox` (iletişim kutusu) tamamen kaldırıldı
+- "Genel Bakış" tab'ı kaldırıldı; yerine `QuickSummary` — selamlama bölümünün hemen altında inline özet
+- `QuickSummary`: platform başına kampanya sayıları + aktif bütçe toplamı, okunmamış not bildirimi, yeni güncelleme bildirimi
+- Bildirim kartları `grid grid-cols-1 sm:grid-cols-2` — taşma düzeltildi
+- Not bildirimi: tıklanınca anında kaybolur (sayfa yenilemesi gerekmez)
+- Güncelleme bildirimi: localStorage key artık useEffect'te değil onClick'te set edilir → yeni güncelleme her zaman görünür, tıklanınca kaybolur
+- Meta Ads tablo sütun sırası: Kampanya Adı | Başlangıç | Bitiş | Günlük Bütçe
+- `whitespace-pre-wrap` eklendi: güncelleme ve not metinleri satır sonlarını korur
+- İçerik takvimi: admin bir firmayı açıp takvime girince yalnızca o firmanın içerikleri gösterilir (`clientSlug` prop'u + API filtresi)
+
+#### Admin Paneli (AdminClientDetail.tsx)
+- Kampanya, güncelleme ve fatura için inline **Düzenle** butonu eklendi
+- Düzenle → aynı satır edit formuna dönüşür, mevcut değerler dolu gelir, PATCH ile kaydedilir
+- Form içi bileşen (`CampaignFormFields` vb.) tanımları kaldırıldı → JSX inline yazıldı (her tuş vuruşunda odak kaybı sorunu çözüldü)
+- `Updates PATCH /api/musteri/admin/updates/[id]` endpoint eklendi
+
+#### Notes.tsx
+- Not listesi önce, "Not Ekle" formu sonda gösterilir (yer değiştirildi)
+
 ### Müşteri Paneli — Olası Geliştirmeler
 - [ ] Faz 5 Notlar: müşteri not yazınca ajansa bildirim (şu an sadece ajans→müşteri yönü bildirilir)
 - [ ] Çalışan profil sayfası (çalışan kendi şifresini değiştirebilsin)
 - [ ] Müşteri profil sayfası (müşteri kendi şifresini değiştirebilsin)
 - [ ] Fatura PDF oluşturma
+- [ ] Meta Business API entegrasyonu (RetroCar test firması — Ad Account: act_1638132090780779, token bekleniyor)
 
 ---
 
