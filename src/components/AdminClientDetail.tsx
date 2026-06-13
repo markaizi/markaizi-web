@@ -421,53 +421,47 @@ function KampanyalarTab({ slug, campaigns, router }: { slug: string; campaigns: 
     router.refresh();
   }
 
-  const CampaignFormFields = ({ f, setF }: { f: typeof emptyForm; setF: React.Dispatch<React.SetStateAction<typeof emptyForm>> }) => (
-    <>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <Field label="Platform">
-          <Select value={f.platform} onChange={(e) => setF((x) => ({ ...x, platform: e.target.value as Campaign["platform"] }))}>
-            <option value="META">Meta</option>
-            <option value="GOOGLE">Google</option>
-            <option value="TIKTOK">TikTok</option>
-          </Select>
-        </Field>
-        <Field label="Durum">
-          <Select value={f.status} onChange={(e) => setF((x) => ({ ...x, status: e.target.value as Campaign["status"] }))}>
-            <option value="AKTIF">Aktif</option>
-            <option value="DURAKLATILDI">Duraklatıldı</option>
-            <option value="TAMAMLANDI">Tamamlandı</option>
-            <option value="ODEME_HATASI">Ödeme Hatası</option>
-          </Select>
-        </Field>
-      </div>
-      <Field label="Kampanya Adı">
-        <Input required value={f.name} onChange={(e) => setF((x) => ({ ...x, name: e.target.value }))} placeholder="Örn: Yaz Kampanyası 2026" />
-      </Field>
-      <Field label="Günlük Bütçe">
-        <Input required value={f.dailyBudget}
-          onChange={(e) => setF((x) => ({ ...x, dailyBudget: e.target.value }))}
-          onBlur={(e) => setF((x) => ({ ...x, dailyBudget: fmtBudget(e.target.value) }))}
-          placeholder="100" />
-      </Field>
-      <div className="flex items-center gap-2">
-        <input type="checkbox" id={`ongoing-${f.name}`} checked={f.ongoing} onChange={(e) => setF((x) => ({ ...x, ongoing: e.target.checked }))} className="accent-purple-500" />
-        <label htmlFor={`ongoing-${f.name}`} className="text-[13px] text-[#8a8a9a]">Devam ediyor (süresiz)</label>
-      </div>
-      {!f.ongoing && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <Field label="Başlangıç"><Input type="date" value={f.startDate} onChange={(e) => setF((x) => ({ ...x, startDate: e.target.value }))} /></Field>
-          <Field label="Bitiş"><Input type="date" value={f.endDate} onChange={(e) => setF((x) => ({ ...x, endDate: e.target.value }))} /></Field>
-        </div>
-      )}
-    </>
-  );
-
   return (
     <div className="space-y-4">
       {campaigns.map((c) => editingId === c.id ? (
         <form key={c.id} onSubmit={handleSave} className="rounded-2xl p-5 space-y-4" style={{ background: "var(--surface)", border: "1px solid rgba(168,85,247,0.4)" }}>
           <p className="font-semibold text-white text-[14px]">Kampanyayı Düzenle</p>
-          <CampaignFormFields f={editForm} setF={setEditForm} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <Field label="Platform">
+              <Select value={editForm.platform} onChange={(e) => setEditForm((x) => ({ ...x, platform: e.target.value as Campaign["platform"] }))}>
+                <option value="META">Meta</option>
+                <option value="GOOGLE">Google</option>
+                <option value="TIKTOK">TikTok</option>
+              </Select>
+            </Field>
+            <Field label="Durum">
+              <Select value={editForm.status} onChange={(e) => setEditForm((x) => ({ ...x, status: e.target.value as Campaign["status"] }))}>
+                <option value="AKTIF">Aktif</option>
+                <option value="DURAKLATILDI">Duraklatıldı</option>
+                <option value="TAMAMLANDI">Tamamlandı</option>
+                <option value="ODEME_HATASI">Ödeme Hatası</option>
+              </Select>
+            </Field>
+          </div>
+          <Field label="Kampanya Adı">
+            <Input required value={editForm.name} onChange={(e) => setEditForm((x) => ({ ...x, name: e.target.value }))} placeholder="Örn: Yaz Kampanyası 2026" />
+          </Field>
+          <Field label="Günlük Bütçe">
+            <Input required value={editForm.dailyBudget}
+              onChange={(e) => setEditForm((x) => ({ ...x, dailyBudget: e.target.value }))}
+              onBlur={(e) => setEditForm((x) => ({ ...x, dailyBudget: fmtBudget(e.target.value) }))}
+              placeholder="100" />
+          </Field>
+          <div className="flex items-center gap-2">
+            <input type="checkbox" id="edit-ongoing" checked={editForm.ongoing} onChange={(e) => setEditForm((x) => ({ ...x, ongoing: e.target.checked }))} className="accent-purple-500" />
+            <label htmlFor="edit-ongoing" className="text-[13px] text-[#8a8a9a]">Devam ediyor (süresiz)</label>
+          </div>
+          {!editForm.ongoing && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <Field label="Başlangıç"><Input type="date" value={editForm.startDate} onChange={(e) => setEditForm((x) => ({ ...x, startDate: e.target.value }))} /></Field>
+              <Field label="Bitiş"><Input type="date" value={editForm.endDate} onChange={(e) => setEditForm((x) => ({ ...x, endDate: e.target.value }))} /></Field>
+            </div>
+          )}
           <ErrMsg msg={editErr} />
           <div className="flex gap-2">
             <SaveBtn loading={editLoading} label="Kaydet" />
@@ -500,7 +494,42 @@ function KampanyalarTab({ slug, campaigns, router }: { slug: string; campaigns: 
       ) : (
         <form onSubmit={handleAdd} className="rounded-2xl p-5 space-y-4 mt-2" style={{ background: "var(--surface)", border: "1px solid rgba(168,85,247,0.3)" }}>
           <p className="font-semibold text-white text-[14px]">Yeni Kampanya</p>
-          <CampaignFormFields f={form} setF={setForm} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <Field label="Platform">
+              <Select value={form.platform} onChange={(e) => setForm((x) => ({ ...x, platform: e.target.value as Campaign["platform"] }))}>
+                <option value="META">Meta</option>
+                <option value="GOOGLE">Google</option>
+                <option value="TIKTOK">TikTok</option>
+              </Select>
+            </Field>
+            <Field label="Durum">
+              <Select value={form.status} onChange={(e) => setForm((x) => ({ ...x, status: e.target.value as Campaign["status"] }))}>
+                <option value="AKTIF">Aktif</option>
+                <option value="DURAKLATILDI">Duraklatıldı</option>
+                <option value="TAMAMLANDI">Tamamlandı</option>
+                <option value="ODEME_HATASI">Ödeme Hatası</option>
+              </Select>
+            </Field>
+          </div>
+          <Field label="Kampanya Adı">
+            <Input required value={form.name} onChange={(e) => setForm((x) => ({ ...x, name: e.target.value }))} placeholder="Örn: Yaz Kampanyası 2026" />
+          </Field>
+          <Field label="Günlük Bütçe">
+            <Input required value={form.dailyBudget}
+              onChange={(e) => setForm((x) => ({ ...x, dailyBudget: e.target.value }))}
+              onBlur={(e) => setForm((x) => ({ ...x, dailyBudget: fmtBudget(e.target.value) }))}
+              placeholder="100" />
+          </Field>
+          <div className="flex items-center gap-2">
+            <input type="checkbox" id="add-ongoing" checked={form.ongoing} onChange={(e) => setForm((x) => ({ ...x, ongoing: e.target.checked }))} className="accent-purple-500" />
+            <label htmlFor="add-ongoing" className="text-[13px] text-[#8a8a9a]">Devam ediyor (süresiz)</label>
+          </div>
+          {!form.ongoing && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <Field label="Başlangıç"><Input type="date" value={form.startDate} onChange={(e) => setForm((x) => ({ ...x, startDate: e.target.value }))} /></Field>
+              <Field label="Bitiş"><Input type="date" value={form.endDate} onChange={(e) => setForm((x) => ({ ...x, endDate: e.target.value }))} /></Field>
+            </div>
+          )}
           <ErrMsg msg={err} />
           <div className="flex gap-2">
             <SaveBtn loading={loading} label="Ekle" />
@@ -573,31 +602,25 @@ function GuncellemelerTab({ slug, updates, router }: { slug: string; updates: Up
     router.refresh();
   }
 
-  const UpdateFormFields = ({ f, setF }: { f: typeof emptyForm; setF: React.Dispatch<React.SetStateAction<typeof emptyForm>> }) => (
-    <>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <Field label="Tür">
-          <Select value={f.kind} onChange={(e) => setF((x) => ({ ...x, kind: e.target.value as Update["kind"] }))}>
-            <option value="AJANS">Ajans</option>
-            <option value="WEBSITE">Web Site</option>
-          </Select>
-        </Field>
-        <Field label="Tarih">
-          <Input type="date" value={f.date} onChange={(e) => setF((x) => ({ ...x, date: e.target.value }))} />
-        </Field>
-      </div>
-      <Field label="Güncelleme Metni">
-        <Textarea required value={f.text} onChange={(e) => setF((x) => ({ ...x, text: e.target.value }))} placeholder="Yapılan çalışmayı açıklayın..." />
-      </Field>
-    </>
-  );
-
   return (
     <div className="space-y-3">
       {updates.map((u) => editingId === u.id ? (
         <form key={u.id} onSubmit={handleSave} className="rounded-2xl p-5 space-y-4" style={{ background: "var(--surface)", border: "1px solid rgba(168,85,247,0.4)" }}>
           <p className="font-semibold text-white text-[14px]">Güncellemeyi Düzenle</p>
-          <UpdateFormFields f={editForm} setF={setEditForm} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <Field label="Tür">
+              <Select value={editForm.kind} onChange={(e) => setEditForm((x) => ({ ...x, kind: e.target.value as Update["kind"] }))}>
+                <option value="AJANS">Ajans</option>
+                <option value="WEBSITE">Web Site</option>
+              </Select>
+            </Field>
+            <Field label="Tarih">
+              <Input type="date" value={editForm.date} onChange={(e) => setEditForm((x) => ({ ...x, date: e.target.value }))} />
+            </Field>
+          </div>
+          <Field label="Güncelleme Metni">
+            <Textarea required value={editForm.text} onChange={(e) => setEditForm((x) => ({ ...x, text: e.target.value }))} placeholder="Yapılan çalışmayı açıklayın..." />
+          </Field>
           <ErrMsg msg={editErr} />
           <div className="flex gap-2">
             <SaveBtn loading={editLoading} label="Kaydet" />
@@ -630,7 +653,20 @@ function GuncellemelerTab({ slug, updates, router }: { slug: string; updates: Up
       ) : (
         <form onSubmit={handleAdd} className="rounded-2xl p-5 space-y-4 mt-2" style={{ background: "var(--surface)", border: "1px solid rgba(168,85,247,0.3)" }}>
           <p className="font-semibold text-white text-[14px]">Yeni Güncelleme</p>
-          <UpdateFormFields f={form} setF={setForm} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <Field label="Tür">
+              <Select value={form.kind} onChange={(e) => setForm((x) => ({ ...x, kind: e.target.value as Update["kind"] }))}>
+                <option value="AJANS">Ajans</option>
+                <option value="WEBSITE">Web Site</option>
+              </Select>
+            </Field>
+            <Field label="Tarih">
+              <Input type="date" value={form.date} onChange={(e) => setForm((x) => ({ ...x, date: e.target.value }))} />
+            </Field>
+          </div>
+          <Field label="Güncelleme Metni">
+            <Textarea required value={form.text} onChange={(e) => setForm((x) => ({ ...x, text: e.target.value }))} placeholder="Yapılan çalışmayı açıklayın..." />
+          </Field>
           <ErrMsg msg={err} />
           <div className="flex gap-2">
             <SaveBtn loading={loading} label="Ekle" />
@@ -703,40 +739,34 @@ function FaturalarTab({ slug, invoices, router }: { slug: string; invoices: Invo
     router.refresh();
   }
 
-  const InvoiceFormFields = ({ f, setF }: { f: typeof emptyForm; setF: React.Dispatch<React.SetStateAction<typeof emptyForm>> }) => (
-    <>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <Field label="Dönem">
-          <Input required value={f.period} onChange={(e) => setF((x) => ({ ...x, period: e.target.value }))} placeholder="Haziran 2026" />
-        </Field>
-        <Field label="Tutar">
-          <Input required value={f.amount}
-            onChange={(e) => setF((x) => ({ ...x, amount: e.target.value }))}
-            onBlur={(e) => setF((x) => ({ ...x, amount: fmtAmount(e.target.value) }))}
-            placeholder="15.000 ₺" />
-        </Field>
-      </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <Field label="Durum">
-          <Select value={f.status} onChange={(e) => setF((x) => ({ ...x, status: e.target.value as Invoice["status"] }))}>
-            <option value="BEKLIYOR">Bekliyor</option>
-            <option value="ODENDI">Ödendi</option>
-            <option value="GUNU_GELMEDI">Günü Gelmedi</option>
-          </Select>
-        </Field>
-        <Field label="Vade Tarihi (opsiyonel)">
-          <Input type="date" value={f.dueDate} onChange={(e) => setF((x) => ({ ...x, dueDate: e.target.value }))} />
-        </Field>
-      </div>
-    </>
-  );
-
   return (
     <div className="space-y-3">
       {invoices.map((inv) => editingId === inv.id ? (
         <form key={inv.id} onSubmit={handleSave} className="rounded-2xl p-5 space-y-4" style={{ background: "var(--surface)", border: "1px solid rgba(168,85,247,0.4)" }}>
           <p className="font-semibold text-white text-[14px]">Faturayı Düzenle</p>
-          <InvoiceFormFields f={editForm} setF={setEditForm} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <Field label="Dönem">
+              <Input required value={editForm.period} onChange={(e) => setEditForm((x) => ({ ...x, period: e.target.value }))} placeholder="Haziran 2026" />
+            </Field>
+            <Field label="Tutar">
+              <Input required value={editForm.amount}
+                onChange={(e) => setEditForm((x) => ({ ...x, amount: e.target.value }))}
+                onBlur={(e) => setEditForm((x) => ({ ...x, amount: fmtAmount(e.target.value) }))}
+                placeholder="15.000 ₺" />
+            </Field>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <Field label="Durum">
+              <Select value={editForm.status} onChange={(e) => setEditForm((x) => ({ ...x, status: e.target.value as Invoice["status"] }))}>
+                <option value="BEKLIYOR">Bekliyor</option>
+                <option value="ODENDI">Ödendi</option>
+                <option value="GUNU_GELMEDI">Günü Gelmedi</option>
+              </Select>
+            </Field>
+            <Field label="Vade Tarihi (opsiyonel)">
+              <Input type="date" value={editForm.dueDate} onChange={(e) => setEditForm((x) => ({ ...x, dueDate: e.target.value }))} />
+            </Field>
+          </div>
           <ErrMsg msg={editErr} />
           <div className="flex gap-2">
             <SaveBtn loading={editLoading} label="Kaydet" />
@@ -768,7 +798,29 @@ function FaturalarTab({ slug, invoices, router }: { slug: string; invoices: Invo
       ) : (
         <form onSubmit={handleAdd} className="rounded-2xl p-5 space-y-4 mt-2" style={{ background: "var(--surface)", border: "1px solid rgba(168,85,247,0.3)" }}>
           <p className="font-semibold text-white text-[14px]">Yeni Fatura</p>
-          <InvoiceFormFields f={form} setF={setForm} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <Field label="Dönem">
+              <Input required value={form.period} onChange={(e) => setForm((x) => ({ ...x, period: e.target.value }))} placeholder="Haziran 2026" />
+            </Field>
+            <Field label="Tutar">
+              <Input required value={form.amount}
+                onChange={(e) => setForm((x) => ({ ...x, amount: e.target.value }))}
+                onBlur={(e) => setForm((x) => ({ ...x, amount: fmtAmount(e.target.value) }))}
+                placeholder="15.000 ₺" />
+            </Field>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <Field label="Durum">
+              <Select value={form.status} onChange={(e) => setForm((x) => ({ ...x, status: e.target.value as Invoice["status"] }))}>
+                <option value="BEKLIYOR">Bekliyor</option>
+                <option value="ODENDI">Ödendi</option>
+                <option value="GUNU_GELMEDI">Günü Gelmedi</option>
+              </Select>
+            </Field>
+            <Field label="Vade Tarihi (opsiyonel)">
+              <Input type="date" value={form.dueDate} onChange={(e) => setForm((x) => ({ ...x, dueDate: e.target.value }))} />
+            </Field>
+          </div>
           <ErrMsg msg={err} />
           <div className="flex gap-2">
             <SaveBtn loading={loading} label="Ekle" />
