@@ -3,7 +3,6 @@ import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import CookieBanner from "@/components/CookieBanner";
 import Analytics from "@/components/Analytics";
-import WorldCupPopup from "@/components/WorldCupPopup";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -60,8 +59,7 @@ export default function RootLayout({
     <html lang="tr" className={`${inter.variable} ${spaceGrotesk.variable}`}>
       <body className="antialiased">
         <Analytics />
-        <WorldCupPopup />
-        {children}
+{children}
         <CookieBanner />
       </body>
     </html>
