@@ -2,9 +2,34 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/adminGuard";
+import { getSession } from "@/lib/auth";
 import bcrypt from "bcryptjs";
 
 export const runtime = "nodejs";
+
+export async function GET() {
+  const session = await getSession();
+  if (!session || session.role === "CLIENT") {
+    return NextResponse.json({ error: "Yetkisiz." }, { status: 403 });
+  }
+
+  let clients;
+  if (session.role === "ADMIN") {
+    clients = await prisma.client.findMany({
+      where: { active: true },
+      select: { id: true, slug: true, name: true },
+      orderBy: { name: "asc" },
+    });
+  } else {
+    const assignments = await prisma.assignment.findMany({
+      where: { userId: session.uid },
+      select: { client: { select: { id: true, slug: true, name: true } } },
+    });
+    clients = assignments.map(a => a.client);
+  }
+
+  return NextResponse.json({ clients });
+}
 
 const schema = z.object({
   name:        z.string().min(1).max(120),

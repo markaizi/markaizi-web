@@ -40,7 +40,7 @@ export default function AdminCalendarView() {
           <h1 className="font-black text-[22px] text-white mb-1">İçerik Takvimi</h1>
           <p className="text-[13px] text-[#8a8a9a]">Tüm firmaların planlanmış içerikleri</p>
         </div>
-        <Calendar showClientName />
+        <Calendar showClientName canEdit />
       </main>
     </div>
   );
