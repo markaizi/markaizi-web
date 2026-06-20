@@ -5,7 +5,6 @@ const LOGOS = [
   { name: "Duru",      sub: "Avize" },
   { name: "Şahin",     sub: "Avize" },
   { name: "Sarsılmaz", sub: "Mobilya" },
-  { name: "Vizyon",    sub: "Aksesuar" },
   { name: "Getat",     sub: "Etimesgut" },
   { name: "Fıtrina",   sub: "" },
   { name: "Alanya",    sub: "Pro Clean" },
