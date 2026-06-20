@@ -1,7 +1,7 @@
 "use client";
 
 const LOGOS = [
-  { name: "Alitel",    sub: "İstikbal" },
+  { name: "İstikbal",  sub: "Alitel" },
   { name: "Duru",      sub: "Avize" },
   { name: "Şahin",     sub: "Avize" },
   { name: "Sarsılmaz", sub: "Mobilya" },
@@ -10,10 +10,11 @@ const LOGOS = [
   { name: "Fıtrina",   sub: "" },
   { name: "Alanya",    sub: "Pro Clean" },
   { name: "Efsane",    sub: "Kebapçı" },
-  { name: "Ahenk",     sub: "Mobilya" },
+  { name: "İstikbal",  sub: "Ahenk" },
   { name: "Retrocar",  sub: "" },
   { name: "Özçalık",   sub: "Dizayn" },
-  { name: "Balmodam",  sub: "Mobilya" },
+  { name: "Doğtaş",    sub: "Mobilya" },
+  { name: "Kelebek",   sub: "Mobilya" },
   { name: "Barış",     sub: "Aksesuar" },
 ];
 
@@ -67,9 +68,9 @@ export default function Portfolio() {
 
         {/* Logo Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-16 reveal">
-          {LOGOS.map((l) => (
+          {LOGOS.map((l, i) => (
             <div
-              key={l.name}
+              key={`${l.name}-${i}`}
               className="flex flex-col items-center justify-center py-6 px-4 rounded-xl transition-all duration-300 cursor-default group"
               style={{ background:"var(--surface)", border:"1px solid var(--border)" }}
               onMouseEnter={(e) => {
