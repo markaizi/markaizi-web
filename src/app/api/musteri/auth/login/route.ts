@@ -7,6 +7,9 @@ import { rateLimit, getClientIp } from "@/lib/security";
 
 export const runtime = "nodejs";
 
+// Bakım modu: true iken sadece ADMIN girebilir. "aç" dediğinde false yap.
+const MAINTENANCE_MODE = true;
+
 const schema = z.object({
   username: z.string().trim().min(1).max(60),
   password: z.string().min(1).max(200),
@@ -53,6 +56,14 @@ export async function POST(req: NextRequest) {
 
   const ok = await bcrypt.compare(parsed.password, user.passwordHash);
   if (!ok) return FAIL;
+
+  if (MAINTENANCE_MODE && user.role !== "ADMIN") {
+    return NextResponse.json({
+      ok: false,
+      error: "Sizlere daha iyi hizmet verebilmek için altyapımızı güncelliyoruz. İhtiyaçlarınız ve sorularınız için lütfen bizimle iletişime geçin.",
+      maintenance: true,
+    }, { status: 503 });
+  }
 
   const token = await signSession({
     uid: user.id,
