@@ -15,6 +15,8 @@ const LOGOS = [
   { name: "Doğtaş",    sub: "Mobilya" },
   { name: "Kelebek",   sub: "Mobilya" },
   { name: "Barış",     sub: "Aksesuar" },
+  { name: "Akali",     sub: "Catering" },
+  { name: "Kubba",     sub: "Garden" },
 ];
 
 export default function Portfolio() {
@@ -66,7 +68,7 @@ export default function Portfolio() {
         </div>
 
         {/* Logo Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-4 mb-16 reveal">
+        <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-4 mb-16 reveal">
           {LOGOS.map((l, i) => (
             <div
               key={`${l.name}-${i}`}
