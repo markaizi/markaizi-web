@@ -89,7 +89,7 @@ export default function Contact() {
   };
 
   return (
-    <section id="iletisim" className="py-24" style={{
+    <section id="iletisim" className="pt-12 pb-24" style={{
       backgroundColor: "#131320",
       backgroundImage: "linear-gradient(rgba(255,255,255,0.028) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.028) 1px, transparent 1px)",
       backgroundSize: "44px 44px",

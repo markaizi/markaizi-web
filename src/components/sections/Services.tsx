@@ -139,35 +139,14 @@ export default function Services() {
           ))}
         </div>
 
-        {/* CTA Buttons */}
+        {/* CTA */}
         <div className="reveal text-center">
-          <p className="text-[14px] text-[#666] mb-5">
-            Aylık paket yerine tek seferlik iş mi yaptırmak istiyorsunuz? Kartvizit, tabela, video çekimi, broşür, logo tasarımı ve daha fazlası için tekil fiyat listemize göz atın.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-3 justify-center">
-            <Link
-              href="/fiyat-hesapla"
-              className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full text-[14px] font-bold transition-all duration-200 hover:opacity-90"
-              style={{ background: "var(--grad)", color: "#fff", boxShadow: "var(--glow-sm)" }}
-            >
-              <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth="2">
-                <path d="M9 7h6M9 12h6M9 17h4" strokeLinecap="round"/>
-                <rect x="3" y="3" width="18" height="18" rx="2" strokeWidth="1.5"/>
-              </svg>
-              Fiyatını Hesapla
-            </Link>
-            <Link
-              href="/fiyatlar"
-              className="inline-flex items-center gap-2 px-7 py-3.5 rounded-full text-[14px] font-bold transition-all duration-200 hover:opacity-80"
-              style={{ background: "rgba(168,85,247,0.12)", color: "#c084fc", border: "1px solid rgba(168,85,247,0.35)" }}
-            >
-              <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth="2">
-                <path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M9 12h6M9 16h4" strokeLinecap="round"/>
-              </svg>
-              Diğer Fiyatlarımız
-            </Link>
-          </div>
+          <a
+            href="/#iletisim"
+            className="btn btn-primary"
+          >
+            Ücretsiz Danışmanlık Al →
+          </a>
         </div>
       </div>
     </section>

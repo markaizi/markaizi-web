@@ -14,26 +14,18 @@ const NAV_LINKS = [
 ];
 
 export default function Navbar() {
-  const [scrolled, setScrolled]   = useState(false);
-  const [open, setOpen]           = useState(false);
-  const [loginOpen, setLoginOpen] = useState(false);
-  const [session, setSession]     = useState<SessionInfo>(undefined as unknown as SessionInfo);
-  const [theme, setTheme]         = useState<"dark" | "light">("dark");
-  const pathname = usePathname();
-  const isHome   = pathname === "/";
+  const [scrolled, setScrolled]       = useState(false);
+  const [open, setOpen]               = useState(false);
+  const [loginOpen, setLoginOpen]     = useState(false);
+  const [session, setSession]         = useState<SessionInfo>(undefined as unknown as SessionInfo);
+  const pathname  = usePathname();
+  const isHome    = pathname === "/";
 
   useEffect(() => {
     fetch("/api/musteri/auth/me")
       .then((r) => r.json())
       .then((d) => setSession(d.ok ? { name: d.name, redirect: d.redirect } : null))
       .catch(() => setSession(null));
-  }, []);
-
-  useEffect(() => {
-    const stored = localStorage.getItem("theme") as "dark" | "light" | null;
-    const initial = stored ?? "dark";
-    setTheme(initial);
-    document.documentElement.classList.toggle("light", initial === "light");
   }, []);
 
   useEffect(() => {
@@ -45,13 +37,6 @@ export default function Navbar() {
   useEffect(() => {
     document.body.style.overflow = (open || loginOpen) ? "hidden" : "";
   }, [open, loginOpen]);
-
-  function toggleTheme() {
-    const next = theme === "dark" ? "light" : "dark";
-    setTheme(next);
-    localStorage.setItem("theme", next);
-    document.documentElement.classList.toggle("light", next === "light");
-  }
 
   const close      = () => setOpen(false);
   const closeLogin = () => setLoginOpen(false);
@@ -70,38 +55,6 @@ export default function Navbar() {
     }
   };
 
-  const ThemeToggle = ({ compact }: { compact?: boolean }) => (
-    <button
-      onClick={toggleTheme}
-      aria-label={theme === "dark" ? "Gündüz moduna geç" : "Gece moduna geç"}
-      className="flex items-center justify-center rounded-full transition-all hover:bg-white/[0.08]"
-      style={{
-        width: compact ? 32 : 36,
-        height: compact ? 32 : 36,
-        border: "1px solid var(--border)",
-        color: "#8a8a9a",
-      }}
-    >
-      {theme === "dark" ? (
-        <svg viewBox="0 0 24 24" fill="none" width={16} height={16} stroke="currentColor" strokeWidth="2" strokeLinecap="round">
-          <circle cx="12" cy="12" r="5"/>
-          <line x1="12" y1="2" x2="12" y2="4"/>
-          <line x1="12" y1="20" x2="12" y2="22"/>
-          <line x1="2" y1="12" x2="4" y2="12"/>
-          <line x1="20" y1="12" x2="22" y2="12"/>
-          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
-          <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
-          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
-          <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-        </svg>
-      ) : (
-        <svg viewBox="0 0 24 24" fill="none" width={16} height={16} stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-        </svg>
-      )}
-    </button>
-  );
-
   return (
     <>
       <header
@@ -109,13 +62,13 @@ export default function Navbar() {
         style={
           scrolled
             ? {
-                background: "var(--nav-bg)",
+                background: "rgba(5,5,5,0.85)",
                 backdropFilter: "blur(20px)",
                 WebkitBackdropFilter: "blur(20px)",
                 borderBottom: "1px solid var(--border)",
                 padding: "14px 0",
               }
-            : { padding: "20px 0", borderBottom: "1px solid var(--border)" }
+            : { padding: "20px 0", borderBottom: "1px solid rgba(255,255,255,0.05)" }
         }
       >
         <nav className="max-w-[1200px] mx-auto px-6 flex items-center justify-between">
@@ -175,10 +128,6 @@ export default function Navbar() {
               ) : null}
             </li>
 
-            <li className="ml-1">
-              <ThemeToggle />
-            </li>
-
             <li>
               <a
                 href={isHome ? "#iletisim" : "/#iletisim"}
@@ -190,9 +139,8 @@ export default function Navbar() {
             </li>
           </ul>
 
-          {/* Mobil: Theme toggle + Müşteri Girişi ikonu + Hamburger */}
-          <div className="md:hidden flex items-center gap-2">
-            <ThemeToggle compact />
+          {/* Mobil: Müşteri Girişi ikonu + Hamburger */}
+          <div className="md:hidden flex items-center gap-3">
             {session ? (
               <a
                 href={session.redirect}
@@ -217,20 +165,20 @@ export default function Navbar() {
                 Müşteri Girişi
               </button>
             ) : null}
-            {/* Hamburger */}
-            <button
-              onClick={() => setOpen((v) => !v)}
-              aria-label="Menüyü aç"
-              className="flex flex-col gap-[5px] p-1 z-[1001] relative"
-            >
-              {[
-                open ? { transform: "translateY(7px) rotate(45deg)" } : {},
-                open ? { opacity: 0 } : {},
-                open ? { transform: "translateY(-7px) rotate(-45deg)" } : {},
-              ].map((style, i) => (
-                <span key={i} className="block w-6 h-[2px] rounded transition-all duration-300" style={{ ...style, background: "var(--nav-icon)" }} />
-              ))}
-            </button>
+          {/* Hamburger */}
+          <button
+            onClick={() => setOpen((v) => !v)}
+            aria-label="Menüyü aç"
+            className="flex flex-col gap-[5px] p-1 z-[1001] relative"
+          >
+            {[
+              open ? { transform: "translateY(7px) rotate(45deg)" } : {},
+              open ? { opacity: 0 } : {},
+              open ? { transform: "translateY(-7px) rotate(-45deg)" } : {},
+            ].map((style, i) => (
+              <span key={i} className="block w-6 h-[2px] bg-white rounded transition-all duration-300" style={style} />
+            ))}
+          </button>
           </div>
         </nav>
       </header>
@@ -239,7 +187,7 @@ export default function Navbar() {
       <div
         className="fixed inset-0 z-[999] flex flex-col transition-transform duration-300"
         style={{
-          background: "var(--nav-mobile-bg)",
+          background: "rgba(5,5,5,0.97)",
           backdropFilter: "blur(20px)",
           transform: open ? "translateX(0)" : "translateX(100%)",
         }}
@@ -311,6 +259,7 @@ function LoginModal({ onClose }: { onClose: () => void }) {
       const data = await res.json();
       if (data.ok) {
         onClose();
+        // Tam sayfa yönlendirme → middleware yeni cookie ile çalışır
         window.location.href = data.redirect;
       } else {
         setError(data.error ?? "Kullanıcı adı veya şifre hatalı.");

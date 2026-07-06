@@ -57,10 +57,6 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="tr" className={`${inter.variable} ${spaceGrotesk.variable}`}>
-      <head>
-        {/* Sayfa yüklenirken tema titremesini önler */}
-        <script dangerouslySetInnerHTML={{ __html: `(function(){try{var t=localStorage.getItem('theme');if(t==='light')document.documentElement.classList.add('light');}catch(e){}})();` }} />
-      </head>
       <body className="antialiased">
         <Analytics />
 {children}
