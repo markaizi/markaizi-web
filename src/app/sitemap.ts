@@ -19,7 +19,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: BASE,                                             lastModified: now, changeFrequency: "weekly",  priority: 1.0 },
     { url: `${BASE}/blog`,                                   lastModified: now, changeFrequency: "weekly",  priority: 0.8 },
     { url: `${BASE}/sss`,                                    lastModified: now, changeFrequency: "monthly", priority: 0.7 },
-    { url: `${BASE}/fiyatlar`,                               lastModified: now, changeFrequency: "weekly",  priority: 0.8 },
     { url: `${BASE}/cv`,                                     lastModified: now, changeFrequency: "monthly", priority: 0.5 },
 
     // ── Hizmet sayfaları ──────────────────────────────────────

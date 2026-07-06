@@ -53,7 +53,6 @@ const jsonLd = {
     { "@type": "Neighborhood", name: "Yenimahalle" },
     { "@type": "Neighborhood", name: "Mamak" },
   ],
-  priceRange: "₺₺",
   openingHoursSpecification: [
     { "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"], opens: "09:00", closes: "20:00" },
   ],
