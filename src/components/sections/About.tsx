@@ -64,7 +64,7 @@ export default function About() {
               Dijital Başarı İçin <span style={{ color: "#c084fc" }}>Doğru Adres</span>
             </h2>
             <p className="text-[#8a8a9a] text-base leading-[1.8] mb-4">
-              Ankara merkezli markaizi olarak, reklamcılık dünyasına matbaa, baskı, insert ve katalog tasarımı tarafından girdik. 10 yılı aşkın bu birikimi arkamıza alarak artık tamamen dijital pazarlamaya odaklandık; çünkü markaların müşterilerine en hızlı ve ölçülebilir şekilde ulaştığı yer burası.
+              Ankara merkezli markaizi olarak, reklamcılık dünyasına Siteler&apos;de matbaa, baskı, insert ve katalog tasarımıyla girdik. Mobilya sektörünün kalbinde geçen 10 yılı aşkın bu birikimi arkamıza alarak artık tamamen dijital pazarlamaya odaklandık; çünkü markaların müşterilerine en hızlı ve ölçülebilir şekilde ulaştığı yer burası.
             </p>
             <p className="text-[#8a8a9a] text-base leading-[1.8]">
               Bugün sosyal medya yönetiminden Google ve Meta reklamlarına, yapay zeka destekli içerik üretimine kadar her adımda yanınızdayız. Veri odaklı kararlar, şeffaf raporlama ve aktif yapay zeka araçlarıyla markanızı dijitalde zirveye taşıyoruz.

@@ -10,9 +10,9 @@ import WhatsApp from "@/components/WhatsApp";
 import ScrollReveal from "@/components/ScrollReveal";
 
 export const metadata: Metadata = {
-  title: "markaizi — Ankara Dijital Reklam Ajansı | Siteler, Sosyal Medya & Google Reklamları",
+  title: "markaizi — Ankara Dijital Reklam Ajansı | Siteler, Mobilya Reklamı & Sosyal Medya",
   description:
-    "Ankara Siteler merkezli dijital reklam ajansı. Mobilyacı, avizeci, aksesuarcı, klinik ve yerel işletmelere özel sosyal medya yönetimi, Google Ads, Meta reklam ve web tasarım. 10+ yıl deneyim, 200+ mutlu müşteri.",
+    "Ankara Siteler merkezli dijital reklam ajansı. Mobilya mağazaları, avizeciler, klinikler ve yerel işletmelere özel sosyal medya yönetimi, Google Ads, Meta reklam ve web tasarım. 10+ yıl Siteler deneyimi, 200+ mutlu müşteri.",
   keywords:
     "dijital reklam ajansı ankara, siteler reklam ajansı, ankara mobilya sosyal medya, ankara avize dijital pazarlama, ankara aksesuar instagram yönetimi, ankara klinik doktor google reklamları, ostim dijital ajans, keçiören sosyal medya ajansı, etimesgut reklam, çankaya dijital pazarlama, ankara google ads, ankara meta reklam, ankara tiktok reklamları, ankara instagram yönetimi, yerel işletme dijital pazarlama",
   alternates: { canonical: "https://markaizi.com.tr" },
@@ -60,6 +60,14 @@ const jsonLd = {
     "https://instagram.com/markaizicom",
     "https://tiktok.com/@markaizicom",
     "https://share.google/S5wQdPjBKZT7DQ9zu",
+  ],
+  knowsAbout: [
+    "Mobilya sektörü dijital pazarlama",
+    "Mobilya mağazaları için Instagram ve Google reklamları",
+    "Siteler mobilya sektörü",
+    "Sosyal medya yönetimi",
+    "Google Ads ve Meta reklam yönetimi",
+    "Yerel işletme pazarlaması",
   ],
   hasOfferCatalog: {
     "@type": "OfferCatalog",

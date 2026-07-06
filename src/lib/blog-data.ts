@@ -289,6 +289,190 @@ export const BLOG_POSTS: BlogPost[] = [
     conclusion:
       "Core Web Vitals optimizasyonu, hem kullanıcı deneyimini iyileştirir hem de Google sıralamalarını olumlu etkiler. markaizi olarak web tasarım projelerinde hız optimizasyonunu standart sürecimizin parçası yapıyoruz. Sitenizin ücretsiz Core Web Vitals analizini yaptırmak için bizimle iletişime geçin.",
   },
+  {
+    slug: "mobilya-reklami-nasil-verilir",
+    category: "Mobilya Sektörü",
+    color: "#fb923c",
+    title: "Mobilya Reklamı Nasıl Verilir? Google ve Instagram İçin Adım Adım Rehber",
+    excerpt:
+      "Mobilya mağazanız için Instagram ve Google'da reklam vermenin doğru yolu. Bütçe, hedefleme, görsel seçimi ve mobilya sektörüne özel kampanya kurgusu.",
+    date: "12 Nisan 2026",
+    readTime: "9 dk",
+    intro:
+      "Mobilya reklamı, diğer sektör reklamlarından farklı işler. Bir koltuk takımı anlık kararla satın alınmaz: müşteri haftalarca araştırır, görselleri karşılaştırır, fiyat sorar ve en sonunda mağazaya gelir. Bu yüzden 'reklam verdim, satış gelmedi' diyen mobilyacıların çoğu aslında yanlış kanalda, yanlış kurguyla reklam vermiştir. Bu rehberde, Ankara Siteler'den Türkiye geneline yüzlerce mobilya kampanyası yönetmiş bir ekip olarak mobilya reklamının doğrusunu adım adım anlatıyoruz.",
+    sections: [
+      {
+        h2: "1. Önce Kanalı Doğru Seçin: Instagram mı, Google mı?",
+        body: "İki kanal iki farklı müşteriyi yakalar. Instagram ve Facebook reklamları, henüz aktif arayışta olmayan ama ev değişikliği, evlilik hazırlığı veya dekorasyon yenileme düşünen kişiye ilham verir — mobilyada talep yaratan kanal budur. Google reklamları ise 'ankara koltuk takımı' veya 'siteler yatak odası fiyatları' diye arayan, satın almaya en yakın müşteriyi yakalar. İdeal kurgu ikisini birlikte kullanmaktır: Instagram ile tanıtır, Google ile arayanı yakalar, retargeting ile ikisini de geri getirirsiniz.",
+      },
+      {
+        h2: "2. Görsel Kalitesi Reklam Maliyetinizi Belirler",
+        body: "Mobilya görselle satılır. Meta'nın reklam sistemi, kullanıcıların ilgisini çeken reklamlara daha ucuz gösterim verir; loş showroom'da telefonla çekilmiş bir koltuk fotoğrafı ile profesyonel çekilmiş, aydınlık ve yaşam alanı hissi veren bir fotoğraf arasında tıklama maliyeti 2-3 kat fark edebilir. Reklam bütçesi ayırmadan önce ürün çekimine yatırım yapın: iyi görsel, kötü görselden her zaman daha ucuza müşteri getirir.",
+      },
+      {
+        h2: "3. Ürün Grubu Bazlı Kampanya Kurun",
+        body: "Tüm mağazayı tek reklamda tanıtmak, en sık yapılan hatadır. Koltuk takımı arayan ile genç odası arayan farklı kişilerdir; yaşları, ilgi alanları ve bütçeleri farklıdır. Kampanyalarınızı ürün gruplarına bölün: yatak odası kampanyası evlilik hazırlığı yapanlara, genç odası kampanyası 35-50 yaş ebeveynlere, koltuk takımı kampanyası yeni taşınanlara hedeflensin. Bölünmüş kampanya, hangi ürünün reklamdan para kazandırdığını da net gösterir.",
+      },
+      {
+        h2: "4. Hedeflemede Mobilyaya Özel Sinyalleri Kullanın",
+        body: "Meta reklamlarında mobilya için güçlü hedefleme sinyalleri: yakın zamanda taşınanlar, nişanlılar ve evlilik hazırlığındakiler, ev dekorasyonu ve iç mimari ile ilgilenenler, belirli gelir bölgelerinde oturanlar. Google'da ise anahtar kelimeleri satın alma niyetine göre ayırın: 'koltuk takımı fiyatları' yüksek niyetli, 'salon dekorasyon fikirleri' düşük niyetlidir. Düşük niyetli kelimelere düşük teklif verin veya bunları Instagram tarafına bırakın.",
+      },
+      {
+        h2: "5. Reklamı WhatsApp'a Bağlayın",
+        body: "Türkiye'de mobilya müşterisinin ilk teması çoğunlukla 'Fiyat nedir?' mesajıdır. Reklamlarınızı doğrudan WhatsApp'a yönlendiren 'Mesaj Gönder' kampanyaları, mobilya sektöründe form doldurmaya göre çok daha yüksek dönüşüm alır. Gelen mesajlara ilk 5-10 dakika içinde yanıt vermek kritiktir: mobilya müşterisi aynı anda 3-4 mağazayla yazışır, ilk dönen genellikle showroom ziyaretini kapar.",
+      },
+      {
+        h2: "6. Bütçeyi Sezona Göre Planlayın",
+        body: "Mobilyada talep mevsimseldir. İlkbahar ve yaz başı evlilik sezonu yatak odası ve tüm ev alışverişini, eylül taşınma ve okul dönemi genç odasını, kasım-aralık ise kampanya beklentisini tetikler. Reklam bütçenizi yıl boyunca sabit tutmak yerine, sektörünüzün yoğun aylarında artırıp durgun aylarda marka bilinirliğine kaydırmak aynı yıllık bütçeyle daha fazla satış getirir.",
+      },
+      {
+        h2: "7. Ölçmeden Harcamayın",
+        body: "Kaç kişi reklamı gördü değil; kaç mesaj geldi, kaç kişi aradı, kaç kişi mağazaya geldi ve kaçı satın aldı — bakmanız gereken zincir budur. WhatsApp mesaj sayısı, telefon araması ve yol tarifi alma gibi eylemleri dönüşüm olarak izleyin. Müşteri başına maliyetinizi bilirseniz, hangi kampanyayı büyütüp hangisini kapatacağınıza veriyle karar verirsiniz.",
+      },
+      {
+        h2: "Sık Yapılan 3 Hata",
+        body: "Birincisi: 'Gönderiyi öne çıkar' butonuyla reklam vermek — bu, Meta Reklam Yöneticisi'ndeki hedefleme ve optimizasyon gücünün çok azını kullanır. İkincisi: reklamı 2-3 gün yayınlayıp 'olmadı' diye kapatmak — algoritmanın öğrenme süreci en az 5-7 gündür. Üçüncüsü: her reklamda indirim vermek — sürekli indirim, markanızı 'indirimsiz alınmaz' algısına sokar ve kâr marjınızı eritir.",
+      },
+    ],
+    conclusion:
+      "Mobilya reklamı, sektörü tanıyan bir el değdiğinde bambaşka sonuç verir. markaizi olarak Siteler'de 10 yılı aşkın süredir mobilya firmalarıyla çalışıyor; İstikbal ve Doğtaş bayilerinden yerel üreticilere kadar yüzlerce kampanya yönetiyoruz. Mağazanız için ücretsiz reklam analizi almak isterseniz WhatsApp'tan bize yazın.",
+  },
+  {
+    slug: "mobilya-magazalari-icin-instagram",
+    category: "Mobilya Sektörü",
+    color: "#fb923c",
+    title: "Mobilya Mağazaları İçin Instagram: Takipçiyi Müşteriye Çeviren 8 Taktik",
+    excerpt:
+      "Instagram'da mobilya satmanın püf noktaları: showroom çekimleri, Reels stratejisi, fiyat sorularını yönetme ve takipçiyi mağazaya getirme yöntemleri.",
+    date: "3 Mayıs 2026",
+    readTime: "8 dk",
+    intro:
+      "Instagram, mobilya sektörünün en güçlü vitrini. Müşteriler artık mağaza gezmeden önce Instagram'da geziyor; hesabınız düzensiz, görselleriniz karanlık ve son paylaşımınız 3 ay önceyse, o müşteri rakibinizin showroom'una gidiyor. İşte Ankara Siteler'deki mobilya mağazaları için yıllardır uyguladığımız, takipçiyi gerçek müşteriye çeviren 8 taktik.",
+    sections: [
+      {
+        h2: "1. Profilinizi Mağaza Vitrini Gibi Düzenleyin",
+        body: "Müşteri profilinize girdiğinde 3 saniyede ne sattığınızı, nerede olduğunuzu ve size nasıl ulaşacağını görmeli. Biyografide net konum (örn. Siteler / Ankara), WhatsApp linki ve çalışma saatleri olsun. Öne çıkan hikayeleri ürün gruplarına göre düzenleyin: Koltuk Takımları, Yatak Odası, Genç Odası, Müşteri Yorumları. Karışık ve amatör bir profil, ürününüz ne kadar iyi olursa olsun güven vermez.",
+      },
+      {
+        h2: "2. Reels'i Showroom Turu Gibi Kullanın",
+        body: "Mobilyada en çok izlenen içerik formatı showroom turu ve ürün tanıtım Reels'leridir. 15-30 saniyelik, tek ürüne odaklanan, ürünün kumaşını ve detayını gösteren videolar hem organik erişim alır hem de kaydedilir. Haftada en az 3 Reels hedefleyin: bir ürün tanıtımı, bir showroom/yeni gelen ürün turu, bir de müşteri evinde kurulum veya teslimat içeriği.",
+      },
+      {
+        h2: "3. Işık, Mobilya Fotoğrafının Yarısıdır",
+        body: "Karanlık showroom fotoğrafı satış öldürür. Ürünlerinizi gün ışığına yakın beyaz ışıkla, mümkünse yaşam alanı kurgusuyla (halı, yastık, aksesuar ile) çekin. Telefonla çekiyorsanız bile geniş açıdan tüm ürünü, yakın açıdan kumaş ve detayı gösterin. Profesyonel çekim bütçeniz varsa öncelik her zaman en çok sattığınız ve kâr marjı en yüksek ürün grubuna verilmeli.",
+      },
+      {
+        h2: "4. Fiyat Sorularını Sisteme Bağlayın",
+        body: "Her mobilya paylaşımının altına 'fiyat?' yorumu gelir. Bunları yanıtsız bırakmak müşteri kaybettirir, herkese aynı kopyala-yapıştır cevabı vermek ise samimiyetsiz durur. En sağlıklı akış: yoruma kısa ve kibar yanıt verip DM veya WhatsApp'a yönlendirmek, WhatsApp'ta ise fiyatla birlikte ürünün ölçü ve kumaş seçeneklerini de paylaşarak konuşmayı showroom davetine bağlamaktır.",
+      },
+      {
+        h2: "5. Müşteri Evinden İçerik İsteyin",
+        body: "Mobilyada en güçlü sosyal kanıt, ürünün gerçek bir evde kurulmuş halidir. Teslimat sonrası müşterinizden fotoğraf isteyin veya montaj ekibiniz çekip gelsin. 'Ayşe Hanım'ın salonuna kurulumumuz tamamlandı' tarzı paylaşımlar, stüdyo çekiminden daha fazla güven ve etkileşim üretir. Ayda en az 2-3 müşteri evi içeriği paylaşmayı hedefleyin.",
+      },
+      {
+        h2: "6. Hikayeleri Günlük Esnaf Sohbetine Çevirin",
+        body: "Feed'iniz vitrin, hikayeleriniz tezgahtır. Yeni gelen ürünü kutusundan çıkarırken, kumaş seçeneklerini gösterirken, atölyede üretim yapılırken çekin. Anket ve soru kutusu kullanın: 'Bu koltuğun hangi rengi salonunuza yakışır?' gibi basit sorular etkileşimi artırır ve algoritmaya hesabınızın canlı olduğunu gösterir.",
+      },
+      {
+        h2: "7. Yerel Hashtag ve Konum Etiketi Kullanın",
+        body: "Milyonluk genel etiketler yerine yerel ve niş etiketlere odaklanın: #sitelermobilya, #ankaramobilya, #koltuktakimi, #yatakodasi gibi. Her paylaşıma mutlaka konum etiketi ekleyin — Siteler veya mağazanızın bulunduğu bölge. Ankara'da mobilya arayan kullanıcılar konum ve yerel etiket üzerinden keşif yapar.",
+      },
+      {
+        h2: "8. Organik Yetmez: Küçük Bütçeli Reklamla Destekleyin",
+        body: "Instagram organik erişimi her yıl daralıyor. En iyi performans gösteren içeriklerinizi küçük bütçelerle bile reklama çevirmek, hesabınızı sadece takipçilerinize değil, mobilya almayı düşünen yeni kitlelere ulaştırır. Özellikle showroom turu Reels'leri ve müşteri evi içerikleri, reklam olarak da en düşük maliyetli sonuçları getirir.",
+      },
+    ],
+    conclusion:
+      "Instagram'da mobilya satışı; düzenli içerik, kaliteli görsel ve hızlı iletişimin toplamıdır. markaizi olarak mobilya mağazalarının Instagram hesaplarını çekimden paylaşıma, reklamdan raporlamaya uçtan uca yönetiyoruz. Hesabınızın ücretsiz analizini isterseniz bize ulaşın.",
+  },
+  {
+    slug: "sitelerde-musteri-cekmenin-yollari",
+    category: "Mobilya Sektörü",
+    color: "#fb923c",
+    title: "Siteler'de Mobilya Mağazanıza Müşteri Çekmenin 7 Dijital Yolu",
+    excerpt:
+      "Ankara Siteler'de binlerce mobilya mağazası arasından sıyrılmanın yolları: dijital görünürlük, Google Haritalar, Instagram ve WhatsApp ile müşteri kazanma rehberi.",
+    date: "7 Haziran 2026",
+    readTime: "8 dk",
+    intro:
+      "Siteler, Türkiye'nin en büyük mobilya üretim ve satış merkezi — ve aynı zamanda en rekabetçisi. Aynı cadde üzerinde onlarca mağaza aynı müşteriye satış yapmaya çalışıyor. Eskiden vitrin ve tabela yeterdi; bugün müşteri Siteler'e gelmeden önce telefonundan 3-4 mağaza belirliyor ve sadece onları geziyor. O listeye girmek ile girememek arasındaki fark, dijital görünürlük. İşte Siteler esnafı için hazırladığımız 7 maddelik yol haritası.",
+    sections: [
+      {
+        h2: "1. Müşteri Siteler'e Gelmeden Önce Sizi Bulmalı",
+        body: "Mobilya müşterisinin yolculuğu artık 'Siteler'e gidip gezelim' diye başlamıyor; 'ankara koltuk takımı', 'siteler mobilya mağazaları' gibi aramalarla ve Instagram keşfetle başlıyor. Araştırma aşamasında ekranına çıkan mağazalar, müşterinin ziyaret listesine giriyor. Bu yüzden ilk hedef: müşteri daha evinden çıkmadan markanızı ona göstermek. Google'da aranınca çıkmak, Instagram'da keşfedilmek ve Haritalar'da güçlü görünmek bu listeye girmenin üç ayağıdır.",
+      },
+      {
+        h2: "2. Google İşletme Profilinizi Mağazanız Kadar Ciddiye Alın",
+        body: "'Siteler mobilya' araması yapan biri önce harita sonuçlarını görür. Profilinizde güncel telefon, çalışma saati, bol ve kaliteli fotoğraf, ürün kategorileri ve düzenli müşteri yorumu olmalı. Yorum sayısı ve puanı, sıralamayı doğrudan etkiler: memnun her müşteriden Google yorumu isteyin. Teslimattan sonra WhatsApp'tan gönderilen tek satırlık yorum linki bile aylık yorum sayınızı katlar.",
+      },
+      {
+        h2: "3. Instagram'ı Showroom'unuzun Şubesi Yapın",
+        body: "Siteler'e gelemeyen ya da gelmeden araştıran müşteri için Instagram hesabınız ikinci showroom'unuzdur. Düzenli ürün paylaşımı, showroom turu Reels'leri ve müşteri evi kurulum içerikleri güven yaratır. Hesabı olmayan veya aylardır paylaşım yapmayan mağaza, müşterinin gözünde 'kapalı dükkan' etkisi bırakır.",
+      },
+      {
+        h2: "4. WhatsApp'ı Satış Kanalına Dönüştürün",
+        body: "Siteler'de satışın büyük kısmı hâlâ konuşarak, pazarlıkla kapanır — WhatsApp bunun dijital hali. İşletme hesabı kullanın: katalog özelliğine ürünlerinizi yükleyin, hızlı yanıt şablonları hazırlayın, mesai dışı otomatik yanıt kurun. Reklamlarınızı ve Instagram profilinizi doğrudan WhatsApp'a bağlayın. İlk mesaja dönüş hızınız, müşterinin hangi mağazayı ziyaret edeceğini belirler.",
+      },
+      {
+        h2: "5. Reklamı 'Siteler'e Gelen'e Değil, 'Mobilya Alacak Olana' Verin",
+        body: "Yaygın hata, reklamı yalnızca Siteler çevresine hedeflemektir. Oysa müşteriniz Çankaya'da, Keçiören'de, hatta Kırıkkale'de oturuyor ve mobilya almaya karar verdiğinde Siteler'e geliyor. Meta ve Google reklamlarında hedefi konum değil niyet belirlemeli: taşınma, evlilik, dekorasyon ilgisi gibi sinyaller taşıyan Ankara ve çevre il kitlelerine ulaşın. Türkiye geneline satış yapıyorsanız kargo/montaj kapasitenize göre hedefi genişletin.",
+      },
+      {
+        h2: "6. Üretici Gücünüzü İçeriğe Çevirin",
+        body: "Siteler'in en büyük kozu üretimin burada olması — bunu içerik olarak kullanan mağaza ise çok az. Atölyede iskeletin yapılışı, döşemenin geçilişi, kumaş seçimi... Bu 'işin mutfağı' içerikleri hem güven verir hem de 'fabrikadan fiyatına' algısını güçlendirir. Hazır mobilya satan zincirlerin yapamayacağı tek içerik türü budur; farkınız burada.",
+      },
+      {
+        h2: "7. Gelen Müşteriyi Veriye Dönüştürün",
+        body: "Mağazaya gelen her müşteri bir daha bulamayacağınız bir veri olabilir — telefonunu alın, WhatsApp listenize ekleyin (izinli şekilde), yeni sezon ve kampanya dönemlerinde toplu mesajla geri çağırın. Mobilyada müşteri 5-10 yıl sonra tekrar alışveriş yapar ama çevresine her yıl tavsiye verir. Memnun müşteri iletişimde tutulursa, Siteler'deki en ucuz reklam kanalınız o olur.",
+      },
+    ],
+    conclusion:
+      "Siteler'de öne çıkmak artık caddedeki en büyük tabelaya sahip olmakla değil, müşterinin telefonundaki ekranda görünmekle mümkün. markaizi olarak Siteler'in içinden gelen bir ekip olarak mobilya mağazalarına dijital görünürlük, reklam yönetimi ve sosyal medya hizmeti veriyoruz. Mağazanız için ücretsiz yol haritası çıkarmamızı isterseniz WhatsApp'tan yazın.",
+  },
+  {
+    slug: "mobilya-yerel-seo-rehberi",
+    category: "Mobilya Sektörü",
+    color: "#fb923c",
+    title: "Mobilya Mağazaları İçin Google Haritalar ve Yerel SEO Rehberi",
+    excerpt:
+      "\"Yakınımdaki mobilya mağazası\" aramalarında üst sıraya çıkın: Google İşletme Profili optimizasyonu, yorum stratejisi ve yerel arama görünürlüğü rehberi.",
+    date: "28 Haziran 2026",
+    readTime: "7 dk",
+    intro:
+      "Google'da 'yakınımdaki mobilya mağazası' veya 'siteler mobilya' arayan müşteri, satın almaya en yakın müşteridir — arabasına binip gelmeye hazırdır. Bu aramalarda ilk 3 harita sonucunda (local pack) görünen mağazalar telefonları ve ziyaretleri alırken, alt sıradakiler listeye bile giremez. İyi haber: yerel SEO, mobilya sektöründe çoğu mağazanın ihmal ettiği, doğru yapıldığında birkaç ayda sonuç veren bir alandır.",
+    sections: [
+      {
+        h2: "Google İşletme Profili: Dijital Tabelanız",
+        body: "Her şey eksiksiz bir Google İşletme Profili (eski adıyla Google My Business) ile başlar. İşletme adınız tabeladakiyle aynı olmalı, kategori olarak 'Mobilya mağazası' ana kategori seçilmeli, mobilya türlerinize göre ek kategoriler (yatak mağazası, ofis mobilyaları vb.) eklenmelidir. Telefon, adres, çalışma saatleri ve web sitesi güncel olmalı; özellikle bayram ve özel gün saatlerini güncellemeyi unutmayın — 'açık yazıyordu, kapalıydı' deneyimi yorumlara olumsuz döner.",
+      },
+      {
+        h2: "Fotoğraf: Profilinizin Satış Gücü",
+        body: "Harita sonuçlarında müşterinin gözü önce fotoğrafa gider. Showroom'un dışı (müşteri sizi bulabilsin), içi (ürün çeşitliliği görünsün) ve öne çıkan ürünlerinizden oluşan en az 20-30 kaliteli fotoğraf yükleyin. Ayda birkaç yeni fotoğraf eklemek profilin 'canlı' olduğunu gösterir. Google'ın verilerine göre fotoğrafı bol profiller, fotoğrafsızlara göre belirgin oranda daha fazla yol tarifi ve arama alır.",
+      },
+      {
+        h2: "Yorumlar: Yerel Sıralamanın En Güçlü Sinyali",
+        body: "Harita sıralamasını belirleyen en önemli faktörlerden biri yorum sayısı, puanı ve güncelliğidir. Sistemi kurun: her teslimat sonrası müşteriye WhatsApp'tan tek tıkla yorum bırakabileceği link gönderilsin. Yorumlara — olumlu ya da olumsuz — mutlaka yanıt verin; yanıtlar hem Google'a aktif olduğunuzu gösterir hem de profili okuyan yeni müşteriye güven verir. Olumsuz yoruma sakin ve çözüm odaklı yanıt, çoğu zaman olumlu yorumdan daha fazla güven üretir.",
+      },
+      {
+        h2: "Web Sitenizle Haritayı Birbirine Bağlayın",
+        body: "Google, işletme profilindeki bilgilerle web sitenizdeki bilgilerin tutarlı olmasına bakar. Sitenizde adres, telefon ve çalışma saatleri profildekiyle birebir aynı olmalı; iletişim sayfanızda Google Haritalar gömülü harita bulunmalı. Sitenizde 'Siteler', 'Ankara' ve sattığınız ürün gruplarının adları metin olarak geçmeli — Google, hangi aramalarla ilgili olduğunuzu bu metinlerden anlar.",
+      },
+      {
+        h2: "Google Posts ile Kampanyalarınızı Duyurun",
+        body: "İşletme profilinin az bilinen özelliği Google Posts: kampanya, yeni ürün ve duyurularınızı doğrudan harita profilinizde gösterir. 'Yatak odası takımlarında sezon kampanyası' gibi paylaşımlar, profilinizi ziyaret eden karar aşamasındaki müşteriye son dokunuşu yapar. Haftada bir paylaşım, profili aktif tutmak için yeterlidir.",
+      },
+      {
+        h2: "Sık Yapılan Yerel SEO Hataları",
+        body: "En yaygın hatalar: işletme adına anahtar kelime doldurmak ('Mert Mobilya Siteler En Ucuz Koltuk' gibi — Google bunu cezalandırabilir), birden fazla profil açmak (şube değilse tek profil olmalı), sahte yorum satın almak (tespit edildiğinde tüm yorumlarınız silinebilir) ve profili kurup unutmak. Yerel SEO tek seferlik kurulum değil, düşük tempolu ama düzenli bir bakım işidir.",
+      },
+      {
+        h2: "Sonuç Ne Zaman Gelir?",
+        body: "Yerel SEO'da değişikliklerin harita sıralamasına yansıması genellikle 4-12 hafta alır. İlk ay profil eksiklerini tamamlayıp fotoğraf ve yorum akışını başlatın; ikinci aydan itibaren profil istatistiklerinden (kaç arama, kaç yol tarifi, kaç telefon) ilerlemeyi takip edin. Rakiplerinizin çoğu bu işi hiç yapmadığı için, düzenli çalışan bir mağaza Siteler gibi rekabetçi bir bölgede bile birkaç ayda üst sıralara çıkabilir.",
+      },
+    ],
+    conclusion:
+      "Yerel SEO, mobilya mağazaları için en düşük maliyetli ve en kalıcı müşteri kaynağıdır. markaizi olarak Google İşletme Profili kurulumu ve optimizasyonunu, mobilya firmalarına verdiğimiz dijital pazarlama hizmetinin standart parçası olarak sunuyoruz. Profilinizin ücretsiz denetimi için bizimle iletişime geçin.",
+  },
 ];
 
 export function getPostBySlug(slug: string): BlogPost | undefined {

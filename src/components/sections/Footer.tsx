@@ -22,6 +22,7 @@ export default function Footer() {
             <FooterCol
               title="Hizmetler"
               links={[
+                { label: "Mobilya Reklam Ajansı",  href: "/mobilya-reklam-ajansi" },
                 { label: "Sosyal Medya Yönetimi", href: "/hizmetler/sosyal-medya-yonetimi" },
                 { label: "Meta Reklamları",        href: "/hizmetler/meta-reklamlari" },
                 { label: "Google Reklamları",      href: "/hizmetler/google-reklamlari" },

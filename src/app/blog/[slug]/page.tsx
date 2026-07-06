@@ -40,8 +40,33 @@ export default async function BlogPostPage({
   const post = getPostBySlug(slug);
   if (!post) notFound();
 
+  const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: post.excerpt,
+    inLanguage: "tr",
+    url: `https://markaizi.com.tr/blog/${post.slug}`,
+    mainEntityOfPage: `https://markaizi.com.tr/blog/${post.slug}`,
+    author: {
+      "@type": "Organization",
+      name: "markaizi Dijital Reklam Ajansı",
+      url: "https://markaizi.com.tr",
+    },
+    publisher: {
+      "@type": "Organization",
+      name: "markaizi",
+      logo: { "@type": "ImageObject", url: "https://markaizi.com.tr/logo.svg" },
+    },
+    articleSection: post.category,
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
+      />
       <Navbar />
       <main>
         {/* Hero */}
@@ -135,6 +160,20 @@ export default async function BlogPostPage({
                   {post.conclusion}
                 </p>
               </div>
+
+              {/* Mobilya yazıları → sektör sayfası iç linki */}
+              {post.category === "Mobilya Sektörü" && (
+                <p className="mt-6 text-[14px] text-[#8a8a9a] leading-relaxed">
+                  Mobilya mağazanız için verdiğimiz tüm hizmetleri{" "}
+                  <a
+                    href="/mobilya-reklam-ajansi"
+                    className="text-[#c084fc] underline underline-offset-2 hover:text-white transition-colors"
+                  >
+                    Mobilya Reklam Ajansı
+                  </a>{" "}
+                  sayfamızda bulabilirsiniz.
+                </p>
+              )}
             </div>
 
             {/* CTA */}
@@ -170,7 +209,11 @@ export default async function BlogPostPage({
                 Diğer Yazılar
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {BLOG_POSTS.filter((p) => p.slug !== post.slug)
+                {[...BLOG_POSTS]
+                  .filter((p) => p.slug !== post.slug)
+                  .sort((a, b) =>
+                    (b.category === post.category ? 1 : 0) - (a.category === post.category ? 1 : 0)
+                  )
                   .slice(0, 2)
                   .map((related) => (
                     <a

@@ -108,7 +108,7 @@ export default function Hero() {
           <p className="hero-sub text-[#8a8a9a] mx-auto lg:mx-0 max-w-[520px] mb-16 leading-relaxed"
             style={{ fontSize:"clamp(16px,1.4vw,17px)" }}
           >
-            Sosyal medya yönetiminden Google reklamlarına, içerik üretiminden web tasarıma kadar markanızın her dijital adımında yanınızdayız.
+            Siteler&apos;in mobilya mağazalarından kliniklere, Ankara&apos;nın yerel işletmelerinden e-ticarete — sosyal medya yönetimi, Google reklamları, içerik üretimi ve web tasarımda her adımda yanınızdayız.
           </p>
 
           <div className="hero-cta flex flex-wrap gap-5 mb-6 justify-center lg:justify-start">

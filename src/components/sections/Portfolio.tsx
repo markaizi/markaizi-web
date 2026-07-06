@@ -33,7 +33,7 @@ export default function Portfolio() {
           <h2 className="font-black leading-tight mb-4 text-white" style={{ fontSize:"clamp(28px,4vw,42px)" }}>
             Güvendikleri <span style={{ color: "#c084fc" }}>Markalar</span>
           </h2>
-          <p className="text-[#8a8a9a] text-[17px]">200&apos;den fazla Ankara işletmesi markaizi ile çalışarak dijital hedeflerine ulaştı.</p>
+          <p className="text-[#8a8a9a] text-[17px]">Siteler&apos;in köklü mobilya markalarından kliniklere, 200&apos;den fazla Ankara işletmesi markaizi ile çalışarak dijital hedeflerine ulaştı.</p>
           <div className="flex flex-wrap justify-center gap-2 mt-4">
             {["Mobilyacılar", "Avizeciler", "Aksesuarcılar", "Klinik & Doktorlar", "Restoranlar", "Hizmet Sektörü"].map((s) => (
               <span

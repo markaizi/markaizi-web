@@ -9,6 +9,10 @@ const BLOG_SLUGS = [
   "tiktok-for-business",
   "yapay-zeka-icerik",
   "core-web-vitals",
+  "mobilya-reklami-nasil-verilir",
+  "mobilya-magazalari-icin-instagram",
+  "sitelerde-musteri-cekmenin-yollari",
+  "mobilya-yerel-seo-rehberi",
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
@@ -18,6 +22,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // ── Ana sayfalar ──────────────────────────────────────────
     { url: BASE,                                             lastModified: now, changeFrequency: "weekly",  priority: 1.0 },
     { url: `${BASE}/blog`,                                   lastModified: now, changeFrequency: "weekly",  priority: 0.8 },
+    { url: `${BASE}/mobilya-reklam-ajansi`,                  lastModified: now, changeFrequency: "monthly", priority: 0.9 },
     { url: `${BASE}/sss`,                                    lastModified: now, changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE}/cv`,                                     lastModified: now, changeFrequency: "monthly", priority: 0.5 },
 
