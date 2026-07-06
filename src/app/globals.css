@@ -2,16 +2,56 @@
 
 /* ── Marka Değişkenleri ────────────────── */
 :root {
-  --bg:        #050505;
-  --bg-alt:    #0a0a0f;
-  --surface:   #0f0f14;
-  --surface-2: #141420;
-  --border:    rgba(255,255,255,0.07);
-  --grad:      linear-gradient(135deg, #7c3aed, #a855f7, #ec4899);
-  --grad-soft: linear-gradient(135deg, rgba(124,58,237,0.15), rgba(236,72,153,0.15));
-  --glow:      0 0 30px rgba(168,85,247,0.35);
-  --glow-sm:   0 0 15px rgba(168,85,247,0.25);
+  --bg:           #050505;
+  --bg-alt:       #0a0a0f;
+  --surface:      #0f0f14;
+  --surface-2:    #141420;
+  --border:       rgba(255,255,255,0.07);
+  --grad:         linear-gradient(135deg, #7c3aed, #a855f7, #ec4899);
+  --grad-soft:    linear-gradient(135deg, rgba(124,58,237,0.15), rgba(236,72,153,0.15));
+  --glow:         0 0 30px rgba(168,85,247,0.35);
+  --glow-sm:      0 0 15px rgba(168,85,247,0.25);
+  --nav-bg:       rgba(5,5,5,0.85);
+  --nav-mobile-bg: rgba(5,5,5,0.97);
+  --nav-icon:     rgba(255,255,255,0.85);
 }
+
+/* ── Gündüz Modu ───────────────────────── */
+html.light {
+  --bg:           #f7f7fb;
+  --bg-alt:       #ededf8;
+  --surface:      #ffffff;
+  --surface-2:    #f2f2fa;
+  --border:       rgba(0,0,0,0.1);
+  --glow:         0 0 30px rgba(168,85,247,0.22);
+  --glow-sm:      0 0 15px rgba(168,85,247,0.16);
+  --nav-bg:       rgba(248,248,251,0.92);
+  --nav-mobile-bg: rgba(240,240,248,0.99);
+  --nav-icon:     #111122;
+}
+
+html.light body { color: #111122; }
+
+html.light .text-white { color: #111122 !important; }
+html.light .text-\[\#8a8a9a\] { color: #5a5a7a !important; }
+html.light .text-\[\#555\]    { color: #6a6a8a !important; }
+html.light .text-\[\#444\]    { color: #5a5a7a !important; }
+
+html.light .btn-outline { color: #111122; border-color: rgba(0,0,0,0.18); }
+html.light .btn-outline:hover { border-color: rgba(168,85,247,0.45); }
+
+html.light .service-card,
+html.light .blog-card {
+  background: var(--surface);
+}
+
+html.light .legal-content h2 { color: #111122; }
+html.light .legal-content p,
+html.light .legal-content ul li { color: #4a4a6a; }
+html.light .legal-content strong { color: #1a1a3a; }
+html.light .blog-intro { color: #3a3a5a; }
+html.light .blog-section h2 { color: #111122; }
+html.light .blog-section p { color: #4a4a6a; }
 
 html { scroll-behavior: smooth; }
 
