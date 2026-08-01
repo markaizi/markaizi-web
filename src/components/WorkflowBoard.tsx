@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
 type Priority = "DUSUK" | "ORTA" | "YUKSEK";
 
@@ -46,13 +46,24 @@ export default function WorkflowBoard() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState<{ mode: "create" | "edit"; columnId?: string; card?: CardData } | null>(null);
-  const [dragId, setDragId] = useState<string | null>(null);
-  const [dragOverCol, setDragOverCol] = useState<string | null>(null);
   const [addingColumn, setAddingColumn] = useState(false);
   const [newColumnTitle, setNewColumnTitle] = useState("");
   const [renamingCol, setRenamingCol] = useState<string | null>(null);
   const [renameValue, setRenameValue] = useState("");
   const [colError, setColError] = useState("");
+
+  // ── Sürükleme (mouse + dokunma, Pointer Events ile birleşik) ─────────────
+  const [dragCardId, setDragCardId] = useState<string | null>(null);
+  const [dragPos, setDragPos] = useState<{ x: number; y: number } | null>(null);
+  const [dragOverCol, setDragOverCol] = useState<string | null>(null);
+  const dragStartRef = useRef<{ id: string; pointerId: number } | null>(null);
+  const dragOverColRef = useRef<string | null>(null);
+  const boardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    document.body.style.userSelect = dragCardId ? "none" : "";
+    return () => { document.body.style.userSelect = ""; };
+  }, [dragCardId]);
 
   const load = useCallback(async () => {
     const res = await fetch("/api/musteri/is-akisi/board");
@@ -89,6 +100,48 @@ export default function WorkflowBoard() {
       body: JSON.stringify({ columnId: targetColumnId }),
     });
     if (!res.ok) load(); // başarısızsa sunucudan tazele
+  }
+
+  function autoScrollBoard(clientX: number) {
+    const el = boardRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const edge = 56;
+    if (clientX < rect.left + edge) el.scrollLeft -= 18;
+    else if (clientX > rect.right - edge) el.scrollLeft += 18;
+  }
+
+  function onHandlePointerDown(e: React.PointerEvent, cardId: string) {
+    e.preventDefault();
+    e.stopPropagation();
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+    dragStartRef.current = { id: cardId, pointerId: e.pointerId };
+    dragOverColRef.current = null;
+    setDragCardId(cardId);
+    setDragPos({ x: e.clientX, y: e.clientY });
+  }
+
+  function onHandlePointerMove(e: React.PointerEvent) {
+    if (!dragStartRef.current) return;
+    setDragPos({ x: e.clientX, y: e.clientY });
+    autoScrollBoard(e.clientX);
+    const el = document.elementFromPoint(e.clientX, e.clientY);
+    const colEl = el?.closest("[data-column-id]") as HTMLElement | null;
+    const colId = colEl?.getAttribute("data-column-id") ?? null;
+    dragOverColRef.current = colId;
+    setDragOverCol(colId);
+  }
+
+  function endDrag() {
+    const start = dragStartRef.current;
+    dragStartRef.current = null;
+    if (start && dragOverColRef.current) {
+      handleMoveCard(start.id, dragOverColRef.current);
+    }
+    dragOverColRef.current = null;
+    setDragCardId(null);
+    setDragPos(null);
+    setDragOverCol(null);
   }
 
   function handleSaved(card: CardData) {
@@ -164,25 +217,26 @@ export default function WorkflowBoard() {
         </div>
       )}
 
-      <div className="flex gap-4 overflow-x-auto pb-4" style={{ scrollbarWidth: "thin" }}>
+      <div
+        ref={boardRef}
+        className="flex gap-3 sm:gap-4 overflow-x-auto pb-4 snap-x snap-mandatory sm:snap-none"
+        style={{ scrollbarWidth: "thin" }}
+      >
         {columns.map((col) => {
-          const isDragTarget = dragOverCol === col.id && dragId !== null;
+          const isDragTarget = dragOverCol === col.id && dragCardId !== null;
           return (
             <div
               key={col.id}
-              className="flex-shrink-0 w-[280px] rounded-2xl flex flex-col"
+              data-column-id={col.id}
+              className="flex-shrink-0 w-[82vw] max-w-[320px] sm:w-[280px] sm:max-w-none snap-center max-h-[calc(100vh-260px)] sm:max-h-[calc(100vh-220px)] rounded-2xl flex flex-col"
               style={{
                 background: isDragTarget ? "rgba(168,85,247,0.06)" : "var(--surface)",
                 border: `1px solid ${isDragTarget ? "rgba(168,85,247,0.4)" : "var(--border)"}`,
-                maxHeight: "calc(100vh - 220px)",
                 transition: "background 0.15s, border-color 0.15s",
               }}
-              onDragOver={(e) => { e.preventDefault(); setDragOverCol(col.id); }}
-              onDragLeave={() => setDragOverCol((c) => (c === col.id ? null : c))}
-              onDrop={(e) => { e.preventDefault(); setDragOverCol(null); if (dragId) handleMoveCard(dragId, col.id); }}
             >
               {/* Sütun başlığı */}
-              <div className="flex items-center justify-between gap-2 px-4 py-3.5" style={{ borderBottom: "1px solid var(--border)" }}>
+              <div className="flex items-center justify-between gap-2 px-3.5 py-3 sm:px-4 sm:py-3.5" style={{ borderBottom: "1px solid var(--border)" }}>
                 {renamingCol === col.id ? (
                   <input
                     autoFocus
@@ -211,7 +265,7 @@ export default function WorkflowBoard() {
                     <button
                       onClick={() => handleDeleteColumn(col.id)}
                       title="Sütunu sil"
-                      className="text-[#555] hover:text-[#f87171] transition-colors"
+                      className="text-[#555] hover:text-[#f87171] transition-colors w-7 h-7 -mr-1.5 flex items-center justify-center rounded-lg"
                     >
                       <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5" stroke="currentColor" strokeWidth="2.5">
                         <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" />
@@ -222,24 +276,41 @@ export default function WorkflowBoard() {
               </div>
 
               {/* Kartlar */}
-              <div className="flex-1 overflow-y-auto px-3 py-3 flex flex-col gap-2.5" style={{ minHeight: 80 }}>
+              <div className="flex-1 overflow-y-auto px-2.5 py-2.5 sm:px-3 sm:py-3 flex flex-col gap-2 sm:gap-2.5" style={{ minHeight: 80 }}>
                 {col.cards.map((card) => (
                   <div
                     key={card.id}
-                    draggable
-                    onDragStart={() => setDragId(card.id)}
-                    onDragEnd={() => setDragId(null)}
                     onClick={() => setModal({ mode: "edit", card })}
-                    className="rounded-xl p-3.5 cursor-pointer transition-all"
+                    className="rounded-xl p-3 sm:p-3.5 cursor-pointer transition-all"
                     style={{
                       background: "var(--surface-2, #141420)",
                       border: "1px solid var(--border)",
-                      opacity: dragId === card.id ? 0.4 : 1,
+                      opacity: dragCardId === card.id ? 0.35 : 1,
                     }}
                     onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.borderColor = "rgba(168,85,247,0.35)")}
                     onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.borderColor = "var(--border)")}
                   >
-                    <p className="text-[13px] font-semibold text-white leading-snug mb-2">{card.title}</p>
+                    <div className="flex items-start justify-between gap-2 mb-2">
+                      <p className="text-[13px] font-semibold text-white leading-snug">{card.title}</p>
+                      <button
+                        onClick={(e) => e.stopPropagation()}
+                        onPointerDown={(e) => onHandlePointerDown(e, card.id)}
+                        onPointerMove={onHandlePointerMove}
+                        onPointerUp={endDrag}
+                        onPointerCancel={endDrag}
+                        onLostPointerCapture={endDrag}
+                        aria-label="Kartı sürükle"
+                        title="Sürükle"
+                        className="flex-shrink-0 w-8 h-8 -mt-1 -mr-1 flex items-center justify-center rounded-lg text-[#555] hover:text-[#8a8a9a] active:text-[#c084fc] active:bg-white/[0.06] transition-colors"
+                        style={{ touchAction: "none", cursor: "grab" }}
+                      >
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
+                          <circle cx="9" cy="6" r="1.5" /><circle cx="15" cy="6" r="1.5" />
+                          <circle cx="9" cy="12" r="1.5" /><circle cx="15" cy="12" r="1.5" />
+                          <circle cx="9" cy="18" r="1.5" /><circle cx="15" cy="18" r="1.5" />
+                        </svg>
+                      </button>
+                    </div>
                     <div className="flex flex-wrap items-center gap-1.5">
                       <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: PRIORITY_BG[card.priority], color: PRIORITY_COLOR[card.priority] }}>
                         {PRIORITY_LABEL[card.priority]}
@@ -269,7 +340,7 @@ export default function WorkflowBoard() {
               {/* Kart ekle */}
               <button
                 onClick={() => setModal({ mode: "create", columnId: col.id })}
-                className="mx-3 mb-3 text-[12px] font-semibold text-[#8a8a9a] hover:text-[#c084fc] py-2 rounded-lg transition-colors text-left px-1"
+                className="mx-2.5 mb-2.5 sm:mx-3 sm:mb-3 text-[12px] font-semibold text-[#8a8a9a] hover:text-[#c084fc] py-2.5 rounded-lg transition-colors text-left px-1.5"
               >
                 + Kart Ekle
               </button>
@@ -279,7 +350,7 @@ export default function WorkflowBoard() {
 
         {/* Sütun ekle (admin) */}
         {isAdmin && (
-          <div className="flex-shrink-0 w-[240px]">
+          <div className="flex-shrink-0 w-[70vw] max-w-[240px] sm:w-[240px] snap-center">
             {addingColumn ? (
               <div className="rounded-2xl p-3" style={{ background: "var(--surface)", border: "1px solid rgba(168,85,247,0.3)" }}>
                 <input
@@ -308,6 +379,28 @@ export default function WorkflowBoard() {
           </div>
         )}
       </div>
+
+      {/* Sürüklenen kartın önizlemesi (parmağı/imleci takip eder) */}
+      {dragCardId && dragPos && (() => {
+        const draggedCard = columns.flatMap((c) => c.cards).find((c) => c.id === dragCardId);
+        if (!draggedCard) return null;
+        return (
+          <div
+            className="fixed z-[1200] pointer-events-none rounded-xl px-3.5 py-2.5"
+            style={{
+              left: dragPos.x,
+              top: dragPos.y,
+              transform: "translate(-50%, -50%) rotate(-2deg)",
+              background: "var(--surface-2, #141420)",
+              border: "1px solid rgba(168,85,247,0.5)",
+              boxShadow: "0 14px 32px rgba(0,0,0,0.45)",
+              maxWidth: 220,
+            }}
+          >
+            <p className="text-[13px] font-semibold text-white truncate">{draggedCard.title}</p>
+          </div>
+        );
+      })()}
 
       {modal && (
         <CardModal
@@ -404,7 +497,7 @@ function CardModal({
     >
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-[440px] rounded-2xl p-7 relative max-h-[85vh] overflow-y-auto"
+        className="w-full max-w-[440px] rounded-2xl p-5 sm:p-7 relative max-h-[88vh] overflow-y-auto"
         style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
       >
         <button type="button" onClick={onClose} className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full transition-all hover:bg-white/[0.08]">
