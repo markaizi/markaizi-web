@@ -9,6 +9,7 @@ interface CardData {
   columnId: string;
   title: string;
   description: string | null;
+  revisionNote: string | null;
   priority: Priority;
   dueDate: string | null;
   sortOrder: number;
@@ -29,13 +30,26 @@ interface ClientOption { id: string; slug: string; name: string; }
 
 const PRIORITY_LABEL: Record<Priority, string> = { DUSUK: "Düşük", ORTA: "Orta", YUKSEK: "Yüksek" };
 const PRIORITY_COLOR: Record<Priority, string> = { DUSUK: "#34d399", ORTA: "#60a5fa", YUKSEK: "#f87171" };
-const PRIORITY_BG: Record<Priority, string> = {
-  DUSUK: "rgba(52,211,153,0.14)", ORTA: "rgba(96,165,250,0.14)", YUKSEK: "rgba(248,113,113,0.14)",
-};
 
 function fmtDate(d: string) {
   const dt = new Date(d + "T00:00:00");
   return dt.toLocaleDateString("tr-TR", { day: "numeric", month: "short" });
+}
+
+// Basılı tutma ile sürükleme başlatma eşikleri
+const TOUCH_LONG_PRESS_MS = 380;
+const TOUCH_CANCEL_DIST = 10; // bu kadar erken hareket ederse kaydırma niyeti sayılır
+const MOUSE_DRAG_DIST = 4;
+
+interface PressState {
+  id: string;
+  pointerId: number;
+  startX: number;
+  startY: number;
+  pointerType: string;
+  dragging: boolean;
+  timer: number | null;
+  target: HTMLElement;
 }
 
 export default function WorkflowBoard() {
@@ -52,11 +66,11 @@ export default function WorkflowBoard() {
   const [renameValue, setRenameValue] = useState("");
   const [colError, setColError] = useState("");
 
-  // ── Sürükleme (mouse + dokunma, Pointer Events ile birleşik) ─────────────
+  // ── Sürükleme: mouse'ta anında, dokunmada basılı tutunca (Pointer Events) ──
   const [dragCardId, setDragCardId] = useState<string | null>(null);
   const [dragPos, setDragPos] = useState<{ x: number; y: number } | null>(null);
   const [dragOverCol, setDragOverCol] = useState<string | null>(null);
-  const dragStartRef = useRef<{ id: string; pointerId: number } | null>(null);
+  const pressRef = useRef<PressState | null>(null);
   const dragOverColRef = useRef<string | null>(null);
   const boardRef = useRef<HTMLDivElement>(null);
 
@@ -111,18 +125,56 @@ export default function WorkflowBoard() {
     else if (clientX > rect.right - edge) el.scrollLeft += 18;
   }
 
-  function onHandlePointerDown(e: React.PointerEvent, cardId: string) {
-    e.preventDefault();
-    e.stopPropagation();
-    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-    dragStartRef.current = { id: cardId, pointerId: e.pointerId };
+  function activateDrag() {
+    const p = pressRef.current;
+    if (!p) return;
+    p.dragging = true;
+    try { p.target.setPointerCapture(p.pointerId); } catch { /* zaten yakalanmış olabilir */ }
     dragOverColRef.current = null;
-    setDragCardId(cardId);
-    setDragPos({ x: e.clientX, y: e.clientY });
+    setDragCardId(p.id);
+    setDragPos({ x: p.startX, y: p.startY });
+    if (typeof navigator !== "undefined" && navigator.vibrate) navigator.vibrate(12);
   }
 
-  function onHandlePointerMove(e: React.PointerEvent) {
-    if (!dragStartRef.current) return;
+  // Mouse: karta basar basmaz sürüklemeye hazır olur, birkaç piksel hareketle sürükleme başlar (eskisi gibi).
+  // Dokunma: kart üzerinde basılı tutulursa (kaydırma niyeti yoksa) sürükleme moduna geçer.
+  function onCardPointerDown(e: React.PointerEvent<HTMLDivElement>, card: CardData) {
+    if (e.pointerType === "mouse" && e.button !== 0) return;
+    pressRef.current = {
+      id: card.id,
+      pointerId: e.pointerId,
+      startX: e.clientX,
+      startY: e.clientY,
+      pointerType: e.pointerType,
+      dragging: false,
+      timer: null,
+      target: e.currentTarget,
+    };
+    if (e.pointerType !== "mouse") {
+      pressRef.current.timer = window.setTimeout(() => {
+        if (pressRef.current?.id === card.id && !pressRef.current.dragging) activateDrag();
+      }, TOUCH_LONG_PRESS_MS);
+    }
+  }
+
+  function onCardPointerMove(e: React.PointerEvent<HTMLDivElement>) {
+    const p = pressRef.current;
+    if (!p) return;
+
+    if (!p.dragging) {
+      const dist = Math.hypot(e.clientX - p.startX, e.clientY - p.startY);
+      if (p.pointerType === "mouse") {
+        if (dist <= MOUSE_DRAG_DIST) return;
+        activateDrag();
+      } else {
+        if (dist > TOUCH_CANCEL_DIST) {
+          if (p.timer) window.clearTimeout(p.timer);
+          pressRef.current = null;
+        }
+        return; // dokunmada sürükleme sadece uzun basışla başlar
+      }
+    }
+
     setDragPos({ x: e.clientX, y: e.clientY });
     autoScrollBoard(e.clientX);
     const el = document.elementFromPoint(e.clientX, e.clientY);
@@ -132,13 +184,26 @@ export default function WorkflowBoard() {
     setDragOverCol(colId);
   }
 
-  function endDrag() {
-    const start = dragStartRef.current;
-    dragStartRef.current = null;
-    if (start && dragOverColRef.current) {
-      handleMoveCard(start.id, dragOverColRef.current);
+  function onCardPointerUp(e: React.PointerEvent<HTMLDivElement>, card: CardData) {
+    const p = pressRef.current;
+    if (p?.timer) window.clearTimeout(p.timer);
+    pressRef.current = null;
+    if (p?.dragging) {
+      if (dragOverColRef.current) handleMoveCard(p.id, dragOverColRef.current);
+      dragOverColRef.current = null;
+      setDragCardId(null);
+      setDragPos(null);
+      setDragOverCol(null);
+    } else if (p) {
+      // Sürükleme olmadı → tıklama/dokunma sayılır, kartı aç
+      setModal({ mode: "edit", card });
     }
-    dragOverColRef.current = null;
+  }
+
+  function onCardPointerCancel() {
+    const p = pressRef.current;
+    if (p?.timer) window.clearTimeout(p.timer);
+    pressRef.current = null;
     setDragCardId(null);
     setDragPos(null);
     setDragOverCol(null);
@@ -228,7 +293,7 @@ export default function WorkflowBoard() {
             <div
               key={col.id}
               data-column-id={col.id}
-              className="flex-shrink-0 w-[82vw] max-w-[320px] sm:w-[280px] sm:max-w-none snap-center max-h-[calc(100vh-260px)] sm:max-h-[calc(100vh-220px)] rounded-2xl flex flex-col"
+              className="flex-shrink-0 w-[82vw] max-w-[320px] sm:w-[280px] sm:max-w-none snap-center max-h-[calc(100vh-235px)] sm:max-h-[calc(100vh-210px)] rounded-2xl flex flex-col"
               style={{
                 background: isDragTarget ? "rgba(168,85,247,0.06)" : "var(--surface)",
                 border: `1px solid ${isDragTarget ? "rgba(168,85,247,0.4)" : "var(--border)"}`,
@@ -236,7 +301,7 @@ export default function WorkflowBoard() {
               }}
             >
               {/* Sütun başlığı */}
-              <div className="flex items-center justify-between gap-2 px-3.5 py-3 sm:px-4 sm:py-3.5" style={{ borderBottom: "1px solid var(--border)" }}>
+              <div className="flex items-center justify-between gap-2 px-3 py-2.5 sm:px-4 sm:py-3" style={{ borderBottom: "1px solid var(--border)" }}>
                 {renamingCol === col.id ? (
                   <input
                     autoFocus
@@ -276,61 +341,64 @@ export default function WorkflowBoard() {
               </div>
 
               {/* Kartlar */}
-              <div className="flex-1 overflow-y-auto px-2.5 py-2.5 sm:px-3 sm:py-3 flex flex-col gap-2 sm:gap-2.5" style={{ minHeight: 80 }}>
+              <div className="flex-1 overflow-y-auto px-2 py-2 sm:px-2.5 sm:py-2.5 flex flex-col gap-1.5" style={{ minHeight: 80 }}>
                 {col.cards.map((card) => (
                   <div
                     key={card.id}
-                    onClick={() => setModal({ mode: "edit", card })}
-                    className="rounded-xl p-3 sm:p-3.5 cursor-pointer transition-all"
+                    onPointerDown={(e) => onCardPointerDown(e, card)}
+                    onPointerMove={onCardPointerMove}
+                    onPointerUp={(e) => onCardPointerUp(e, card)}
+                    onPointerCancel={onCardPointerCancel}
+                    onLostPointerCapture={onCardPointerCancel}
+                    className="rounded-lg px-2.5 py-2 transition-all select-none"
                     style={{
                       background: "var(--surface-2, #141420)",
                       border: "1px solid var(--border)",
+                      borderLeft: card.revisionNote ? "3px solid #fb923c" : "1px solid var(--border)",
                       opacity: dragCardId === card.id ? 0.35 : 1,
+                      cursor: dragCardId === card.id ? "grabbing" : "grab",
+                      touchAction: "pan-y",
                     }}
                     onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.borderColor = "rgba(168,85,247,0.35)")}
                     onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.borderColor = "var(--border)")}
                   >
-                    <div className="flex items-start justify-between gap-2 mb-2">
-                      <p className="text-[13px] font-semibold text-white leading-snug">{card.title}</p>
-                      <button
-                        onClick={(e) => e.stopPropagation()}
-                        onPointerDown={(e) => onHandlePointerDown(e, card.id)}
-                        onPointerMove={onHandlePointerMove}
-                        onPointerUp={endDrag}
-                        onPointerCancel={endDrag}
-                        onLostPointerCapture={endDrag}
-                        aria-label="Kartı sürükle"
-                        title="Sürükle"
-                        className="flex-shrink-0 w-8 h-8 -mt-1 -mr-1 flex items-center justify-center rounded-lg text-[#555] hover:text-[#8a8a9a] active:text-[#c084fc] active:bg-white/[0.06] transition-colors"
-                        style={{ touchAction: "none", cursor: "grab" }}
-                      >
-                        <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor">
-                          <circle cx="9" cy="6" r="1.5" /><circle cx="15" cy="6" r="1.5" />
-                          <circle cx="9" cy="12" r="1.5" /><circle cx="15" cy="12" r="1.5" />
-                          <circle cx="9" cy="18" r="1.5" /><circle cx="15" cy="18" r="1.5" />
-                        </svg>
-                      </button>
+                    <div className="flex items-center gap-1.5">
+                      <span
+                        className="w-[7px] h-[7px] rounded-full flex-shrink-0"
+                        style={{ background: PRIORITY_COLOR[card.priority] }}
+                        title={PRIORITY_LABEL[card.priority]}
+                      />
+                      <p className="text-[12.5px] font-semibold text-white truncate">{card.title}</p>
                     </div>
-                    <div className="flex flex-wrap items-center gap-1.5">
-                      <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: PRIORITY_BG[card.priority], color: PRIORITY_COLOR[card.priority] }}>
-                        {PRIORITY_LABEL[card.priority]}
-                      </span>
-                      {card.client && (
-                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full text-[#c084fc]" style={{ background: "rgba(168,85,247,0.1)" }}>
-                          {card.client.name}
-                        </span>
-                      )}
-                      {card.dueDate && (
-                        <span className="text-[10px] font-medium text-[#8a8a9a]">📅 {fmtDate(card.dueDate)}</span>
-                      )}
-                    </div>
+
+                    {(card.client || card.dueDate) && (
+                      <div className="flex flex-wrap items-center gap-1 mt-1">
+                        {card.client && (
+                          <span className="text-[9.5px] font-semibold px-1.5 py-0.5 rounded-md text-[#c084fc]" style={{ background: "rgba(168,85,247,0.1)" }}>
+                            {card.client.name}
+                          </span>
+                        )}
+                        {card.dueDate && (
+                          <span className="text-[9.5px] font-medium text-[#8a8a9a]">📅 {fmtDate(card.dueDate)}</span>
+                        )}
+                      </div>
+                    )}
+
+                    {card.revisionNote && (
+                      <div className="mt-1.5 px-2 py-1 rounded-md flex items-start gap-1"
+                        style={{ background: "rgba(251,146,60,0.1)", border: "1px solid rgba(251,146,60,0.25)" }}>
+                        <span className="text-[10px] flex-shrink-0 leading-tight">🔄</span>
+                        <p className="text-[10px] font-medium text-[#fb923c] leading-snug line-clamp-2">{card.revisionNote}</p>
+                      </div>
+                    )}
+
                     {card.assignee && (
-                      <div className="flex items-center gap-1.5 mt-2.5">
-                        <div className="w-5 h-5 rounded-full flex items-center justify-center text-[9px] font-black flex-shrink-0"
+                      <div className="flex items-center gap-1.5 mt-1.5">
+                        <div className="w-4 h-4 rounded-full flex items-center justify-center text-[8px] font-black flex-shrink-0"
                           style={{ background: "var(--grad-soft)", color: "#c084fc", border: "1px solid rgba(168,85,247,0.3)" }}>
                           {card.assignee.name.charAt(0).toUpperCase()}
                         </div>
-                        <span className="text-[11px] text-[#8a8a9a] truncate">{card.assignee.name}</span>
+                        <span className="text-[10px] text-[#8a8a9a] truncate">{card.assignee.name}</span>
                       </div>
                     )}
                   </div>
@@ -340,7 +408,7 @@ export default function WorkflowBoard() {
               {/* Kart ekle */}
               <button
                 onClick={() => setModal({ mode: "create", columnId: col.id })}
-                className="mx-2.5 mb-2.5 sm:mx-3 sm:mb-3 text-[12px] font-semibold text-[#8a8a9a] hover:text-[#c084fc] py-2.5 rounded-lg transition-colors text-left px-1.5"
+                className="mx-2 mb-2 sm:mx-2.5 sm:mb-2.5 text-[12px] font-semibold text-[#8a8a9a] hover:text-[#c084fc] py-2.5 rounded-lg transition-colors text-left px-1.5"
               >
                 + Kart Ekle
               </button>
@@ -436,6 +504,7 @@ function CardModal({
   const card = state.card;
   const [title, setTitle] = useState(card?.title ?? "");
   const [description, setDescription] = useState(card?.description ?? "");
+  const [revisionNote, setRevisionNote] = useState(card?.revisionNote ?? "");
   const [priority, setPriority] = useState<Priority>(card?.priority ?? "ORTA");
   const [dueDate, setDueDate] = useState(card?.dueDate ?? "");
   const [assigneeId, setAssigneeId] = useState(card?.assignee?.id ?? "");
@@ -458,6 +527,7 @@ function CardModal({
     const body = {
       title: title.trim(),
       description: description.trim() || null,
+      revisionNote: revisionNote.trim() || null,
       priority,
       dueDate: dueDate || null,
       assigneeId: assigneeId || null,
@@ -532,6 +602,23 @@ function CardModal({
               className="w-full px-3.5 py-2.5 rounded-xl text-[14px] text-white placeholder-[#555] outline-none resize-y"
               style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
             />
+          </div>
+
+          <div>
+            <label className="block text-[11px] font-semibold uppercase tracking-wide mb-1.5" style={{ color: "#fb923c" }}>
+              🔄 Revize Notu <span className="normal-case font-normal opacity-70">(varsa)</span>
+            </label>
+            <textarea
+              value={revisionNote}
+              onChange={(e) => setRevisionNote(e.target.value)}
+              rows={2}
+              placeholder="Örn. Logo daha büyük olsun, renk tonu koyulaştırılsın..."
+              className="w-full px-3.5 py-2.5 rounded-xl text-[14px] text-white placeholder-[#555] outline-none resize-y"
+              style={{ background: "var(--bg)", border: "1px solid rgba(251,146,60,0.3)" }}
+            />
+            <p className="text-[11px] text-[#666] mt-1.5">
+              Bir not yazarsan kartın üzerinde turuncu vurgu ile görünür. İş tamamlanınca temizleyebilirsin.
+            </p>
           </div>
 
           <div className="grid grid-cols-2 gap-3">

@@ -9,6 +9,7 @@ export const runtime = "nodejs";
 const patchSchema = z.object({
   title: z.string().trim().min(1).max(160).optional(),
   description: z.string().trim().max(2000).optional().nullable(),
+  revisionNote: z.string().trim().max(2000).optional().nullable(),
   priority: z.enum(["DUSUK", "ORTA", "YUKSEK"]).optional(),
   dueDate: z.string().optional().nullable(),
   assigneeId: z.string().optional().nullable(),
@@ -52,6 +53,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       ...rest,
       sortOrder,
       description: rest.description === undefined ? undefined : rest.description || null,
+      revisionNote: rest.revisionNote === undefined ? undefined : rest.revisionNote || null,
       assigneeId: rest.assigneeId === undefined ? undefined : rest.assigneeId || null,
       clientId: clientId === undefined ? undefined : clientId || null,
       dueDate: dueDate === undefined ? undefined : dueDate ? new Date(dueDate) : null,

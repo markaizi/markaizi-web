@@ -10,6 +10,7 @@ const schema = z.object({
   columnId: z.string().min(1),
   title: z.string().trim().min(1).max(160),
   description: z.string().trim().max(2000).optional().nullable(),
+  revisionNote: z.string().trim().max(2000).optional().nullable(),
   priority: z.enum(["DUSUK", "ORTA", "YUKSEK"]).optional(),
   dueDate: z.string().optional().nullable(), // "YYYY-MM-DD"
   assigneeId: z.string().optional().nullable(),
@@ -24,7 +25,7 @@ export async function POST(req: NextRequest) {
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
   }
-  const { columnId, title, description, priority, dueDate, assigneeId, clientId } = parsed.data;
+  const { columnId, title, description, revisionNote, priority, dueDate, assigneeId, clientId } = parsed.data;
 
   if (clientId) {
     try {
@@ -44,6 +45,7 @@ export async function POST(req: NextRequest) {
       columnId,
       title,
       description: description || null,
+      revisionNote: revisionNote || null,
       priority: priority ?? "ORTA",
       dueDate: dueDate ? new Date(dueDate) : null,
       assigneeId: assigneeId || null,

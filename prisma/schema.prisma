@@ -233,13 +233,14 @@ model WorkflowColumn {
 }
 
 model WorkflowCard {
-  id          String           @id @default(cuid())
-  columnId    String
-  title       String
-  description String?
-  priority    WorkflowPriority @default(ORTA)
-  dueDate     DateTime?
-  sortOrder   Int              @default(0)
+  id           String           @id @default(cuid())
+  columnId     String
+  title        String
+  description  String?
+  revisionNote String? // admin'in "revize istiyorum" notu — kart üzerinde vurgulu gösterilir
+  priority     WorkflowPriority @default(ORTA)
+  dueDate      DateTime?
+  sortOrder    Int              @default(0)
 
   clientId   String?
   assigneeId String?
