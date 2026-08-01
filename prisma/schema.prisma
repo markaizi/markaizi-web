@@ -56,6 +56,12 @@ enum NoteVisibility {
   PAYLASIMLI
 }
 
+enum WorkflowPriority {
+  DUSUK
+  ORTA
+  YUKSEK
+}
+
 // ── Modeller ─────────────────────────────────────────────
 model User {
   id           String  @id @default(cuid())
@@ -79,6 +85,9 @@ model User {
   authoredNotes   Note[]        @relation("NoteAuthor")
   noteReads       NoteRead[]
 
+  workflowCardsAssigned WorkflowCard[] @relation("WorkflowAssignee")
+  workflowCardsCreated  WorkflowCard[] @relation("WorkflowCreator")
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -91,13 +100,14 @@ model Client {
   invoiceNote String?
   active      Boolean @default(true)
 
-  campaigns    Campaign[]
-  updates      Update[]
-  contentItems ContentItem[]
-  invoices     Invoice[]
-  notes        Note[]
-  assignments  Assignment[]
-  users        User[]        @relation("ClientUsers")
+  campaigns     Campaign[]
+  updates       Update[]
+  contentItems  ContentItem[]
+  invoices      Invoice[]
+  notes         Note[]
+  assignments   Assignment[]
+  users         User[]         @relation("ClientUsers")
+  workflowCards WorkflowCard[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -209,4 +219,37 @@ model NoteRead {
   readAt DateTime @default(now())
 
   @@id([userId, noteId])
+}
+
+// ── İş Akışı (Trello tarzı ajans-içi kanban) ──────────────
+model WorkflowColumn {
+  id        String @id @default(cuid())
+  title     String
+  sortOrder Int    @default(0)
+
+  cards WorkflowCard[]
+
+  createdAt DateTime @default(now())
+}
+
+model WorkflowCard {
+  id          String           @id @default(cuid())
+  columnId    String
+  title       String
+  description String?
+  priority    WorkflowPriority @default(ORTA)
+  dueDate     DateTime?
+  sortOrder   Int              @default(0)
+
+  clientId   String?
+  assigneeId String?
+  creatorId  String
+
+  column   WorkflowColumn @relation(fields: [columnId], references: [id], onDelete: Cascade)
+  client   Client?        @relation(fields: [clientId], references: [id], onDelete: SetNull)
+  assignee User?          @relation("WorkflowAssignee", fields: [assigneeId], references: [id], onDelete: SetNull)
+  creator  User           @relation("WorkflowCreator", fields: [creatorId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

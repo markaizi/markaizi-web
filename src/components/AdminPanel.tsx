@@ -205,6 +205,35 @@ function Dashboard({ clients, adminName, employeeCount, totalUnread, totalOverdu
           </div>
         </button>
 
+        {/* İş Akışı */}
+        <button onClick={() => router.push("/musteri/admin/is-akisi")}
+          className="group rounded-2xl p-6 text-left transition-all duration-200 relative overflow-hidden"
+          style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+          onMouseEnter={e => {
+            (e.currentTarget as HTMLElement).style.borderColor = "rgba(251,146,60,0.4)";
+            (e.currentTarget as HTMLElement).style.background = "rgba(251,146,60,0.06)";
+          }}
+          onMouseLeave={e => {
+            (e.currentTarget as HTMLElement).style.borderColor = "var(--border)";
+            (e.currentTarget as HTMLElement).style.background = "var(--surface)";
+          }}>
+          <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4"
+            style={{ background: "rgba(251,146,60,0.12)", border: "1px solid rgba(251,146,60,0.2)" }}>
+            <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="#fb923c" strokeWidth="2">
+              <rect x="3" y="3" width="5" height="18" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
+              <rect x="10" y="3" width="5" height="11" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
+              <rect x="17" y="3" width="4" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+          <p className="text-[17px] font-bold text-white mb-1">İş Akışı</p>
+          <p className="text-[13px] text-[#8a8a9a]">Kanban görev panosu</p>
+          <div className="absolute right-5 top-1/2 -translate-y-1/2 text-[#555] group-hover:text-[#fb923c] transition-colors">
+            <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="currentColor" strokeWidth="2">
+              <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+        </button>
+
         {/* Takvim */}
         <button onClick={() => router.push("/musteri/admin/takvim")}
           className="group rounded-2xl p-6 text-left transition-all duration-200 relative overflow-hidden"
@@ -263,7 +292,7 @@ function Dashboard({ clients, adminName, employeeCount, totalUnread, totalOverdu
 
         {/* Profilim */}
         <button onClick={() => router.push("/musteri/admin/profil")}
-          className="group rounded-2xl p-6 text-left transition-all duration-200 relative overflow-hidden"
+          className="group rounded-2xl p-6 text-left transition-all duration-200 relative overflow-hidden col-span-2"
           style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
           onMouseEnter={e => {
             (e.currentTarget as HTMLElement).style.borderColor = "rgba(251,191,36,0.4)";

@@ -57,12 +57,20 @@ export default function EmployeeDashboard({
             <h2 className="font-black text-[24px] text-white mb-1">Atanmış Firmalar</h2>
             <p className="text-[14px] text-[#8a8a9a]">Merhaba {employeeName} · {clients.length} firma</p>
           </div>
-          <button
-            onClick={() => router.push("/musteri/calisan/takvim")}
-            className="btn btn-outline text-sm px-4 py-2.5 self-start sm:self-auto"
-          >
-            📅 Takvim
-          </button>
+          <div className="flex gap-3 self-start sm:self-auto">
+            <button
+              onClick={() => router.push("/musteri/calisan/is-akisi")}
+              className="btn btn-outline text-sm px-4 py-2.5"
+            >
+              🗂️ İş Akışı
+            </button>
+            <button
+              onClick={() => router.push("/musteri/calisan/takvim")}
+              className="btn btn-outline text-sm px-4 py-2.5"
+            >
+              📅 Takvim
+            </button>
+          </div>
         </div>
 
         {/* Okunmamış not özeti */}
