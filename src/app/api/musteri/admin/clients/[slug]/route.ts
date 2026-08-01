@@ -7,7 +7,6 @@ export const runtime = "nodejs";
 
 const schema = z.object({
   name: z.string().min(1).max(120).optional(),
-  package: z.string().min(1).max(120).optional(),
   invoiceNote: z.string().max(500).nullable().optional(),
   active: z.boolean().optional(),
 });

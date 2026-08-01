@@ -34,7 +34,6 @@ export interface Invoice {
 export interface ClientData {
   slug: string;
   name: string;
-  package: string;
   envKey: string;
 
   metaCampaigns?: Campaign[];
@@ -53,7 +52,6 @@ export const CLIENTS: ClientData[] = [
   {
     slug: "sahinavize",
     name: "Şahin Avize",
-    package: "Büyüme Paketi",
     envKey: "SAHINAVIZE",
 
     metaCampaigns: [
@@ -177,7 +175,6 @@ export const CLIENTS: ClientData[] = [
   {
     slug: "alanyapro",
     name: "Alanya Pro Cleaning",
-    package: "Kurumsal Paketi",
     envKey: "ALANYAPRO",
 
     metaCampaigns: [
@@ -276,7 +273,6 @@ export const CLIENTS: ClientData[] = [
   {
     slug: "fitrina",
     name: "Fitrina",
-    package: "Meta - Basit Yönetim",
     envKey: "FITRINA",
 
     metaCampaigns: [
@@ -307,7 +303,6 @@ export const CLIENTS: ClientData[] = [
   {
     slug: "retrocar",
     name: "RetroCar",
-    package: "Meta - Basit Yönetim",
     envKey: "RETROCAR",
 
     metaCampaigns: [
@@ -338,7 +333,6 @@ export const CLIENTS: ClientData[] = [
   {
     slug: "sarsilmaz",
     name: "Sarsılmaz Mobilya",
-    package: "Başlangıç Paketi",
     envKey: "SARSILMAZ",
 
     metaCampaigns: [
@@ -365,7 +359,6 @@ export const CLIENTS: ClientData[] = [
   // {
   //   slug: "musteri-slug",
   //   name: "Müşteri Adı",
-  //   package: "Başlangıç Paketi",
   //   envKey: "MUSTERIADI",   ← Vercel: CLIENT_PASSWORD_MUSTERIADI
   //   metaCampaigns: [],
   //   googleCampaigns: [],

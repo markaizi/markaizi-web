@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 export interface AssignedClient {
   slug: string;
   name: string;
-  package: string;
   pendingCount: number;
   metaCount: number;
   googleCount: number;
@@ -136,7 +135,6 @@ export default function EmployeeDashboard({
                       </span>
                     )}
                   </div>
-                  <p className="text-[12px] text-[#8a8a9a] truncate">{client.package}</p>
                 </div>
               </div>
 

@@ -85,12 +85,6 @@ function Dashboard({
           <a href="/" className="font-black text-[18px] gradient-text flex-shrink-0">markaizi</a>
           <span className="text-[#555] flex-shrink-0">/</span>
           <span className="text-[14px] font-semibold text-white truncate">{client.name}</span>
-          <span
-            className="hidden sm:inline text-[11px] font-bold px-2.5 py-1 rounded-full flex-shrink-0"
-            style={{ background: "rgba(168,85,247,0.12)", color: "#c084fc", border: "1px solid rgba(168,85,247,0.2)" }}
-          >
-            {client.package}
-          </span>
         </div>
         {isAdminView ? (
           <a href="/musteri/admin"

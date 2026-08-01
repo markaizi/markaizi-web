@@ -123,8 +123,8 @@ async function main() {
   for (const c of CLIENTS) {
     const client = await prisma.client.upsert({
       where: { slug: c.slug },
-      update: { name: c.name, package: c.package, invoiceNote: c.invoiceNote ?? null },
-      create: { slug: c.slug, name: c.name, package: c.package, invoiceNote: c.invoiceNote ?? null },
+      update: { name: c.name, invoiceNote: c.invoiceNote ?? null },
+      create: { slug: c.slug, name: c.name, invoiceNote: c.invoiceNote ?? null },
     });
 
     // Alt verileri temizle, yeniden yaz (idempotent)

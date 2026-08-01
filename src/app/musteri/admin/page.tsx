@@ -49,7 +49,6 @@ export default async function AdminPage() {
     return {
       slug: c.slug,
       name: c.name,
-      package: c.package,
       activeCampaignCount: c.campaigns.filter(x => x.status === CampaignStatus.AKTIF).length,
       totalCampaignCount: c.campaigns.length,
       pendingInvoiceCount: pendingInvoices.length,

@@ -55,7 +55,6 @@ export default async function CalisanClientPage({
   const data: EmployeeClientData = {
     slug: client.slug,
     name: client.name,
-    package: client.package,
     canWriteNotes: employeeUser?.canWriteNotes ?? false,
     perms: {
       canViewCampaigns: assignment.canViewCampaigns,

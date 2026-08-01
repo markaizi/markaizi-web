@@ -34,7 +34,6 @@ export async function GET() {
 const schema = z.object({
   name:        z.string().min(1).max(120),
   slug:        z.string().min(1).max(60).regex(/^[a-z0-9-]+$/, "Slug: küçük harf, rakam, tire"),
-  package:     z.string().min(1).max(120),
   invoiceNote: z.string().max(500).optional(),
   // Opsiyonel: aynı anda müşteri hesabı oluştur
   username: z.string().min(2).max(60).regex(/^[a-z0-9_-]+$/).optional(),
@@ -52,7 +51,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
   }
 
-  const { name, slug, package: pkg, invoiceNote, username, email, password } = parsed.data;
+  const { name, slug, invoiceNote, username, email, password } = parsed.data;
 
   // Sistem rotalarıyla çakışmayı engelle
   const RESERVED = ["admin", "calisan", "giris", "takvim", "profil"];
@@ -74,7 +73,7 @@ export async function POST(req: NextRequest) {
   }
 
   const client = await prisma.client.create({
-    data: { name, slug, package: pkg, invoiceNote: invoiceNote || null },
+    data: { name, slug, invoiceNote: invoiceNote || null },
   });
 
   if (username && email && password) {

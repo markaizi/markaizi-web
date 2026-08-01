@@ -7,7 +7,6 @@ import Notes from "@/components/Notes";
 export interface EmployeeClientData {
   slug: string;
   name: string;
-  package: string;
   canWriteNotes: boolean;
   perms: {
     canViewCampaigns: boolean;
@@ -118,7 +117,6 @@ export default function EmployeeClientDetail({ data, unreadNoteCount = 0 }: { da
           </div>
           <div>
             <h1 className="font-black text-[22px] text-white">{data.name}</h1>
-            <p className="text-[13px] text-[#8a8a9a]">{data.package}</p>
           </div>
         </div>
 

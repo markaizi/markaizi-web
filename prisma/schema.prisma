@@ -96,7 +96,6 @@ model Client {
   id          String  @id @default(cuid())
   slug        String  @unique
   name        String
-  package     String
   invoiceNote String?
   active      Boolean @default(true)
 

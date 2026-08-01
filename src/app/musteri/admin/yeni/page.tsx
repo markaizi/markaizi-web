@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 export default function YeniFirmaPage() {
   const router = useRouter();
   const [form, setForm] = useState({
-    name: "", slug: "", package: "", invoiceNote: "",
+    name: "", slug: "", invoiceNote: "",
     username: "", email: "", password: "",
   });
   const [withUser, setWithUser] = useState(false);
@@ -31,7 +31,7 @@ export default function YeniFirmaPage() {
     setLoading(true); setErr("");
     const body: Record<string, string> = {
       name: form.name, slug: form.slug,
-      package: form.package, invoiceNote: form.invoiceNote,
+      invoiceNote: form.invoiceNote,
     };
     if (withUser && form.username && form.password) {
       body.username = form.username;
@@ -99,12 +99,6 @@ export default function YeniFirmaPage() {
                   className="flex-1 px-3 py-2.5 rounded-r-lg text-[14px] text-white placeholder-[#555] outline-none focus:ring-1 focus:ring-purple-500/50"
                   style={inputStyle} />
               </div>
-            </div>
-
-            <div>
-              <label className={labelCls}>Paket</label>
-              <input required value={form.package} onChange={(e) => setForm((f) => ({ ...f, package: e.target.value }))}
-                placeholder="Örn: Sosyal Medya Yönetimi" className={inputCls} style={inputStyle} />
             </div>
 
             <div>

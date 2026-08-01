@@ -10,7 +10,6 @@ export interface ClientDetailData {
   id: string;
   slug: string;
   name: string;
-  package: string;
   invoiceNote: string;
   active: boolean;
   campaigns: {
@@ -245,7 +244,7 @@ export default function AdminClientDetail({ data, unreadNoteCount = 0 }: { data:
           </div>
           <div>
             <h1 className="font-black text-[22px] text-white">{data.name}</h1>
-            <p className="text-[13px] text-[#8a8a9a]">{data.package} · /{data.slug}</p>
+            <p className="text-[13px] text-[#8a8a9a]">/{data.slug}</p>
           </div>
         </div>
 
@@ -300,7 +299,7 @@ export default function AdminClientDetail({ data, unreadNoteCount = 0 }: { data:
 // ── Genel sekmesi ─────────────────────────────────────────────────────────────
 
 function GenelTab({ data, router }: { data: ClientDetailData; router: ReturnType<typeof useRouter> }) {
-  const [form, setForm] = useState({ name: data.name, package: data.package, invoiceNote: data.invoiceNote });
+  const [form, setForm] = useState({ name: data.name, invoiceNote: data.invoiceNote });
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
   const [ok, setOk] = useState(false);
@@ -332,9 +331,6 @@ function GenelTab({ data, router }: { data: ClientDetailData; router: ReturnType
       <form onSubmit={handleSubmit} className="rounded-2xl p-6 space-y-4" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
         <Field label="Firma Adı">
           <Input required value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} />
-        </Field>
-        <Field label="Paket">
-          <Input required value={form.package} onChange={(e) => setForm((f) => ({ ...f, package: e.target.value }))} placeholder="Örn: Premium Paket" />
         </Field>
         <Field label="Fatura Notu (opsiyonel)">
           <Textarea value={form.invoiceNote} onChange={(e) => setForm((f) => ({ ...f, invoiceNote: e.target.value }))} placeholder="Fatura ile ilgili ek bilgi..." />

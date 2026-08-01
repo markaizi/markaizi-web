@@ -49,7 +49,6 @@ export default async function CalisanPage() {
   const clients: AssignedClient[] = assignments.map((a) => ({
     slug: a.client.slug,
     name: a.client.name,
-    package: a.client.package,
     pendingCount: a.client.contentItems.length,
     metaCount: a.client.campaigns.filter((c) => c.platform === "META").length,
     googleCount: a.client.campaigns.filter((c) => c.platform === "GOOGLE").length,

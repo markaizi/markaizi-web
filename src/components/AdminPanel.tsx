@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 export interface AdminClientSummary {
   slug: string;
   name: string;
-  package: string;
   activeCampaignCount: number;
   totalCampaignCount: number;
   pendingInvoiceCount: number;
@@ -379,7 +378,7 @@ function FirmalarView({ clients, onBack, router }: {
               onMouseEnter={e => (e.currentTarget as HTMLElement).style.background = isOverdue ? "rgba(248,113,113,0.08)" : "rgba(255,255,255,0.025)"}
               onMouseLeave={e => (e.currentTarget as HTMLElement).style.background = isOverdue ? "rgba(248,113,113,0.04)" : "transparent"}>
 
-              {/* Firma adı + paket */}
+              {/* Firma adı */}
               <div className="flex items-center gap-3 min-w-0">
                 <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 text-[13px] font-black"
                   style={{ background: "rgba(168,85,247,0.12)", border: "1px solid rgba(168,85,247,0.2)", color: "#c084fc" }}>
@@ -395,7 +394,6 @@ function FirmalarView({ clients, onBack, router }: {
                       </span>
                     )}
                   </div>
-                  <p className="text-[12px] text-[#555] truncate">{client.package}</p>
                 </div>
               </div>
 

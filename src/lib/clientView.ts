@@ -87,7 +87,6 @@ export async function getClientView(slug: string): Promise<ClientView | null> {
   const data: ClientData = {
     slug: client.slug,
     name: client.name,
-    package: client.package,
     envKey: "", // portal'da kullanılmıyor
     metaCampaigns: meta,
     googleCampaigns: google,
