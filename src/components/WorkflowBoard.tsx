@@ -46,10 +46,14 @@ interface PressState {
   pointerId: number;
   startX: number;
   startY: number;
+  lastX: number;
+  lastY: number;
   pointerType: string;
   dragging: boolean;
+  scrolling: boolean;
   timer: number | null;
   target: HTMLElement;
+  scrollEl: HTMLElement | null;
 }
 
 export default function WorkflowBoard() {
@@ -137,22 +141,31 @@ export default function WorkflowBoard() {
   }
 
   // Mouse: karta basar basmaz sürüklemeye hazır olur, birkaç piksel hareketle sürükleme başlar (eskisi gibi).
-  // Dokunma: kart üzerinde basılı tutulursa (kaydırma niyeti yoksa) sürükleme moduna geçer.
+  // Dokunma: touch-action:none ile tarayıcının kendi kaydırma/iptal yarışına girmesini engelliyoruz.
+  // Karta basılı tutulursa (erken hareket yoksa) sürükleme moduna geçer; erken hareket olursa
+  // bunu kaydırma niyeti sayıp listeyi kendimiz (elle) kaydırıyoruz.
   function onCardPointerDown(e: React.PointerEvent<HTMLDivElement>, card: CardData) {
     if (e.pointerType === "mouse" && e.button !== 0) return;
+    const scrollEl = (e.currentTarget as HTMLElement).closest(".wf-cards-scroll") as HTMLElement | null;
     pressRef.current = {
       id: card.id,
       pointerId: e.pointerId,
       startX: e.clientX,
       startY: e.clientY,
+      lastX: e.clientX,
+      lastY: e.clientY,
       pointerType: e.pointerType,
       dragging: false,
+      scrolling: false,
       timer: null,
       target: e.currentTarget,
+      scrollEl,
     };
     if (e.pointerType !== "mouse") {
       pressRef.current.timer = window.setTimeout(() => {
-        if (pressRef.current?.id === card.id && !pressRef.current.dragging) activateDrag();
+        if (pressRef.current?.id === card.id && !pressRef.current.dragging && !pressRef.current.scrolling) {
+          activateDrag();
+        }
       }, TOUCH_LONG_PRESS_MS);
     }
   }
@@ -160,6 +173,15 @@ export default function WorkflowBoard() {
   function onCardPointerMove(e: React.PointerEvent<HTMLDivElement>) {
     const p = pressRef.current;
     if (!p) return;
+
+    // Kaydırma moduna geçmişse: native touch-action kapalı olduğu için listeyi elle kaydırıyoruz
+    if (p.scrolling) {
+      if (p.scrollEl) p.scrollEl.scrollTop -= e.clientY - p.lastY;
+      if (boardRef.current) boardRef.current.scrollLeft -= e.clientX - p.lastX;
+      p.lastX = e.clientX;
+      p.lastY = e.clientY;
+      return;
+    }
 
     if (!p.dragging) {
       const dist = Math.hypot(e.clientX - p.startX, e.clientY - p.startY);
@@ -169,7 +191,9 @@ export default function WorkflowBoard() {
       } else {
         if (dist > TOUCH_CANCEL_DIST) {
           if (p.timer) window.clearTimeout(p.timer);
-          pressRef.current = null;
+          p.scrolling = true;
+          p.lastX = e.clientX;
+          p.lastY = e.clientY;
         }
         return; // dokunmada sürükleme sadece uzun basışla başlar
       }
@@ -194,8 +218,8 @@ export default function WorkflowBoard() {
       setDragCardId(null);
       setDragPos(null);
       setDragOverCol(null);
-    } else if (p) {
-      // Sürükleme olmadı → tıklama/dokunma sayılır, kartı aç
+    } else if (p && !p.scrolling) {
+      // Sürükleme/kaydırma olmadı → tıklama/dokunma sayılır, kartı aç
       setModal({ mode: "edit", card });
     }
   }
@@ -341,7 +365,7 @@ export default function WorkflowBoard() {
               </div>
 
               {/* Kartlar */}
-              <div className="flex-1 overflow-y-auto px-2 py-2 sm:px-2.5 sm:py-2.5 flex flex-col gap-1.5" style={{ minHeight: 80 }}>
+              <div className="wf-cards-scroll flex-1 overflow-y-auto px-2 py-2 sm:px-2.5 sm:py-2.5 flex flex-col gap-1.5" style={{ minHeight: 80 }}>
                 {col.cards.map((card) => (
                   <div
                     key={card.id}
@@ -357,7 +381,7 @@ export default function WorkflowBoard() {
                       borderLeft: card.revisionNote ? "3px solid #fb923c" : "1px solid var(--border)",
                       opacity: dragCardId === card.id ? 0.35 : 1,
                       cursor: dragCardId === card.id ? "grabbing" : "grab",
-                      touchAction: "pan-y",
+                      touchAction: "none",
                     }}
                     onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.borderColor = "rgba(168,85,247,0.35)")}
                     onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.borderColor = "var(--border)")}
