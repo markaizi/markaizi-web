@@ -11,6 +11,9 @@ export interface ClientDetailData {
   slug: string;
   name: string;
   invoiceNote: string;
+  contactPerson: string;
+  contactEmail: string;
+  contactPhone: string;
   active: boolean;
   campaigns: {
     id: string;
@@ -299,7 +302,10 @@ export default function AdminClientDetail({ data, unreadNoteCount = 0 }: { data:
 // ── Genel sekmesi ─────────────────────────────────────────────────────────────
 
 function GenelTab({ data, router }: { data: ClientDetailData; router: ReturnType<typeof useRouter> }) {
-  const [form, setForm] = useState({ name: data.name, invoiceNote: data.invoiceNote });
+  const [form, setForm] = useState({
+    name: data.name, invoiceNote: data.invoiceNote,
+    contactPerson: data.contactPerson, contactEmail: data.contactEmail, contactPhone: data.contactPhone,
+  });
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
   const [ok, setOk] = useState(false);
@@ -332,6 +338,19 @@ function GenelTab({ data, router }: { data: ClientDetailData; router: ReturnType
         <Field label="Firma Adı">
           <Input required value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} />
         </Field>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <Field label="Yetkili Kişi (opsiyonel)">
+            <Input value={form.contactPerson} onChange={(e) => setForm((f) => ({ ...f, contactPerson: e.target.value }))} placeholder="Örn: Ahmet Yılmaz" />
+          </Field>
+          <Field label="Telefon (opsiyonel)">
+            <Input type="tel" value={form.contactPhone} onChange={(e) => setForm((f) => ({ ...f, contactPhone: e.target.value }))} placeholder="0532 000 00 00" />
+          </Field>
+        </div>
+        <Field label="E-posta (opsiyonel)">
+          <Input type="email" value={form.contactEmail} onChange={(e) => setForm((f) => ({ ...f, contactEmail: e.target.value }))} placeholder="firma@ornek.com" />
+        </Field>
+
         <Field label="Fatura Notu (opsiyonel)">
           <Textarea value={form.invoiceNote} onChange={(e) => setForm((f) => ({ ...f, invoiceNote: e.target.value }))} placeholder="Fatura ile ilgili ek bilgi..." />
         </Field>

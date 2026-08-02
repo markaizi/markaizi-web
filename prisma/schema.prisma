@@ -99,6 +99,11 @@ model Client {
   invoiceNote String?
   active      Boolean @default(true)
 
+  // İletişim bilgileri — hepsi opsiyonel
+  contactPerson String?
+  contactEmail  String?
+  contactPhone  String?
+
   campaigns     Campaign[]
   updates       Update[]
   contentItems  ContentItem[]

@@ -8,6 +8,9 @@ export const runtime = "nodejs";
 const schema = z.object({
   name: z.string().min(1).max(120).optional(),
   invoiceNote: z.string().max(500).nullable().optional(),
+  contactPerson: z.string().max(120).nullable().optional(),
+  contactEmail: z.string().email("Geçerli bir e-posta girin.").max(160).nullable().optional().or(z.literal("")),
+  contactPhone: z.string().max(40).nullable().optional(),
   active: z.boolean().optional(),
 });
 

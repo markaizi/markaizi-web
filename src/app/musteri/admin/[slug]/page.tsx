@@ -54,6 +54,9 @@ export default async function AdminClientPage({
     slug: client.slug,
     name: client.name,
     invoiceNote: client.invoiceNote ?? "",
+    contactPerson: client.contactPerson ?? "",
+    contactEmail: client.contactEmail ?? "",
+    contactPhone: client.contactPhone ?? "",
     active: client.active,
     campaigns: client.campaigns.map((c) => ({
       id: c.id,

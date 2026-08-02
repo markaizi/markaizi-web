@@ -46,7 +46,9 @@ export default async function CalisanClientPage({
       campaigns: { orderBy: [{ platform: "asc" }, { sortOrder: "asc" }] },
       updates: { orderBy: { date: "desc" }, take: 20 },
       contentItems: { orderBy: { scheduledDate: "desc" } },
-      invoices: { orderBy: { id: "desc" } },
+      // Fatura görüntüleme yetkisi yoksa veri sayfaya hiç gönderilmez (sadece UI'da
+      // gizlemek yetmez — sayfa kaynağından okunabilir olurdu).
+      invoices: assignment.canViewInvoices ? { orderBy: { id: "desc" } } : false,
     },
   });
 
@@ -88,7 +90,7 @@ export default async function CalisanClientPage({
       status: ci.status,
       publishedAt: ci.publishedAt?.toISOString().split("T")[0] ?? null,
     })),
-    invoices: client.invoices.map((i) => ({
+    invoices: (client.invoices ?? []).map((i) => ({
       id: i.id,
       period: i.period,
       amount: i.amount,

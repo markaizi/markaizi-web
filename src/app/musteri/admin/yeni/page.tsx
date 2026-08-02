@@ -7,6 +7,7 @@ export default function YeniFirmaPage() {
   const router = useRouter();
   const [form, setForm] = useState({
     name: "", slug: "",
+    contactPerson: "", contactEmail: "", contactPhone: "",
     billingAmount: "", billingPeriod: "AYLIK", paymentDueDate: "",
     username: "", email: "", password: "",
   });
@@ -41,6 +42,9 @@ export default function YeniFirmaPage() {
     const body: Record<string, string> = {
       name: form.name, slug: form.slug,
     };
+    if (form.contactPerson.trim()) body.contactPerson = form.contactPerson;
+    if (form.contactEmail.trim())  body.contactEmail  = form.contactEmail;
+    if (form.contactPhone.trim())  body.contactPhone  = form.contactPhone;
     if (form.billingAmount.trim()) {
       body.billingAmount = form.billingAmount;
       body.billingPeriod = form.billingPeriod;
@@ -114,6 +118,36 @@ export default function YeniFirmaPage() {
               </div>
             </div>
 
+          </div>
+
+          {/* İletişim Bilgileri */}
+          <div className="rounded-2xl p-6 space-y-5" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+            <div>
+              <p className="font-semibold text-white text-[14px]">İletişim Bilgileri</p>
+              <p className="text-[12px] text-[#8a8a9a] mt-0.5">Tamamı opsiyonel.</p>
+            </div>
+
+            <div>
+              <label className={labelCls}>Yetkili Kişi</label>
+              <input value={form.contactPerson}
+                onChange={(e) => setForm((f) => ({ ...f, contactPerson: e.target.value }))}
+                placeholder="Örn: Ahmet Yılmaz" className={inputCls} style={inputStyle} />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className={labelCls}>E-posta</label>
+                <input type="email" value={form.contactEmail}
+                  onChange={(e) => setForm((f) => ({ ...f, contactEmail: e.target.value }))}
+                  placeholder="firma@ornek.com" className={inputCls} style={inputStyle} />
+              </div>
+              <div>
+                <label className={labelCls}>Telefon</label>
+                <input type="tel" value={form.contactPhone}
+                  onChange={(e) => setForm((f) => ({ ...f, contactPhone: e.target.value }))}
+                  placeholder="0532 000 00 00" className={inputCls} style={inputStyle} />
+              </div>
+            </div>
           </div>
 
           {/* Ödeme Anlaşması */}
