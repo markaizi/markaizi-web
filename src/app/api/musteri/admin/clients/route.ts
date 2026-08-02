@@ -35,6 +35,10 @@ const schema = z.object({
   name:        z.string().min(1).max(120),
   slug:        z.string().min(1).max(60).regex(/^[a-z0-9-]+$/, "Slug: küçük harf, rakam, tire"),
   invoiceNote: z.string().max(500).optional(),
+  // Opsiyonel: doldurulursa firma ile birlikte ilk fatura kaydı da oluşturulur
+  billingAmount:   z.string().max(60).optional(),
+  billingPeriod:   z.enum(["HAFTALIK", "AYLIK"]).optional(),
+  paymentDueDate:  z.string().optional(), // "YYYY-MM-DD"
   // Opsiyonel: aynı anda müşteri hesabı oluştur
   username: z.string().min(2).max(60).regex(/^[a-z0-9_-]+$/).optional(),
   email:    z.string().email().optional(),
@@ -51,7 +55,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
   }
 
-  const { name, slug, invoiceNote, username, email, password } = parsed.data;
+  const { name, slug, invoiceNote, billingAmount, billingPeriod, paymentDueDate, username, email, password } = parsed.data;
 
   // Sistem rotalarıyla çakışmayı engelle
   const RESERVED = ["admin", "calisan", "giris", "takvim", "profil"];
@@ -75,6 +79,19 @@ export async function POST(req: NextRequest) {
   const client = await prisma.client.create({
     data: { name, slug, invoiceNote: invoiceNote || null },
   });
+
+  // Ödeme anlaşması dolduruldu ise firma ile birlikte ilk fatura kaydını da oluştur
+  if (billingAmount && billingAmount.trim()) {
+    await prisma.invoice.create({
+      data: {
+        clientId: client.id,
+        period: billingPeriod === "HAFTALIK" ? "Haftalık Ödeme" : "Aylık Ödeme",
+        amount: billingAmount,
+        dueDate: paymentDueDate ? new Date(paymentDueDate) : null,
+        status: "BEKLIYOR",
+      },
+    });
+  }
 
   if (username && email && password) {
     await prisma.user.create({

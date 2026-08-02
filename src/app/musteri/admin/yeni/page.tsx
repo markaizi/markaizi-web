@@ -6,7 +6,8 @@ import { useRouter } from "next/navigation";
 export default function YeniFirmaPage() {
   const router = useRouter();
   const [form, setForm] = useState({
-    name: "", slug: "", invoiceNote: "",
+    name: "", slug: "",
+    billingAmount: "", billingPeriod: "AYLIK", paymentDueDate: "",
     username: "", email: "", password: "",
   });
   const [withUser, setWithUser] = useState(false);
@@ -26,13 +27,25 @@ export default function YeniFirmaPage() {
     setForm((f) => ({ ...f, name, slug, username: f.username || slug }));
   }
 
+  function fmtAmount(raw: string): string {
+    const digits = raw.replace(/[^\d]/g, "");
+    if (!digits) return raw;
+    const num = parseInt(digits, 10);
+    if (isNaN(num)) return raw;
+    return num.toLocaleString("tr-TR") + " ₺";
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true); setErr("");
     const body: Record<string, string> = {
       name: form.name, slug: form.slug,
-      invoiceNote: form.invoiceNote,
     };
+    if (form.billingAmount.trim()) {
+      body.billingAmount = form.billingAmount;
+      body.billingPeriod = form.billingPeriod;
+      if (form.paymentDueDate) body.paymentDueDate = form.paymentDueDate;
+    }
     if (withUser && form.username && form.password) {
       body.username = form.username;
       body.email    = form.email;
@@ -101,13 +114,39 @@ export default function YeniFirmaPage() {
               </div>
             </div>
 
+          </div>
+
+          {/* Ödeme Anlaşması */}
+          <div className="rounded-2xl p-6 space-y-5" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
             <div>
-              <label className={labelCls}>Fatura Notu (opsiyonel)</label>
-              <textarea rows={2} value={form.invoiceNote}
-                onChange={(e) => setForm((f) => ({ ...f, invoiceNote: e.target.value }))}
-                placeholder="Fatura bilgisi, ödeme şartları..."
-                className="w-full px-3 py-2.5 rounded-lg text-[14px] text-white placeholder-[#555] outline-none focus:ring-1 focus:ring-purple-500/50 resize-none"
-                style={inputStyle} />
+              <p className="font-semibold text-white text-[14px]">Ödeme Anlaşması</p>
+              <p className="text-[12px] text-[#8a8a9a] mt-0.5">Opsiyonel — doldurursan firma oluşur oluşmaz ilk fatura kaydı da otomatik açılır.</p>
+            </div>
+
+            <div>
+              <label className={labelCls}>Ücret</label>
+              <input value={form.billingAmount}
+                onChange={(e) => setForm((f) => ({ ...f, billingAmount: e.target.value }))}
+                onBlur={(e) => setForm((f) => ({ ...f, billingAmount: fmtAmount(e.target.value) }))}
+                placeholder="Örn: 5.000 ₺" className={inputCls} style={inputStyle} />
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label className={labelCls}>Ödeme Periyodu</label>
+                <select value={form.billingPeriod}
+                  onChange={(e) => setForm((f) => ({ ...f, billingPeriod: e.target.value }))}
+                  className={inputCls} style={{ ...inputStyle, cursor: "pointer" }}>
+                  <option value="AYLIK" style={{ background: "#0f0f14" }}>Aylık</option>
+                  <option value="HAFTALIK" style={{ background: "#0f0f14" }}>Haftalık</option>
+                </select>
+              </div>
+              <div>
+                <label className={labelCls}>Ödeme Tarihi (opsiyonel)</label>
+                <input type="date" value={form.paymentDueDate}
+                  onChange={(e) => setForm((f) => ({ ...f, paymentDueDate: e.target.value }))}
+                  className={inputCls} style={inputStyle} />
+              </div>
             </div>
           </div>
 
