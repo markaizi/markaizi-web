@@ -37,6 +37,11 @@ enum InvoiceStatus {
   GUNU_GELMEDI
 }
 
+enum BillingPeriod {
+  HAFTALIK
+  AYLIK
+}
+
 enum ContentStatus {
   PLANLANDI
   DUZENLENIYOR
@@ -103,6 +108,11 @@ model Client {
   contactPerson String?
   contactEmail  String?
   contactPhone  String?
+
+  // Ödeme planı — doluysa, bir fatura "Ödendi" yapıldığında sonraki dönem
+  // faturası otomatik oluşturulur (GUNU_GELMEDI durumuyla).
+  billingAmount String?
+  billingPeriod BillingPeriod?
 
   campaigns     Campaign[]
   updates       Update[]

@@ -11,6 +11,8 @@ const schema = z.object({
   contactPerson: z.string().max(120).nullable().optional(),
   contactEmail: z.string().email("Geçerli bir e-posta girin.").max(160).nullable().optional().or(z.literal("")),
   contactPhone: z.string().max(40).nullable().optional(),
+  billingAmount: z.string().max(60).nullable().optional(),
+  billingPeriod: z.enum(["HAFTALIK", "AYLIK"]).nullable().optional(),
   active: z.boolean().optional(),
 });
 
@@ -31,7 +33,14 @@ export async function PATCH(
   const client = await prisma.client.findUnique({ where: { slug } });
   if (!client) return NextResponse.json({ error: "Firma bulunamadı." }, { status: 404 });
 
-  await prisma.client.update({ where: { slug }, data: parsed.data });
+  const data = { ...parsed.data };
+  // Ücret boşsa periyodu da anlamsız — birlikte temizle
+  if (data.billingAmount !== undefined && !data.billingAmount) {
+    data.billingAmount = null;
+    data.billingPeriod = null;
+  }
+
+  await prisma.client.update({ where: { slug }, data });
   return NextResponse.json({ ok: true });
 }
 

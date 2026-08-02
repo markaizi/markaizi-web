@@ -27,14 +27,37 @@ export async function PATCH(
     return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
   }
 
+  const before = await prisma.invoice.findUnique({ where: { id }, include: { client: true } });
+  if (!before) return NextResponse.json({ error: "Fatura bulunamadı." }, { status: 404 });
+
   const { dueDate, ...rest } = parsed.data;
-  await prisma.invoice.update({
+  const updated = await prisma.invoice.update({
     where: { id },
     data: {
       ...rest,
       ...(dueDate !== undefined ? { dueDate: dueDate ? new Date(dueDate) : null } : {}),
     },
   });
+
+  // Fatura yeni "Ödendi" olduysa ve firmanın tekrarlayan ödeme planı varsa
+  // sonraki dönemin faturasını otomatik oluştur ("Günü Gelmedi" durumuyla).
+  const { client } = before;
+  if (rest.status === "ODENDI" && before.status !== "ODENDI" && client.billingPeriod && client.billingAmount) {
+    const base = updated.dueDate ?? before.dueDate ?? new Date();
+    const next = new Date(base);
+    if (client.billingPeriod === "HAFTALIK") next.setUTCDate(next.getUTCDate() + 7);
+    else next.setUTCMonth(next.getUTCMonth() + 1);
+
+    await prisma.invoice.create({
+      data: {
+        clientId: client.id,
+        period: client.billingPeriod === "HAFTALIK" ? "Haftalık Ödeme" : "Aylık Ödeme",
+        amount: client.billingAmount,
+        dueDate: next,
+        status: "GUNU_GELMEDI",
+      },
+    });
+  }
 
   return NextResponse.json({ ok: true });
 }

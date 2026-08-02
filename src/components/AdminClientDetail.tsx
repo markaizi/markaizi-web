@@ -14,6 +14,8 @@ export interface ClientDetailData {
   contactPerson: string;
   contactEmail: string;
   contactPhone: string;
+  billingAmount: string;
+  billingPeriod: "HAFTALIK" | "AYLIK" | "";
   active: boolean;
   campaigns: {
     id: string;
@@ -305,6 +307,7 @@ function GenelTab({ data, router }: { data: ClientDetailData; router: ReturnType
   const [form, setForm] = useState({
     name: data.name, invoiceNote: data.invoiceNote,
     contactPerson: data.contactPerson, contactEmail: data.contactEmail, contactPhone: data.contactPhone,
+    billingAmount: data.billingAmount, billingPeriod: data.billingPeriod || "AYLIK",
   });
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
@@ -350,6 +353,27 @@ function GenelTab({ data, router }: { data: ClientDetailData; router: ReturnType
         <Field label="E-posta (opsiyonel)">
           <Input type="email" value={form.contactEmail} onChange={(e) => setForm((f) => ({ ...f, contactEmail: e.target.value }))} placeholder="firma@ornek.com" />
         </Field>
+
+        <div className="pt-1 pb-1">
+          <p className="text-[13px] font-semibold text-white">Ödeme Planı</p>
+          <p className="text-[11px] text-[#8a8a9a] mt-0.5">
+            Doluysa, bir fatura &quot;Ödendi&quot; yapıldığında sonraki dönemin faturası otomatik oluşur.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <Field label="Ücret (opsiyonel)">
+            <Input value={form.billingAmount}
+              onChange={(e) => setForm((f) => ({ ...f, billingAmount: e.target.value }))}
+              onBlur={(e) => setForm((f) => ({ ...f, billingAmount: fmtAmount(e.target.value) }))}
+              placeholder="Örn: 20.000 ₺" />
+          </Field>
+          <Field label="Ödeme Periyodu">
+            <Select value={form.billingPeriod} onChange={(e) => setForm((f) => ({ ...f, billingPeriod: e.target.value as "HAFTALIK" | "AYLIK" }))}>
+              <option value="AYLIK">Aylık</option>
+              <option value="HAFTALIK">Haftalık</option>
+            </Select>
+          </Field>
+        </div>
 
         <Field label="Fatura Notu (opsiyonel)">
           <Textarea value={form.invoiceNote} onChange={(e) => setForm((f) => ({ ...f, invoiceNote: e.target.value }))} placeholder="Fatura ile ilgili ek bilgi..." />

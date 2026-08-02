@@ -85,6 +85,8 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  const hasBilling = !!(billingAmount && billingAmount.trim());
+
   const client = await prisma.client.create({
     data: {
       name, slug,
@@ -92,16 +94,18 @@ export async function POST(req: NextRequest) {
       contactPerson: contactPerson || null,
       contactEmail: contactEmail || null,
       contactPhone: contactPhone || null,
+      billingAmount: hasBilling ? billingAmount : null,
+      billingPeriod: hasBilling ? (billingPeriod ?? "AYLIK") : null,
     },
   });
 
   // Ödeme anlaşması dolduruldu ise firma ile birlikte ilk fatura kaydını da oluştur
-  if (billingAmount && billingAmount.trim()) {
+  if (hasBilling) {
     await prisma.invoice.create({
       data: {
         clientId: client.id,
         period: billingPeriod === "HAFTALIK" ? "Haftalık Ödeme" : "Aylık Ödeme",
-        amount: billingAmount,
+        amount: billingAmount!,
         dueDate: paymentDueDate ? new Date(paymentDueDate) : null,
         status: "BEKLIYOR",
       },
