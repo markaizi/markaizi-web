@@ -20,15 +20,17 @@ export async function POST(req: NextRequest) {
     const age           = cleanStr(body.age, 10);
     const medeni        = cleanStr(body.medeni, 30);
     const ucretBeklenti = cleanStr(body.ucretBeklenti, 100);
-    const experience    = cleanStr(body.experience, 80);
+    const montajSeviye  = cleanStr(body.montajSeviye, 20);
+    const cekimSeviye   = cleanStr(body.cekimSeviye, 20);
     const programs      = Array.isArray(body.programs) ? body.programs.map((p: string) => cleanStr(p, 60)).join(", ") : "";
     const sosyalMedya   = Array.isArray(body.sosyalMedya) ? body.sosyalMedya.map((p: string) => cleanStr(p, 100)).join(", ") : "";
+    const referanslar   = cleanStr(body.referanslar, 2000);
     const metaGoogle    = cleanStr(body.metaGoogle, 3000);
     const usesAi        = cleanStr(body.usesAi, 20);
     const aiTools       = cleanStr(body.aiTools, 3000);
     const about         = cleanStr(body.about, 3000);
 
-    if (!name || !email || !phone) {
+    if (!name || !email || !phone || !ucretBeklenti) {
       return NextResponse.json({ error: "Zorunlu alanlar eksik." }, { status: 400 });
     }
     if (!isValidEmail(email)) {
@@ -65,9 +67,11 @@ export async function POST(req: NextRequest) {
               ${row("Yaş",             escapeHtml(age))}
               ${row("Medeni Durum",    escapeHtml(medeni))}
               ${row("Ücret Beklenti",  escapeHtml(ucretBeklenti))}
-              ${row("Kurgu Tecrübesi", escapeHtml(experience))}
+              ${row("Montaj Seviyesi", escapeHtml(montajSeviye))}
+              ${row("Çekim Seviyesi",  escapeHtml(cekimSeviye))}
               ${row("Programlar",      escapeHtml(programs))}
               ${row("Sosyal Medya",    escapeHtml(sosyalMedya))}
+              ${row("Referanslar",     referanslar ? escapeHtml(referanslar).replace(/\n/g, "<br>") : "")}
               ${row("Meta / Google",   metaGoogle ? escapeHtml(metaGoogle).replace(/\n/g, "<br>") : "")}
               ${row("YZ Araçları",     usesAi === "evet"
                 ? `<strong>Evet</strong><br><span style="color:#ccc">${escapeHtml(aiTools).replace(/\n/g, "<br>") || "Belirtilmedi"}</span>`

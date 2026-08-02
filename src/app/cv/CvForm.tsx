@@ -2,12 +2,7 @@
 
 import { useState, FormEvent } from "react";
 
-const EXPERIENCE_OPTIONS = [
-  "Yok — Sıfırdan öğrenmeye hazırım",
-  "Başlangıç — 1 yıldan az",
-  "Orta — 1-3 yıl",
-  "İleri — 3 yıl ve üzeri",
-];
+const SEVIYE_OPTIONS = ["Başlangıç", "Orta", "İleri", "Uzman"];
 
 const PROGRAMS = [
   "Adobe Premiere",
@@ -39,19 +34,45 @@ const inputFocusStyle = { outline: "none", borderColor: "rgba(168,85,247,0.5)", 
 const toggleActive   = { background: "rgba(168,85,247,0.2)", color: "#c084fc", border: "1px solid rgba(168,85,247,0.5)" };
 const toggleInactive = { background: "var(--bg)", color: "#8a8a9a", border: "1px solid var(--border)" };
 
+function SeviyeSecici({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  return (
+    <div className="flex flex-col gap-2">
+      {SEVIYE_OPTIONS.map((opt) => (
+        <button
+          key={opt}
+          type="button"
+          onClick={() => onChange(opt)}
+          className="w-full text-left px-4 py-3 rounded-xl text-[14px] font-semibold transition-all duration-150 flex items-center gap-3"
+          style={value === opt ? toggleActive : toggleInactive}
+        >
+          <span
+            className="w-4 h-4 rounded-full flex-shrink-0 flex items-center justify-center border transition-all"
+            style={value === opt
+              ? { background: "#c084fc", borderColor: "#c084fc" }
+              : { background: "transparent", borderColor: "#444" }
+            }
+          >
+            {value === opt && (
+              <svg viewBox="0 0 10 10" className="w-2.5 h-2.5" fill="white">
+                <circle cx="5" cy="5" r="3"/>
+              </svg>
+            )}
+          </span>
+          {opt}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 export default function CvForm() {
   const [status, setStatus]         = useState<"idle" | "sending" | "done" | "error">("idle");
-  const [experience, setExperience] = useState("");
+  const [montajSeviye, setMontajSeviye] = useState("");
+  const [cekimSeviye, setCekimSeviye]   = useState("");
   const [programs, setPrograms]     = useState<string[]>([]);
   const [sosyalMedya, setSosyalMedya] = useState<string[]>([]);
   const [usesAi, setUsesAi]         = useState("hayir");
   const [medeni, setMedeni]         = useState("");
-  const [showYokJoke, setShowYokJoke] = useState(false);
-
-  function handleExperience(opt: string) {
-    setExperience(opt);
-    setShowYokJoke(opt === "Yok — Sıfırdan öğrenmeye hazırım");
-  }
 
   function toggleProgram(p: string) {
     setPrograms((prev) => prev.includes(p) ? prev.filter((x) => x !== p) : [...prev, p]);
@@ -75,9 +96,11 @@ export default function CvForm() {
       age:            get("age"),
       medeni,
       ucretBeklenti:  get("ucretBeklenti"),
-      experience,
+      montajSeviye,
+      cekimSeviye,
       programs,
       sosyalMedya,
+      referanslar:    get("referanslar"),
       metaGoogle:     get("metaGoogle"),
       usesAi,
       aiTools:        get("aiTools"),
@@ -93,7 +116,8 @@ export default function CvForm() {
       if (res.ok) {
         setStatus("done");
         form.reset();
-        setExperience("");
+        setMontajSeviye("");
+        setCekimSeviye("");
         setPrograms([]);
         setSosyalMedya([]);
         setUsesAi("hayir");
@@ -112,30 +136,6 @@ export default function CvForm() {
 
   return (
     <>
-    {/* Espri popup */}
-    {showYokJoke && (
-      <div
-        className="fixed inset-0 z-50 flex items-center justify-center px-5"
-        style={{ background: "rgba(0,0,0,0.75)", backdropFilter: "blur(6px)" }}
-      >
-        <div
-          className="rounded-2xl p-8 max-w-sm w-full text-center"
-          style={{ background: "var(--surface)", border: "1px solid rgba(251,191,36,0.35)" }}
-        >
-          <div className="text-[52px] mb-4 leading-none">😄</div>
-          <p className="text-white font-bold text-[18px] mb-1">olmazsa biz seni ararız :)</p>
-          <button
-            type="button"
-            onClick={() => setShowYokJoke(false)}
-            className="mt-6 px-6 py-3 rounded-full text-[14px] font-bold transition-all w-full"
-            style={{ background: "rgba(251,191,36,0.15)", color: "#fbbf24", border: "1px solid rgba(251,191,36,0.4)" }}
-          >
-            şaka şaka, devam et 😄
-          </button>
-        </div>
-      </div>
-    )}
-
     <div className="rounded-2xl p-8" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
       <h2 className="text-white font-black text-[22px] mb-1">Başvuru Formu</h2>
       <p className="text-[#8a8a9a] text-[13px] mb-8">
@@ -209,42 +209,43 @@ export default function CvForm() {
               </div>
             </div>
             <div>
-              <label className={labelCls}>Ücret Beklentisi</label>
-              <input name="ucretBeklenti" placeholder="Örn: 25.000 ₺ / net" className={inputCls} style={inputStyle}
+              <label className={labelCls}>Ücret Beklentisi *</label>
+              <input name="ucretBeklenti" required placeholder="Örn: 25.000 ₺ / net" className={inputCls} style={inputStyle}
                 onFocus={(e) => Object.assign(e.target.style, inputFocusStyle)}
                 onBlur={(e) => Object.assign(e.target.style, inputStyle)} />
             </div>
           </div>
 
-          {/* Tecrübe — toggle butonlar */}
+          {/* Video Kurgu / Montaj Seviyesi */}
           <div>
-            <label className={labelCls}>Video Kurgu / Montaj Tecrübesi *</label>
-            <div className="flex flex-col gap-2">
-              {EXPERIENCE_OPTIONS.map((opt) => (
-                <button
-                  key={opt}
-                  type="button"
-                  onClick={() => handleExperience(opt)}
-                  className="w-full text-left px-4 py-3 rounded-xl text-[14px] font-semibold transition-all duration-150 flex items-center gap-3"
-                  style={experience === opt ? toggleActive : toggleInactive}
-                >
-                  <span
-                    className="w-4 h-4 rounded-full flex-shrink-0 flex items-center justify-center border transition-all"
-                    style={experience === opt
-                      ? { background: "#c084fc", borderColor: "#c084fc" }
-                      : { background: "transparent", borderColor: "#444" }
-                    }
-                  >
-                    {experience === opt && (
-                      <svg viewBox="0 0 10 10" className="w-2.5 h-2.5" fill="white">
-                        <circle cx="5" cy="5" r="3"/>
-                      </svg>
-                    )}
-                  </span>
-                  {opt}
-                </button>
-              ))}
-            </div>
+            <label className={labelCls}>Video Kurgu / Montaj Seviyesi *</label>
+            <SeviyeSecici value={montajSeviye} onChange={setMontajSeviye} />
+          </div>
+
+          {/* Video Çekim / Fotoğrafçılık Seviyesi */}
+          <div>
+            <label className={labelCls}>Video Çekim / Fotoğrafçılık Seviyesi</label>
+            <SeviyeSecici value={cekimSeviye} onChange={setCekimSeviye} />
+          </div>
+
+          {/* Referanslar */}
+          <div>
+            <label className={labelCls}>
+              Referanslar{" "}
+              <span className="text-[#555] normal-case font-normal">(opsiyonel)</span>
+            </label>
+            <p className="text-[12px] text-[#666] mb-3">
+              Yönettiğiniz Instagram sayfa linkleri, çektiğiniz/kurguladığınız video linkleri vb. varsa paylaşın.
+            </p>
+            <textarea
+              name="referanslar"
+              rows={3}
+              placeholder="Örn: instagram.com/hesap-adi, youtube.com/watch?v=..."
+              className={`${inputCls} resize-none`}
+              style={inputStyle}
+              onFocus={(e) => Object.assign(e.target.style, inputFocusStyle)}
+              onBlur={(e) => Object.assign(e.target.style, inputStyle)}
+            />
           </div>
 
           {/* Programlar */}
@@ -377,7 +378,7 @@ export default function CvForm() {
 
           <button
             type="submit"
-            disabled={status === "sending" || !experience}
+            disabled={status === "sending" || !montajSeviye}
             className="btn btn-primary w-full py-4 text-[15px] disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {status === "sending" ? (
