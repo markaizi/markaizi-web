@@ -38,7 +38,6 @@ export default function SosyalMedyaPage() {
         { icon: "🔍", title: "Hashtag & SEO", desc: "Platformun arama algoritmalarına uygun hashtag ve açıklama stratejisi." },
         { icon: "📈", title: "Büyüme Stratejisi", desc: "Organik büyümeyi hızlandırmak için sürekli güncellenen içerik ve yayın stratejisi." },
       ]}
-      calculatorCta
       faq={[
         {
           q: "Paylaşılacak içerikleri kim hazırlıyor?",

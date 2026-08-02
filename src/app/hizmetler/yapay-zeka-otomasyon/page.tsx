@@ -40,7 +40,6 @@ export default function YapayZekaOtomasyonPage() {
         { icon: "📊", title: "Otomatik Raporlama", desc: "Tüm kampanyalarınızın verilerini tek panelde toplayıp otomatik raporlar üretiyoruz." },
         { icon: "🤝", title: "Müşteri İletişimi Otomasyonu", desc: "Chatbot, otomatik mesaj akışları ve CRM entegrasyonlarıyla müşteri deneyimini ölçeklendiriyoruz." },
       ]}
-      noPricingNote="Yapay zeka & otomasyon hizmetinin fiyatlandırması; proje kapsamı, içerik adedi, otomasyon karmaşıklığı ve süreye göre belirlenmektedir. Size özel teklif için WhatsApp veya iletişim formu üzerinden ulaşın — 24 saat içinde yanıt veriyoruz."
       faq={[
         {
           q: "Yapay zeka & otomasyon işletmeme ne kazandırır?",

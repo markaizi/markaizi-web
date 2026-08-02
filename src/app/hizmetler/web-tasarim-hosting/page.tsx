@@ -34,68 +34,6 @@ export default function WebTasarimPage() {
           { icon: "🔍", title: "SEO Altyapısı", desc: "Arama motorlarında üst sıralara çıkmak için teknik SEO temelleri." },
           { icon: "✏️", title: "Kolay Yönetim Paneli", desc: "Teknik bilgi olmadan içerik güncelleyebileceğiniz kullanıcı dostu panel." },
         ]}
-        pricing={[
-          {
-            name: "Basit Tanıtım Sitesi",
-            price: "14.900",
-            period: "",
-            paymentSlug: "web-basit",
-            desc: "Küçük işletmeler ve bireysel girişimciler için tek seferlik kurulum.",
-            features: [
-              "5 sayfaya kadar tasarım",
-              "Mobil uyumlu & hızlı",
-              "İletişim formu",
-              "SSL sertifikası",
-              "1 yıl hosting dahil",
-              "Domain kurulumu",
-            ],
-          },
-          {
-            name: "Kurumsal Web Sitesi",
-            price: "29.900",
-            period: "",
-            paymentSlug: "web-kurumsal",
-            desc: "Marka kimliğini yansıtan, SEO uyumlu kurumsal site.",
-            featured: true,
-            features: [
-              "15 sayfaya kadar tasarım",
-              "Özel marka kimliği entegrasyonu",
-              "SEO temel optimizasyonu",
-              "Blog / Haber yönetim paneli",
-              "Google Analytics entegrasyonu",
-              "1 yıl hosting & destek",
-            ],
-          },
-          {
-            name: "Gelişmiş SEO'lu Site",
-            price: "49.900",
-            period: "",
-            paymentSlug: "web-seo",
-            desc: "Kapsamlı SEO altyapısı ve yüksek performanslı tam kurulum.",
-            features: [
-              "Sınırsız sayfa",
-              "Kapsamlı on-page SEO optimizasyonu",
-              "Sayfa hızı optimizasyonu",
-              "Schema markup & yapısal veri",
-              "6 ay SEO takip & raporlama",
-              "Öncelikli teknik destek",
-            ],
-          },
-          {
-            name: "E-Ticaret Sitesi",
-            price: null,
-            desc: "Ürün sayısı ve özel gereksinimlere göre fiyatlandırılır. Teklif almak için formu doldurun.",
-            cta: "Teklif Formu →",
-            features: [
-              "Sınırsız ürün kataloğu",
-              "Güvenli ödeme entegrasyonu",
-              "Stok & sipariş yönetimi",
-              "Mobil uyumlu alışveriş deneyimi",
-              "SEO & performans optimizasyonu",
-              "Kargo entegrasyonu",
-            ],
-          },
-        ]}
         faq={[
           {
             q: "Web sitem ne kadar sürede hazır olur?",
@@ -107,7 +45,7 @@ export default function WebTasarimPage() {
           },
           {
             q: "Hosting ve domain ücreti dahil mi?",
-            a: "Temel paketlerde ilk yıl hosting kurulumu ve domain kaydı hizmet bedeline dahildir. İkinci yıldan itibaren hosting (yıllık yaklaşık 1.500–3.000 ₺) ve domain yenileme ücreti ayrıca fatura edilir. SSL sertifikası tüm paketlerde ücretsizdir.",
+            a: "Temel paketlerde ilk yıl hosting kurulumu ve domain kaydı hizmet bedeline dahildir. İkinci yıldan itibaren hosting ve domain yenileme ücreti ayrıca fatura edilir; güncel tutarı size özel teklifte paylaşırız. SSL sertifikası tüm paketlerde ücretsizdir.",
           },
           {
             q: "Sitem SEO uyumlu ve mobil uyumlu olacak mı?",

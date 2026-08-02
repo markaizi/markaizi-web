@@ -1,51 +1,40 @@
 import { MetadataRoute } from "next";
+import { BLOG_POSTS } from "@/lib/blog-data";
 
 const BASE = "https://markaizi.com.tr";
 
-const BLOG_SLUGS = [
-  "instagram-algoritmasi",
-  "google-ads-butce-optimizasyonu",
-  "meta-ads-roas",
-  "tiktok-for-business",
-  "yapay-zeka-icerik",
-  "core-web-vitals",
-  "mobilya-reklami-nasil-verilir",
-  "mobilya-magazalari-icin-instagram",
-  "sitelerde-musteri-cekmenin-yollari",
-  "mobilya-yerel-seo-rehberi",
-];
+// Sitenin en son içerik revizyon tarihi. Her istekte "şimdi" döndürmek yerine
+// sabit bir tarih kullanılır — gerçek bir güncelleme olduğunda elle güncellenir.
+const SITE_UPDATED = new Date("2026-08-02");
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const now = new Date();
-
   const static_pages: MetadataRoute.Sitemap = [
     // ── Ana sayfalar ──────────────────────────────────────────
-    { url: BASE,                                             lastModified: now, changeFrequency: "weekly",  priority: 1.0 },
-    { url: `${BASE}/blog`,                                   lastModified: now, changeFrequency: "weekly",  priority: 0.8 },
-    { url: `${BASE}/mobilya-reklam-ajansi`,                  lastModified: now, changeFrequency: "monthly", priority: 0.9 },
-    { url: `${BASE}/sss`,                                    lastModified: now, changeFrequency: "monthly", priority: 0.7 },
-    { url: `${BASE}/cv`,                                     lastModified: now, changeFrequency: "monthly", priority: 0.5 },
+    { url: BASE,                                             lastModified: SITE_UPDATED, changeFrequency: "weekly",  priority: 1.0 },
+    { url: `${BASE}/blog`,                                   lastModified: SITE_UPDATED, changeFrequency: "weekly",  priority: 0.8 },
+    { url: `${BASE}/mobilya-reklam-ajansi`,                  lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.9 },
+    { url: `${BASE}/sss`,                                    lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${BASE}/cv`,                                     lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.5 },
 
     // ── Hizmet sayfaları ──────────────────────────────────────
-    { url: `${BASE}/hizmetler/sosyal-medya-yonetimi`,        lastModified: now, changeFrequency: "monthly", priority: 0.9 },
-    { url: `${BASE}/hizmetler/meta-reklamlari`,              lastModified: now, changeFrequency: "monthly", priority: 0.9 },
-    { url: `${BASE}/hizmetler/google-reklamlari`,            lastModified: now, changeFrequency: "monthly", priority: 0.9 },
-    { url: `${BASE}/hizmetler/tiktok-reklamlari`,            lastModified: now, changeFrequency: "monthly", priority: 0.8 },
-    { url: `${BASE}/hizmetler/yapay-zeka-otomasyon`,         lastModified: now, changeFrequency: "monthly", priority: 0.8 },
-    { url: `${BASE}/hizmetler/web-tasarim-hosting`,          lastModified: now, changeFrequency: "monthly", priority: 0.8 },
-    { url: `${BASE}/hizmetler/web-tasarim-hosting/teklif`,   lastModified: now, changeFrequency: "monthly", priority: 0.6 },
-    { url: `${BASE}/hizmetler/icerik-uretimi`,               lastModified: now, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${BASE}/hizmetler/sosyal-medya-yonetimi`,        lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.9 },
+    { url: `${BASE}/hizmetler/meta-reklamlari`,              lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.9 },
+    { url: `${BASE}/hizmetler/google-reklamlari`,            lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.9 },
+    { url: `${BASE}/hizmetler/tiktok-reklamlari`,            lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${BASE}/hizmetler/yapay-zeka-otomasyon`,         lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${BASE}/hizmetler/web-tasarim-hosting`,          lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${BASE}/hizmetler/web-tasarim-hosting/teklif`,   lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.6 },
 
     // ── Yasal sayfalar ────────────────────────────────────────
-    { url: `${BASE}/kvkk`,                                   lastModified: now, changeFrequency: "yearly",  priority: 0.3 },
-    { url: `${BASE}/gizlilik-politikasi`,                    lastModified: now, changeFrequency: "yearly",  priority: 0.3 },
-    { url: `${BASE}/cerez-politikasi`,                       lastModified: now, changeFrequency: "yearly",  priority: 0.3 },
-    { url: `${BASE}/kullanim-sartlari`,                      lastModified: now, changeFrequency: "yearly",  priority: 0.3 },
+    { url: `${BASE}/kvkk`,                                   lastModified: SITE_UPDATED, changeFrequency: "yearly",  priority: 0.3 },
+    { url: `${BASE}/gizlilik-politikasi`,                    lastModified: SITE_UPDATED, changeFrequency: "yearly",  priority: 0.3 },
+    { url: `${BASE}/cerez-politikasi`,                       lastModified: SITE_UPDATED, changeFrequency: "yearly",  priority: 0.3 },
+    { url: `${BASE}/kullanim-sartlari`,                      lastModified: SITE_UPDATED, changeFrequency: "yearly",  priority: 0.3 },
   ];
 
-  const blog_pages: MetadataRoute.Sitemap = BLOG_SLUGS.map((slug) => ({
-    url: `${BASE}/blog/${slug}`,
-    lastModified: now,
+  const blog_pages: MetadataRoute.Sitemap = BLOG_POSTS.map((post) => ({
+    url: `${BASE}/blog/${post.slug}`,
+    lastModified: new Date(post.dateISO),
     changeFrequency: "monthly" as const,
     priority: 0.7,
   }));

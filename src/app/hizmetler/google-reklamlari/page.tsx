@@ -36,7 +36,6 @@ export default function GoogleReklamlariPage() {
         { icon: "🗝️", title: "Anahtar Kelime Yönetimi", desc: "Doğru kelimelere teklif verin, yanlış aramalarda para kaybetmeyin." },
         { icon: "📊", title: "Dönüşüm Takibi", desc: "Formdan telefona, satıştan ziyarete kadar her dönüşümü ölçün." },
       ]}
-      calculatorCta
       faq={[
         {
           q: "Google Ads reklam bütçem ne kadar olmalı?",

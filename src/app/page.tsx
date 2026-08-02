@@ -24,7 +24,7 @@ const jsonLd = {
   name: "markaizi Dijital Reklam Ajansı",
   url: "https://markaizi.com.tr",
   logo: "https://markaizi.com.tr/logo.svg",
-  image: "https://markaizi.com.tr/opengraph-image.png",
+  image: "https://markaizi.com.tr/opengraph-image",
   description:
     "Ankara merkezli dijital reklam ajansı. Sosyal medya yönetimi, Google & Meta reklamları, TikTok reklamları, içerik üretimi ve web tasarım hizmetleri.",
   telephone: "+90-552-077-27-00",

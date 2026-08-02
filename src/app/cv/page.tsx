@@ -5,6 +5,7 @@ import CvForm from "./CvForm";
 export const metadata: Metadata = {
   title: "Kariyer — markaizi",
   description: "markaizi dijital reklam ajansı ekibine katılmak için başvuru formunu doldurun.",
+  alternates: { canonical: "https://markaizi.com.tr/cv" },
 };
 
 export default function CvPage() {
@@ -22,6 +23,7 @@ export default function CvPage() {
       </div>
 
       <div className="max-w-[720px] mx-auto px-5 py-12">
+        <h1 className="sr-only">markaizi Kariyer Başvurusu</h1>
         <CvForm />
       </div>
     </div>

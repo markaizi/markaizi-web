@@ -47,9 +47,6 @@ export const metadata: Metadata = {
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large" },
   },
-  alternates: {
-    canonical: "https://markaizi.com.tr",
-  },
 };
 
 export default function RootLayout({

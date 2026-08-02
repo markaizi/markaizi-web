@@ -1,5 +1,3 @@
-"use client";
-import { useState } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/sections/Footer";
 import WhatsApp from "@/components/WhatsApp";
@@ -73,7 +71,7 @@ const FAQS = [
       },
       {
         q: "Hosting ve domain ücreti ayrıca mı ödeniyor?",
-        a: "Temel paketlerde ilk yıl hosting ve domain kurulumu hizmet bedeline dahildir. İkinci yıldan itibaren hosting bedeli (yıllık yaklaşık 1.500-3.000 ₺) ve domain yenileme ücreti ayrıca fatura edilir.",
+        a: "Temel paketlerde ilk yıl hosting ve domain kurulumu hizmet bedeline dahildir. İkinci yıldan itibaren hosting bedeli ve domain yenileme ücreti ayrıca fatura edilir; güncel tutarı size özel teklifte paylaşırız.",
       },
     ],
   },
@@ -95,8 +93,6 @@ const faqJsonLd = {
 };
 
 export default function SSSPage() {
-  const [open, setOpen] = useState<string | null>(null);
-
   return (
     <>
       <script
@@ -127,43 +123,25 @@ export default function SSSPage() {
               <div key={group.category}>
                 <h2 className="text-[13px] font-bold uppercase tracking-widest text-[#c084fc] mb-5">{group.category}</h2>
                 <div className="space-y-3">
-                  {group.items.map((item) => {
-                    const id = group.category + item.q;
-                    const isOpen = open === id;
-                    return (
-                      <div
-                        key={item.q}
-                        className="rounded-xl overflow-hidden transition-all duration-200"
-                        style={{
-                          background: "var(--surface)",
-                          border: `1px solid ${isOpen ? "rgba(168,85,247,0.4)" : "var(--border)"}`,
-                        }}
-                      >
-                        <button
-                          onClick={() => setOpen(isOpen ? null : id)}
-                          className="w-full flex items-center justify-between gap-4 p-5 text-left"
-                        >
-                          <span className="font-semibold text-[15px] text-white leading-snug">{item.q}</span>
-                          <span
-                            className="flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center transition-all duration-200"
-                            style={{
-                              background: isOpen ? "var(--grad)" : "rgba(255,255,255,0.06)",
-                              transform: isOpen ? "rotate(45deg)" : "rotate(0deg)",
-                            }}
-                          >
-                            <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5" stroke="white" strokeWidth="2.5">
-                              <path d="M12 5v14M5 12h14" strokeLinecap="round"/>
-                            </svg>
-                          </span>
-                        </button>
-                        {isOpen && (
-                          <div className="px-5 pb-5">
-                            <p className="text-[14px] text-[#8a8a9a] leading-[1.8]">{item.a}</p>
-                          </div>
-                        )}
+                  {group.items.map((item) => (
+                    <details
+                      key={item.q}
+                      className="faq-details rounded-xl overflow-hidden transition-all duration-200"
+                      style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+                    >
+                      <summary className="faq-summary w-full flex items-center justify-between gap-4 p-5 cursor-pointer list-none">
+                        <span className="font-semibold text-[15px] text-white leading-snug">{item.q}</span>
+                        <span className="faq-icon flex-shrink-0 w-7 h-7 rounded-full flex items-center justify-center transition-all duration-200">
+                          <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5" stroke="white" strokeWidth="2.5">
+                            <path d="M12 5v14M5 12h14" strokeLinecap="round"/>
+                          </svg>
+                        </span>
+                      </summary>
+                      <div className="px-5 pb-5">
+                        <p className="text-[14px] text-[#8a8a9a] leading-[1.8]">{item.a}</p>
                       </div>
-                    );
-                  })}
+                    </details>
+                  ))}
                 </div>
               </div>
             ))}

@@ -25,7 +25,8 @@ export async function generateMetadata({
       title: post.title,
       description: post.excerpt,
       type: "article",
-      publishedTime: post.date,
+      publishedTime: post.dateISO,
+      modifiedTime: post.dateISO,
       authors: ["markaizi"],
     },
   };
@@ -48,6 +49,9 @@ export default async function BlogPostPage({
     inLanguage: "tr",
     url: `https://markaizi.com.tr/blog/${post.slug}`,
     mainEntityOfPage: `https://markaizi.com.tr/blog/${post.slug}`,
+    datePublished: post.dateISO,
+    dateModified: post.dateISO,
+    image: "https://markaizi.com.tr/opengraph-image",
     author: {
       "@type": "Organization",
       name: "markaizi Dijital Reklam Ajansı",

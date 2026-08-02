@@ -7,6 +7,7 @@ import LegalPageTemplate from "@/components/LegalPageTemplate";
 export const metadata: Metadata = {
   title: "KVKK Aydınlatma Metni — markaizi",
   description: "markaizi Dijital Reklam Ajansı KVKK kapsamında kişisel verilerin korunması hakkında aydınlatma metni.",
+  alternates: { canonical: "https://markaizi.com.tr/kvkk" },
 };
 
 export default function KVKKPage() {

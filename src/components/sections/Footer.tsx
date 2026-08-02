@@ -9,7 +9,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-16 mb-16">
           {/* Brand */}
           <div>
-            <a href="#" className="inline-block mb-5">
+            <a href="/" className="inline-block mb-5">
               <Logo height={56} />
             </a>
             <p className="text-sm text-[#8a8a9a] leading-relaxed max-w-[240px]">
@@ -34,9 +34,10 @@ export default function Footer() {
             <FooterCol
               title="Şirket"
               links={[
-                { label: "Hakkımızda", href: "#hakkimizda" },
-                { label: "Portföy",    href: "#portfolio" },
-                { label: "İletişim",   href: "#iletisim" },
+                { label: "Hakkımızda", href: "/#hakkimizda" },
+                { label: "Portföy",    href: "/#portfolio" },
+                { label: "İletişim",   href: "/#iletisim" },
+                { label: "Blog",       href: "/blog" },
                 { label: "Kariyer",    href: "/cv" },
               ]}
             />

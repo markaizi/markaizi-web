@@ -1,5 +1,5 @@
-import { redirect } from "next/navigation";
+import { permanentRedirect } from "next/navigation";
 
 export default function IcerikUretimiPage() {
-  redirect("/hizmetler/sosyal-medya-yonetimi");
+  permanentRedirect("/hizmetler/sosyal-medya-yonetimi");
 }

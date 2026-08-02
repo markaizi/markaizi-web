@@ -34,7 +34,6 @@ export default function TikTokReklamlariPage() {
         { icon: "🔥", title: "Trend Takibi", desc: "Güncel TikTok trendlerini reklamlarınıza entegre ederek viral potansiyel yaratıyoruz." },
         { icon: "📈", title: "Performans Takibi", desc: "Görüntülenme, tıklama ve dönüşüm verilerini düzenli raporluyoruz." },
       ]}
-      calculatorCta
       faq={[
         {
           q: "TikTok reklamları hangi işletmeler için uygun?",

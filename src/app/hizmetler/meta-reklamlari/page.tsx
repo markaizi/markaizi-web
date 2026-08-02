@@ -34,7 +34,6 @@ export default function MetaReklamlariPage() {
         { icon: "💰", title: "Bütçe Optimizasyonu", desc: "En düşük maliyetle en fazla dönüşümü sağlayacak bütçe dağılımı." },
         { icon: "📊", title: "Haftalık Raporlama", desc: "Tıklama, dönüşüm, ROAS ve maliyet verilerini şeffaf raporlarla görün." },
       ]}
-      calculatorCta
       faq={[
         {
           q: "Meta (Facebook & Instagram) reklamları için minimum bütçe nedir?",

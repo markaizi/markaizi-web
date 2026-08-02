@@ -191,13 +191,12 @@ input:focus, select:focus, textarea:focus {
 .testimonial-track { display: flex; transition: transform 0.5s cubic-bezier(0.4,0,0.2,1); }
 .testimonial-card  { min-width: 100%; }
 
-/* ── Pricing Featured Amount ───────────── */
-.pricing-featured-amount {
-  color: #ffffff !important;
-  background: none !important;
-  -webkit-text-fill-color: #ffffff !important;
-  text-shadow: 0 0 20px rgba(255,255,255,0.3);
-}
+/* ── FAQ Akordeon (native <details>) ────── */
+.faq-summary::-webkit-details-marker { display: none; }
+.faq-summary { list-style: none; }
+.faq-icon { background: rgba(255,255,255,0.06); }
+.faq-details[open] { border-color: rgba(168,85,247,0.4) !important; }
+.faq-details[open] .faq-icon { background: var(--grad); transform: rotate(45deg); }
 
 /* ── Legal Pages ───────────────────────── */
 .legal-content h2 {

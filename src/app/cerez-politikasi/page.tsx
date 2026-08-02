@@ -7,6 +7,7 @@ import LegalPageTemplate from "@/components/LegalPageTemplate";
 export const metadata: Metadata = {
   title: "Çerez Politikası — markaizi",
   description: "markaizi web sitesinde kullanılan çerezler ve yönetim seçenekleri hakkında bilgi.",
+  alternates: { canonical: "https://markaizi.com.tr/cerez-politikasi" },
 };
 
 export default function CerezPolitikasiPage() {

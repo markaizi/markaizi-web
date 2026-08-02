@@ -9,6 +9,7 @@ export type BlogPost = {
   title: string;
   excerpt: string;
   date: string;
+  dateISO: string; // YYYY-MM-DD — yapılandırılmış veri ve <meta> etiketleri için
   readTime: string;
   color: string;
   intro: string;
@@ -21,13 +22,14 @@ export const BLOG_POSTS: BlogPost[] = [
     slug: "instagram-algoritmasi",
     category: "Sosyal Medya",
     color: "#c084fc",
-    title: "Instagram Algoritması 2025: Organik Büyüme İçin 10 Strateji",
+    title: "Instagram Algoritması 2026: Organik Büyüme İçin 10 Strateji",
     excerpt:
       "Instagram'ın son algoritma güncellemeleri neleri değiştirdi? Reels, Carousel ve Story formatlarında nasıl daha fazla erişim elde edersiniz?",
-    date: "15 Ocak 2025",
+    date: "15 Ocak 2026",
+    dateISO: "2026-01-15",
     readTime: "7 dk",
     intro:
-      "Instagram algoritması, içeriklerin kimde ve ne zaman gösterileceğini belirleyen karmaşık bir sistemdir. 2025 itibarıyla Meta, organik içerikleri orijinallik, etkileşim hızı ve tamamlanma oranı üzerinden değerlendiriyor. Aşağıdaki 10 strateji, bu kriterleri doğrudan etkileyen uygulanabilir adımlardır.",
+      "Instagram algoritması, içeriklerin kimde ve ne zaman gösterileceğini belirleyen karmaşık bir sistemdir. 2026 itibarıyla Meta, organik içerikleri orijinallik, etkileşim hızı ve tamamlanma oranı üzerinden değerlendiriyor. Aşağıdaki 10 strateji, bu kriterleri doğrudan etkileyen uygulanabilir adımlardır.",
     sections: [
       {
         h2: "1. Reels Formatına Öncelik Verin",
@@ -51,7 +53,7 @@ export const BLOG_POSTS: BlogPost[] = [
       },
       {
         h2: "6. Hashtag Kullanımını Sadeleştirin",
-        body: "30 hashtag döneminin geride kaldığını kabul edin. 2025'te Instagram, 3–5 adet, içerikle gerçekten ilgili hashtag öneriyor. Niche (özel kitle) hashtag'leri, milyonluk genel hashtag'lerden çok daha iyi hedefleme ve keşfedilebilirlik sağlar.",
+        body: "30 hashtag döneminin geride kaldığını kabul edin. 2026'da Instagram, 3–5 adet, içerikle gerçekten ilgili hashtag öneriyor. Niche (özel kitle) hashtag'leri, milyonluk genel hashtag'lerden çok daha iyi hedefleme ve keşfedilebilirlik sağlar.",
       },
       {
         h2: "7. Story Etkileşim Araçlarını Aktif Kullanın",
@@ -80,7 +82,8 @@ export const BLOG_POSTS: BlogPost[] = [
     title: "Google Ads'de Bütçeyi Optimize Etmenin 7 Yolu",
     excerpt:
       "Tıklama başı maliyeti (CPC) nasıl düşürülür? Anahtar kelime kalite puanı neden önemlidir ve nasıl artırılır?",
-    date: "22 Ocak 2025",
+    date: "22 Ocak 2026",
+    dateISO: "2026-01-22",
     readTime: "9 dk",
     intro:
       "Google Ads'de harcanan her lira, doğru yapılandırılmış bir kampanyada çok daha fazla getiri sağlar. Ancak çoğu işletme, yanlış anahtar kelime seçimi ve zayıf kalite puanı nedeniyle bütçesinin önemli bir kısmını israf eder. İşte bütçenizi optimize etmenin 7 kanıtlanmış yolu.",
@@ -124,7 +127,8 @@ export const BLOG_POSTS: BlogPost[] = [
     title: "Meta Ads'de ROAS Artırmanın Kesin Yolları",
     excerpt:
       "Facebook ve Instagram reklamlarında reklam harcaması getirisini (ROAS) nasıl maksimize edersiniz? A/B test stratejileri ve kreatif ipuçları.",
-    date: "5 Şubat 2025",
+    date: "5 Şubat 2026",
+    dateISO: "2026-02-05",
     readTime: "8 dk",
     intro:
       "ROAS (Return on Ad Spend — Reklam Harcaması Getirisi), harcadığınız her lira için elde ettiğiniz geliri ölçer. ROAS = 3 demek, 1 TL harcayıp 3 TL kazanmak demektir. Meta Ads'de başarılı kampanyalar için bu oranı nasıl maksimize edeceğinizi adım adım açıklıyoruz.",
@@ -168,7 +172,8 @@ export const BLOG_POSTS: BlogPost[] = [
     title: "TikTok For Business: Markalar İçin Kapsamlı Rehber",
     excerpt:
       "TikTok Ads Manager kullanımı, In-Feed reklam formatları ve Türkiye pazarında TikTok'u etkin kullanma stratejileri.",
-    date: "12 Şubat 2025",
+    date: "12 Şubat 2026",
+    dateISO: "2026-02-12",
     readTime: "10 dk",
     intro:
       "TikTok, Türkiye'de 25 milyonu aşkın aktif kullanıcısıyla artık yalnızca genç neslin platformu değil. 25–44 yaş grubunun kullanımı her yıl artıyor ve platform, özellikle moda, yemek, güzellik, hizmet ve eğitim sektörlerinde markalar için güçlü bir satış kanalına dönüşüyor.",
@@ -212,7 +217,8 @@ export const BLOG_POSTS: BlogPost[] = [
     title: "Yapay Zeka ile İçerik Üretimi: Ajansların Kullandığı Araçlar",
     excerpt:
       "ChatGPT, Midjourney, Canva AI ve daha fazlası. Dijital ajanslar içerik üretimini nasıl hızlandırıyor ve kaliteyi nasıl koruyor?",
-    date: "20 Şubat 2025",
+    date: "20 Şubat 2026",
+    dateISO: "2026-02-20",
     readTime: "6 dk",
     intro:
       "Yapay zeka araçları, dijital ajansların içerik üretim hızını dramatik biçimde artırıyor. Aylarca süren süreçler saatlere iniyor; ancak kaliteyi korumak için insan denetimi her zamankinden daha kritik. İşte profesyonel ajansların aktif kullandığı araçlar ve kullanım senaryoları.",
@@ -249,10 +255,11 @@ export const BLOG_POSTS: BlogPost[] = [
     slug: "core-web-vitals",
     category: "Web Tasarım",
     color: "#a78bfa",
-    title: "2025'te Web Sitesi Hız Optimizasyonu: Core Web Vitals Rehberi",
+    title: "2026'da Web Sitesi Hız Optimizasyonu: Core Web Vitals Rehberi",
     excerpt:
       "Google'ın sıralamada önem verdiği Core Web Vitals metrikleri nelerdir? LCP, INP ve CLS nasıl iyileştirilir?",
-    date: "1 Mart 2025",
+    date: "1 Mart 2026",
+    dateISO: "2026-03-01",
     readTime: "8 dk",
     intro:
       "Google, 2021'den bu yana Core Web Vitals'ı arama sıralama faktörü olarak kullanıyor. Yavaş veya görsel olarak dengesiz bir site, rakipleriniz tarafından geçilmenize yol açar. Bu rehberde, teknik bilgi gerektirmeyen pratik optimizasyon adımlarını bulacaksınız.",
@@ -297,6 +304,7 @@ export const BLOG_POSTS: BlogPost[] = [
     excerpt:
       "Mobilya mağazanız için Instagram ve Google'da reklam vermenin doğru yolu. Bütçe, hedefleme, görsel seçimi ve mobilya sektörüne özel kampanya kurgusu.",
     date: "12 Nisan 2026",
+    dateISO: "2026-04-12",
     readTime: "9 dk",
     intro:
       "Mobilya reklamı, diğer sektör reklamlarından farklı işler. Bir koltuk takımı anlık kararla satın alınmaz: müşteri haftalarca araştırır, görselleri karşılaştırır, fiyat sorar ve en sonunda mağazaya gelir. Bu yüzden 'reklam verdim, satış gelmedi' diyen mobilyacıların çoğu aslında yanlış kanalda, yanlış kurguyla reklam vermiştir. Bu rehberde, Ankara Siteler'den Türkiye geneline yüzlerce mobilya kampanyası yönetmiş bir ekip olarak mobilya reklamının doğrusunu adım adım anlatıyoruz.",
@@ -345,6 +353,7 @@ export const BLOG_POSTS: BlogPost[] = [
     excerpt:
       "Instagram'da mobilya satmanın püf noktaları: showroom çekimleri, Reels stratejisi, fiyat sorularını yönetme ve takipçiyi mağazaya getirme yöntemleri.",
     date: "3 Mayıs 2026",
+    dateISO: "2026-05-03",
     readTime: "8 dk",
     intro:
       "Instagram, mobilya sektörünün en güçlü vitrini. Müşteriler artık mağaza gezmeden önce Instagram'da geziyor; hesabınız düzensiz, görselleriniz karanlık ve son paylaşımınız 3 ay önceyse, o müşteri rakibinizin showroom'una gidiyor. İşte Ankara Siteler'deki mobilya mağazaları için yıllardır uyguladığımız, takipçiyi gerçek müşteriye çeviren 8 taktik.",
@@ -393,6 +402,7 @@ export const BLOG_POSTS: BlogPost[] = [
     excerpt:
       "Ankara Siteler'de binlerce mobilya mağazası arasından sıyrılmanın yolları: dijital görünürlük, Google Haritalar, Instagram ve WhatsApp ile müşteri kazanma rehberi.",
     date: "7 Haziran 2026",
+    dateISO: "2026-06-07",
     readTime: "8 dk",
     intro:
       "Siteler, Türkiye'nin en büyük mobilya üretim ve satış merkezi — ve aynı zamanda en rekabetçisi. Aynı cadde üzerinde onlarca mağaza aynı müşteriye satış yapmaya çalışıyor. Eskiden vitrin ve tabela yeterdi; bugün müşteri Siteler'e gelmeden önce telefonundan 3-4 mağaza belirliyor ve sadece onları geziyor. O listeye girmek ile girememek arasındaki fark, dijital görünürlük. İşte Siteler esnafı için hazırladığımız 7 maddelik yol haritası.",
@@ -437,6 +447,7 @@ export const BLOG_POSTS: BlogPost[] = [
     excerpt:
       "\"Yakınımdaki mobilya mağazası\" aramalarında üst sıraya çıkın: Google İşletme Profili optimizasyonu, yorum stratejisi ve yerel arama görünürlüğü rehberi.",
     date: "28 Haziran 2026",
+    dateISO: "2026-06-28",
     readTime: "7 dk",
     intro:
       "Google'da 'yakınımdaki mobilya mağazası' veya 'siteler mobilya' arayan müşteri, satın almaya en yakın müşteridir — arabasına binip gelmeye hazırdır. Bu aramalarda ilk 3 harita sonucunda (local pack) görünen mağazalar telefonları ve ziyaretleri alırken, alt sıradakiler listeye bile giremez. İyi haber: yerel SEO, mobilya sektöründe çoğu mağazanın ihmal ettiği, doğru yapıldığında birkaç ayda sonuç veren bir alandır.",

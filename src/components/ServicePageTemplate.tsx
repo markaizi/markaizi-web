@@ -4,26 +4,11 @@ import Footer from "@/components/sections/Footer";
 import WhatsApp from "@/components/WhatsApp";
 import ServiceFAQ, { FAQItem } from "@/components/ServiceFAQ";
 
-export interface PricingPackage {
-  name: string;
-  price: string | null; // null → "Teklif Al"
-  period?: string;
-  desc: string;
-  features: string[];
-  featured?: boolean;
-  cta?: string;
-  paymentSlug?: string; // /odeme/[slug] yönlendirmesi için
-}
-
 export interface ServicePageProps {
   title: string;
   subtitle: string;
   description: string[];
   features: { icon: string; title: string; desc: string }[];
-  pricing?: PricingPackage[];
-  pricingNote?: string;   // fiyat tablosunun altında gösterilecek not
-  noPricingNote?: string; // fiyat yoksa alt not
-  calculatorCta?: boolean; // fiyat tablosu yerine "Fiyatını Hesapla" yönlendirmesi
   faq?: FAQItem[]; // hizmete özel sıkça sorulan sorular
   icon: React.ReactNode;
   badge: string;
@@ -34,10 +19,6 @@ export default function ServicePageTemplate({
   subtitle,
   description,
   features,
-  pricing,
-  pricingNote,
-  noPricingNote,
-  calculatorCta,
   faq,
   icon,
   badge,
@@ -188,59 +169,6 @@ export default function ServicePageTemplate({
       </main>
       <Footer />
       <WhatsApp />
-    </>
-  );
-}
-
-function PricingCard({ pkg }: { pkg: PricingPackage }) {
-  return (
-    <>
-      {pkg.featured && (
-        <span
-          className="inline-block text-[11px] font-bold tracking-wide uppercase text-white px-3.5 py-1 rounded-full mb-4"
-          style={{ background: "var(--grad)" }}
-        >
-          Önerilen
-        </span>
-      )}
-      <div className="text-base font-bold mb-3">{pkg.name}</div>
-      {pkg.price ? (
-        <div className="flex items-baseline gap-1 mb-3">
-          <span className="text-[16px] font-semibold text-[#8a8a9a]">₺</span>
-          <span
-            className={`text-[40px] font-black leading-none ${pkg.featured ? "pricing-featured-amount" : "gradient-text"}`}
-          >
-            {pkg.price}
-          </span>
-          <span className="text-[13px] text-[#8a8a9a]">{pkg.period ?? "/ay"}</span>
-        </div>
-      ) : (
-        <div className="text-[28px] font-black gradient-text mb-3">Teklif Al</div>
-      )}
-      <p className="text-[13px] text-[#8a8a9a] mb-6 leading-relaxed">{pkg.desc}</p>
-      <ul className="flex flex-col gap-3 mb-7 flex-1">
-        {pkg.features.map((f) => (
-          <li key={f} className="flex items-start gap-2.5 text-[13px] leading-snug">
-            <span
-              className="inline-flex w-[18px] h-[18px] items-center justify-center rounded-full text-[9px] flex-shrink-0 mt-0.5"
-              style={{ background: "var(--grad)" }}
-            >
-              ✓
-            </span>
-            {f}
-          </li>
-        ))}
-      </ul>
-      <a
-        href={
-          pkg.cta === "Teklif Formu →"
-            ? "/hizmetler/web-tasarim-hosting/teklif"
-            : "/#iletisim"
-        }
-        className={`btn w-full text-sm py-3 mt-auto ${pkg.featured ? "btn-primary" : "btn-outline"}`}
-      >
-        {pkg.cta ?? (pkg.price ? "Teklif Al" : "Teklif İste")}
-      </a>
     </>
   );
 }
