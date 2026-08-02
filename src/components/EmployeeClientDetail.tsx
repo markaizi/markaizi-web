@@ -7,10 +7,7 @@ import Notes from "@/components/Notes";
 export interface EmployeeClientData {
   slug: string;
   name: string;
-  canWriteNotes: boolean;
   perms: {
-    canViewCampaigns: boolean;
-    canManageCampaigns: boolean;
     canViewContent: boolean;
     canManageContent: boolean;
     canViewUpdates: boolean;
@@ -18,14 +15,6 @@ export interface EmployeeClientData {
     canViewInvoices: boolean;
     canManageInvoices: boolean;
   };
-  campaigns: {
-    id: string;
-    platform: "META" | "GOOGLE" | "TIKTOK";
-    name: string;
-    dailyBudget: string;
-    status: "AKTIF" | "DURAKLATILDI" | "TAMAMLANDI" | "ODEME_HATASI";
-    ongoing: boolean;
-  }[];
   updates: { id: string; kind: "AJANS" | "WEBSITE"; text: string; date: string }[];
   contentItems: {
     id: string; title: string; description: string;
@@ -38,17 +27,23 @@ export interface EmployeeClientData {
     status: "ODENDI" | "BEKLIYOR" | "GUNU_GELMEDI";
     dueDate: string | null;
   }[];
+  adReports: {
+    id: string;
+    platform: "META" | "GOOGLE" | "WEBSITE";
+    month: string;
+    spend: string;
+    impressions: string;
+    clicks: string;
+    summary: string;
+    publishedAt: string;
+  }[];
 }
 
-const PLATFORM_COLOR: Record<string, string> = { META: "#c084fc", GOOGLE: "#60a5fa", TIKTOK: "#f472b6" };
-const PLATFORM_BG: Record<string, string> = { META: "rgba(168,85,247,0.15)", GOOGLE: "rgba(59,130,246,0.15)", TIKTOK: "rgba(236,72,153,0.15)" };
 const STATUS_LABEL: Record<string, string> = {
-  AKTIF: "Aktif", DURAKLATILDI: "Duraklatıldı", TAMAMLANDI: "Tamamlandı", ODEME_HATASI: "Ödeme Hatası",
   PLANLANDI: "Planlandı", DUZENLENIYOR: "Düzenleniyor", HAZIR: "Hazır", YAYINLANDI: "Yayınlandı",
   ODENDI: "Ödendi", BEKLIYOR: "Bekliyor", GUNU_GELMEDI: "Günü Gelmedi",
 };
 const STATUS_COLOR: Record<string, string> = {
-  AKTIF: "#34d399", DURAKLATILDI: "#fbbf24", TAMAMLANDI: "#8a8a9a", ODEME_HATASI: "#f87171",
   PLANLANDI: "#8a8a9a", DUZENLENIYOR: "#fbbf24", HAZIR: "#60a5fa", YAYINLANDI: "#34d399",
   ODENDI: "#34d399", BEKLIYOR: "#fbbf24", GUNU_GELMEDI: "#8a8a9a",
 };
@@ -56,12 +51,13 @@ const CONTENT_STATUS_BG: Record<string, string> = {
   PLANLANDI: "rgba(138,138,154,0.12)", DUZENLENIYOR: "rgba(251,191,36,0.12)",
   HAZIR: "rgba(96,165,250,0.12)", YAYINLANDI: "rgba(52,211,153,0.12)",
 };
+const PLATFORM_LABEL: Record<string, string> = { META: "Meta", GOOGLE: "Google", WEBSITE: "Website" };
+const PLATFORM_COLOR: Record<string, string> = { META: "#60a5fa", GOOGLE: "#34d399", WEBSITE: "#c084fc" };
 type ContentStatus = EmployeeClientData["contentItems"][number]["status"];
-type CampaignStatus = EmployeeClientData["campaigns"][number]["status"];
 type InvoiceStatus = EmployeeClientData["invoices"][number]["status"];
-type Platform = EmployeeClientData["campaigns"][number]["platform"];
+type AdReport = EmployeeClientData["adReports"][number];
 
-type TabKey = "icerikler" | "guncellemeler" | "kampanyalar" | "faturalar" | "notlar";
+type TabKey = "icerikler" | "guncellemeler" | "faturalar" | "raporlar" | "notlar";
 
 export default function EmployeeClientDetail({ data, unreadNoteCount = 0 }: { data: EmployeeClientData; unreadNoteCount?: number }) {
   const router = useRouter();
@@ -70,9 +66,9 @@ export default function EmployeeClientDetail({ data, unreadNoteCount = 0 }: { da
   const tabs = [
     (perms.canViewContent || perms.canManageContent) && { key: "icerikler" as TabKey, label: "İçerikler" },
     (perms.canViewUpdates || perms.canManageUpdates) && { key: "guncellemeler" as TabKey, label: "Güncellemeler" },
-    perms.canViewCampaigns && { key: "kampanyalar" as TabKey, label: "Kampanyalar" },
     perms.canViewInvoices && { key: "faturalar" as TabKey, label: "Faturalar" },
-    { key: "notlar" as TabKey, label: "Notlar" },
+    { key: "raporlar" as TabKey, label: "Raporlar" },
+    { key: "notlar" as TabKey, label: "Müşteri İstekleri" },
   ].filter(Boolean) as { key: TabKey; label: string }[];
 
   const [tab, setTab] = useState<TabKey>(tabs[0]?.key ?? "icerikler");
@@ -152,16 +148,15 @@ export default function EmployeeClientDetail({ data, unreadNoteCount = 0 }: { da
               <EmpGuncellemelerTab slug={data.slug} updates={data.updates}
                 canManage={perms.canManageUpdates} router={router} />
             )}
-            {tab === "kampanyalar" && perms.canViewCampaigns && (
-              <EmpKampanyalarTab slug={data.slug} campaigns={data.campaigns}
-                canManage={perms.canManageCampaigns} router={router} />
-            )}
             {tab === "faturalar" && perms.canViewInvoices && (
               <EmpFaturalarTab slug={data.slug} invoices={data.invoices}
                 canManage={perms.canManageInvoices} router={router} />
             )}
+            {tab === "raporlar" && (
+              <EmpRaporlarTab slug={data.slug} reports={data.adReports} router={router} />
+            )}
             {tab === "notlar" && (
-              <Notes clientSlug={data.slug} canWrite={data.canWriteNotes} isAjans />
+              <Notes clientSlug={data.slug} isClient={false} isStaff />
             )}
           </>
         )}
@@ -353,146 +348,6 @@ function EmpGuncellemelerTab({ slug, updates, canManage, router }: {
   );
 }
 
-// ── Kampanyalar ───────────────────────────────────────────────────────────────
-
-function EmpKampanyalarTab({ slug, campaigns, canManage, router }: {
-  slug: string; campaigns: EmployeeClientData["campaigns"];
-  canManage: boolean; router: ReturnType<typeof useRouter>;
-}) {
-  const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({
-    platform: "META" as Platform,
-    name: "", dailyBudget: "", status: "AKTIF" as CampaignStatus,
-    ongoing: false, startDate: "", endDate: "",
-  });
-  const [loading, setLoading] = useState(false);
-  const [err, setErr] = useState("");
-
-  async function handleAdd(e: React.FormEvent) {
-    e.preventDefault(); setLoading(true); setErr("");
-    const res = await fetch(`/api/musteri/admin/clients/${slug}/campaigns`, {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        ...form,
-        startDate: form.startDate || null,
-        endDate: form.endDate || null,
-      }),
-    });
-    const json = await res.json(); setLoading(false);
-    if (json.ok) { setShowForm(false); setForm({ platform: "META", name: "", dailyBudget: "", status: "AKTIF", ongoing: false, startDate: "", endDate: "" }); router.refresh(); }
-    else setErr(json.error ?? "Hata.");
-  }
-
-  async function handleStatusChange(id: string, status: CampaignStatus) {
-    await fetch(`/api/musteri/admin/campaigns/${id}`, {
-      method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ status }),
-    });
-    router.refresh();
-  }
-
-  return (
-    <div className="space-y-3">
-      {campaigns.map((c) => (
-        <div key={c.id} className="rounded-xl p-4 flex items-center gap-3" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
-          <span className="text-[11px] font-bold px-2.5 py-1 rounded-full flex-shrink-0"
-            style={{ background: PLATFORM_BG[c.platform], color: PLATFORM_COLOR[c.platform] }}>
-            {c.platform}
-          </span>
-          <div className="flex-1 min-w-0">
-            <p className="text-white text-[14px] font-semibold truncate">{c.name}</p>
-            <p className="text-[12px] text-[#8a8a9a]">{c.dailyBudget} · {c.ongoing ? "Devam ediyor" : STATUS_LABEL[c.status]}</p>
-          </div>
-          {canManage ? (
-            <select value={c.status} onChange={(e) => handleStatusChange(c.id, e.target.value as CampaignStatus)}
-              className="rounded-lg text-[11px] outline-none flex-shrink-0"
-              style={{ background: "var(--bg)", border: "1px solid var(--border)", padding: "3px 6px", color: STATUS_COLOR[c.status] }}>
-              <option value="AKTIF">Aktif</option>
-              <option value="DURAKLATILDI">Duraklatıldı</option>
-              <option value="TAMAMLANDI">Tamamlandı</option>
-              <option value="ODEME_HATASI">Ödeme Hatası</option>
-            </select>
-          ) : (
-            <span className="text-[11px] px-2 py-1 rounded-full flex-shrink-0"
-              style={{ background: "rgba(138,138,154,0.12)", color: STATUS_COLOR[c.status] }}>
-              {STATUS_LABEL[c.status]}
-            </span>
-          )}
-        </div>
-      ))}
-      {campaigns.length === 0 && <p className="text-[13px] text-[#8a8a9a] text-center py-8">Kampanya yok.</p>}
-      {canManage && !showForm && (
-        <button onClick={() => setShowForm(true)} className="btn btn-outline text-sm w-full py-3 mt-2">+ Kampanya Ekle</button>
-      )}
-      {canManage && showForm && (
-        <form onSubmit={handleAdd} className="rounded-2xl p-5 space-y-4 mt-2" style={{ background: "var(--surface)", border: "1px solid rgba(96,165,250,0.3)" }}>
-          <p className="font-semibold text-white text-[14px]">Yeni Kampanya</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <div>
-              <label className="block text-[11px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1.5">Platform</label>
-              <select value={form.platform} onChange={(e) => setForm((f) => ({ ...f, platform: e.target.value as Platform }))}
-                className="w-full px-3 py-2 rounded-lg text-[14px] text-white outline-none"
-                style={{ background: "var(--bg)", border: "1px solid var(--border)" }}>
-                <option value="META">Meta</option>
-                <option value="GOOGLE">Google</option>
-                <option value="TIKTOK">TikTok</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-[11px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1.5">Durum</label>
-              <select value={form.status} onChange={(e) => setForm((f) => ({ ...f, status: e.target.value as CampaignStatus }))}
-                className="w-full px-3 py-2 rounded-lg text-[14px] text-white outline-none"
-                style={{ background: "var(--bg)", border: "1px solid var(--border)" }}>
-                <option value="AKTIF">Aktif</option>
-                <option value="DURAKLATILDI">Duraklatıldı</option>
-                <option value="TAMAMLANDI">Tamamlandı</option>
-                <option value="ODEME_HATASI">Ödeme Hatası</option>
-              </select>
-            </div>
-            <div className="col-span-2">
-              <label className="block text-[11px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1.5">Kampanya Adı</label>
-              <input required value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder="Yaz Kampanyası 2026"
-                className="w-full px-3 py-2 rounded-lg text-[14px] text-white placeholder-[#555] outline-none"
-                style={{ background: "var(--bg)", border: "1px solid var(--border)" }} />
-            </div>
-            <div>
-              <label className="block text-[11px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1.5">Günlük Bütçe</label>
-              <input required value={form.dailyBudget} onChange={(e) => setForm((f) => ({ ...f, dailyBudget: e.target.value }))} placeholder="500 ₺/gün"
-                className="w-full px-3 py-2 rounded-lg text-[14px] text-white placeholder-[#555] outline-none"
-                style={{ background: "var(--bg)", border: "1px solid var(--border)" }} />
-            </div>
-            <div className="flex items-center gap-2 pt-5">
-              <input type="checkbox" id={`ongoing-${slug}`} checked={form.ongoing} onChange={(e) => setForm((f) => ({ ...f, ongoing: e.target.checked }))}
-                className="w-4 h-4 rounded accent-purple-500" />
-              <label htmlFor={`ongoing-${slug}`} className="text-[13px] text-[#8a8a9a]">Devam ediyor</label>
-            </div>
-            {!form.ongoing && (
-              <>
-                <div>
-                  <label className="block text-[11px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1.5">Başlangıç</label>
-                  <input type="date" value={form.startDate} onChange={(e) => setForm((f) => ({ ...f, startDate: e.target.value }))}
-                    className="w-full px-3 py-2 rounded-lg text-[14px] text-white outline-none"
-                    style={{ background: "var(--bg)", border: "1px solid var(--border)" }} />
-                </div>
-                <div>
-                  <label className="block text-[11px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1.5">Bitiş</label>
-                  <input type="date" value={form.endDate} onChange={(e) => setForm((f) => ({ ...f, endDate: e.target.value }))}
-                    className="w-full px-3 py-2 rounded-lg text-[14px] text-white outline-none"
-                    style={{ background: "var(--bg)", border: "1px solid var(--border)" }} />
-                </div>
-              </>
-            )}
-          </div>
-          {err && <p className="text-[12px] text-red-400">{err}</p>}
-          <div className="flex gap-2">
-            <button type="submit" disabled={loading} className="btn btn-primary text-sm px-5 py-2">{loading ? "..." : "Ekle"}</button>
-            <button type="button" onClick={() => setShowForm(false)} className="btn btn-outline text-sm px-5 py-2">İptal</button>
-          </div>
-        </form>
-      )}
-    </div>
-  );
-}
-
 // ── Faturalar ─────────────────────────────────────────────────────────────────
 
 function EmpFaturalarTab({ slug, invoices, canManage, router }: {
@@ -589,6 +444,131 @@ function EmpFaturalarTab({ slug, invoices, canManage, router }: {
           {err && <p className="text-[12px] text-red-400">{err}</p>}
           <div className="flex gap-2">
             <button type="submit" disabled={loading} className="btn btn-primary text-sm px-5 py-2">{loading ? "..." : "Ekle"}</button>
+            <button type="button" onClick={() => setShowForm(false)} className="btn btn-outline text-sm px-5 py-2">İptal</button>
+          </div>
+        </form>
+      )}
+    </div>
+  );
+}
+
+// ── Raporlar ──────────────────────────────────────────────────────────────────
+
+function fmtReportDate(iso: string) {
+  return new Date(iso).toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" });
+}
+
+function EmpRaporlarTab({ slug, reports, router }: {
+  slug: string; reports: AdReport[]; router: ReturnType<typeof useRouter>;
+}) {
+  const emptyForm = { platform: "META" as AdReport["platform"], month: "", spend: "", impressions: "", clicks: "", summary: "" };
+  const [showForm, setShowForm] = useState(false);
+  const [form, setForm] = useState(emptyForm);
+  const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState("");
+  const [deleting, setDeleting] = useState<string | null>(null);
+
+  async function handleAdd(e: React.FormEvent) {
+    e.preventDefault(); setLoading(true); setErr("");
+    const res = await fetch(`/api/musteri/admin/clients/${slug}/reports`, {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(form),
+    });
+    const json = await res.json(); setLoading(false);
+    if (json.ok) { setShowForm(false); setForm(emptyForm); router.refresh(); }
+    else setErr(json.error ?? "Hata.");
+  }
+
+  async function handleDelete(id: string) {
+    if (!confirm("Bu raporu sil?")) return;
+    setDeleting(id);
+    await fetch(`/api/musteri/admin/reports/${id}`, { method: "DELETE" });
+    setDeleting(null);
+    router.refresh();
+  }
+
+  return (
+    <div className="space-y-3">
+      {reports.map((r) => (
+        <div key={r.id} className="rounded-xl p-4" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full" style={{ color: PLATFORM_COLOR[r.platform], background: `${PLATFORM_COLOR[r.platform]}18` }}>
+                  {PLATFORM_LABEL[r.platform]}
+                </span>
+                <p className="text-white text-[14px] font-semibold">{r.month}</p>
+              </div>
+              <p className="text-[12px] text-[#8a8a9a] mt-1">
+                {[
+                  r.spend && `Harcama: ${r.spend}`,
+                  r.impressions && `Görüntülenme: ${r.impressions}`,
+                  r.clicks && `Tıklama: ${r.clicks}`,
+                ].filter(Boolean).join(" · ") || "Detay girilmemiş"}
+              </p>
+              {r.summary && <p className="text-[12px] text-[#8a8a9a] mt-1 whitespace-pre-wrap leading-relaxed">{r.summary}</p>}
+              <p className="text-[11px] text-[#555] mt-1.5">Yayınlanma: {fmtReportDate(r.publishedAt)}</p>
+            </div>
+            <button onClick={() => handleDelete(r.id)} disabled={deleting === r.id}
+              className="text-[12px] text-red-400 hover:text-red-300 transition-colors px-2 py-1 rounded flex-shrink-0">
+              {deleting === r.id ? "..." : "Sil"}
+            </button>
+          </div>
+        </div>
+      ))}
+      {reports.length === 0 && <p className="text-[13px] text-[#8a8a9a] text-center py-8">Henüz rapor yayınlanmadı.</p>}
+      {!showForm && (
+        <button onClick={() => setShowForm(true)} className="btn btn-outline text-sm w-full py-3 mt-2">+ Rapor Yayınla</button>
+      )}
+      {showForm && (
+        <form onSubmit={handleAdd} className="rounded-2xl p-5 space-y-4 mt-2" style={{ background: "var(--surface)", border: "1px solid rgba(96,165,250,0.3)" }}>
+          <p className="font-semibold text-white text-[14px]">Yeni Rapor</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className="block text-[11px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1.5">Platform</label>
+              <select value={form.platform} onChange={(e) => setForm((f) => ({ ...f, platform: e.target.value as AdReport["platform"] }))}
+                className="w-full px-3 py-2 rounded-lg text-[14px] text-white outline-none"
+                style={{ background: "var(--bg)", border: "1px solid var(--border)" }}>
+                <option value="META">Meta</option>
+                <option value="GOOGLE">Google</option>
+                <option value="WEBSITE">Website</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-[11px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1.5">Ay</label>
+              <input required value={form.month} onChange={(e) => setForm((f) => ({ ...f, month: e.target.value }))} placeholder="Temmuz 2026"
+                className="w-full px-3 py-2 rounded-lg text-[14px] text-white placeholder-[#555] outline-none"
+                style={{ background: "var(--bg)", border: "1px solid var(--border)" }} />
+            </div>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label className="block text-[11px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1.5">Harcama</label>
+              <input value={form.spend} onChange={(e) => setForm((f) => ({ ...f, spend: e.target.value }))} placeholder="5.000 ₺"
+                className="w-full px-3 py-2 rounded-lg text-[14px] text-white placeholder-[#555] outline-none"
+                style={{ background: "var(--bg)", border: "1px solid var(--border)" }} />
+            </div>
+            <div>
+              <label className="block text-[11px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1.5">Görüntülenme</label>
+              <input value={form.impressions} onChange={(e) => setForm((f) => ({ ...f, impressions: e.target.value }))} placeholder="42.000"
+                className="w-full px-3 py-2 rounded-lg text-[14px] text-white placeholder-[#555] outline-none"
+                style={{ background: "var(--bg)", border: "1px solid var(--border)" }} />
+            </div>
+            <div>
+              <label className="block text-[11px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1.5">Tıklama</label>
+              <input value={form.clicks} onChange={(e) => setForm((f) => ({ ...f, clicks: e.target.value }))} placeholder="850"
+                className="w-full px-3 py-2 rounded-lg text-[14px] text-white placeholder-[#555] outline-none"
+                style={{ background: "var(--bg)", border: "1px solid var(--border)" }} />
+            </div>
+          </div>
+          <div>
+            <label className="block text-[11px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1.5">Özet (opsiyonel)</label>
+            <textarea rows={3} value={form.summary} onChange={(e) => setForm((f) => ({ ...f, summary: e.target.value }))} placeholder="Neye ne kadar harcandığına dair kısa özet..."
+              className="w-full px-3 py-2 rounded-lg text-[14px] text-white placeholder-[#555] outline-none resize-none"
+              style={{ background: "var(--bg)", border: "1px solid var(--border)" }} />
+          </div>
+          {err && <p className="text-[12px] text-red-400">{err}</p>}
+          <div className="flex gap-2">
+            <button type="submit" disabled={loading} className="btn btn-primary text-sm px-5 py-2">{loading ? "..." : "Yayınla"}</button>
             <button type="button" onClick={() => setShowForm(false)} className="btn btn-outline text-sm px-5 py-2">İptal</button>
           </div>
         </form>

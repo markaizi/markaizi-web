@@ -17,7 +17,6 @@ export async function GET() {
       username: true,
       name: true,
       email: true,
-      canWriteNotes: true,
       assignments: {
         select: { id: true, client: { select: { slug: true, name: true } } },
       },

@@ -31,11 +31,11 @@ export default async function AdminClientPage({
     prisma.client.findUnique({
       where: { slug },
       include: {
-        campaigns: { orderBy: [{ platform: "asc" }, { sortOrder: "asc" }] },
         updates: { orderBy: { date: "desc" } },
         invoices: { orderBy: { id: "desc" } },
         contentItems: { orderBy: { scheduledDate: "desc" } },
-        users: { where: { role: "CLIENT" }, select: { id: true, username: true, name: true, email: true, canWriteNotes: true } },
+        users: { where: { role: "CLIENT" }, select: { id: true, username: true, name: true, email: true } },
+        adReports: { orderBy: { publishedAt: "desc" } },
       },
     }),
     prisma.note.count({
@@ -59,17 +59,9 @@ export default async function AdminClientPage({
     contactPhone: client.contactPhone ?? "",
     billingAmount: client.billingAmount ?? "",
     billingPeriod: client.billingPeriod ?? "",
+    dailyMetaSpend: client.dailyMetaSpend ?? "",
+    dailyGoogleSpend: client.dailyGoogleSpend ?? "",
     active: client.active,
-    campaigns: client.campaigns.map((c) => ({
-      id: c.id,
-      platform: c.platform,
-      name: c.name,
-      dailyBudget: c.dailyBudget,
-      status: c.status,
-      ongoing: c.ongoing,
-      startDate: c.startDate?.toISOString().split("T")[0] ?? null,
-      endDate: c.endDate?.toISOString().split("T")[0] ?? null,
-    })),
     updates: client.updates.map((u) => ({
       id: u.id,
       kind: u.kind,
@@ -92,6 +84,16 @@ export default async function AdminClientPage({
       publishedAt: ci.publishedAt?.toISOString().split("T")[0] ?? null,
     })),
     users: client.users.map((u) => ({ ...u, username: u.username ?? null })),
+    adReports: client.adReports.map((r) => ({
+      id: r.id,
+      platform: r.platform,
+      month: r.month,
+      spend: r.spend ?? "",
+      impressions: r.impressions ?? "",
+      clicks: r.clicks ?? "",
+      summary: r.summary ?? "",
+      publishedAt: r.publishedAt.toISOString(),
+    })),
   };
 
   return <AdminClientDetail data={data} unreadNoteCount={unreadCount} />;

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { CampaignStatus, InvoiceStatus } from "@prisma/client";
+import { InvoiceStatus } from "@prisma/client";
 import AdminPanel, { type AdminClientSummary } from "@/components/AdminPanel";
 
 export const dynamic = "force-dynamic";
@@ -26,7 +26,6 @@ export default async function AdminPage() {
       where: { active: true },
       orderBy: { name: "asc" },
       include: {
-        campaigns: { select: { platform: true, status: true } },
         invoices: { select: { status: true, dueDate: true } },
       },
     }),
@@ -49,8 +48,6 @@ export default async function AdminPage() {
     return {
       slug: c.slug,
       name: c.name,
-      activeCampaignCount: c.campaigns.filter(x => x.status === CampaignStatus.AKTIF).length,
-      totalCampaignCount: c.campaigns.length,
       pendingInvoiceCount: pendingInvoices.length,
       overdueInvoiceCount: overdueInvoices.length,
       unreadNoteCount: unreadMap.get(c.id) ?? 0,

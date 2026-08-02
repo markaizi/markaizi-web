@@ -8,8 +8,6 @@ const disabled = () => NextResponse.json({ error: "Hesabınız devre dışı." }
 
 export type AssignmentPerms = {
   id: string;
-  canViewCampaigns: boolean;
-  canManageCampaigns: boolean;
   canViewContent: boolean;
   canManageContent: boolean;
   canViewUpdates: boolean;
@@ -36,37 +34,6 @@ export async function requireStaffForSlug(slug: string) {
     if (hit) return { session, perms: hit as AssignmentPerms, err: null };
   }
   return { session: null, perms: null, err: forbidden() };
-}
-
-/** ADMIN veya firma'ya canManageCampaigns=true atanmış EMPLOYEE. */
-export async function requireCampaignManageForSlug(slug: string) {
-  const session = await getSession();
-  if (!session) return { session: null, err: unauth() };
-  if (!(await checkActive(session.uid))) return { session: null, err: disabled() };
-  if (session.role === "ADMIN") return { session, err: null };
-  if (session.role === "EMPLOYEE") {
-    const hit = await prisma.assignment.findFirst({
-      where: { userId: session.uid, client: { slug }, canManageCampaigns: true },
-    });
-    if (hit) return { session, err: null };
-  }
-  return { session: null, err: forbidden() };
-}
-
-/** ADMIN veya kampanyanın firmasına canManageCampaigns=true atanmış EMPLOYEE. */
-export async function requireCampaignManageById(id: string) {
-  const session = await getSession();
-  if (!session) return { session: null, err: unauth() };
-  if (!(await checkActive(session.uid))) return { session: null, err: disabled() };
-  if (session.role === "ADMIN") return { session, err: null };
-  if (session.role === "EMPLOYEE") {
-    const campaign = await prisma.campaign.findUnique({
-      where: { id },
-      select: { client: { select: { assignments: { where: { userId: session.uid, canManageCampaigns: true } } } } },
-    });
-    if (campaign?.client.assignments.length) return { session, err: null };
-  }
-  return { session: null, err: forbidden() };
 }
 
 /** ADMIN veya firma'ya canManageInvoices=true atanmış EMPLOYEE. */
@@ -153,6 +120,22 @@ export async function requireWorkflowManageColumns() {
   });
   if (!user?.workflowAccess || !user.workflowCanManageColumns) return { session: null, err: forbidden() };
   return { session, err: null };
+}
+
+/** ADMIN veya raporun firmasına atanmış EMPLOYEE. */
+export async function requireStaffForReport(id: string) {
+  const session = await getSession();
+  if (!session) return { session: null, err: unauth() };
+  if (!(await checkActive(session.uid))) return { session: null, err: disabled() };
+  if (session.role === "ADMIN") return { session, err: null };
+  if (session.role === "EMPLOYEE") {
+    const report = await prisma.adReport.findUnique({
+      where: { id },
+      select: { client: { select: { assignments: { where: { userId: session.uid } } } } },
+    });
+    if (report?.client.assignments.length) return { session, err: null };
+  }
+  return { session: null, err: forbidden() };
 }
 
 /** ADMIN veya güncellemenin firmasına canManageUpdates=true atanmış EMPLOYEE. */

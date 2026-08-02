@@ -1,11 +1,11 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import type { ClientData, Campaign } from "@/lib/clients";
+import type { ClientData } from "@/lib/clients";
 import Calendar from "@/components/Calendar";
 import Notes from "@/components/Notes";
 
-type Tab = "meta" | "google" | "tiktok" | "website" | "updates" | "calendar" | "invoice" | "notlar";
+type Tab = "website" | "updates" | "calendar" | "invoice" | "raporlar" | "notlar";
 
 function fmtAmount(raw: string): string {
   const digits = raw.replace(/[^\d]/g, "");
@@ -15,40 +15,26 @@ function fmtAmount(raw: string): string {
   return num.toLocaleString("tr-TR") + " ₺";
 }
 
-function fmtBudget(raw: string): string {
-  const digits = raw.replace(/[^\d]/g, "");
-  if (!digits) return raw;
-  const num = parseInt(digits, 10);
-  if (isNaN(num)) return raw;
-  return num.toLocaleString("tr-TR") + " ₺/gün";
-}
-
-function parseBudgetNum(raw: string): number {
-  const digits = raw.replace(/[^\d]/g, "");
-  if (!digits) return 0;
-  return parseInt(digits, 10) || 0;
-}
-
 const TABS: { id: Tab; label: string; emoji: string }[] = [
-  { id: "meta",     label: "Meta Ads",           emoji: "📣" },
-  { id: "google",   label: "Google Ads",          emoji: "🔍" },
-  { id: "tiktok",   label: "TikTok Ads",          emoji: "🎵" },
   { id: "website",  label: "Website",             emoji: "🌐" },
   { id: "updates",  label: "Güncellemeler",        emoji: "📝" },
   { id: "calendar", label: "İçerik Takvimi",       emoji: "📅" },
   { id: "invoice",  label: "Fatura",               emoji: "💳" },
-  { id: "notlar",   label: "Notlar",               emoji: "🗒️" },
+  { id: "raporlar", label: "Reklam Raporları",     emoji: "📊" },
+  { id: "notlar",   label: "Müşteri İstekleri",    emoji: "🗒️" },
 ];
 
 // ── Ana bileşen ──────────────────────────────────────────────────────────────
 export default function ClientPortal({
   client,
   isAdminView = false,
-  canWriteNotes = false,
+  isClientViewer = false,
+  isAdmin = false,
 }: {
   client: ClientData;
   isAdminView?: boolean;
-  canWriteNotes?: boolean;
+  isClientViewer?: boolean;
+  isAdmin?: boolean;
 }) {
   async function handleLogout() {
     try {
@@ -57,7 +43,15 @@ export default function ClientPortal({
     window.location.href = isAdminView ? "/musteri/admin" : "/musteri/giris";
   }
 
-  return <Dashboard client={client} onLogout={handleLogout} isAdminView={isAdminView} canWriteNotes={canWriteNotes} />;
+  return (
+    <Dashboard
+      client={client}
+      onLogout={handleLogout}
+      isAdminView={isAdminView}
+      isClientViewer={isClientViewer}
+      isAdmin={isAdmin}
+    />
+  );
 }
 
 // ── Dashboard ─────────────────────────────────────────────────────────────────
@@ -65,14 +59,16 @@ function Dashboard({
   client,
   onLogout,
   isAdminView,
-  canWriteNotes,
+  isClientViewer,
+  isAdmin,
 }: {
   client: ClientData;
   onLogout: () => void;
   isAdminView: boolean;
-  canWriteNotes: boolean;
+  isClientViewer: boolean;
+  isAdmin: boolean;
 }) {
-  const [activeTab, setActiveTab] = useState<Tab>("meta");
+  const [activeTab, setActiveTab] = useState<Tab>("calendar");
 
   return (
     <div className="min-h-screen" style={{ background: "var(--bg)" }}>
@@ -152,18 +148,17 @@ function Dashboard({
         </div>
 
         <div>
-          {activeTab === "meta"     && <MetaTab     client={client} />}
-          {activeTab === "google"   && <GoogleTab   client={client} />}
-          {activeTab === "tiktok"   && <TikTokTab   client={client} />}
           {activeTab === "website"  && <WebsiteTab  client={client} />}
           {activeTab === "updates"  && <UpdatesTab  client={client} />}
           {activeTab === "calendar" && <CalendarTab clientSlug={client.slug} />}
           {activeTab === "invoice"  && <InvoiceTab  client={client} />}
+          {activeTab === "raporlar" && <ReportsTab  client={client} />}
           {activeTab === "notlar"   && (
             <Notes
               clientSlug={client.slug}
-              canWrite={isAdminView || canWriteNotes}
-              isAjans={isAdminView}
+              isClient={isClientViewer}
+              isStaff={isAdminView}
+              isAdmin={isAdmin}
             />
           )}
         </div>
@@ -177,6 +172,7 @@ function QuickSummary({ client, onNavigate }: { client: ClientData; onNavigate: 
   const [unreadCount, setUnreadCount] = useState<number | null>(null);
   const [latestUpdate, setLatestUpdate] = useState<{ date: string; text: string } | null>(null);
   const [unseenUpdate, setUnseenUpdate] = useState(false);
+  const [unseenReport, setUnseenReport] = useState<{ id: string; platform: string; month: string } | null>(null);
 
   useEffect(() => {
     fetch("/api/musteri/notifications")
@@ -198,22 +194,27 @@ function QuickSummary({ client, onNavigate }: { client: ClientData; onNavigate: 
         setUnseenUpdate(true);
       }
     }
-  }, [client.slug, client.updates]);
 
-  const meta   = client.metaCampaigns   ?? [];
-  const google = client.googleCampaigns ?? [];
-  const tiktok = client.tiktokCampaigns ?? [];
+    const reports = client.adReports ?? [];
+    if (reports.length > 0) {
+      const latest = reports[0];
+      const seenKey = `seen_report_${client.slug}`;
+      const lastSeen = localStorage.getItem(seenKey);
+      if (lastSeen !== latest.id) {
+        setUnseenReport({ id: latest.id, platform: latest.platform, month: latest.month });
+      }
+    }
+  }, [client.slug, client.updates, client.adReports]);
 
-  const platforms = [
-    { key: "meta"   as Tab, label: "Meta",    emoji: "📣", color: "#60a5fa", campaigns: meta   },
-    { key: "google" as Tab, label: "Google",  emoji: "🔍", color: "#34d399", campaigns: google },
-    { key: "tiktok" as Tab, label: "TikTok",  emoji: "🎵", color: "#fb923c", campaigns: tiktok },
-  ].filter((p) => p.campaigns.length > 0);
+  const dailySpends = [
+    { label: "Günlük Meta Harcaması",   emoji: "📣", color: "#60a5fa", value: client.dailyMetaSpend },
+    { label: "Günlük Google Harcaması", emoji: "🔍", color: "#34d399", value: client.dailyGoogleSpend },
+  ].filter((s) => s.value);
 
-  const hasNotifications = unseenUpdate || (unreadCount !== null && unreadCount > 0);
-  const hasCampaigns = platforms.length > 0;
+  const hasNotifications = unseenUpdate || !!unseenReport || (unreadCount !== null && unreadCount > 0);
+  const hasSpends = dailySpends.length > 0;
 
-  if (!hasNotifications && !hasCampaigns) return null;
+  if (!hasNotifications && !hasSpends) return null;
 
   return (
     <div className="space-y-3">
@@ -238,6 +239,23 @@ function QuickSummary({ client, onNavigate }: { client: ClientData; onNavigate: 
                 sub: `${latestUpdate.date} — ${latestUpdate.text}`,
               }
             : null,
+          unseenReport
+            ? {
+                key: "report",
+                onClick: () => {
+                  localStorage.setItem(`seen_report_${client.slug}`, unseenReport.id);
+                  setUnseenReport(null);
+                  onNavigate("raporlar");
+                },
+                icon: "📊",
+                iconBg: "rgba(192,132,252,0.15)",
+                border: "rgba(192,132,252,0.45)",
+                bg: "rgba(192,132,252,0.08)",
+                labelColor: "#d8b4fe",
+                label: "Yeni reklam raporu yayınlandı",
+                sub: `${PLATFORM_META[unseenReport.platform]?.label ?? unseenReport.platform} — ${unseenReport.month}`,
+              }
+            : null,
           unreadCount !== null && unreadCount > 0
             ? {
                 key: "notes",
@@ -247,8 +265,8 @@ function QuickSummary({ client, onNavigate }: { client: ClientData; onNavigate: 
                 border: "rgba(251,146,60,0.45)",
                 bg: "rgba(251,146,60,0.08)",
                 labelColor: "#fdba74",
-                label: `${unreadCount} okunmamış not`,
-                sub: "Ajansınızdan size yeni notlar var.",
+                label: `${unreadCount} yeni yanıt`,
+                sub: "İsteğinize ajansınızdan yeni bir yanıt var.",
               }
             : null,
         ].filter((x): x is NotifItem => x !== null);
@@ -279,88 +297,25 @@ function QuickSummary({ client, onNavigate }: { client: ClientData; onNavigate: 
         );
       })()}
 
-      {/* Platform bazlı kampanya özeti */}
-      {hasCampaigns && (
-        <div className={`grid gap-3 ${platforms.length === 1 ? "grid-cols-1" : platforms.length === 2 ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-1 sm:grid-cols-3"}`}>
-          {platforms.map(({ key, label, emoji, color, campaigns }) => {
-            const aktif = campaigns.filter((c) => c.status === "Aktif");
-            const duraklatildi = campaigns.filter((c) => c.status === "Duraklatıldı").length;
-            const aktivButce = aktif.reduce((s, c) => s + parseBudgetNum(c.dailyBudget), 0);
-            return (
-              <button
-                key={key}
-                onClick={() => onNavigate(key)}
-                className="text-left rounded-xl p-4 transition-all hover:opacity-90"
-                style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
-              >
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="text-[15px]">{emoji}</span>
-                  <span className="text-[12px] font-bold uppercase tracking-wide" style={{ color }}>{label} Kampanyaları</span>
-                </div>
-                <div className="flex gap-4 mb-2">
-                  <div>
-                    <p className="text-[22px] font-black text-white leading-none">{campaigns.length}</p>
-                    <p className="text-[10px] text-[#555] mt-0.5">toplam</p>
-                  </div>
-                  <div>
-                    <p className="text-[22px] font-black leading-none" style={{ color: "#34d399" }}>{aktif.length}</p>
-                    <p className="text-[10px] text-[#555] mt-0.5">aktif</p>
-                  </div>
-                  {duraklatildi > 0 && (
-                    <div>
-                      <p className="text-[22px] font-black leading-none" style={{ color: "#fbbf24" }}>{duraklatildi}</p>
-                      <p className="text-[10px] text-[#555] mt-0.5">duraklatılmış</p>
-                    </div>
-                  )}
-                </div>
-                {aktivButce > 0 && (
-                  <p className="text-[11px] font-semibold" style={{ color: "#8a8a9a" }}>
-                    Toplam günlük bütçe:{" "}
-                    <span style={{ color }}>{aktivButce.toLocaleString("tr-TR")} ₺/gün</span>
-                  </p>
-                )}
-              </button>
-            );
-          })}
+      {/* Günlük reklam harcaması */}
+      {hasSpends && (
+        <div className={`grid gap-3 ${dailySpends.length === 1 ? "grid-cols-1" : "grid-cols-1 sm:grid-cols-2"}`}>
+          {dailySpends.map(({ label, emoji, color, value }) => (
+            <div
+              key={label}
+              className="rounded-xl p-4"
+              style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+            >
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-[15px]">{emoji}</span>
+                <span className="text-[12px] font-bold uppercase tracking-wide" style={{ color }}>{label}</span>
+              </div>
+              <p className="text-[26px] font-black text-white leading-none">{fmtAmount(value!)}</p>
+            </div>
+          ))}
         </div>
       )}
     </div>
-  );
-}
-
-// ── Tab: Meta Ads ─────────────────────────────────────────────────────────────
-function MetaTab({ client }: { client: ClientData }) {
-  if (!client.metaCampaigns?.length) {
-    return <Empty text="Meta Ads kampanyası henüz tanımlanmadı." />;
-  }
-  return (
-    <Section title="Meta Ads Kampanyaları" subtitle="Instagram & Facebook reklam kampanyalarınız">
-      <CampaignTable campaigns={client.metaCampaigns} />
-    </Section>
-  );
-}
-
-// ── Tab: Google Ads ───────────────────────────────────────────────────────────
-function GoogleTab({ client }: { client: ClientData }) {
-  if (!client.googleCampaigns?.length) {
-    return <Empty text="Google Ads kampanyası henüz tanımlanmadı." />;
-  }
-  return (
-    <Section title="Google Ads Kampanyaları" subtitle="Google arama ve görüntülü reklam kampanyalarınız">
-      <CampaignTable campaigns={client.googleCampaigns} />
-    </Section>
-  );
-}
-
-// ── Tab: TikTok Ads ───────────────────────────────────────────────────────────
-function TikTokTab({ client }: { client: ClientData }) {
-  if (!client.tiktokCampaigns?.length) {
-    return <Empty text="TikTok Ads kampanyası henüz tanımlanmadı." />;
-  }
-  return (
-    <Section title="TikTok Ads Kampanyaları" subtitle="TikTok reklam kampanyalarınız">
-      <CampaignTable campaigns={client.tiktokCampaigns} />
-    </Section>
   );
 }
 
@@ -502,77 +457,112 @@ function InvoiceTab({ client }: { client: ClientData }) {
   );
 }
 
-// ── Kampanya Tablosu ──────────────────────────────────────────────────────────
-const statusStyle2 = (s: string) => {
-  if (s === "Aktif")        return { background: "rgba(52,211,153,0.1)",  color: "#34d399" };
-  if (s === "Duraklatıldı") return { background: "rgba(251,191,36,0.1)",  color: "#fbbf24" };
-  if (s === "Tamamlandı")   return { background: "rgba(139,142,160,0.1)", color: "#8a8a9a" };
-  if (s === "Ödeme Hatası") return { background: "rgba(239,68,68,0.1)",   color: "#f87171" };
-  return {};
+// ── Tab: Reklam Raporları ─────────────────────────────────────────────────────
+const PLATFORM_META: Record<string, { label: string; emoji: string; color: string }> = {
+  META:    { label: "Meta",    emoji: "📣", color: "#60a5fa" },
+  GOOGLE:  { label: "Google",  emoji: "🔍", color: "#34d399" },
+  WEBSITE: { label: "Website", emoji: "🌐", color: "#c084fc" },
 };
 
-function CampaignTable({ campaigns }: { campaigns: Campaign[] }) {
+function fmtReportDate(iso: string) {
+  return new Date(iso).toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" });
+}
+
+function ReportsTab({ client }: { client: ClientData }) {
+  const reports = client.adReports ?? [];
+  const platforms = ["META", "GOOGLE", "WEBSITE"] as const;
+  const hasAny = reports.length > 0;
+
+  if (!hasAny) {
+    return <Empty text="Henüz yayınlanmış reklam raporu yok." />;
+  }
+
   return (
-    <>
-      {/* Mobil: kart */}
-      <div className="md:hidden space-y-3">
-        {campaigns.map((c, i) => (
-          <div key={i} className="rounded-xl p-4" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
-            <div className="flex items-start justify-between gap-2 mb-2">
-              <p className="text-[14px] text-white font-semibold">{c.name}</p>
-              <span className="text-[11px] font-bold px-2.5 py-1 rounded-full flex-shrink-0" style={statusStyle2(c.status)}>{c.status}</span>
-            </div>
-            <div className="grid grid-cols-3 gap-2">
-              <div className="rounded-xl px-3 py-2.5" style={{ background: "var(--bg)" }}>
-                <p className="text-[10px] text-[#8a8a9a] mb-1 uppercase tracking-wide">Başlangıç</p>
-                <p className="text-[12px] text-white font-medium">{c.startDate}</p>
-              </div>
-              <div className="rounded-xl px-3 py-2.5" style={{ background: "var(--bg)" }}>
-                <p className="text-[10px] text-[#8a8a9a] mb-1 uppercase tracking-wide">Bitiş</p>
-                <p className="text-[12px] text-white font-medium">{c.endDate}</p>
-              </div>
-              <div className="rounded-xl px-3 py-2.5" style={{ background: "var(--bg)" }}>
-                <p className="text-[10px] text-[#8a8a9a] mb-1 uppercase tracking-wide">Günlük</p>
-                <p className="text-[12px] text-white font-medium">{fmtBudget(c.dailyBudget)}</p>
-              </div>
-            </div>
+    <Section title="Reklam Raporları" subtitle="Aylık harcama, görüntülenme ve tıklama özetleriniz">
+      <div className="space-y-4">
+        {platforms.map((p) => {
+          const items = reports.filter((r) => r.platform === p);
+          if (items.length === 0) return null;
+          return <PlatformReportCard key={p} platform={p} items={items} />;
+        })}
+      </div>
+    </Section>
+  );
+}
+
+function PlatformReportCard({
+  platform,
+  items,
+}: {
+  platform: "META" | "GOOGLE" | "WEBSITE";
+  items: NonNullable<ClientData["adReports"]>;
+}) {
+  const [expanded, setExpanded] = useState(false);
+  const meta = PLATFORM_META[platform];
+  const latest = items[0];
+  const history = items.slice(1);
+
+  return (
+    <div className="rounded-2xl overflow-hidden" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+      <div className="p-5">
+        <div className="flex items-center gap-2 mb-3">
+          <span className="text-[16px]">{meta.emoji}</span>
+          <span className="text-[13px] font-bold uppercase tracking-wide" style={{ color: meta.color }}>{meta.label}</span>
+          <span className="text-[12px] text-[#8a8a9a] ml-auto">{latest.month}</span>
+        </div>
+
+        <div className="grid grid-cols-3 gap-3 mb-3">
+          <div>
+            <p className="text-[10px] text-[#8a8a9a] uppercase tracking-wide mb-1">Harcama</p>
+            <p className="text-[15px] font-black text-white">{latest.spend || "—"}</p>
           </div>
-        ))}
+          <div>
+            <p className="text-[10px] text-[#8a8a9a] uppercase tracking-wide mb-1">Görüntülenme</p>
+            <p className="text-[15px] font-black text-white">{latest.impressions || "—"}</p>
+          </div>
+          <div>
+            <p className="text-[10px] text-[#8a8a9a] uppercase tracking-wide mb-1">Tıklama</p>
+            <p className="text-[15px] font-black text-white">{latest.clicks || "—"}</p>
+          </div>
+        </div>
+
+        {latest.summary && (
+          <p className="text-[13px] text-[#c8c8d0] whitespace-pre-wrap leading-relaxed mb-2">{latest.summary}</p>
+        )}
+        <p className="text-[11px] text-[#555]">Yayınlanma: {fmtReportDate(latest.publishedAt)}</p>
+
+        {history.length > 0 && (
+          <button
+            onClick={() => setExpanded((v) => !v)}
+            className="mt-3 text-[12px] font-semibold transition-colors"
+            style={{ color: meta.color }}
+          >
+            {expanded ? "Geçmiş raporları gizle ▲" : `Geçmiş ${history.length} raporu göster ▼`}
+          </button>
+        )}
       </div>
 
-      {/* Masaüstü: tablo */}
-      <div className="hidden md:block rounded-2xl overflow-hidden" style={{ border: "1px solid var(--border)" }}>
-        <div
-          className="grid grid-cols-4 px-5 py-3 text-[11px] font-bold uppercase tracking-wider text-[#8a8a9a]"
-          style={{ background: "var(--surface-2)" }}
-        >
-          <span>Kampanya Adı</span>
-          <span>Başlangıç</span>
-          <span>Bitiş</span>
-          <span className="text-right">Günlük Bütçe</span>
-        </div>
-        {campaigns.map((c, i) => (
-          <div
-            key={i}
-            className="grid grid-cols-4 px-5 py-4 items-center"
-            style={{
-              background: i % 2 === 0 ? "var(--surface)" : "var(--bg)",
-              borderTop: i > 0 ? "1px solid var(--border)" : "none",
-            }}
-          >
-            <span className="text-[13px] text-[#c8c8d8] truncate pr-3">{c.name}</span>
-            <span className="text-[13px] text-white">{c.startDate}</span>
-            <span className="text-[13px] text-[#8a8a9a]">{c.endDate}</span>
-            <div className="flex flex-col items-end gap-1">
-              <span className="text-[13px] font-semibold text-white">{fmtBudget(c.dailyBudget)}</span>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={statusStyle2(c.status)}>
-                {c.status}
-              </span>
+      {expanded && history.length > 0 && (
+        <div style={{ borderTop: "1px solid var(--border)" }}>
+          {history.map((r) => (
+            <div key={r.id} className="px-5 py-3" style={{ borderTop: "1px solid var(--border)" }}>
+              <div className="flex items-center justify-between gap-3 mb-1">
+                <p className="text-[13px] font-semibold text-white">{r.month}</p>
+                <p className="text-[11px] text-[#555]">{fmtReportDate(r.publishedAt)}</p>
+              </div>
+              <p className="text-[12px] text-[#8a8a9a]">
+                {[
+                  r.spend && `Harcama: ${r.spend}`,
+                  r.impressions && `Görüntülenme: ${r.impressions}`,
+                  r.clicks && `Tıklama: ${r.clicks}`,
+                ].filter(Boolean).join(" · ") || "Detay girilmemiş"}
+              </p>
+              {r.summary && <p className="text-[12px] text-[#8a8a9a] mt-1 whitespace-pre-wrap leading-relaxed">{r.summary}</p>}
             </div>
-          </div>
-        ))}
-      </div>
-    </>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
 

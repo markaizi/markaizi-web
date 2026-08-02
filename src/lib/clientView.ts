@@ -4,17 +4,11 @@
  * Böylece mevcut portal UI'ı değişmeden DB'den beslenir.
  */
 import { prisma } from "@/lib/db";
-import type {
-  ClientData,
-  Campaign,
-  CampaignStatus,
-  InvoiceStatus,
-} from "@/lib/clients";
+import type { ClientData, InvoiceStatus, RequestStatus } from "@/lib/clients";
 import {
-  Platform,
   UpdateKind,
-  CampaignStatus as DbCampaignStatus,
   InvoiceStatus as DbInvoiceStatus,
+  RequestStatus as DbRequestStatus,
 } from "@prisma/client";
 
 const fmtFull = new Intl.DateTimeFormat("tr-TR", { day: "numeric", month: "long", year: "numeric" });
@@ -23,37 +17,16 @@ const fmtShort = new Intl.DateTimeFormat("tr-TR", { day: "numeric", month: "long
 const trDate = (d: Date | null | undefined) => (d ? fmtFull.format(d) : "");
 const trDateShort = (d: Date | null | undefined) => (d ? fmtShort.format(d) : "");
 
-const CAMPAIGN_STATUS: Record<DbCampaignStatus, CampaignStatus> = {
-  AKTIF: "Aktif",
-  DURAKLATILDI: "Duraklatıldı",
-  TAMAMLANDI: "Tamamlandı",
-  ODEME_HATASI: "Ödeme Hatası",
-};
-
 const INVOICE_STATUS: Record<DbInvoiceStatus, InvoiceStatus> = {
   ODENDI: "Ödendi",
   BEKLIYOR: "Bekliyor",
   GUNU_GELMEDI: "Günü Gelmedi",
 };
 
-type CampaignRow = {
-  name: string;
-  startDate: Date | null;
-  endDate: Date | null;
-  ongoing: boolean;
-  dailyBudget: string;
-  status: DbCampaignStatus;
+const REQUEST_STATUS: Record<DbRequestStatus, RequestStatus> = {
+  BEKLIYOR: "Bekliyor",
+  YAPILDI: "Yapıldı",
 };
-
-function toCampaign(c: CampaignRow): Campaign {
-  return {
-    name: c.name,
-    startDate: trDate(c.startDate),
-    endDate: c.ongoing ? "Devam ediyor" : trDate(c.endDate),
-    dailyBudget: c.dailyBudget,
-    status: CAMPAIGN_STATUS[c.status],
-  };
-}
 
 export interface ClientView {
   id: string;
@@ -65,17 +38,14 @@ export async function getClientView(slug: string): Promise<ClientView | null> {
   const client = await prisma.client.findUnique({
     where: { slug },
     include: {
-      campaigns: { orderBy: { sortOrder: "asc" } },
       updates: { orderBy: { date: "asc" } },
       contentItems: { orderBy: { scheduledDate: "asc" } },
       invoices: { orderBy: { id: "asc" } },
+      notes: { orderBy: { createdAt: "desc" } },
+      adReports: { orderBy: { publishedAt: "desc" } },
     },
   });
   if (!client) return null;
-
-  const meta = client.campaigns.filter((c) => c.platform === Platform.META).map(toCampaign);
-  const google = client.campaigns.filter((c) => c.platform === Platform.GOOGLE).map(toCampaign);
-  const tiktok = client.campaigns.filter((c) => c.platform === Platform.TIKTOK).map(toCampaign);
 
   const agencyUpdates = client.updates
     .filter((u) => u.kind === UpdateKind.AJANS)
@@ -88,9 +58,8 @@ export async function getClientView(slug: string): Promise<ClientView | null> {
     slug: client.slug,
     name: client.name,
     envKey: "", // portal'da kullanılmıyor
-    metaCampaigns: meta,
-    googleCampaigns: google,
-    tiktokCampaigns: tiktok,
+    dailyMetaSpend: client.dailyMetaSpend ?? undefined,
+    dailyGoogleSpend: client.dailyGoogleSpend ?? undefined,
     websiteUpdates,
     updates: agencyUpdates,
     contentCalendar: client.contentItems.map((ci) => ({
@@ -104,6 +73,22 @@ export async function getClientView(slug: string): Promise<ClientView | null> {
       dueDate: inv.dueDate ? trDate(inv.dueDate) : undefined,
     })),
     invoiceNote: client.invoiceNote ?? undefined,
+    requests: client.notes.map((n) => ({
+      id: n.id,
+      text: n.text,
+      status: REQUEST_STATUS[n.status],
+      createdAt: n.createdAt.toISOString(),
+    })),
+    adReports: client.adReports.map((r) => ({
+      id: r.id,
+      platform: r.platform,
+      month: r.month,
+      spend: r.spend ?? undefined,
+      impressions: r.impressions ?? undefined,
+      clicks: r.clicks ?? undefined,
+      summary: r.summary ?? undefined,
+      publishedAt: r.publishedAt.toISOString(),
+    })),
   };
 
   return { id: client.id, data };

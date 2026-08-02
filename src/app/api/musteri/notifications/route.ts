@@ -4,10 +4,10 @@ import { prisma } from "@/lib/db";
 
 export const runtime = "nodejs";
 
-// Kullanıcıya ait okunmamış not sayılarını firma bazında döner.
-// CLIENT için: kendi firmasındaki PAYLASIMLI notlar
-// EMPLOYEE için: atandığı firmalardaki, role-scoped notlar
-// ADMIN için: tüm firmalardaki tüm notlar
+// Firma bazında "okunmamış" istek sayılarını döner.
+// ADMIN/EMPLOYEE için: müşterinin yazdığı, henüz okunmamış istekler.
+// CLIENT için: kendi isteklerinden durumu değişip henüz görülmemiş olanlar
+// (durum değişince müşterinin NoteRead kaydı silinir — bkz. notes/note/[id] PATCH).
 export async function GET() {
   const session = await getSession();
   if (!session) return NextResponse.json({ error: "Yetkisiz." }, { status: 401 });
@@ -36,15 +36,11 @@ export async function GET() {
 
   const clientIds = clientFilter.map((c) => c.id);
 
-  // Okunmamış notlar: başkası tarafından yazılmış, NoteRead kaydı olmayan
-  const visibilityFilter =
-    session.role === "CLIENT" ? { visibility: "PAYLASIMLI" as const } : {};
-
+  // Okunmamış: başkası tarafından yazılmış (veya durumu değişmiş), NoteRead kaydı olmayan
   const unreadNotes = await prisma.note.findMany({
     where: {
       clientId: { in: clientIds },
       authorId: { not: session.uid },
-      ...visibilityFilter,
       reads: { none: { userId: session.uid } },
     },
     select: {

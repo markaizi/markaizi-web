@@ -18,19 +18,6 @@ enum Role {
   CLIENT
 }
 
-enum Platform {
-  META
-  GOOGLE
-  TIKTOK
-}
-
-enum CampaignStatus {
-  AKTIF
-  DURAKLATILDI
-  TAMAMLANDI
-  ODEME_HATASI
-}
-
 enum InvoiceStatus {
   ODENDI
   BEKLIYOR
@@ -54,11 +41,15 @@ enum UpdateKind {
   WEBSITE
 }
 
-// ICERIK = sadece ajans-içi (admin + atanmış çalışan)
-// PAYLASIMLI = müşteri de görür
-enum NoteVisibility {
-  ICERIK
-  PAYLASIMLI
+enum RequestStatus {
+  BEKLIYOR
+  YAPILDI
+}
+
+enum ReportPlatform {
+  META
+  GOOGLE
+  WEBSITE
 }
 
 enum WorkflowPriority {
@@ -95,6 +86,7 @@ model User {
   authoredContent ContentItem[] @relation("ContentAssignee")
   authoredNotes   Note[]        @relation("NoteAuthor")
   noteReads       NoteRead[]
+  authoredAdReports AdReport[]  @relation("AdReportAuthor")
 
   workflowCardsAssigned WorkflowCard[] @relation("WorkflowAssignee")
   workflowCardsCreated  WorkflowCard[] @relation("WorkflowCreator")
@@ -120,7 +112,10 @@ model Client {
   billingAmount String?
   billingPeriod BillingPeriod?
 
-  campaigns     Campaign[]
+  // Günlük reklam harcaması — müşteri kendi panelinde görür, admin/çalışan girer
+  dailyMetaSpend   String?
+  dailyGoogleSpend String?
+
   updates       Update[]
   contentItems  ContentItem[]
   invoices      Invoice[]
@@ -128,6 +123,7 @@ model Client {
   assignments   Assignment[]
   users         User[]         @relation("ClientUsers")
   workflowCards WorkflowCard[]
+  adReports     AdReport[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -139,8 +135,6 @@ model Assignment {
   clientId String
 
   // Her section için: false+false=Yok, true+false=Görüntüle, true+true=Düzenle
-  canViewCampaigns   Boolean @default(true)
-  canManageCampaigns Boolean @default(false)
   canViewContent     Boolean @default(true)
   canManageContent   Boolean @default(true)
   canViewUpdates     Boolean @default(true)
@@ -154,21 +148,6 @@ model Assignment {
   createdAt DateTime @default(now())
 
   @@unique([userId, clientId])
-}
-
-model Campaign {
-  id          String         @id @default(cuid())
-  clientId    String
-  platform    Platform
-  name        String
-  startDate   DateTime?
-  endDate     DateTime?
-  ongoing     Boolean        @default(false)
-  dailyBudget String // "200 ₺/gün"
-  status      CampaignStatus @default(AKTIF)
-  sortOrder   Int            @default(0)
-
-  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
 }
 
 model ContentItem {
@@ -213,13 +192,14 @@ model Invoice {
   client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
 }
 
+// Müşteri İstekleri — sadece CLIENT yazar, ajans görüntüleyip durumunu işaretler.
 model Note {
-  id         String         @id @default(cuid())
+  id         String        @id @default(cuid())
   clientId   String
   authorId   String?
   authorRole Role
   text       String
-  visibility NoteVisibility @default(ICERIK)
+  status     RequestStatus @default(BEKLIYOR)
 
   client Client     @relation(fields: [clientId], references: [id], onDelete: Cascade)
   author User?      @relation("NoteAuthor", fields: [authorId], references: [id], onDelete: SetNull)
@@ -273,4 +253,22 @@ model WorkflowCard {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+// ── Aylık Reklam Raporları ─────────────────────────────────
+model AdReport {
+  id          String         @id @default(cuid())
+  clientId    String
+  platform    ReportPlatform
+  month       String // "Temmuz 2026"
+  spend       String?
+  impressions String?
+  clicks      String?
+  summary     String?
+  authorId    String?
+
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  author User?  @relation("AdReportAuthor", fields: [authorId], references: [id], onDelete: SetNull)
+
+  publishedAt DateTime @default(now())
 }

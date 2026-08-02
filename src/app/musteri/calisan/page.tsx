@@ -25,7 +25,6 @@ export default async function CalisanPage() {
       include: {
         client: {
           include: {
-            campaigns: { select: { platform: true } },
             contentItems: {
               where: { status: { in: ["PLANLANDI", "DUZENLENIYOR"] } },
               select: { id: true },
@@ -51,9 +50,6 @@ export default async function CalisanPage() {
     slug: a.client.slug,
     name: a.client.name,
     pendingCount: a.client.contentItems.length,
-    metaCount: a.client.campaigns.filter((c) => c.platform === "META").length,
-    googleCount: a.client.campaigns.filter((c) => c.platform === "GOOGLE").length,
-    tiktokCount: a.client.campaigns.filter((c) => c.platform === "TIKTOK").length,
     unreadNoteCount: unreadMap.get(a.clientId) ?? 0,
   }));
 

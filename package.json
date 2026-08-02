@@ -9,8 +9,7 @@
     "lint": "eslint",
     "postinstall": "prisma generate",
     "prisma:migrate": "dotenv -e .env.local -- prisma migrate dev",
-    "prisma:studio": "dotenv -e .env.local -- prisma studio",
-    "db:seed": "dotenv -e .env.local -- tsx prisma/seed.ts"
+    "prisma:studio": "dotenv -e .env.local -- prisma studio"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",

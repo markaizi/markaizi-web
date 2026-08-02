@@ -7,7 +7,6 @@ import bcrypt from "bcryptjs";
 export const runtime = "nodejs";
 
 const patchSchema = z.object({
-  canWriteNotes: z.boolean().optional(),
   name:     z.string().min(1).max(120).optional(),
   email:    z.string().email().optional(),
   username: z.string().min(2).max(60).regex(/^[a-z0-9_-]+$/, "Kullanıcı adı: küçük harf, rakam, tire, alt çizgi").optional(),

@@ -13,6 +13,8 @@ const schema = z.object({
   contactPhone: z.string().max(40).nullable().optional(),
   billingAmount: z.string().max(60).nullable().optional(),
   billingPeriod: z.enum(["HAFTALIK", "AYLIK"]).nullable().optional(),
+  dailyMetaSpend: z.string().max(60).nullable().optional(),
+  dailyGoogleSpend: z.string().max(60).nullable().optional(),
   active: z.boolean().optional(),
 });
 

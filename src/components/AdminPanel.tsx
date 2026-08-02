@@ -6,8 +6,6 @@ import { useRouter } from "next/navigation";
 export interface AdminClientSummary {
   slug: string;
   name: string;
-  activeCampaignCount: number;
-  totalCampaignCount: number;
   pendingInvoiceCount: number;
   overdueInvoiceCount: number;
   unreadNoteCount: number;
@@ -34,7 +32,6 @@ export default function AdminPanel({
 
   const totalUnread = clients.reduce((s, c) => s + c.unreadNoteCount, 0);
   const totalOverdue = clients.reduce((s, c) => s + c.overdueInvoiceCount, 0);
-  const totalActiveCampaigns = clients.reduce((s, c) => s + c.activeCampaignCount, 0);
 
   return (
     <div className="min-h-screen" style={{ background: "var(--bg)" }}>
@@ -76,7 +73,6 @@ export default function AdminPanel({
             employeeCount={employeeCount}
             totalUnread={totalUnread}
             totalOverdue={totalOverdue}
-            totalActiveCampaigns={totalActiveCampaigns}
             onGoFirmalar={() => setSection("firmalar")}
             router={router}
           />
@@ -91,13 +87,12 @@ export default function AdminPanel({
 
 // ── Dashboard ─────────────────────────────────────────────────────────────────
 
-function Dashboard({ clients, adminName, employeeCount, totalUnread, totalOverdue, totalActiveCampaigns, onGoFirmalar, router }: {
+function Dashboard({ clients, adminName, employeeCount, totalUnread, totalOverdue, onGoFirmalar, router }: {
   clients: AdminClientSummary[];
   adminName: string;
   employeeCount: number;
   totalUnread: number;
   totalOverdue: number;
-  totalActiveCampaigns: number;
   onGoFirmalar: () => void;
   router: ReturnType<typeof useRouter>;
 }) {
@@ -110,13 +105,12 @@ function Dashboard({ clients, adminName, employeeCount, totalUnread, totalOverdu
       </div>
 
       {/* Hızlı özet çubukları */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8">
         {[
           { label: "Aktif Firma", value: clients.length, color: "#c084fc", bg: "rgba(192,132,252,0.1)", border: "rgba(192,132,252,0.2)" },
-          { label: "Aktif Kampanya", value: totalActiveCampaigns, color: "#60a5fa", bg: "rgba(96,165,250,0.1)", border: "rgba(96,165,250,0.2)" },
           { label: "Çalışan", value: employeeCount, color: "#34d399", bg: "rgba(52,211,153,0.1)", border: "rgba(52,211,153,0.2)" },
           {
-            label: totalOverdue > 0 ? "Gecikmiş Fatura" : "Okunmamış Not",
+            label: totalOverdue > 0 ? "Gecikmiş Fatura" : "Bekleyen İstek",
             value: totalOverdue > 0 ? totalOverdue : totalUnread,
             color: totalOverdue > 0 ? "#f87171" : "#fb923c",
             bg: totalOverdue > 0 ? "rgba(248,113,113,0.1)" : "rgba(251,146,60,0.1)",
@@ -156,14 +150,14 @@ function Dashboard({ clients, adminName, employeeCount, totalUnread, totalOverdu
               style={{ background: "rgba(251,146,60,0.07)", border: "1px solid rgba(251,146,60,0.2)" }}>
               <span className="text-[15px] flex-shrink-0">🔔</span>
               <p className="text-[13px]" style={{ color: "#fb923c" }}>
-                <span className="font-semibold">Okunmamış not: </span>
                 {clients.filter(c => c.unreadNoteCount > 0).map((c, i, arr) => (
                   <span key={c.slug}>
                     <button onClick={() => router.push(`/musteri/admin/${c.slug}`)}
                       className="underline underline-offset-2 font-medium hover:opacity-80 transition-opacity">
-                      {c.name} ({c.unreadNoteCount})
+                      {c.name}
                     </button>
-                    {i < arr.length - 1 ? ", " : ""}
+                    {c.unreadNoteCount > 1 ? ` firmasından ${c.unreadNoteCount} isteğiniz var` : " firmasından bir isteğiniz var"}
+                    {i < arr.length - 1 ? " · " : ""}
                   </span>
                 ))}
               </p>
@@ -354,12 +348,11 @@ function FirmalarView({ clients, onBack, router }: {
       {/* Tablo */}
       <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid var(--border)" }}>
         {/* Başlık */}
-        <div className="grid grid-cols-[1fr_auto_auto_auto_auto] gap-3 px-5 py-3 text-[11px] font-bold uppercase tracking-wider text-[#555]"
+        <div className="grid grid-cols-[1fr_auto_auto_auto] gap-3 px-5 py-3 text-[11px] font-bold uppercase tracking-wider text-[#555]"
           style={{ background: "var(--surface-2,#0a0a0f)", borderBottom: "1px solid var(--border)" }}>
           <span>Firma</span>
-          <span className="text-center w-24">Kampanya</span>
           <span className="text-center w-24">Fatura</span>
-          <span className="text-center w-16">Not</span>
+          <span className="text-center w-16">İstek</span>
           <span className="w-16"></span>
         </div>
 
@@ -370,7 +363,7 @@ function FirmalarView({ clients, onBack, router }: {
           return (
             <div key={client.slug}
               onClick={() => router.push(`/musteri/admin/${client.slug}`)}
-              className="group grid grid-cols-[1fr_auto_auto_auto_auto] gap-3 items-center px-5 py-4 cursor-pointer transition-colors"
+              className="group grid grid-cols-[1fr_auto_auto_auto] gap-3 items-center px-5 py-4 cursor-pointer transition-colors"
               style={{
                 borderBottom: isLast ? "none" : "1px solid var(--border)",
                 background: isOverdue ? "rgba(248,113,113,0.04)" : "transparent",
@@ -397,20 +390,6 @@ function FirmalarView({ clients, onBack, router }: {
                 </div>
               </div>
 
-              {/* Kampanya */}
-              <div className="w-24 text-center">
-                {client.activeCampaignCount > 0 ? (
-                  <span className="text-[12px] font-semibold px-2.5 py-1 rounded-full"
-                    style={{ background: "rgba(96,165,250,0.1)", color: "#60a5fa" }}>
-                    {client.activeCampaignCount} aktif
-                  </span>
-                ) : client.totalCampaignCount > 0 ? (
-                  <span className="text-[12px] text-[#555]">{client.totalCampaignCount} kamp.</span>
-                ) : (
-                  <span className="text-[12px] text-[#444]">—</span>
-                )}
-              </div>
-
               {/* Fatura */}
               <div className="w-24 text-center">
                 {client.overdueInvoiceCount > 0 ? (
@@ -428,7 +407,7 @@ function FirmalarView({ clients, onBack, router }: {
                 )}
               </div>
 
-              {/* Not */}
+              {/* İstek */}
               <div className="w-16 text-center">
                 {client.unreadNoteCount > 0 ? (
                   <span className="text-[12px] font-bold px-2 py-0.5 rounded-full"

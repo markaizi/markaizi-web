@@ -27,9 +27,8 @@ export default async function CalisanClientPage({
   if (session.role === "ADMIN") redirect(`/musteri/admin/${slug}`);
 
   // EMPLOYEE: sadece atanmış firmaya erişebilir
-  const [assignment, employeeUser, unreadCount] = await Promise.all([
+  const [assignment, unreadCount] = await Promise.all([
     prisma.assignment.findFirst({ where: { userId: session.uid, client: { slug } } }),
-    prisma.user.findUnique({ where: { id: session.uid }, select: { canWriteNotes: true } }),
     prisma.note.count({
       where: {
         client: { slug },
@@ -43,12 +42,12 @@ export default async function CalisanClientPage({
   const client = await prisma.client.findUnique({
     where: { slug },
     include: {
-      campaigns: { orderBy: [{ platform: "asc" }, { sortOrder: "asc" }] },
       updates: { orderBy: { date: "desc" }, take: 20 },
       contentItems: { orderBy: { scheduledDate: "desc" } },
       // Fatura görüntüleme yetkisi yoksa veri sayfaya hiç gönderilmez (sadece UI'da
       // gizlemek yetmez — sayfa kaynağından okunabilir olurdu).
       invoices: assignment.canViewInvoices ? { orderBy: { id: "desc" } } : false,
+      adReports: { orderBy: { publishedAt: "desc" } },
     },
   });
 
@@ -57,10 +56,7 @@ export default async function CalisanClientPage({
   const data: EmployeeClientData = {
     slug: client.slug,
     name: client.name,
-    canWriteNotes: employeeUser?.canWriteNotes ?? false,
     perms: {
-      canViewCampaigns: assignment.canViewCampaigns,
-      canManageCampaigns: assignment.canManageCampaigns,
       canViewContent: assignment.canViewContent,
       canManageContent: assignment.canManageContent,
       canViewUpdates: assignment.canViewUpdates,
@@ -68,14 +64,6 @@ export default async function CalisanClientPage({
       canViewInvoices: assignment.canViewInvoices,
       canManageInvoices: assignment.canManageInvoices,
     },
-    campaigns: client.campaigns.map((c) => ({
-      id: c.id,
-      platform: c.platform,
-      name: c.name,
-      dailyBudget: c.dailyBudget,
-      status: c.status,
-      ongoing: c.ongoing,
-    })),
     updates: client.updates.map((u) => ({
       id: u.id,
       kind: u.kind,
@@ -96,6 +84,16 @@ export default async function CalisanClientPage({
       amount: i.amount,
       status: i.status,
       dueDate: i.dueDate?.toISOString().split("T")[0] ?? null,
+    })),
+    adReports: client.adReports.map((r) => ({
+      id: r.id,
+      platform: r.platform,
+      month: r.month,
+      spend: r.spend ?? "",
+      impressions: r.impressions ?? "",
+      clicks: r.clicks ?? "",
+      summary: r.summary ?? "",
+      publishedAt: r.publishedAt.toISOString(),
     })),
   };
 

@@ -42,7 +42,6 @@ export default async function AdminEmployeeDetailPage({
     username: employee.username ?? "",
     name: employee.name,
     email: employee.email,
-    canWriteNotes: employee.canWriteNotes,
     workflowAccess: employee.workflowAccess,
     workflowCanManageCards: employee.workflowCanManageCards,
     workflowCanDeleteAnyCard: employee.workflowCanDeleteAnyCard,
@@ -50,8 +49,6 @@ export default async function AdminEmployeeDetailPage({
     assignments: employee.assignments.map((a) => ({
       id: a.id,
       client: a.client,
-      canViewCampaigns: a.canViewCampaigns,
-      canManageCampaigns: a.canManageCampaigns,
       canViewContent: a.canViewContent,
       canManageContent: a.canManageContent,
       canViewUpdates: a.canViewUpdates,

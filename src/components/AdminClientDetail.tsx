@@ -16,17 +16,9 @@ export interface ClientDetailData {
   contactPhone: string;
   billingAmount: string;
   billingPeriod: "HAFTALIK" | "AYLIK" | "";
+  dailyMetaSpend: string;
+  dailyGoogleSpend: string;
   active: boolean;
-  campaigns: {
-    id: string;
-    platform: "META" | "GOOGLE" | "TIKTOK";
-    name: string;
-    dailyBudget: string;
-    status: "AKTIF" | "DURAKLATILDI" | "TAMAMLANDI" | "ODEME_HATASI";
-    ongoing: boolean;
-    startDate: string | null;
-    endDate: string | null;
-  }[];
   updates: {
     id: string;
     kind: "AJANS" | "WEBSITE";
@@ -48,36 +40,27 @@ export interface ClientDetailData {
     status: "PLANLANDI" | "DUZENLENIYOR" | "HAZIR" | "YAYINLANDI";
     publishedAt: string | null;
   }[];
-  users: { id: string; username: string | null; name: string; email: string; canWriteNotes: boolean }[];
+  users: { id: string; username: string | null; name: string; email: string }[];
+  adReports: {
+    id: string;
+    platform: "META" | "GOOGLE" | "WEBSITE";
+    month: string;
+    spend: string;
+    impressions: string;
+    clicks: string;
+    summary: string;
+    publishedAt: string;
+  }[];
 }
 
 // ── Yardımcılar ───────────────────────────────────────────────────────────────
 
-const PLATFORM_LABEL: Record<string, string> = { META: "Meta", GOOGLE: "Google", TIKTOK: "TikTok" };
-const PLATFORM_COLOR: Record<string, string> = {
-  META: "rgba(168,85,247,0.15)",
-  GOOGLE: "rgba(59,130,246,0.15)",
-  TIKTOK: "rgba(236,72,153,0.15)",
-};
-const PLATFORM_TEXT: Record<string, string> = {
-  META: "#c084fc",
-  GOOGLE: "#60a5fa",
-  TIKTOK: "#f472b6",
-};
 const STATUS_LABEL: Record<string, string> = {
-  AKTIF: "Aktif",
-  DURAKLATILDI: "Duraklatıldı",
-  TAMAMLANDI: "Tamamlandı",
-  ODEME_HATASI: "Ödeme Hatası",
   ODENDI: "Ödendi",
   BEKLIYOR: "Bekliyor",
   GUNU_GELMEDI: "Günü Gelmedi",
 };
 const STATUS_COLOR: Record<string, string> = {
-  AKTIF: "#34d399",
-  DURAKLATILDI: "#fbbf24",
-  TAMAMLANDI: "#8a8a9a",
-  ODEME_HATASI: "#f87171",
   ODENDI: "#34d399",
   BEKLIYOR: "#fbbf24",
   GUNU_GELMEDI: "#8a8a9a",
@@ -85,6 +68,17 @@ const STATUS_COLOR: Record<string, string> = {
   DUZENLENIYOR: "#fbbf24",
   HAZIR: "#60a5fa",
   YAYINLANDI: "#34d399",
+};
+
+const PLATFORM_LABEL: Record<string, string> = {
+  META: "Meta",
+  GOOGLE: "Google",
+  WEBSITE: "Website",
+};
+const PLATFORM_COLOR: Record<string, string> = {
+  META: "#60a5fa",
+  GOOGLE: "#34d399",
+  WEBSITE: "#c084fc",
 };
 
 const CONTENT_STATUS_BG: Record<string, string> = {
@@ -100,14 +94,6 @@ function fmtAmount(raw: string): string {
   const num = parseInt(digits, 10);
   if (isNaN(num)) return raw;
   return num.toLocaleString("tr-TR") + " ₺";
-}
-
-function fmtBudget(raw: string): string {
-  const digits = raw.replace(/[^\d]/g, "");
-  if (!digits) return raw;
-  const num = parseInt(digits, 10);
-  if (isNaN(num)) return raw;
-  return num.toLocaleString("tr-TR") + " ₺/gün";
 }
 
 // ── Paylaşılan UI ─────────────────────────────────────────────────────────────
@@ -198,7 +184,7 @@ function EditBtn({ onClick }: { onClick: () => void }) {
 
 export default function AdminClientDetail({ data, unreadNoteCount = 0 }: { data: ClientDetailData; unreadNoteCount?: number }) {
   const router = useRouter();
-  const [tab, setTab] = useState<"genel" | "kampanyalar" | "icerikler" | "guncellemeler" | "faturalar" | "notlar" | "kullanici">("genel");
+  const [tab, setTab] = useState<"genel" | "icerikler" | "guncellemeler" | "faturalar" | "raporlar" | "notlar" | "kullanici">("genel");
 
   async function handleLogout() {
     try { await fetch("/api/musteri/auth/logout", { method: "POST" }); } catch { /* ignore */ }
@@ -255,14 +241,14 @@ export default function AdminClientDetail({ data, unreadNoteCount = 0 }: { data:
 
         {/* Sekmeler */}
         <div className="flex gap-1 mb-7 flex-wrap">
-          {(["genel", "kampanyalar", "icerikler", "guncellemeler", "faturalar", "notlar", "kullanici"] as const).map((t) => {
+          {(["genel", "icerikler", "guncellemeler", "faturalar", "raporlar", "notlar", "kullanici"] as const).map((t) => {
             const labels: Record<typeof t, string> = {
               genel: "Genel",
-              kampanyalar: "Kampanyalar",
               icerikler: "İçerikler",
               guncellemeler: "Güncellemeler",
               faturalar: "Faturalar",
-              notlar: "Notlar",
+              raporlar: "Raporlar",
+              notlar: "Müşteri İstekleri",
               kullanici: "Kullanıcı",
             };
             return (
@@ -290,11 +276,11 @@ export default function AdminClientDetail({ data, unreadNoteCount = 0 }: { data:
 
         {/* İçerik */}
         {tab === "genel" && <GenelTab data={data} router={router} />}
-        {tab === "kampanyalar" && <KampanyalarTab slug={data.slug} campaigns={data.campaigns} router={router} />}
         {tab === "icerikler" && <IceriklerTab slug={data.slug} contentItems={data.contentItems} router={router} />}
         {tab === "guncellemeler" && <GuncellemelerTab slug={data.slug} updates={data.updates} router={router} />}
         {tab === "faturalar" && <FaturalarTab slug={data.slug} invoices={data.invoices} router={router} />}
-        {tab === "notlar" && <Notes clientSlug={data.slug} canWrite isAjans isAdmin />}
+        {tab === "raporlar" && <RaporlarTab slug={data.slug} reports={data.adReports} router={router} />}
+        {tab === "notlar" && <Notes clientSlug={data.slug} isClient={false} isStaff isAdmin />}
         {tab === "kullanici" && <KullaniciTab slug={data.slug} users={data.users} router={router} />}
       </main>
     </div>
@@ -308,6 +294,7 @@ function GenelTab({ data, router }: { data: ClientDetailData; router: ReturnType
     name: data.name, invoiceNote: data.invoiceNote,
     contactPerson: data.contactPerson, contactEmail: data.contactEmail, contactPhone: data.contactPhone,
     billingAmount: data.billingAmount, billingPeriod: data.billingPeriod || "AYLIK",
+    dailyMetaSpend: data.dailyMetaSpend, dailyGoogleSpend: data.dailyGoogleSpend,
   });
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
@@ -375,6 +362,27 @@ function GenelTab({ data, router }: { data: ClientDetailData; router: ReturnType
           </Field>
         </div>
 
+        <div className="pt-1 pb-1">
+          <p className="text-[13px] font-semibold text-white">Günlük Reklam Harcaması</p>
+          <p className="text-[11px] text-[#8a8a9a] mt-0.5">
+            Müşteri bunu kendi panelinin ana sayfasında görür.
+          </p>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <Field label="Meta (opsiyonel)">
+            <Input value={form.dailyMetaSpend}
+              onChange={(e) => setForm((f) => ({ ...f, dailyMetaSpend: e.target.value }))}
+              onBlur={(e) => setForm((f) => ({ ...f, dailyMetaSpend: fmtAmount(e.target.value) }))}
+              placeholder="Örn: 250 ₺" />
+          </Field>
+          <Field label="Google (opsiyonel)">
+            <Input value={form.dailyGoogleSpend}
+              onChange={(e) => setForm((f) => ({ ...f, dailyGoogleSpend: e.target.value }))}
+              onBlur={(e) => setForm((f) => ({ ...f, dailyGoogleSpend: fmtAmount(e.target.value) }))}
+              placeholder="Örn: 150 ₺" />
+          </Field>
+        </div>
+
         <Field label="Fatura Notu (opsiyonel)">
           <Textarea value={form.invoiceNote} onChange={(e) => setForm((f) => ({ ...f, invoiceNote: e.target.value }))} placeholder="Fatura ile ilgili ek bilgi..." />
         </Field>
@@ -387,195 +395,6 @@ function GenelTab({ data, router }: { data: ClientDetailData; router: ReturnType
           </button>
         </div>
       </form>
-    </div>
-  );
-}
-
-// ── Kampanyalar sekmesi ───────────────────────────────────────────────────────
-
-type Campaign = ClientDetailData["campaigns"][number];
-
-function KampanyalarTab({ slug, campaigns, router }: { slug: string; campaigns: Campaign[]; router: ReturnType<typeof useRouter> }) {
-  const emptyForm = { platform: "META" as Campaign["platform"], name: "", dailyBudget: "", status: "AKTIF" as Campaign["status"], ongoing: false, startDate: "", endDate: "" };
-  const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState(emptyForm);
-  const [loading, setLoading] = useState(false);
-  const [err, setErr] = useState("");
-  const [deleting, setDeleting] = useState<string | null>(null);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editForm, setEditForm] = useState(emptyForm);
-  const [editLoading, setEditLoading] = useState(false);
-  const [editErr, setEditErr] = useState("");
-
-  function startEdit(c: Campaign) {
-    setEditingId(c.id);
-    setEditForm({
-      platform: c.platform,
-      name: c.name,
-      dailyBudget: c.dailyBudget,
-      status: c.status,
-      ongoing: c.ongoing,
-      startDate: c.startDate ?? "",
-      endDate: c.endDate ?? "",
-    });
-    setEditErr("");
-  }
-
-  async function handleSave(e: React.FormEvent) {
-    e.preventDefault();
-    if (!editingId) return;
-    setEditLoading(true);
-    setEditErr("");
-    const res = await fetch(`/api/musteri/admin/campaigns/${editingId}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...editForm, startDate: editForm.startDate || null, endDate: editForm.endDate || null }),
-    });
-    const json = await res.json();
-    setEditLoading(false);
-    if (json.ok) { setEditingId(null); router.refresh(); }
-    else setEditErr(json.error ?? "Hata.");
-  }
-
-  async function handleAdd(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-    setErr("");
-    const res = await fetch(`/api/musteri/admin/clients/${slug}/campaigns`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...form, startDate: form.startDate || null, endDate: form.endDate || null }),
-    });
-    const json = await res.json();
-    setLoading(false);
-    if (json.ok) { setShowForm(false); setForm(emptyForm); router.refresh(); }
-    else setErr(json.error ?? "Hata.");
-  }
-
-  async function handleDelete(id: string) {
-    if (!confirm("Bu kampanyayı sil?")) return;
-    setDeleting(id);
-    await fetch(`/api/musteri/admin/campaigns/${id}`, { method: "DELETE" });
-    setDeleting(null);
-    router.refresh();
-  }
-
-  return (
-    <div className="space-y-4">
-      {campaigns.map((c) => editingId === c.id ? (
-        <form key={c.id} onSubmit={handleSave} className="rounded-2xl p-5 space-y-4" style={{ background: "var(--surface)", border: "1px solid rgba(168,85,247,0.4)" }}>
-          <p className="font-semibold text-white text-[14px]">Kampanyayı Düzenle</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <Field label="Platform">
-              <Select value={editForm.platform} onChange={(e) => setEditForm((x) => ({ ...x, platform: e.target.value as Campaign["platform"] }))}>
-                <option value="META">Meta</option>
-                <option value="GOOGLE">Google</option>
-                <option value="TIKTOK">TikTok</option>
-              </Select>
-            </Field>
-            <Field label="Durum">
-              <Select value={editForm.status} onChange={(e) => setEditForm((x) => ({ ...x, status: e.target.value as Campaign["status"] }))}>
-                <option value="AKTIF">Aktif</option>
-                <option value="DURAKLATILDI">Duraklatıldı</option>
-                <option value="TAMAMLANDI">Tamamlandı</option>
-                <option value="ODEME_HATASI">Ödeme Hatası</option>
-              </Select>
-            </Field>
-          </div>
-          <Field label="Kampanya Adı">
-            <Input required value={editForm.name} onChange={(e) => setEditForm((x) => ({ ...x, name: e.target.value }))} placeholder="Örn: Yaz Kampanyası 2026" />
-          </Field>
-          <Field label="Günlük Bütçe">
-            <Input required value={editForm.dailyBudget}
-              onChange={(e) => setEditForm((x) => ({ ...x, dailyBudget: e.target.value }))}
-              onBlur={(e) => setEditForm((x) => ({ ...x, dailyBudget: fmtBudget(e.target.value) }))}
-              placeholder="100" />
-          </Field>
-          <div className="flex items-center gap-2">
-            <input type="checkbox" id="edit-ongoing" checked={editForm.ongoing} onChange={(e) => setEditForm((x) => ({ ...x, ongoing: e.target.checked }))} className="accent-purple-500" />
-            <label htmlFor="edit-ongoing" className="text-[13px] text-[#8a8a9a]">Devam ediyor (süresiz)</label>
-          </div>
-          {!editForm.ongoing && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <Field label="Başlangıç"><Input type="date" value={editForm.startDate} onChange={(e) => setEditForm((x) => ({ ...x, startDate: e.target.value }))} /></Field>
-              <Field label="Bitiş"><Input type="date" value={editForm.endDate} onChange={(e) => setEditForm((x) => ({ ...x, endDate: e.target.value }))} /></Field>
-            </div>
-          )}
-          <ErrMsg msg={editErr} />
-          <div className="flex gap-2">
-            <SaveBtn loading={editLoading} label="Kaydet" />
-            <button type="button" onClick={() => setEditingId(null)} className="btn btn-outline text-sm px-5 py-2">İptal</button>
-          </div>
-        </form>
-      ) : (
-        <div key={c.id} className="rounded-xl p-4 flex items-start gap-3" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
-          <span className="text-[11px] font-bold px-2.5 py-1 rounded-full flex-shrink-0 mt-0.5" style={{ background: PLATFORM_COLOR[c.platform], color: PLATFORM_TEXT[c.platform] }}>
-            {PLATFORM_LABEL[c.platform]}
-          </span>
-          <div className="flex-1 min-w-0">
-            <p className="text-white text-[14px] font-semibold truncate">{c.name}</p>
-            <p className="text-[12px] text-[#8a8a9a] mt-0.5">{fmtBudget(c.dailyBudget)} · {c.ongoing ? "Devam ediyor" : `${c.startDate ?? "?"} → ${c.endDate ?? "?"}`}</p>
-          </div>
-          <div className="flex items-center gap-2 flex-shrink-0">
-            <span className="text-[12px] font-medium px-2 py-1 rounded-full" style={{ color: STATUS_COLOR[c.status], background: `${STATUS_COLOR[c.status]}18` }}>{STATUS_LABEL[c.status]}</span>
-            <EditBtn onClick={() => startEdit(c)} />
-            <DeleteBtn onClick={() => handleDelete(c.id)} loading={deleting === c.id} />
-          </div>
-        </div>
-      ))}
-
-      {campaigns.length === 0 && (
-        <p className="text-[13px] text-[#8a8a9a] text-center py-8">Henüz kampanya yok.</p>
-      )}
-
-      {!showForm ? (
-        <button onClick={() => setShowForm(true)} className="btn btn-outline text-sm w-full py-3 mt-2">+ Kampanya Ekle</button>
-      ) : (
-        <form onSubmit={handleAdd} className="rounded-2xl p-5 space-y-4 mt-2" style={{ background: "var(--surface)", border: "1px solid rgba(168,85,247,0.3)" }}>
-          <p className="font-semibold text-white text-[14px]">Yeni Kampanya</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <Field label="Platform">
-              <Select value={form.platform} onChange={(e) => setForm((x) => ({ ...x, platform: e.target.value as Campaign["platform"] }))}>
-                <option value="META">Meta</option>
-                <option value="GOOGLE">Google</option>
-                <option value="TIKTOK">TikTok</option>
-              </Select>
-            </Field>
-            <Field label="Durum">
-              <Select value={form.status} onChange={(e) => setForm((x) => ({ ...x, status: e.target.value as Campaign["status"] }))}>
-                <option value="AKTIF">Aktif</option>
-                <option value="DURAKLATILDI">Duraklatıldı</option>
-                <option value="TAMAMLANDI">Tamamlandı</option>
-                <option value="ODEME_HATASI">Ödeme Hatası</option>
-              </Select>
-            </Field>
-          </div>
-          <Field label="Kampanya Adı">
-            <Input required value={form.name} onChange={(e) => setForm((x) => ({ ...x, name: e.target.value }))} placeholder="Örn: Yaz Kampanyası 2026" />
-          </Field>
-          <Field label="Günlük Bütçe">
-            <Input required value={form.dailyBudget}
-              onChange={(e) => setForm((x) => ({ ...x, dailyBudget: e.target.value }))}
-              onBlur={(e) => setForm((x) => ({ ...x, dailyBudget: fmtBudget(e.target.value) }))}
-              placeholder="100" />
-          </Field>
-          <div className="flex items-center gap-2">
-            <input type="checkbox" id="add-ongoing" checked={form.ongoing} onChange={(e) => setForm((x) => ({ ...x, ongoing: e.target.checked }))} className="accent-purple-500" />
-            <label htmlFor="add-ongoing" className="text-[13px] text-[#8a8a9a]">Devam ediyor (süresiz)</label>
-          </div>
-          {!form.ongoing && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              <Field label="Başlangıç"><Input type="date" value={form.startDate} onChange={(e) => setForm((x) => ({ ...x, startDate: e.target.value }))} /></Field>
-              <Field label="Bitiş"><Input type="date" value={form.endDate} onChange={(e) => setForm((x) => ({ ...x, endDate: e.target.value }))} /></Field>
-            </div>
-          )}
-          <ErrMsg msg={err} />
-          <div className="flex gap-2">
-            <SaveBtn loading={loading} label="Ekle" />
-            <button type="button" onClick={() => setShowForm(false)} className="btn btn-outline text-sm px-5 py-2">İptal</button>
-          </div>
-        </form>
-      )}
     </div>
   );
 }
@@ -871,6 +690,182 @@ function FaturalarTab({ slug, invoices, router }: { slug: string; invoices: Invo
   );
 }
 
+// ── Raporlar sekmesi ─────────────────────────────────────────────────────────
+
+type AdReport = ClientDetailData["adReports"][number];
+
+function fmtReportDate(iso: string) {
+  return new Date(iso).toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" });
+}
+
+function RaporlarTab({ slug, reports, router }: { slug: string; reports: AdReport[]; router: ReturnType<typeof useRouter> }) {
+  const emptyForm = { platform: "META" as AdReport["platform"], month: "", spend: "", impressions: "", clicks: "", summary: "" };
+  const [showForm, setShowForm] = useState(false);
+  const [form, setForm] = useState(emptyForm);
+  const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState("");
+  const [deleting, setDeleting] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editForm, setEditForm] = useState(emptyForm);
+  const [editLoading, setEditLoading] = useState(false);
+  const [editErr, setEditErr] = useState("");
+
+  function startEdit(r: AdReport) {
+    setEditingId(r.id);
+    setEditForm({ platform: r.platform, month: r.month, spend: r.spend, impressions: r.impressions, clicks: r.clicks, summary: r.summary });
+    setEditErr("");
+  }
+
+  async function handleSave(e: React.FormEvent) {
+    e.preventDefault();
+    if (!editingId) return;
+    setEditLoading(true);
+    setEditErr("");
+    const res = await fetch(`/api/musteri/admin/reports/${editingId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(editForm),
+    });
+    const json = await res.json();
+    setEditLoading(false);
+    if (json.ok) { setEditingId(null); router.refresh(); }
+    else setEditErr(json.error ?? "Hata.");
+  }
+
+  async function handleAdd(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    setErr("");
+    const res = await fetch(`/api/musteri/admin/clients/${slug}/reports`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(form),
+    });
+    const json = await res.json();
+    setLoading(false);
+    if (json.ok) { setShowForm(false); setForm(emptyForm); router.refresh(); }
+    else setErr(json.error ?? "Hata.");
+  }
+
+  async function handleDelete(id: string) {
+    if (!confirm("Bu raporu sil?")) return;
+    setDeleting(id);
+    await fetch(`/api/musteri/admin/reports/${id}`, { method: "DELETE" });
+    setDeleting(null);
+    router.refresh();
+  }
+
+  return (
+    <div className="space-y-3">
+      {reports.map((r) => editingId === r.id ? (
+        <form key={r.id} onSubmit={handleSave} className="rounded-2xl p-5 space-y-4" style={{ background: "var(--surface)", border: "1px solid rgba(168,85,247,0.4)" }}>
+          <p className="font-semibold text-white text-[14px]">Raporu Düzenle</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <Field label="Platform">
+              <Select value={editForm.platform} onChange={(e) => setEditForm((x) => ({ ...x, platform: e.target.value as AdReport["platform"] }))}>
+                <option value="META">Meta</option>
+                <option value="GOOGLE">Google</option>
+                <option value="WEBSITE">Website</option>
+              </Select>
+            </Field>
+            <Field label="Ay">
+              <Input required value={editForm.month} onChange={(e) => setEditForm((x) => ({ ...x, month: e.target.value }))} placeholder="Temmuz 2026" />
+            </Field>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <Field label="Harcama">
+              <Input value={editForm.spend} onChange={(e) => setEditForm((x) => ({ ...x, spend: e.target.value }))} placeholder="5.000 ₺" />
+            </Field>
+            <Field label="Görüntülenme">
+              <Input value={editForm.impressions} onChange={(e) => setEditForm((x) => ({ ...x, impressions: e.target.value }))} placeholder="42.000" />
+            </Field>
+            <Field label="Tıklama">
+              <Input value={editForm.clicks} onChange={(e) => setEditForm((x) => ({ ...x, clicks: e.target.value }))} placeholder="850" />
+            </Field>
+          </div>
+          <Field label="Özet (opsiyonel)">
+            <Textarea value={editForm.summary} onChange={(e) => setEditForm((x) => ({ ...x, summary: e.target.value }))} placeholder="Neye ne kadar harcandığına dair kısa özet..." />
+          </Field>
+          <ErrMsg msg={editErr} />
+          <div className="flex gap-2">
+            <SaveBtn loading={editLoading} label="Kaydet" />
+            <button type="button" onClick={() => setEditingId(null)} className="btn btn-outline text-sm px-5 py-2">İptal</button>
+          </div>
+        </form>
+      ) : (
+        <div key={r.id} className="rounded-xl p-4" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+          <div className="flex items-start justify-between gap-3">
+            <div className="min-w-0">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-[11px] font-bold px-2 py-0.5 rounded-full" style={{ color: PLATFORM_COLOR[r.platform], background: `${PLATFORM_COLOR[r.platform]}18` }}>
+                  {PLATFORM_LABEL[r.platform]}
+                </span>
+                <p className="text-white text-[14px] font-semibold">{r.month}</p>
+              </div>
+              <p className="text-[12px] text-[#8a8a9a] mt-1">
+                {[
+                  r.spend && `Harcama: ${r.spend}`,
+                  r.impressions && `Görüntülenme: ${r.impressions}`,
+                  r.clicks && `Tıklama: ${r.clicks}`,
+                ].filter(Boolean).join(" · ") || "Detay girilmemiş"}
+              </p>
+              {r.summary && <p className="text-[12px] text-[#8a8a9a] mt-1 whitespace-pre-wrap leading-relaxed">{r.summary}</p>}
+              <p className="text-[11px] text-[#555] mt-1.5">Yayınlanma: {fmtReportDate(r.publishedAt)}</p>
+            </div>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <EditBtn onClick={() => startEdit(r)} />
+              <DeleteBtn onClick={() => handleDelete(r.id)} loading={deleting === r.id} />
+            </div>
+          </div>
+        </div>
+      ))}
+
+      {reports.length === 0 && (
+        <p className="text-[13px] text-[#8a8a9a] text-center py-8">Henüz rapor yayınlanmadı.</p>
+      )}
+
+      {!showForm ? (
+        <button onClick={() => setShowForm(true)} className="btn btn-outline text-sm w-full py-3 mt-2">+ Rapor Yayınla</button>
+      ) : (
+        <form onSubmit={handleAdd} className="rounded-2xl p-5 space-y-4 mt-2" style={{ background: "var(--surface)", border: "1px solid rgba(168,85,247,0.3)" }}>
+          <p className="font-semibold text-white text-[14px]">Yeni Rapor</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <Field label="Platform">
+              <Select value={form.platform} onChange={(e) => setForm((x) => ({ ...x, platform: e.target.value as AdReport["platform"] }))}>
+                <option value="META">Meta</option>
+                <option value="GOOGLE">Google</option>
+                <option value="WEBSITE">Website</option>
+              </Select>
+            </Field>
+            <Field label="Ay">
+              <Input required value={form.month} onChange={(e) => setForm((x) => ({ ...x, month: e.target.value }))} placeholder="Temmuz 2026" />
+            </Field>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <Field label="Harcama">
+              <Input value={form.spend} onChange={(e) => setForm((x) => ({ ...x, spend: e.target.value }))} placeholder="5.000 ₺" />
+            </Field>
+            <Field label="Görüntülenme">
+              <Input value={form.impressions} onChange={(e) => setForm((x) => ({ ...x, impressions: e.target.value }))} placeholder="42.000" />
+            </Field>
+            <Field label="Tıklama">
+              <Input value={form.clicks} onChange={(e) => setForm((x) => ({ ...x, clicks: e.target.value }))} placeholder="850" />
+            </Field>
+          </div>
+          <Field label="Özet (opsiyonel)">
+            <Textarea value={form.summary} onChange={(e) => setForm((x) => ({ ...x, summary: e.target.value }))} placeholder="Neye ne kadar harcandığına dair kısa özet..." />
+          </Field>
+          <ErrMsg msg={err} />
+          <div className="flex gap-2">
+            <SaveBtn loading={loading} label="Yayınla" />
+            <button type="button" onClick={() => setShowForm(false)} className="btn btn-outline text-sm px-5 py-2">İptal</button>
+          </div>
+        </form>
+      )}
+    </div>
+  );
+}
+
 // ── İçerikler sekmesi ────────────────────────────────────────────────────────
 
 type ContentItem = ClientDetailData["contentItems"][number];
@@ -1042,8 +1037,6 @@ function KullaniciTab({
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
   const [ok, setOk] = useState("");
-  const [canWriteNotes, setCanWriteNotes] = useState(existing?.canWriteNotes ?? false);
-  const [notesLoading, setNotesLoading] = useState(false);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -1063,18 +1056,6 @@ function KullaniciTab({
     } else setErr(json.error ?? "Hata.");
   }
 
-  async function handleNotesToggle(val: boolean) {
-    if (!existing) return;
-    setNotesLoading(true);
-    setCanWriteNotes(val);
-    await fetch(`/api/musteri/admin/clients/${slug}/users`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ canWriteNotes: val }),
-    });
-    setNotesLoading(false);
-  }
-
   return (
     <div className="space-y-5">
       {existing && (
@@ -1086,31 +1067,6 @@ function KullaniciTab({
             <p className="text-white text-[14px] font-semibold">{existing.name}</p>
             <p className="text-[12px] text-[#8a8a9a]">@{existing.username} · {existing.email}</p>
           </div>
-        </div>
-      )}
-
-      {/* canWriteNotes toggle — yalnızca mevcut kullanıcı varsa */}
-      {existing && (
-        <div className="rounded-xl p-4 flex items-center justify-between gap-4"
-          style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
-          <div>
-            <p className="text-white text-[14px] font-semibold">Not Yazma Yetkisi</p>
-            <p className="text-[12px] text-[#8a8a9a] mt-0.5">
-              Açıksa müşteri kendi firma sayfasına not bırakabilir (PAYLASIMLI).
-            </p>
-          </div>
-          <button
-            onClick={() => handleNotesToggle(!canWriteNotes)}
-            disabled={notesLoading}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg text-[13px] font-semibold transition-all flex-shrink-0"
-            style={{
-              background: canWriteNotes ? "rgba(52,211,153,0.15)" : "rgba(138,138,154,0.1)",
-              border: `1px solid ${canWriteNotes ? "rgba(52,211,153,0.3)" : "var(--border)"}`,
-              color: canWriteNotes ? "#34d399" : "#8a8a9a",
-            }}
-          >
-            {notesLoading ? "..." : canWriteNotes ? "✓ Açık" : "Kapalı"}
-          </button>
         </div>
       )}
 

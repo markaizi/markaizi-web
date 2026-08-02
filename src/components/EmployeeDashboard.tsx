@@ -6,9 +6,6 @@ export interface AssignedClient {
   slug: string;
   name: string;
   pendingCount: number;
-  metaCount: number;
-  googleCount: number;
-  tiktokCount: number;
   unreadNoteCount: number;
 }
 
@@ -76,22 +73,22 @@ export default function EmployeeDashboard({
           </div>
         </div>
 
-        {/* Okunmamış not özeti */}
+        {/* Bekleyen istek özeti */}
         {clients.some((c) => c.unreadNoteCount > 0) && (
           <div className="mb-6 px-4 py-3 rounded-xl flex items-start gap-3"
             style={{ background: "rgba(251,146,60,0.07)", border: "1px solid rgba(251,146,60,0.2)" }}>
             <span className="text-[16px] flex-shrink-0">🔔</span>
             <div className="text-[13px]" style={{ color: "#fb923c" }}>
-              <span className="font-semibold">Okunmamış not: </span>
               {clients.filter((c) => c.unreadNoteCount > 0).map((c, i, arr) => (
                 <span key={c.slug}>
                   <button
                     onClick={() => router.push(`/musteri/calisan/${c.slug}`)}
                     className="underline underline-offset-2 font-medium hover:opacity-80 transition-opacity"
                   >
-                    {c.name} ({c.unreadNoteCount})
+                    {c.name}
                   </button>
-                  {i < arr.length - 1 ? ", " : ""}
+                  {c.unreadNoteCount > 1 ? ` firmasından ${c.unreadNoteCount} isteğiniz var` : " firmasından bir isteğiniz var"}
+                  {i < arr.length - 1 ? " · " : ""}
                 </span>
               ))}
             </div>
@@ -133,7 +130,7 @@ export default function EmployeeDashboard({
                       <span
                         className="flex-shrink-0 text-[10px] font-bold px-1.5 py-0.5 rounded-full"
                         style={{ background: "rgba(251,146,60,0.15)", color: "#fb923c", border: "1px solid rgba(251,146,60,0.3)" }}
-                        title={`${client.unreadNoteCount} okunmamış not`}
+                        title={`${client.unreadNoteCount} bekleyen istek`}
                       >
                         {client.unreadNoteCount}
                       </span>
@@ -146,21 +143,6 @@ export default function EmployeeDashboard({
                 {client.pendingCount > 0 && (
                   <span className="px-2 py-1 rounded-full" style={{ background: "rgba(251,191,36,0.1)", color: "#fbbf24" }}>
                     {client.pendingCount} bekleyen içerik
-                  </span>
-                )}
-                {client.metaCount > 0 && (
-                  <span className="px-2 py-1 rounded-full" style={{ background: "rgba(168,85,247,0.1)", color: "#c084fc" }}>
-                    {client.metaCount} Meta
-                  </span>
-                )}
-                {client.googleCount > 0 && (
-                  <span className="px-2 py-1 rounded-full" style={{ background: "rgba(59,130,246,0.1)", color: "#60a5fa" }}>
-                    {client.googleCount} Google
-                  </span>
-                )}
-                {client.tiktokCount > 0 && (
-                  <span className="px-2 py-1 rounded-full" style={{ background: "rgba(236,72,153,0.1)", color: "#f472b6" }}>
-                    {client.tiktokCount} TikTok
                   </span>
                 )}
               </div>

@@ -8,7 +8,6 @@ export interface EmployeeDetailData {
   username: string;
   name: string;
   email: string;
-  canWriteNotes: boolean;
   workflowAccess: boolean;
   workflowCanManageCards: boolean;
   workflowCanDeleteAnyCard: boolean;
@@ -16,8 +15,6 @@ export interface EmployeeDetailData {
   assignments: {
     id: string;
     client: { id: string; slug: string; name: string };
-    canViewCampaigns: boolean;
-    canManageCampaigns: boolean;
     canViewContent: boolean;
     canManageContent: boolean;
     canViewUpdates: boolean;
@@ -30,7 +27,6 @@ export interface EmployeeDetailData {
 interface ClientOption { id: string; slug: string; name: string; }
 
 const SECTIONS = [
-  { label: "Kampanyalar", viewKey: "canViewCampaigns" as const, manageKey: "canManageCampaigns" as const },
   { label: "İçerikler",    viewKey: "canViewContent"   as const, manageKey: "canManageContent"   as const },
   { label: "Güncellemeler",viewKey: "canViewUpdates"   as const, manageKey: "canManageUpdates"   as const },
   { label: "Faturalar",    viewKey: "canViewInvoices"  as const, manageKey: "canManageInvoices"  as const },
@@ -48,8 +44,6 @@ function getState(view: boolean, manage: boolean): SectionState {
 
 type LocalAssign = {
   id: string | null;
-  canViewCampaigns: boolean;
-  canManageCampaigns: boolean;
   canViewContent: boolean;
   canManageContent: boolean;
   canViewUpdates: boolean;
@@ -59,7 +53,6 @@ type LocalAssign = {
 };
 
 const DEFAULT_PERMS: Omit<LocalAssign, "id"> = {
-  canViewCampaigns: true, canManageCampaigns: false,
   canViewContent: true,   canManageContent: true,
   canViewUpdates: true,   canManageUpdates: true,
   canViewInvoices: false, canManageInvoices: false,
@@ -107,19 +100,6 @@ export default function AdminEmployeeDetail({
     router.push("/musteri/admin/calisanlar");
   }
 
-  // ── Not yazma yetkisi ────────────────────────────────────────────────────
-  const [canWriteNotes, setCanWriteNotes] = useState(employee.canWriteNotes);
-  const [notesLoading, setNotesLoading] = useState(false);
-
-  async function handleNotesToggle(val: boolean) {
-    setNotesLoading(true);
-    setCanWriteNotes(val);
-    await fetch(`/api/musteri/admin/employees/${employee.id}`, {
-      method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ canWriteNotes: val }),
-    });
-    setNotesLoading(false);
-  }
-
   // ── İş Akışı yetkileri ───────────────────────────────────────────────────
   const [wf, setWf] = useState({
     workflowAccess: employee.workflowAccess,
@@ -144,7 +124,6 @@ export default function AdminEmployeeDetail({
     employee.assignments.forEach((a) => {
       m.set(a.client.id, {
         id: a.id,
-        canViewCampaigns: a.canViewCampaigns, canManageCampaigns: a.canManageCampaigns,
         canViewContent: a.canViewContent, canManageContent: a.canManageContent,
         canViewUpdates: a.canViewUpdates, canManageUpdates: a.canManageUpdates,
         canViewInvoices: a.canViewInvoices, canManageInvoices: a.canManageInvoices,
@@ -260,22 +239,6 @@ export default function AdminEmployeeDetail({
                 className="w-full px-3 py-2.5 rounded-lg text-[14px] text-white placeholder-[#555] outline-none focus:ring-1 focus:ring-purple-500/50"
                 style={{ background: "var(--bg)", border: "1px solid var(--border)" }} />
             </div>
-          </div>
-
-          <div className="flex items-center justify-between pt-1">
-            <button
-              type="button"
-              onClick={() => handleNotesToggle(!canWriteNotes)}
-              disabled={notesLoading}
-              className="text-[12px] px-3 py-1.5 rounded-full transition-all"
-              style={{
-                background: canWriteNotes ? "rgba(52,211,153,0.12)" : "rgba(138,138,154,0.1)",
-                border: `1px solid ${canWriteNotes ? "rgba(52,211,153,0.3)" : "var(--border)"}`,
-                color: canWriteNotes ? "#34d399" : "#8a8a9a",
-              }}
-            >
-              {notesLoading ? "..." : canWriteNotes ? "🗒 Not Yazma: Açık" : "🗒 Not Yazma: Kapalı"}
-            </button>
           </div>
 
           {infoErr && <p className="text-[12px] text-red-400">{infoErr}</p>}
