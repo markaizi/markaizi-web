@@ -1,21 +1,7 @@
 "use client";
 
 import { useState, FormEvent } from "react";
-
-const SEVIYE_OPTIONS = ["Başlangıç", "Orta", "İleri", "Uzman"];
-
-const PROGRAMS = [
-  "Adobe Premiere",
-  "CapCut",
-  "Adobe Photoshop",
-  "Illustrator",
-  "DaVinci Resolve",
-  "After Effects",
-  "Final Cut",
-  "Edits",
-  "Canva",
-  "Diğer",
-];
+import { CV_SKILLS } from "@/lib/cv-skills";
 
 const SOSYAL_MEDYA_OPTIONS = [
   "Aktif sosyal medya kullanıcısıyım",
@@ -34,48 +20,45 @@ const inputFocusStyle = { outline: "none", borderColor: "rgba(168,85,247,0.5)", 
 const toggleActive   = { background: "rgba(168,85,247,0.2)", color: "#c084fc", border: "1px solid rgba(168,85,247,0.5)" };
 const toggleInactive = { background: "var(--bg)", color: "#8a8a9a", border: "1px solid var(--border)" };
 
-function SeviyeSecici({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+function SkillSlider({ label, value, onChange }: { label: string; value: number; onChange: (v: number) => void }) {
   return (
-    <div className="flex flex-col gap-2">
-      {SEVIYE_OPTIONS.map((opt) => (
-        <button
-          key={opt}
-          type="button"
-          onClick={() => onChange(opt)}
-          className="w-full text-left px-4 py-3 rounded-xl text-[14px] font-semibold transition-all duration-150 flex items-center gap-3"
-          style={value === opt ? toggleActive : toggleInactive}
+    <div>
+      <div className="flex items-center justify-between mb-2 gap-3">
+        <span className="text-[14px] font-semibold text-white">{label}</span>
+        <span
+          className="text-[12px] font-bold px-2.5 py-1 rounded-full flex-shrink-0"
+          style={{ background: "rgba(168,85,247,0.15)", color: "#c084fc" }}
         >
-          <span
-            className="w-4 h-4 rounded-full flex-shrink-0 flex items-center justify-center border transition-all"
-            style={value === opt
-              ? { background: "#c084fc", borderColor: "#c084fc" }
-              : { background: "transparent", borderColor: "#444" }
-            }
-          >
-            {value === opt && (
-              <svg viewBox="0 0 10 10" className="w-2.5 h-2.5" fill="white">
-                <circle cx="5" cy="5" r="3"/>
-              </svg>
-            )}
-          </span>
-          {opt}
-        </button>
-      ))}
+          {value}/10
+        </span>
+      </div>
+      <input
+        type="range"
+        min={1}
+        max={10}
+        step={1}
+        value={value}
+        onChange={(e) => onChange(Number(e.target.value))}
+        className="skill-slider w-full"
+      />
+      <div className="flex justify-between text-[10px] font-semibold text-[#666] mt-1.5 uppercase tracking-wide">
+        <span>Başlangıç</span>
+        <span>Uzman</span>
+      </div>
     </div>
   );
 }
 
 export default function CvForm() {
   const [status, setStatus]         = useState<"idle" | "sending" | "done" | "error">("idle");
-  const [montajSeviye, setMontajSeviye] = useState("");
-  const [cekimSeviye, setCekimSeviye]   = useState("");
-  const [programs, setPrograms]     = useState<string[]>([]);
+  const [skills, setSkills] = useState<Record<string, number>>(
+    () => Object.fromEntries(CV_SKILLS.map((s) => [s, 1]))
+  );
   const [sosyalMedya, setSosyalMedya] = useState<string[]>([]);
-  const [usesAi, setUsesAi]         = useState("hayir");
   const [medeni, setMedeni]         = useState("");
 
-  function toggleProgram(p: string) {
-    setPrograms((prev) => prev.includes(p) ? prev.filter((x) => x !== p) : [...prev, p]);
+  function setSkill(skill: string, value: number) {
+    setSkills((prev) => ({ ...prev, [skill]: value }));
   }
 
   function toggleSosyal(p: string) {
@@ -96,14 +79,9 @@ export default function CvForm() {
       age:            get("age"),
       medeni,
       ucretBeklenti:  get("ucretBeklenti"),
-      montajSeviye,
-      cekimSeviye,
-      programs,
+      skills,
       sosyalMedya,
       referanslar:    get("referanslar"),
-      metaGoogle:     get("metaGoogle"),
-      usesAi,
-      aiTools:        get("aiTools"),
       about:          get("about"),
     };
 
@@ -116,11 +94,8 @@ export default function CvForm() {
       if (res.ok) {
         setStatus("done");
         form.reset();
-        setMontajSeviye("");
-        setCekimSeviye("");
-        setPrograms([]);
+        setSkills(Object.fromEntries(CV_SKILLS.map((s) => [s, 1])));
         setSosyalMedya([]);
-        setUsesAi("hayir");
         setMedeni("");
       } else {
         const d = await res.json();
@@ -216,16 +191,22 @@ export default function CvForm() {
             </div>
           </div>
 
-          {/* Video Kurgu / Montaj Seviyesi */}
+          {/* Bilgi ve Program Seviyeleri */}
           <div>
-            <label className={labelCls}>Video Kurgu / Montaj Seviyesi *</label>
-            <SeviyeSecici value={montajSeviye} onChange={setMontajSeviye} />
-          </div>
-
-          {/* Video Çekim / Fotoğrafçılık Seviyesi */}
-          <div>
-            <label className={labelCls}>Video Çekim / Fotoğrafçılık Seviyesi</label>
-            <SeviyeSecici value={cekimSeviye} onChange={setCekimSeviye} />
+            <label className={labelCls}>Bilgi ve Program Seviyeleriniz</label>
+            <p className="text-[12px] text-[#666] mb-4">
+              Her biri için kendinizi 1 (başlangıç) ile 10 (uzman) arasında değerlendirin.
+            </p>
+            <div className="space-y-5">
+              {CV_SKILLS.map((skill) => (
+                <SkillSlider
+                  key={skill}
+                  label={skill}
+                  value={skills[skill]}
+                  onChange={(v) => setSkill(skill, v)}
+                />
+              ))}
+            </div>
           </div>
 
           {/* Referanslar */}
@@ -246,27 +227,6 @@ export default function CvForm() {
               onFocus={(e) => Object.assign(e.target.style, inputFocusStyle)}
               onBlur={(e) => Object.assign(e.target.style, inputStyle)}
             />
-          </div>
-
-          {/* Programlar */}
-          <div>
-            <label className={labelCls}>Kullandığınız Programlar</label>
-            <div className="flex flex-wrap gap-2.5">
-              {PROGRAMS.map((p) => {
-                const selected = programs.includes(p);
-                return (
-                  <button
-                    key={p}
-                    type="button"
-                    onClick={() => toggleProgram(p)}
-                    className="px-4 py-2 rounded-full text-[13px] font-semibold transition-all duration-150"
-                    style={selected ? toggleActive : toggleInactive}
-                  >
-                    {selected && <span className="mr-1.5">✓</span>}{p}
-                  </button>
-                );
-              })}
-            </div>
           </div>
 
           {/* Sosyal Medya Tecrübesi */}
@@ -304,57 +264,6 @@ export default function CvForm() {
             </div>
           </div>
 
-          {/* Meta & Google Reklam Tecrübesi */}
-          <div>
-            <label className={labelCls}>
-              Meta ve Google Reklam Tecrübeniz{" "}
-              <span className="text-[#555] normal-case font-normal">(opsiyonel)</span>
-            </label>
-            <textarea
-              name="metaGoogle"
-              rows={4}
-              placeholder="Reklam hesabı yönettiniz mi? Hangi platformlarda, nasıl kampanyalar kurdunuz?"
-              className={`${inputCls} resize-none`}
-              style={inputStyle}
-              onFocus={(e) => Object.assign(e.target.style, inputFocusStyle)}
-              onBlur={(e) => Object.assign(e.target.style, inputStyle)}
-            />
-          </div>
-
-          {/* Yapay Zeka */}
-          <div>
-            <label className={labelCls}>Yapay Zeka Araçları Kullanıyor musunuz?</label>
-            <div className="flex gap-3 mb-3">
-              {[{ val: "hayir", label: "Hayır" }, { val: "evet", label: "Evet, kullanıyorum" }].map((opt) => (
-                <button
-                  key={opt.val}
-                  type="button"
-                  onClick={() => setUsesAi(opt.val)}
-                  className="flex-1 py-3 rounded-xl text-[14px] font-semibold transition-all duration-150"
-                  style={usesAi === opt.val ? toggleActive : toggleInactive}
-                >
-                  {usesAi === opt.val && "✓ "}{opt.label}
-                </button>
-              ))}
-            </div>
-            {usesAi === "evet" && (
-              <div>
-                <p className="text-[12px] text-[#c084fc] mb-2 leading-relaxed">
-                  Bu kısım bizim için önemli — lütfen hangilerini, ne amaçla ve nasıl kullandığınızı kısaca anlatın.
-                </p>
-                <textarea
-                  name="aiTools"
-                  rows={4}
-                  placeholder="Örn: Midjourney ile içerik görseli üretiyorum, ChatGPT ile caption yazıyorum..."
-                  className={`${inputCls} resize-none`}
-                  style={inputStyle}
-                  onFocus={(e) => Object.assign(e.target.style, inputFocusStyle)}
-                  onBlur={(e) => Object.assign(e.target.style, inputStyle)}
-                />
-              </div>
-            )}
-          </div>
-
           {/* Hakkında */}
           <div>
             <label className={labelCls}>Kendinizi Kısaca Tanıtın *</label>
@@ -378,7 +287,7 @@ export default function CvForm() {
 
           <button
             type="submit"
-            disabled={status === "sending" || !montajSeviye}
+            disabled={status === "sending"}
             className="btn btn-primary w-full py-4 text-[15px] disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {status === "sending" ? (

@@ -198,6 +198,43 @@ input:focus, select:focus, textarea:focus {
 .faq-details[open] { border-color: rgba(168,85,247,0.4) !important; }
 .faq-details[open] .faq-icon { background: var(--grad); transform: rotate(45deg); }
 
+/* ── CV Bilgi Seviyesi Kaydırıcı ─────────── */
+.skill-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(168,85,247,0.4), rgba(168,85,247,0.08));
+  outline: none;
+  cursor: pointer;
+}
+.skill-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--grad);
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 3px rgba(168,85,247,0.25);
+  cursor: pointer;
+}
+.skill-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--grad);
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 3px rgba(168,85,247,0.25);
+  cursor: pointer;
+}
+.skill-slider::-moz-range-track {
+  height: 6px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(168,85,247,0.4), rgba(168,85,247,0.08));
+}
+
 /* ── Legal Pages ───────────────────────── */
 .legal-content h2 {
   font-size: 18px;
