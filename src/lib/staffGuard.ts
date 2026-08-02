@@ -116,6 +116,45 @@ export async function requireStaffForContentItem(id: string) {
   return { session: null, err: forbidden() };
 }
 
+/** ADMIN veya workflowAccess=true olan EMPLOYEE — İş Akışı panosunu görebilir. */
+export async function requireWorkflowAccess() {
+  const session = await getSession();
+  if (!session || session.role === "CLIENT") return { session: null, err: forbidden() };
+  if (!(await checkActive(session.uid))) return { session: null, err: disabled() };
+  if (session.role === "ADMIN") return { session, err: null };
+  const user = await prisma.user.findUnique({ where: { id: session.uid }, select: { workflowAccess: true } });
+  if (!user?.workflowAccess) return { session: null, err: forbidden() };
+  return { session, err: null };
+}
+
+/** ADMIN veya workflowCanManageCards=true olan EMPLOYEE — kart ekle/düzenle/taşı. */
+export async function requireWorkflowManageCards() {
+  const session = await getSession();
+  if (!session || session.role === "CLIENT") return { session: null, err: forbidden() };
+  if (!(await checkActive(session.uid))) return { session: null, err: disabled() };
+  if (session.role === "ADMIN") return { session, err: null };
+  const user = await prisma.user.findUnique({
+    where: { id: session.uid },
+    select: { workflowAccess: true, workflowCanManageCards: true },
+  });
+  if (!user?.workflowAccess || !user.workflowCanManageCards) return { session: null, err: forbidden() };
+  return { session, err: null };
+}
+
+/** ADMIN veya workflowCanManageColumns=true olan EMPLOYEE — sütun ekle/adlandır/sil. */
+export async function requireWorkflowManageColumns() {
+  const session = await getSession();
+  if (!session || session.role === "CLIENT") return { session: null, err: forbidden() };
+  if (!(await checkActive(session.uid))) return { session: null, err: disabled() };
+  if (session.role === "ADMIN") return { session, err: null };
+  const user = await prisma.user.findUnique({
+    where: { id: session.uid },
+    select: { workflowAccess: true, workflowCanManageColumns: true },
+  });
+  if (!user?.workflowAccess || !user.workflowCanManageColumns) return { session: null, err: forbidden() };
+  return { session, err: null };
+}
+
 /** ADMIN veya güncellemenin firmasına canManageUpdates=true atanmış EMPLOYEE. */
 export async function requireStaffForUpdate(id: string) {
   const session = await getSession();

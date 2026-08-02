@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
-import { requireStaff } from "@/lib/adminGuard";
+import { requireWorkflowManageCards, requireWorkflowAccess } from "@/lib/staffGuard";
 import { assertCanAccessClient } from "@/lib/auth";
 
 export const runtime = "nodejs";
@@ -19,7 +19,7 @@ const patchSchema = z.object({
 });
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const { session, err } = await requireStaff();
+  const { session, err } = await requireWorkflowManageCards();
   if (err) return err;
   const { id } = await params;
 
@@ -69,15 +69,22 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 }
 
 export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const { session, err } = await requireStaff();
+  const { session, err } = await requireWorkflowAccess();
   if (err) return err;
   const { id } = await params;
 
   const card = await prisma.workflowCard.findUnique({ where: { id }, select: { creatorId: true } });
   if (!card) return NextResponse.json({ error: "Kart bulunamadı." }, { status: 404 });
 
-  if (session!.role !== "ADMIN" && card.creatorId !== session!.uid) {
-    return NextResponse.json({ error: "Bu kartı sadece oluşturan kişi veya admin silebilir." }, { status: 403 });
+  if (session!.role !== "ADMIN") {
+    const me = await prisma.user.findUnique({
+      where: { id: session!.uid },
+      select: { workflowCanDeleteAnyCard: true, workflowCanManageCards: true },
+    });
+    const canDeleteOwn = me?.workflowCanManageCards && card.creatorId === session!.uid;
+    if (!me?.workflowCanDeleteAnyCard && !canDeleteOwn) {
+      return NextResponse.json({ error: "Bu kartı silme yetkiniz yok." }, { status: 403 });
+    }
   }
 
   await prisma.workflowCard.delete({ where: { id } });

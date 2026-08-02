@@ -62,6 +62,9 @@ export default function WorkflowBoard() {
   const [clients, setClients] = useState<ClientOption[]>([]);
   const [currentUserId, setCurrentUserId] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
+  const [canManageCards, setCanManageCards] = useState(true);
+  const [canDeleteAnyCard, setCanDeleteAnyCard] = useState(false);
+  const [canManageColumns, setCanManageColumns] = useState(false);
   const [loading, setLoading] = useState(true);
   const [modal, setModal] = useState<{ mode: "create" | "edit"; columnId?: string; card?: CardData } | null>(null);
   const [addingColumn, setAddingColumn] = useState(false);
@@ -92,6 +95,9 @@ export default function WorkflowBoard() {
     setClients(data.clients);
     setCurrentUserId(data.currentUserId);
     setIsAdmin(data.isAdmin);
+    setCanManageCards(data.canManageCards);
+    setCanDeleteAnyCard(data.canDeleteAnyCard);
+    setCanManageColumns(data.canManageColumns);
     setLoading(false);
   }, []);
 
@@ -338,10 +344,10 @@ export default function WorkflowBoard() {
                   />
                 ) : (
                   <button
-                    disabled={!isAdmin}
+                    disabled={!canManageColumns}
                     onClick={() => { setRenamingCol(col.id); setRenameValue(col.title); }}
                     className="text-[13px] font-bold text-white truncate text-left"
-                    style={{ cursor: isAdmin ? "text" : "default" }}
+                    style={{ cursor: canManageColumns ? "text" : "default" }}
                   >
                     {col.title}
                   </button>
@@ -350,7 +356,7 @@ export default function WorkflowBoard() {
                   <span className="text-[11px] font-semibold text-[#8a8a9a] px-2 py-0.5 rounded-full" style={{ background: "var(--bg)" }}>
                     {col.cards.length}
                   </span>
-                  {isAdmin && (
+                  {canManageColumns && (
                     <button
                       onClick={() => handleDeleteColumn(col.id)}
                       title="Sütunu sil"
@@ -369,18 +375,19 @@ export default function WorkflowBoard() {
                 {col.cards.map((card) => (
                   <div
                     key={card.id}
-                    onPointerDown={(e) => onCardPointerDown(e, card)}
-                    onPointerMove={onCardPointerMove}
-                    onPointerUp={(e) => onCardPointerUp(e, card)}
-                    onPointerCancel={onCardPointerCancel}
-                    onLostPointerCapture={onCardPointerCancel}
+                    onPointerDown={canManageCards ? (e) => onCardPointerDown(e, card) : undefined}
+                    onPointerMove={canManageCards ? onCardPointerMove : undefined}
+                    onPointerUp={canManageCards ? (e) => onCardPointerUp(e, card) : undefined}
+                    onPointerCancel={canManageCards ? onCardPointerCancel : undefined}
+                    onLostPointerCapture={canManageCards ? onCardPointerCancel : undefined}
+                    onClick={!canManageCards ? () => setModal({ mode: "edit", card }) : undefined}
                     className="rounded-lg px-2.5 py-2 transition-all select-none"
                     style={{
                       background: "var(--surface-2, #141420)",
                       border: "1px solid var(--border)",
                       borderLeft: card.revisionNote ? "3px solid #fb923c" : "1px solid var(--border)",
                       opacity: dragCardId === card.id ? 0.35 : 1,
-                      cursor: dragCardId === card.id ? "grabbing" : "grab",
+                      cursor: !canManageCards ? "pointer" : dragCardId === card.id ? "grabbing" : "grab",
                       touchAction: "none",
                     }}
                     onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.borderColor = "rgba(168,85,247,0.35)")}
@@ -430,18 +437,20 @@ export default function WorkflowBoard() {
               </div>
 
               {/* Kart ekle */}
-              <button
-                onClick={() => setModal({ mode: "create", columnId: col.id })}
-                className="mx-2 mb-2 sm:mx-2.5 sm:mb-2.5 text-[12px] font-semibold text-[#8a8a9a] hover:text-[#c084fc] py-2.5 rounded-lg transition-colors text-left px-1.5"
-              >
-                + Kart Ekle
-              </button>
+              {canManageCards && (
+                <button
+                  onClick={() => setModal({ mode: "create", columnId: col.id })}
+                  className="mx-2 mb-2 sm:mx-2.5 sm:mb-2.5 text-[12px] font-semibold text-[#8a8a9a] hover:text-[#c084fc] py-2.5 rounded-lg transition-colors text-left px-1.5"
+                >
+                  + Kart Ekle
+                </button>
+              )}
             </div>
           );
         })}
 
-        {/* Sütun ekle (admin) */}
-        {isAdmin && (
+        {/* Sütun ekle */}
+        {canManageColumns && (
           <div className="flex-shrink-0 w-[70vw] max-w-[240px] sm:w-[240px] snap-center">
             {addingColumn ? (
               <div className="rounded-2xl p-3" style={{ background: "var(--surface)", border: "1px solid rgba(168,85,247,0.3)" }}>
@@ -501,6 +510,8 @@ export default function WorkflowBoard() {
           clients={clients}
           currentUserId={currentUserId}
           isAdmin={isAdmin}
+          canManageCards={canManageCards}
+          canDeleteAnyCard={canDeleteAnyCard}
           onClose={() => setModal(null)}
           onSaved={handleSaved}
           onDeleted={handleDeleted}
@@ -513,19 +524,23 @@ export default function WorkflowBoard() {
 // ── Kart Modalı ──────────────────────────────────────────────────────────────
 
 function CardModal({
-  state, employees, clients, currentUserId, isAdmin, onClose, onSaved, onDeleted,
+  state, employees, clients, currentUserId, isAdmin, canManageCards, canDeleteAnyCard, onClose, onSaved, onDeleted,
 }: {
   state: { mode: "create" | "edit"; columnId?: string; card?: CardData };
   employees: PersonOption[];
   clients: ClientOption[];
   currentUserId: string;
   isAdmin: boolean;
+  canManageCards: boolean;
+  canDeleteAnyCard: boolean;
   onClose: () => void;
   onSaved: (card: CardData) => void;
   onDeleted: (id: string) => void;
 }) {
   const isEdit = state.mode === "edit";
   const card = state.card;
+  // canManageCards=false olan kullanıcı bir karta tıklarsa (görüntüleme amaçlı) salt-okunur açılır
+  const readOnly = isEdit && !canManageCards;
   const [title, setTitle] = useState(card?.title ?? "");
   const [description, setDescription] = useState(card?.description ?? "");
   const [revisionNote, setRevisionNote] = useState(card?.revisionNote ?? "");
@@ -540,7 +555,7 @@ function CardModal({
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState("");
 
-  const canDelete = isEdit && (isAdmin || card?.creator.id === currentUserId);
+  const canDelete = isEdit && (isAdmin || canDeleteAnyCard || (canManageCards && card?.creator.id === currentUserId));
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -600,7 +615,14 @@ function CardModal({
           </svg>
         </button>
 
-        <h2 className="font-bold text-[17px] text-white mb-6">{isEdit ? "Kartı Düzenle" : "Yeni Kart"}</h2>
+        <div className="flex items-center gap-2 mb-6">
+          <h2 className="font-bold text-[17px] text-white">{isEdit ? "Kartı Düzenle" : "Yeni Kart"}</h2>
+          {readOnly && (
+            <span className="text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full" style={{ background: "rgba(138,138,154,0.15)", color: "#8a8a9a" }}>
+              Salt Görüntüleme
+            </span>
+          )}
+        </div>
 
         <div className="space-y-4">
           <div>
@@ -609,9 +631,10 @@ function CardModal({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
-              autoFocus
+              autoFocus={!readOnly}
+              disabled={readOnly}
               placeholder="Örn. RetroCar Reels çekimi"
-              className="w-full px-3.5 py-2.5 rounded-xl text-[14px] text-white placeholder-[#555] outline-none"
+              className="w-full px-3.5 py-2.5 rounded-xl text-[14px] text-white placeholder-[#555] outline-none disabled:opacity-70"
               style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
             />
           </div>
@@ -622,8 +645,9 @@ function CardModal({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
+              disabled={readOnly}
               placeholder="Detaylar..."
-              className="w-full px-3.5 py-2.5 rounded-xl text-[14px] text-white placeholder-[#555] outline-none resize-y"
+              className="w-full px-3.5 py-2.5 rounded-xl text-[14px] text-white placeholder-[#555] outline-none resize-y disabled:opacity-70"
               style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
             />
           </div>
@@ -636,13 +660,16 @@ function CardModal({
               value={revisionNote}
               onChange={(e) => setRevisionNote(e.target.value)}
               rows={2}
+              disabled={readOnly}
               placeholder="Örn. Logo daha büyük olsun, renk tonu koyulaştırılsın..."
-              className="w-full px-3.5 py-2.5 rounded-xl text-[14px] text-white placeholder-[#555] outline-none resize-y"
+              className="w-full px-3.5 py-2.5 rounded-xl text-[14px] text-white placeholder-[#555] outline-none resize-y disabled:opacity-70"
               style={{ background: "var(--bg)", border: "1px solid rgba(251,146,60,0.3)" }}
             />
-            <p className="text-[11px] text-[#666] mt-1.5">
-              Bir not yazarsan kartın üzerinde turuncu vurgu ile görünür. İş tamamlanınca temizleyebilirsin.
-            </p>
+            {!readOnly && (
+              <p className="text-[11px] text-[#666] mt-1.5">
+                Bir not yazarsan kartın üzerinde turuncu vurgu ile görünür. İş tamamlanınca temizleyebilirsin.
+              </p>
+            )}
           </div>
 
           <div className="grid grid-cols-2 gap-3">
@@ -651,7 +678,8 @@ function CardModal({
               <select
                 value={priority}
                 onChange={(e) => setPriority(e.target.value as Priority)}
-                className="w-full px-3.5 py-2.5 rounded-xl text-[14px] text-white outline-none"
+                disabled={readOnly}
+                className="w-full px-3.5 py-2.5 rounded-xl text-[14px] text-white outline-none disabled:opacity-70"
                 style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
               >
                 <option value="DUSUK">Düşük</option>
@@ -665,7 +693,8 @@ function CardModal({
                 type="date"
                 value={dueDate}
                 onChange={(e) => setDueDate(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl text-[14px] text-white outline-none"
+                disabled={readOnly}
+                className="w-full px-3.5 py-2.5 rounded-xl text-[14px] text-white outline-none disabled:opacity-70"
                 style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
               />
             </div>
@@ -676,7 +705,8 @@ function CardModal({
             <select
               value={assigneeId}
               onChange={(e) => setAssigneeId(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl text-[14px] text-white outline-none"
+              disabled={readOnly}
+              className="w-full px-3.5 py-2.5 rounded-xl text-[14px] text-white outline-none disabled:opacity-70"
               style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
             >
               <option value="">Atanmadı</option>
@@ -692,7 +722,8 @@ function CardModal({
               <select
                 value={clientId}
                 onChange={(e) => setClientId(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl text-[14px] text-white outline-none"
+                disabled={readOnly}
+                className="w-full px-3.5 py-2.5 rounded-xl text-[14px] text-white outline-none disabled:opacity-70"
                 style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
               >
                 <option value="">Yok</option>
@@ -706,18 +737,29 @@ function CardModal({
 
         {error && <p className="text-[12px] text-red-400 mt-4">{error}</p>}
 
-        <div className="flex gap-3 mt-7">
-          {canDelete && (
+        {!readOnly && (
+          <div className="flex gap-3 mt-7">
+            {canDelete && (
+              <button type="button" onClick={handleDelete} disabled={deleting}
+                className="text-[13px] font-semibold text-[#f87171] px-4 py-2.5 rounded-xl transition-all"
+                style={{ background: "rgba(248,113,113,0.1)", border: "1px solid rgba(248,113,113,0.25)" }}>
+                {deleting ? "Siliniyor..." : "Sil"}
+              </button>
+            )}
+            <button type="submit" disabled={saving} className="btn btn-primary flex-1">
+              {saving ? "Kaydediliyor..." : isEdit ? "Kaydet" : "Kartı Oluştur"}
+            </button>
+          </div>
+        )}
+        {readOnly && canDelete && (
+          <div className="flex gap-3 mt-7">
             <button type="button" onClick={handleDelete} disabled={deleting}
-              className="text-[13px] font-semibold text-[#f87171] px-4 py-2.5 rounded-xl transition-all"
+              className="text-[13px] font-semibold text-[#f87171] px-4 py-2.5 rounded-xl transition-all w-full"
               style={{ background: "rgba(248,113,113,0.1)", border: "1px solid rgba(248,113,113,0.25)" }}>
               {deleting ? "Siliniyor..." : "Sil"}
             </button>
-          )}
-          <button type="submit" disabled={saving} className="btn btn-primary flex-1">
-            {saving ? "Kaydediliyor..." : isEdit ? "Kaydet" : "Kartı Oluştur"}
-          </button>
-        </div>
+          </div>
+        )}
       </form>
     </div>
   );

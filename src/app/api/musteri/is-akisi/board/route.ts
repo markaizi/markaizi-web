@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { requireStaff } from "@/lib/adminGuard";
+import { requireWorkflowAccess } from "@/lib/staffGuard";
 
 export const runtime = "nodejs";
 
 const DEFAULT_COLUMNS = ["Yapılacak", "Devam Ediyor", "Kontrol", "Tamamlandı"];
 
 export async function GET() {
-  const { session, err } = await requireStaff();
+  const { session, err } = await requireWorkflowAccess();
   if (err) return err;
 
   let columnCount = await prisma.workflowColumn.count();
@@ -46,5 +46,23 @@ export async function GET() {
         }),
   ]);
 
-  return NextResponse.json({ columns, employees, clients, currentUserId: session!.uid, isAdmin: session!.role === "ADMIN" });
+  const isAdmin = session!.role === "ADMIN";
+  let canManageCards = isAdmin;
+  let canDeleteAnyCard = isAdmin;
+  let canManageColumns = isAdmin;
+  if (!isAdmin) {
+    const me = await prisma.user.findUnique({
+      where: { id: session!.uid },
+      select: { workflowCanManageCards: true, workflowCanDeleteAnyCard: true, workflowCanManageColumns: true },
+    });
+    canManageCards = !!me?.workflowCanManageCards;
+    canDeleteAnyCard = !!me?.workflowCanDeleteAnyCard;
+    canManageColumns = !!me?.workflowCanManageColumns;
+  }
+
+  return NextResponse.json({
+    columns, employees, clients,
+    currentUserId: session!.uid,
+    isAdmin, canManageCards, canDeleteAnyCard, canManageColumns,
+  });
 }

@@ -84,6 +84,12 @@ model User {
   // Müşteri/çalışana not yazma yetkisi (admin her zaman yazar)
   canWriteNotes Boolean @default(false)
 
+  // İş Akışı (kanban) yetkileri — sadece EMPLOYEE için anlamlı, ADMIN her zaman tam erişir
+  workflowAccess           Boolean @default(true)  // panoyu hiç görebilir mi
+  workflowCanManageCards   Boolean @default(true)  // kart ekle/düzenle/taşı/kendi kartını sil
+  workflowCanDeleteAnyCard Boolean @default(false) // başkasının kartını da silebilir
+  workflowCanManageColumns Boolean @default(false) // sütun ekle/yeniden adlandır/sil
+
   assignments     Assignment[]
   authoredUpdates Update[]      @relation("UpdateAuthor")
   authoredContent ContentItem[] @relation("ContentAssignee")

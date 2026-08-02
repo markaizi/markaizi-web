@@ -1,14 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
-import { requireAdmin } from "@/lib/adminGuard";
+import { requireWorkflowManageColumns } from "@/lib/staffGuard";
 
 export const runtime = "nodejs";
 
 const schema = z.object({ title: z.string().trim().min(1).max(60) });
 
 export async function POST(req: NextRequest) {
-  const { err } = await requireAdmin();
+  const { err } = await requireWorkflowManageColumns();
   if (err) return err;
 
   const parsed = schema.safeParse(await req.json());

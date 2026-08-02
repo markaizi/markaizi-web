@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
-import { requireStaff } from "@/lib/adminGuard";
+import { requireWorkflowManageCards } from "@/lib/staffGuard";
 import { assertCanAccessClient } from "@/lib/auth";
 
 export const runtime = "nodejs";
@@ -18,7 +18,7 @@ const schema = z.object({
 });
 
 export async function POST(req: NextRequest) {
-  const { session, err } = await requireStaff();
+  const { session, err } = await requireWorkflowManageCards();
   if (err) return err;
 
   const parsed = schema.safeParse(await req.json());

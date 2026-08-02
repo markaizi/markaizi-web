@@ -15,9 +15,11 @@ export interface AssignedClient {
 export default function EmployeeDashboard({
   clients,
   employeeName,
+  workflowAccess = true,
 }: {
   clients: AssignedClient[];
   employeeName: string;
+  workflowAccess?: boolean;
 }) {
   const router = useRouter();
 
@@ -57,12 +59,14 @@ export default function EmployeeDashboard({
             <p className="text-[14px] text-[#8a8a9a]">Merhaba {employeeName} · {clients.length} firma</p>
           </div>
           <div className="flex gap-3 self-start sm:self-auto">
-            <button
-              onClick={() => router.push("/musteri/calisan/is-akisi")}
-              className="btn btn-outline text-sm px-4 py-2.5"
-            >
-              🗂️ İş Akışı
-            </button>
+            {workflowAccess && (
+              <button
+                onClick={() => router.push("/musteri/calisan/is-akisi")}
+                className="btn btn-outline text-sm px-4 py-2.5"
+              >
+                🗂️ İş Akışı
+              </button>
+            )}
             <button
               onClick={() => router.push("/musteri/calisan/takvim")}
               className="btn btn-outline text-sm px-4 py-2.5"

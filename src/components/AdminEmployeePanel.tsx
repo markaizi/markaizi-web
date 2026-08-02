@@ -3,68 +3,19 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-export interface EmployeeData {
+export interface EmployeeSummary {
   id: string;
   username: string;
   name: string;
   email: string;
-  canWriteNotes: boolean;
-  assignments: {
-    id: string;
-    client: { id: string; slug: string; name: string };
-    canViewCampaigns: boolean;
-    canManageCampaigns: boolean;
-    canViewContent: boolean;
-    canManageContent: boolean;
-    canViewUpdates: boolean;
-    canManageUpdates: boolean;
-    canViewInvoices: boolean;
-    canManageInvoices: boolean;
-  }[];
+  assignedCount: number;
+  workflowAccess: boolean;
 }
-
-const SECTIONS = [
-  { label: "Kampanyalar", viewKey: "canViewCampaigns" as const, manageKey: "canManageCampaigns" as const },
-  { label: "İçerikler",    viewKey: "canViewContent"   as const, manageKey: "canManageContent"   as const },
-  { label: "Güncellemeler",viewKey: "canViewUpdates"   as const, manageKey: "canManageUpdates"   as const },
-  { label: "Faturalar",    viewKey: "canViewInvoices"  as const, manageKey: "canManageInvoices"  as const },
-];
-
-type SectionState = "yok" | "goruntule" | "duzenle";
-type ViewKey = typeof SECTIONS[number]["viewKey"];
-type ManageKey = typeof SECTIONS[number]["manageKey"];
-
-function getState(view: boolean, manage: boolean): SectionState {
-  if (manage) return "duzenle";
-  if (view) return "goruntule";
-  return "yok";
-}
-
-type LocalAssign = {
-  id: string | null;
-  canViewCampaigns: boolean;
-  canManageCampaigns: boolean;
-  canViewContent: boolean;
-  canManageContent: boolean;
-  canViewUpdates: boolean;
-  canManageUpdates: boolean;
-  canViewInvoices: boolean;
-  canManageInvoices: boolean;
-};
-
-const DEFAULT_PERMS: Omit<LocalAssign, "id"> = {
-  canViewCampaigns: true, canManageCampaigns: false,
-  canViewContent: true,   canManageContent: true,
-  canViewUpdates: true,   canManageUpdates: true,
-  canViewInvoices: false, canManageInvoices: false,
-};
 
 export default function AdminEmployeePanel({
   employees,
-  allClients,
 }: {
-  employees: EmployeeData[];
-  allClients: { id: string; slug: string; name: string }[];
+  employees: EmployeeSummary[];
 }) {
   const router = useRouter();
   const [showForm, setShowForm] = useState(false);
@@ -115,17 +66,17 @@ export default function AdminEmployeePanel({
         </button>
       </header>
 
-      <main className="max-w-[860px] mx-auto px-6 py-10">
+      <main className="max-w-[720px] mx-auto px-6 py-10">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
           <div>
             <h1 className="font-black text-[24px] text-white mb-1">Çalışanlar</h1>
-            <p className="text-[14px] text-[#8a8a9a]">{employees.length} çalışan</p>
+            <p className="text-[14px] text-[#8a8a9a]">{employees.length} çalışan · bir çalışana tıklayınca yetkilerini düzenle</p>
           </div>
           <button onClick={() => setShowForm(true)} className="btn btn-primary text-sm px-5 py-2.5 self-start sm:self-auto">+ Yeni Çalışan</button>
         </div>
 
         {showForm && (
-          <form onSubmit={handleCreate} className="rounded-2xl p-6 mb-8 space-y-4"
+          <form onSubmit={handleCreate} className="rounded-2xl p-6 mb-6 space-y-4"
             style={{ background: "var(--surface)", border: "1px solid rgba(168,85,247,0.3)" }}>
             <p className="font-semibold text-white text-[15px]">Yeni Çalışan</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -153,275 +104,48 @@ export default function AdminEmployeePanel({
           </form>
         )}
 
-        <div className="space-y-6">
-          {employees.length === 0 && !showForm && (
+        <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid var(--border)" }}>
+          {employees.length === 0 ? (
             <p className="text-[13px] text-[#8a8a9a] text-center py-12">Henüz çalışan yok.</p>
+          ) : (
+            employees.map((emp, i) => (
+              <div
+                key={emp.id}
+                onClick={() => router.push(`/musteri/admin/calisanlar/${emp.id}`)}
+                className="group flex items-center gap-3 px-5 py-4 cursor-pointer transition-colors"
+                style={{
+                  background: "var(--surface)",
+                  borderBottom: i < employees.length - 1 ? "1px solid var(--border)" : "none",
+                }}
+                onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.025)")}
+                onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.background = "var(--surface)")}
+              >
+                <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 text-[13px] font-black"
+                  style={{ background: "var(--grad-soft)", color: "#c084fc" }}>
+                  {emp.name.charAt(0).toUpperCase()}
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-white font-semibold text-[14px] truncate">{emp.name}</p>
+                  <p className="text-[12px] text-[#555] truncate">@{emp.username} · {emp.email}</p>
+                </div>
+                {!emp.workflowAccess && (
+                  <span className="flex-shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full"
+                    style={{ background: "rgba(138,138,154,0.12)", color: "#8a8a9a" }} title="İş Akışı erişimi kapalı">
+                    İş Akışı Kapalı
+                  </span>
+                )}
+                <span className="flex-shrink-0 text-[12px] px-2.5 py-1 rounded-full"
+                  style={{ background: emp.assignedCount > 0 ? "rgba(168,85,247,0.12)" : "rgba(138,138,154,0.1)", color: emp.assignedCount > 0 ? "#c084fc" : "#555" }}>
+                  {emp.assignedCount} firma
+                </span>
+                <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 flex-shrink-0 text-[#444] group-hover:text-[#c084fc] transition-colors" stroke="currentColor" strokeWidth="2.5">
+                  <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </div>
+            ))
           )}
-          {employees.map((emp) => (
-            <EmployeeCard key={emp.id} employee={emp} allClients={allClients} router={router} />
-          ))}
         </div>
       </main>
-    </div>
-  );
-}
-
-// ── Çalışan Kartı ─────────────────────────────────────────────────────────────
-
-function EmployeeCard({
-  employee,
-  allClients,
-  router,
-}: {
-  employee: EmployeeData;
-  allClients: { id: string; slug: string; name: string }[];
-  router: ReturnType<typeof useRouter>;
-}) {
-  const [canWriteNotes, setCanWriteNotes] = useState(employee.canWriteNotes);
-  const [notesLoading, setNotesLoading] = useState(false);
-  const [showEdit, setShowEdit] = useState(false);
-  const [editForm, setEditForm] = useState({ name: employee.name, email: employee.email, username: employee.username, password: "" });
-  const [editLoading, setEditLoading] = useState(false);
-  const [editErr, setEditErr] = useState("");
-  const [deleted, setDeleted] = useState(false);
-
-  async function handleEdit(e: React.FormEvent) {
-    e.preventDefault();
-    setEditLoading(true); setEditErr("");
-    const body: Record<string, string> = {
-      name: editForm.name, email: editForm.email, username: editForm.username,
-    };
-    if (editForm.password) body.password = editForm.password;
-    const res  = await fetch(`/api/musteri/admin/employees/${employee.id}`, {
-      method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body),
-    });
-    const json = await res.json();
-    setEditLoading(false);
-    if (json.ok) { setShowEdit(false); router.refresh(); }
-    else setEditErr(json.error ?? "Hata.");
-  }
-
-  async function handleDelete() {
-    if (!confirm(`"${employee.name}" çalışanı sil? Bu işlem geri alınamaz.`)) return;
-    await fetch(`/api/musteri/admin/employees/${employee.id}`, { method: "DELETE" });
-    setDeleted(true);
-    router.refresh();
-  }
-
-  async function handleNotesToggle(val: boolean) {
-    setNotesLoading(true);
-    setCanWriteNotes(val);
-    await fetch(`/api/musteri/admin/employees/${employee.id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ canWriteNotes: val }),
-    });
-    setNotesLoading(false);
-  }
-
-  const [localAssign, setLocalAssign] = useState<Map<string, LocalAssign>>(
-    () => {
-      const m = new Map<string, LocalAssign>();
-      employee.assignments.forEach((a) => {
-        m.set(a.client.id, {
-          id: a.id,
-          canViewCampaigns: a.canViewCampaigns,
-          canManageCampaigns: a.canManageCampaigns,
-          canViewContent: a.canViewContent,
-          canManageContent: a.canManageContent,
-          canViewUpdates: a.canViewUpdates,
-          canManageUpdates: a.canManageUpdates,
-          canViewInvoices: a.canViewInvoices,
-          canManageInvoices: a.canManageInvoices,
-        });
-      });
-      return m;
-    }
-  );
-
-  async function handleToggleClient(client: { id: string; slug: string; name: string }) {
-    const current = localAssign.get(client.id);
-    if (current) {
-      const newMap = new Map(localAssign);
-      newMap.delete(client.id);
-      setLocalAssign(newMap);
-      if (current.id) {
-        await fetch(`/api/musteri/admin/assignments/${current.id}`, { method: "DELETE" });
-        router.refresh();
-      }
-    } else {
-      const newMap = new Map(localAssign);
-      newMap.set(client.id, { id: null, ...DEFAULT_PERMS });
-      setLocalAssign(newMap);
-      const res = await fetch("/api/musteri/admin/assignments", {
-        method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId: employee.id, clientSlug: client.slug, ...DEFAULT_PERMS }),
-      });
-      const json = await res.json();
-      if (json.ok) {
-        newMap.set(client.id, { id: json.id, ...DEFAULT_PERMS });
-        setLocalAssign(new Map(newMap));
-        router.refresh();
-      }
-    }
-  }
-
-  async function handleSectionChange(
-    clientId: string,
-    section: typeof SECTIONS[number],
-    state: SectionState
-  ) {
-    const current = localAssign.get(clientId);
-    if (!current) return;
-    const updates: Partial<Record<ViewKey | ManageKey, boolean>> = {
-      [section.viewKey]: state !== "yok",
-      [section.manageKey]: state === "duzenle",
-    };
-    const updated = { ...current, ...updates };
-    const newMap = new Map(localAssign);
-    newMap.set(clientId, updated);
-    setLocalAssign(newMap);
-    if (current.id) {
-      await fetch(`/api/musteri/admin/assignments/${current.id}`, {
-        method: "PATCH", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updates),
-      });
-    }
-  }
-
-  const assignedCount = localAssign.size;
-
-  if (deleted) return null;
-
-  return (
-    <div className="rounded-2xl overflow-hidden" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
-      {/* Başlık */}
-      <div className="px-5 py-4 flex items-center gap-3 flex-wrap" style={{ borderBottom: "1px solid var(--border)" }}>
-        <div className="w-10 h-10 rounded-xl flex items-center justify-center font-black text-[16px] flex-shrink-0"
-          style={{ background: "var(--grad-soft)", color: "#c084fc" }}>
-          {employee.name.charAt(0).toUpperCase()}
-        </div>
-        <div className="flex-1 min-w-0">
-          <p className="text-white font-bold text-[15px]">{employee.name}</p>
-          <p className="text-[12px] text-[#8a8a9a]">@{employee.username} · {employee.email}</p>
-        </div>
-        <span className="text-[12px] px-2.5 py-1 rounded-full flex-shrink-0"
-          style={{ background: assignedCount > 0 ? "rgba(168,85,247,0.12)" : "rgba(138,138,154,0.1)", color: assignedCount > 0 ? "#c084fc" : "#555" }}>
-          {assignedCount} firma
-        </span>
-        <button
-          onClick={() => handleNotesToggle(!canWriteNotes)}
-          disabled={notesLoading}
-          title="Not yazma yetkisi"
-          className="text-[11px] px-2.5 py-1 rounded-full transition-all flex-shrink-0"
-          style={{
-            background: canWriteNotes ? "rgba(52,211,153,0.12)" : "rgba(138,138,154,0.1)",
-            border: `1px solid ${canWriteNotes ? "rgba(52,211,153,0.3)" : "var(--border)"}`,
-            color: canWriteNotes ? "#34d399" : "#555",
-          }}
-        >
-          {notesLoading ? "..." : canWriteNotes ? "🗒 Not: Açık" : "🗒 Not: Kapalı"}
-        </button>
-        <button onClick={() => setShowEdit((v) => !v)}
-          className="text-[11px] px-2.5 py-1 rounded-full transition-all flex-shrink-0"
-          style={{ background: "rgba(96,165,250,0.1)", border: "1px solid rgba(96,165,250,0.25)", color: "#60a5fa" }}>
-          Düzenle
-        </button>
-        <button onClick={handleDelete}
-          className="text-[11px] px-2.5 py-1 rounded-full transition-all flex-shrink-0"
-          style={{ background: "rgba(248,113,113,0.1)", border: "1px solid rgba(248,113,113,0.25)", color: "#f87171" }}>
-          Sil
-        </button>
-      </div>
-
-      {/* Düzenle formu */}
-      {showEdit && (
-        <form onSubmit={handleEdit} className="px-5 py-5 space-y-3"
-          style={{ background: "rgba(96,165,250,0.03)", borderBottom: "1px solid var(--border)" }}>
-          <p className="text-[13px] font-semibold text-[#60a5fa]">Çalışanı Düzenle</p>
-          <div className="grid grid-cols-2 gap-3">
-            {[
-              { key: "name",     label: "Ad Soyad",       placeholder: "" },
-              { key: "username", label: "Kullanıcı Adı",  placeholder: "" },
-              { key: "email",    label: "E-posta",         placeholder: "" },
-              { key: "password", label: "Yeni Şifre",     placeholder: "Boş bırakırsan değişmez" },
-            ].map(({ key, label, placeholder }) => (
-              <div key={key}>
-                <label className="block text-[10px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1">{label}</label>
-                <input
-                  type={key === "password" ? "password" : "text"}
-                  value={editForm[key as keyof typeof editForm]}
-                  onChange={(e) => setEditForm((f) => ({ ...f, [key]: e.target.value }))}
-                  placeholder={placeholder}
-                  required={key !== "password"}
-                  className="w-full px-3 py-2 rounded-lg text-[13px] text-white placeholder-[#555] outline-none focus:ring-1 focus:ring-blue-500/50"
-                  style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
-                />
-              </div>
-            ))}
-          </div>
-          {editErr && <p className="text-[12px] text-red-400">{editErr}</p>}
-          <div className="flex gap-2">
-            <button type="submit" disabled={editLoading}
-              className="btn btn-primary text-sm px-4 py-1.5">{editLoading ? "..." : "Kaydet"}</button>
-            <button type="button" onClick={() => setShowEdit(false)}
-              className="btn btn-outline text-sm px-4 py-1.5">İptal</button>
-          </div>
-        </form>
-      )}
-
-
-      <div className="divide-y" style={{ borderColor: "var(--border)" }}>
-        {allClients.map((client) => {
-          const assigned = localAssign.get(client.id);
-          return (
-            <div key={client.id}>
-              <label className="flex items-center gap-3 px-5 py-3 cursor-pointer hover:bg-white/[0.02] transition-colors select-none">
-                <input
-                  type="checkbox"
-                  checked={!!assigned}
-                  onChange={() => handleToggleClient(client)}
-                  className="w-4 h-4 rounded accent-purple-500 cursor-pointer flex-shrink-0"
-                />
-                <span className="text-[14px] text-white font-medium flex-1">{client.name}</span>
-                {assigned && <span className="text-[11px] text-[#c084fc]">atandı</span>}
-              </label>
-
-              {assigned && (
-                <div className="px-5 pb-4 grid grid-cols-2 gap-x-6 gap-y-3" style={{ paddingLeft: "2.75rem" }}>
-                  {SECTIONS.map((sec) => {
-                    const state = getState(assigned[sec.viewKey], assigned[sec.manageKey]);
-                    return (
-                      <div key={sec.label}>
-                        <p className="text-[10px] font-semibold text-[#555] uppercase tracking-wide mb-1.5">{sec.label}</p>
-                        <div className="flex rounded-lg overflow-hidden" style={{ border: "1px solid var(--border)" }}>
-                          {(["yok", "goruntule", "duzenle"] as SectionState[]).map((s) => (
-                            <button
-                              key={s}
-                              onClick={() => handleSectionChange(client.id, sec, s)}
-                              className="flex-1 text-[11px] py-1 transition-colors"
-                              style={{
-                                background: state === s
-                                  ? s === "yok" ? "rgba(138,138,154,0.2)" : s === "goruntule" ? "rgba(96,165,250,0.2)" : "rgba(168,85,247,0.2)"
-                                  : "transparent",
-                                color: state === s
-                                  ? s === "yok" ? "#8a8a9a" : s === "goruntule" ? "#60a5fa" : "#c084fc"
-                                  : "#555",
-                                fontWeight: state === s ? 600 : 400,
-                              }}>
-                              {s === "yok" ? "Yok" : s === "goruntule" ? "Görüntüle" : "Düzenle"}
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
     </div>
   );
 }

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
-import { requireAdmin } from "@/lib/adminGuard";
+import { requireWorkflowManageColumns } from "@/lib/staffGuard";
 
 export const runtime = "nodejs";
 
@@ -11,7 +11,7 @@ const patchSchema = z.object({
 });
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const { err } = await requireAdmin();
+  const { err } = await requireWorkflowManageColumns();
   if (err) return err;
   const { id } = await params;
 
@@ -25,7 +25,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 }
 
 export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const { err } = await requireAdmin();
+  const { err } = await requireWorkflowManageColumns();
   if (err) return err;
   const { id } = await params;
 

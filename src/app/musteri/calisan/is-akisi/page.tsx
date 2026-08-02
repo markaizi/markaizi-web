@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
+import { prisma } from "@/lib/db";
 import WorkflowBoard from "@/components/WorkflowBoard";
 
 export const dynamic = "force-dynamic";
@@ -14,6 +15,9 @@ export default async function CalisanIsAkisiPage() {
   if (!session) redirect("/musteri/giris?next=/musteri/calisan/is-akisi");
   if (session.role === "CLIENT") redirect("/musteri/giris");
   if (session.role === "ADMIN") redirect("/musteri/admin/is-akisi");
+
+  const me = await prisma.user.findUnique({ where: { id: session.uid }, select: { workflowAccess: true } });
+  if (!me?.workflowAccess) redirect("/musteri/calisan");
 
   return (
     <div className="min-h-screen" style={{ background: "var(--bg)" }}>

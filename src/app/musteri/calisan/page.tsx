@@ -18,7 +18,8 @@ export default async function CalisanPage() {
   // Admin ise admin paneline yönlendir
   if (session.role === "ADMIN") redirect("/musteri/admin");
 
-  const [assignments, unreadNotes] = await Promise.all([
+  const [me, assignments, unreadNotes] = await Promise.all([
+    prisma.user.findUnique({ where: { id: session.uid }, select: { workflowAccess: true } }),
     prisma.assignment.findMany({
       where: { userId: session.uid },
       include: {
@@ -56,5 +57,5 @@ export default async function CalisanPage() {
     unreadNoteCount: unreadMap.get(a.clientId) ?? 0,
   }));
 
-  return <EmployeeDashboard clients={clients} employeeName={session.name} />;
+  return <EmployeeDashboard clients={clients} employeeName={session.name} workflowAccess={me?.workflowAccess ?? true} />;
 }

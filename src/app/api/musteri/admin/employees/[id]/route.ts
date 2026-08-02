@@ -12,6 +12,11 @@ const patchSchema = z.object({
   email:    z.string().email().optional(),
   username: z.string().min(2).max(60).regex(/^[a-z0-9_-]+$/, "Kullanıcı adı: küçük harf, rakam, tire, alt çizgi").optional(),
   password: z.string().min(6).max(128).optional(),
+  // İş Akışı yetkileri
+  workflowAccess: z.boolean().optional(),
+  workflowCanManageCards: z.boolean().optional(),
+  workflowCanDeleteAnyCard: z.boolean().optional(),
+  workflowCanManageColumns: z.boolean().optional(),
 });
 
 export async function PATCH(
