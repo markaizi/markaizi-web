@@ -20,16 +20,47 @@ const inputFocusStyle = { outline: "none", borderColor: "rgba(168,85,247,0.5)", 
 const toggleActive   = { background: "rgba(168,85,247,0.2)", color: "#c084fc", border: "1px solid rgba(168,85,247,0.5)" };
 const toggleInactive = { background: "var(--bg)", color: "#8a8a9a", border: "1px solid var(--border)" };
 
+// Seviye 1'den 10'a: başlangıçtan uzmanlığa giden yolda isimlendirme
+const LEVEL_LABELS = [
+  "Acemi", "Çaylak", "Amatör", "Gelişen", "Yetkin",
+  "Bilgili", "Deneyimli", "Usta", "Profesyonel", "Uzman",
+];
+
+// Rengi de seviyeyle birlikte değiştir: gri (bilmiyorum) → mor → pembe (uzman) — marka gradyanıyla aynı yol
+const COLOR_STOPS = [
+  { r: 138, g: 138, b: 154 }, // #8a8a9a — nötr gri
+  { r: 124, g: 58,  b: 237 }, // #7c3aed — mor
+  { r: 168, g: 85,  b: 247 }, // #a855f7 — açık mor
+  { r: 236, g: 72,  b: 153 }, // #ec4899 — pembe
+];
+
+function levelColor(value: number) {
+  const t = (value - 1) / 9;
+  const segCount = COLOR_STOPS.length - 1;
+  const segT = t * segCount;
+  const idx = Math.min(Math.floor(segT), segCount - 1);
+  const localT = segT - idx;
+  const a = COLOR_STOPS[idx];
+  const b = COLOR_STOPS[idx + 1];
+  const r = Math.round(a.r + (b.r - a.r) * localT);
+  const g = Math.round(a.g + (b.g - a.g) * localT);
+  const bl = Math.round(a.b + (b.b - a.b) * localT);
+  return { rgb: `rgb(${r}, ${g}, ${bl})`, rgba: (alpha: number) => `rgba(${r}, ${g}, ${bl}, ${alpha})` };
+}
+
 function SkillSlider({ label, value, onChange }: { label: string; value: number; onChange: (v: number) => void }) {
+  const color = levelColor(value);
+  const percent = ((value - 1) / 9) * 100;
+
   return (
     <div>
-      <div className="flex items-center justify-between mb-2 gap-3">
-        <span className="text-[14px] font-semibold text-white">{label}</span>
+      <div className="flex items-center justify-between mb-1.5 gap-2">
+        <span className="text-[13px] font-semibold text-white leading-tight">{label}</span>
         <span
-          className="text-[12px] font-bold px-2.5 py-1 rounded-full flex-shrink-0"
-          style={{ background: "rgba(168,85,247,0.15)", color: "#c084fc" }}
+          className="text-[11px] font-bold px-2 py-0.5 rounded-full flex-shrink-0 whitespace-nowrap transition-colors duration-150"
+          style={{ background: color.rgba(0.15), color: color.rgb }}
         >
-          {value}/10
+          {value} · {LEVEL_LABELS[value - 1]}
         </span>
       </div>
       <input
@@ -40,11 +71,12 @@ function SkillSlider({ label, value, onChange }: { label: string; value: number;
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
         className="skill-slider w-full"
+        style={{
+          ["--thumb-color" as string]: color.rgb,
+          ["--thumb-glow" as string]: color.rgba(0.3),
+          background: `linear-gradient(to right, ${color.rgb} ${percent}%, rgba(255,255,255,0.08) ${percent}%)`,
+        }}
       />
-      <div className="flex justify-between text-[10px] font-semibold text-[#666] mt-1.5 uppercase tracking-wide">
-        <span>Başlangıç</span>
-        <span>Uzman</span>
-      </div>
     </div>
   );
 }
@@ -197,7 +229,7 @@ export default function CvForm() {
             <p className="text-[12px] text-[#666] mb-4">
               Her biri için kendinizi 1 (başlangıç) ile 10 (uzman) arasında değerlendirin.
             </p>
-            <div className="space-y-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
               {CV_SKILLS.map((skill) => (
                 <SkillSlider
                   key={skill}
