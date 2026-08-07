@@ -8,7 +8,7 @@ import { rateLimit, getClientIp } from "@/lib/security";
 export const runtime = "nodejs";
 
 // Bakım modu: true iken sadece ADMIN girebilir. "aç" dediğinde false yap.
-const MAINTENANCE_MODE = true;
+const MAINTENANCE_MODE = false;
 
 const schema = z.object({
   username: z.string().trim().min(1).max(60),
