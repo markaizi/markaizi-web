@@ -9,16 +9,21 @@ const patchSchema = z.object({
   title: z.string().trim().min(1).max(60).optional(),
   sortOrder: z.number().int().optional(),
   triggersWorkLog: z.boolean().optional(),
+  adminOnly: z.boolean().optional(),
 });
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const { err } = await requireWorkflowManageColumns();
+  const { session, err } = await requireWorkflowManageColumns();
   if (err) return err;
   const { id } = await params;
 
   const parsed = patchSchema.safeParse(await req.json());
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
+  }
+
+  if (parsed.data.adminOnly !== undefined && session!.role !== "ADMIN") {
+    return NextResponse.json({ error: "Bu sütunu yalnızca admin kilitleyebilir." }, { status: 403 });
   }
 
   const column = await prisma.workflowColumn.update({ where: { id }, data: parsed.data });

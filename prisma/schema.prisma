@@ -238,6 +238,11 @@ model WorkflowColumn {
   // isme göre eşleştirme yapılmıyor, admin açıkça işaretliyor.
   triggersWorkLog Boolean @default(false)
 
+  // true ise: bu sütuna sadece ADMIN kart taşıyabilir/kart ekleyebilir; sütundaki
+  // kartlara (taşıma, düzenleme, silme) ADMIN dışında kimse dokunamaz — kart o
+  // sütundayken çalışanlar için salt-okunur ve sürüklenemez hale gelir.
+  adminOnly Boolean @default(false)
+
   cards WorkflowCard[]
 
   createdAt DateTime @default(now())

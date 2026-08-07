@@ -23,6 +23,7 @@ interface ColumnData {
   title: string;
   sortOrder: number;
   triggersWorkLog: boolean;
+  adminOnly: boolean;
   cards: CardData[];
 }
 
@@ -108,6 +109,8 @@ export default function WorkflowBoard() {
   async function handleMoveCard(cardId: string, targetColumnId: string) {
     const card = columns.flatMap((c) => c.cards).find((c) => c.id === cardId);
     if (!card || card.columnId === targetColumnId) return;
+    const targetCol = columns.find((c) => c.id === targetColumnId);
+    if (!isAdmin && targetCol?.adminOnly) return; // sadece admin bu sütuna kart taşıyabilir
     const prevColumnId = card.columnId;
 
     // İyimser güncelleme
@@ -311,6 +314,15 @@ export default function WorkflowBoard() {
     });
   }
 
+  async function handleToggleAdminOnly(id: string, next: boolean) {
+    setColumns((prev) => prev.map((c) => (c.id === id ? { ...c, adminOnly: next } : c)));
+    await fetch(`/api/musteri/is-akisi/columns/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ adminOnly: next }),
+    });
+  }
+
   function handleMoveColumn(id: string, direction: "left" | "right") {
     setColumns((prev) => {
       const idx = prev.findIndex((c) => c.id === id);
@@ -368,6 +380,7 @@ export default function WorkflowBoard() {
       >
         {columns.map((col, colIdx) => {
           const isDragTarget = dragOverCol === col.id && dragCardId !== null;
+          const locked = !isAdmin && col.adminOnly;
           return (
             <div
               key={col.id}
@@ -405,8 +418,35 @@ export default function WorkflowBoard() {
                   <span className="text-[11px] font-semibold text-[#8a8a9a] px-2 py-0.5 rounded-full mr-0.5" style={{ background: "var(--bg)" }}>
                     {col.cards.length}
                   </span>
+                  {col.adminOnly && !isAdmin && (
+                    <span
+                      title="Bu sütuna yalnızca admin kart taşıyabilir ve buradaki kartlara yalnızca admin dokunabilir"
+                      className="w-6 h-6 flex items-center justify-center text-[#c084fc]"
+                    >
+                      <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5" stroke="currentColor" strokeWidth="2">
+                        <rect x="5" y="11" width="14" height="9" rx="2" />
+                        <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+                      </svg>
+                    </span>
+                  )}
                   {canManageColumns && (
                     <>
+                      {isAdmin && (
+                        <button
+                          onClick={() => handleToggleAdminOnly(col.id, !col.adminOnly)}
+                          title={col.adminOnly ? "Bu sütun kilitli — yalnızca admin kart taşıyabilir/dokunabilir (kapatmak için tıkla)" : "Bu sütunu kilitle — yalnızca admin kart taşıyabilsin ve dokunabilsin"}
+                          className="w-6 h-6 flex items-center justify-center rounded-md transition-colors"
+                          style={{
+                            color: col.adminOnly ? "#c084fc" : "#555",
+                            background: col.adminOnly ? "rgba(168,85,247,0.15)" : "transparent",
+                          }}
+                        >
+                          <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5" stroke="currentColor" strokeWidth="2">
+                            <rect x="5" y="11" width="14" height="9" rx="2" />
+                            <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+                          </svg>
+                        </button>
+                      )}
                       <button
                         onClick={() => handleToggleTrigger(col.id, !col.triggersWorkLog)}
                         title={col.triggersWorkLog ? "Bu sütuna taşınan kartlar otomatik iş kaydı oluşturur — kapatmak için tıkla" : "Bu sütuna taşınan kartlar otomatik iş kaydı oluştursun mu?"}
@@ -456,22 +496,24 @@ export default function WorkflowBoard() {
 
               {/* Kartlar */}
               <div className="wf-cards-scroll flex-1 overflow-y-auto px-2 py-2 sm:px-2.5 sm:py-2.5 flex flex-col gap-1.5" style={{ minHeight: 80 }}>
-                {col.cards.map((card) => (
+                {col.cards.map((card) => {
+                  const interactive = canManageCards && !locked;
+                  return (
                   <div
                     key={card.id}
-                    onPointerDown={canManageCards ? (e) => onCardPointerDown(e, card) : undefined}
-                    onPointerMove={canManageCards ? onCardPointerMove : undefined}
-                    onPointerUp={canManageCards ? (e) => onCardPointerUp(e, card) : undefined}
-                    onPointerCancel={canManageCards ? onCardPointerCancel : undefined}
-                    onLostPointerCapture={canManageCards ? onCardPointerCancel : undefined}
-                    onClick={!canManageCards ? () => setModal({ mode: "edit", card }) : undefined}
+                    onPointerDown={interactive ? (e) => onCardPointerDown(e, card) : undefined}
+                    onPointerMove={interactive ? onCardPointerMove : undefined}
+                    onPointerUp={interactive ? (e) => onCardPointerUp(e, card) : undefined}
+                    onPointerCancel={interactive ? onCardPointerCancel : undefined}
+                    onLostPointerCapture={interactive ? onCardPointerCancel : undefined}
+                    onClick={!interactive ? () => setModal({ mode: "edit", card }) : undefined}
                     className="rounded-lg px-2.5 py-2 transition-all select-none"
                     style={{
                       background: "var(--surface-2, #141420)",
                       border: "1px solid var(--border)",
                       borderLeft: card.revisionNote ? "3px solid #fb923c" : "1px solid var(--border)",
                       opacity: dragCardId === card.id ? 0.35 : 1,
-                      cursor: !canManageCards ? "pointer" : dragCardId === card.id ? "grabbing" : "grab",
+                      cursor: !interactive ? "pointer" : dragCardId === card.id ? "grabbing" : "grab",
                       touchAction: "none",
                     }}
                     onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.borderColor = "rgba(168,85,247,0.35)")}
@@ -517,11 +559,12 @@ export default function WorkflowBoard() {
                       </div>
                     )}
                   </div>
-                ))}
+                  );
+                })}
               </div>
 
               {/* Kart ekle */}
-              {canManageCards && (
+              {canManageCards && !locked && (
                 <button
                   onClick={() => setModal({ mode: "create", columnId: col.id })}
                   className="mx-2 mb-2 sm:mx-2.5 sm:mb-2.5 text-[12px] font-semibold text-[#8a8a9a] hover:text-[#c084fc] py-2.5 rounded-lg transition-colors text-left px-1.5"
@@ -590,6 +633,7 @@ export default function WorkflowBoard() {
       {modal && (
         <CardModal
           state={modal}
+          columns={columns}
           employees={employees}
           clients={clients}
           currentUserId={currentUserId}
@@ -718,9 +762,10 @@ function ArchiveModal({ onClose, onRestored }: { onClose: () => void; onRestored
 // ── Kart Modalı ──────────────────────────────────────────────────────────────
 
 function CardModal({
-  state, employees, clients, currentUserId, isAdmin, canManageCards, canDeleteAnyCard, onClose, onSaved, onDeleted,
+  state, columns, employees, clients, currentUserId, isAdmin, canManageCards, canDeleteAnyCard, onClose, onSaved, onDeleted,
 }: {
   state: { mode: "create" | "edit"; columnId?: string; card?: CardData };
+  columns: ColumnData[];
   employees: PersonOption[];
   clients: ClientOption[];
   currentUserId: string;
@@ -733,8 +778,11 @@ function CardModal({
 }) {
   const isEdit = state.mode === "edit";
   const card = state.card;
-  // canManageCards=false olan kullanıcı bir karta tıklarsa (görüntüleme amaçlı) salt-okunur açılır
-  const readOnly = isEdit && !canManageCards;
+  const cardColumn = columns.find((c) => c.id === (card?.columnId ?? state.columnId));
+  const locked = !isAdmin && !!cardColumn?.adminOnly;
+  // canManageCards=false olan kullanıcı bir karta tıklarsa (görüntüleme amaçlı) salt-okunur açılır;
+  // admin-only bir sütundaki kart ise (locked) admin dışında herkes için de salt-okunur.
+  const readOnly = isEdit && (!canManageCards || locked);
   const [title, setTitle] = useState(card?.title ?? "");
   const [description, setDescription] = useState(card?.description ?? "");
   const [revisionNote, setRevisionNote] = useState(card?.revisionNote ?? "");
@@ -750,7 +798,9 @@ function CardModal({
   const [archiving, setArchiving] = useState(false);
   const [error, setError] = useState("");
 
-  const canDelete = isEdit && (isAdmin || canDeleteAnyCard || (canManageCards && card?.creator.id === currentUserId));
+  // Arşivleme her zaman yalnızca admin'e açık; silme izni ayrıca kilitli sütunlarda (locked) herkes için kapanır.
+  const canArchive = isEdit && isAdmin;
+  const canDelete = isEdit && !locked && (isAdmin || canDeleteAnyCard || (canManageCards && card?.creator.id === currentUserId));
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -827,8 +877,13 @@ function CardModal({
         <div className="flex items-center gap-2 mb-6">
           <h2 className="font-bold text-[17px] text-white">{isEdit ? "Kartı Düzenle" : "Yeni Kart"}</h2>
           {readOnly && (
-            <span className="text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full" style={{ background: "rgba(138,138,154,0.15)", color: "#8a8a9a" }}>
-              Salt Görüntüleme
+            <span
+              className="text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full"
+              style={locked
+                ? { background: "rgba(168,85,247,0.15)", color: "#c084fc" }
+                : { background: "rgba(138,138,154,0.15)", color: "#8a8a9a" }}
+            >
+              {locked ? "Sadece Admin Dokunabilir" : "Salt Görüntüleme"}
             </span>
           )}
         </div>
@@ -948,7 +1003,7 @@ function CardModal({
 
         {!readOnly && (
           <div className="flex gap-3 mt-7">
-            {canDelete && isEdit && (
+            {canArchive && (
               <button type="button" onClick={handleArchive} disabled={archiving || deleting}
                 className="text-[13px] font-semibold text-[#c084fc] px-4 py-2.5 rounded-xl transition-all"
                 style={{ background: "rgba(168,85,247,0.1)", border: "1px solid rgba(168,85,247,0.25)" }}>
@@ -967,20 +1022,22 @@ function CardModal({
             </button>
           </div>
         )}
-        {readOnly && canDelete && (
+        {readOnly && (canDelete || canArchive) && (
           <div className="flex gap-3 mt-7">
-            {isEdit && (
+            {canArchive && (
               <button type="button" onClick={handleArchive} disabled={archiving || deleting}
                 className="text-[13px] font-semibold text-[#c084fc] px-4 py-2.5 rounded-xl transition-all flex-1"
                 style={{ background: "rgba(168,85,247,0.1)", border: "1px solid rgba(168,85,247,0.25)" }}>
                 {archiving ? "Arşivleniyor..." : "Arşivle"}
               </button>
             )}
-            <button type="button" onClick={handleDelete} disabled={deleting || archiving}
-              className="text-[13px] font-semibold text-[#f87171] px-4 py-2.5 rounded-xl transition-all flex-1"
-              style={{ background: "rgba(248,113,113,0.1)", border: "1px solid rgba(248,113,113,0.25)" }}>
-              {deleting ? "Siliniyor..." : "Sil"}
-            </button>
+            {canDelete && (
+              <button type="button" onClick={handleDelete} disabled={deleting || archiving}
+                className="text-[13px] font-semibold text-[#f87171] px-4 py-2.5 rounded-xl transition-all flex-1"
+                style={{ background: "rgba(248,113,113,0.1)", border: "1px solid rgba(248,113,113,0.25)" }}>
+                {deleting ? "Siliniyor..." : "Sil"}
+              </button>
+            )}
           </div>
         )}
       </form>

@@ -35,6 +35,13 @@ export async function POST(req: NextRequest) {
     }
   }
 
+  if (session!.role !== "ADMIN") {
+    const column = await prisma.workflowColumn.findUnique({ where: { id: columnId }, select: { adminOnly: true } });
+    if (column?.adminOnly) {
+      return NextResponse.json({ error: "Bu sütuna yalnızca admin kart ekleyebilir." }, { status: 403 });
+    }
+  }
+
   const maxOrder = await prisma.workflowCard.aggregate({
     _max: { sortOrder: true },
     where: { columnId },

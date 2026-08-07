@@ -40,9 +40,37 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
   const before = await prisma.workflowCard.findUnique({
     where: { id },
-    select: { columnId: true, workLog: { select: { id: true, amount: true } } },
+    select: {
+      columnId: true,
+      workLog: { select: { id: true, amount: true } },
+      column: { select: { adminOnly: true, triggersWorkLog: true } },
+    },
   });
   if (!before) return NextResponse.json({ error: "Kart bulunamadı." }, { status: 404 });
+
+  const isAdmin = session!.role === "ADMIN";
+
+  // Arşivleme yalnızca admin'e açık.
+  if (archived !== undefined && !isAdmin) {
+    return NextResponse.json({ error: "Kartları yalnızca admin arşivleyebilir." }, { status: 403 });
+  }
+
+  // Kart şu an admin-only bir sütundaysa, admin dışında kimse ona dokunamaz
+  // (taşıyamaz, düzenleyemez, silemez) — sütun "kilitli" sayılır.
+  if (before.column.adminOnly && !isAdmin) {
+    return NextResponse.json({ error: "Bu sütundaki kartlara yalnızca admin dokunabilir." }, { status: 403 });
+  }
+
+  let toCol: { adminOnly: boolean; triggersWorkLog: boolean } | null = null;
+  if (rest.columnId && rest.columnId !== before.columnId) {
+    toCol = await prisma.workflowColumn.findUnique({
+      where: { id: rest.columnId },
+      select: { adminOnly: true, triggersWorkLog: true },
+    });
+    if (toCol?.adminOnly && !isAdmin) {
+      return NextResponse.json({ error: "Bu sütuna yalnızca admin kart taşıyabilir." }, { status: 403 });
+    }
+  }
 
   // Sütun değişiyorsa, kartı hedef sütunun sonuna taşı
   let sortOrder = rest.sortOrder;
@@ -78,16 +106,11 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   // try/catch içinde — burada bir hata olsa da kart taşıma işlemi başarılı sayılır.
   try {
     if (rest.columnId && rest.columnId !== before.columnId) {
-      const [fromCol, toCol] = await Promise.all([
-        prisma.workflowColumn.findUnique({ where: { id: before.columnId }, select: { triggersWorkLog: true } }),
-        prisma.workflowColumn.findUnique({ where: { id: rest.columnId }, select: { triggersWorkLog: true } }),
-      ]);
-
       if (toCol?.triggersWorkLog && card.assigneeId && !before.workLog) {
         await prisma.workLog.create({
           data: { userId: card.assigneeId, date: new Date(), description: card.title, workflowCardId: card.id },
         });
-      } else if (!toCol?.triggersWorkLog && fromCol?.triggersWorkLog && before.workLog && before.workLog.amount === null) {
+      } else if (!toCol?.triggersWorkLog && before.column.triggersWorkLog && before.workLog && before.workLog.amount === null) {
         // Tetikleyici sütundan, henüz fiyatlandırılmamış hâldeyken çıkarıldı — otomatik oluşan kaydı geri al.
         await prisma.workLog.delete({ where: { id: before.workLog.id } });
       }
@@ -112,10 +135,16 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
   if (err) return err;
   const { id } = await params;
 
-  const card = await prisma.workflowCard.findUnique({ where: { id }, select: { creatorId: true } });
+  const card = await prisma.workflowCard.findUnique({
+    where: { id },
+    select: { creatorId: true, column: { select: { adminOnly: true } } },
+  });
   if (!card) return NextResponse.json({ error: "Kart bulunamadı." }, { status: 404 });
 
   if (session!.role !== "ADMIN") {
+    if (card.column.adminOnly) {
+      return NextResponse.json({ error: "Bu sütundaki kartlara yalnızca admin dokunabilir." }, { status: 403 });
+    }
     const me = await prisma.user.findUnique({
       where: { id: session!.uid },
       select: { workflowCanDeleteAnyCard: true, workflowCanManageCards: true },
