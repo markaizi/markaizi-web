@@ -255,6 +255,26 @@ export default function AdminEmployeeDetail({
   );
   const [savingLogId, setSavingLogId] = useState<string | null>(null);
   const [deletingLogId, setDeletingLogId] = useState<string | null>(null);
+  const [bulkSavingCurrent, setBulkSavingCurrent] = useState(false);
+
+  async function handleBulkSaveCurrent() {
+    const toSave = currentLogs.filter((l) => (amountDrafts[l.id] ?? "").trim() !== (l.amount ?? ""));
+    if (toSave.length === 0) return;
+    setBulkSavingCurrent(true);
+    const results = await Promise.all(toSave.map(async (l) => {
+      const amount = amountDrafts[l.id]?.trim() || null;
+      const res = await fetch(`/api/musteri/admin/worklogs/${l.id}`, {
+        method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ amount }),
+      });
+      const json = await res.json();
+      return { id: l.id, ok: !!json.ok, amount: json.log?.amount as string | null | undefined };
+    }));
+    setCurrentLogs((prev) => prev.map((l) => {
+      const r = results.find((x) => x.id === l.id);
+      return r?.ok ? { ...l, amount: r.amount ?? null } : l;
+    }));
+    setBulkSavingCurrent(false);
+  }
 
   async function handleSaveAmount(logId: string) {
     setSavingLogId(logId);
@@ -287,6 +307,34 @@ export default function AdminEmployeeDetail({
   const [archivedAmountDrafts, setArchivedAmountDrafts] = useState<Record<string, string>>({});
   const [archivedSavingId, setArchivedSavingId] = useState<string | null>(null);
   const [archivedDeletingId, setArchivedDeletingId] = useState<string | null>(null);
+  const [bulkSavingArchived, setBulkSavingArchived] = useState<string | null>(null);
+
+  async function handleBulkSaveArchived(periodKey: string) {
+    const entries = archivedEntries[periodKey] ?? [];
+    const toSave = entries.filter((l) => (archivedAmountDrafts[l.id] ?? "").trim() !== (l.amount ?? ""));
+    if (toSave.length === 0) return;
+    setBulkSavingArchived(periodKey);
+    const results = await Promise.all(toSave.map(async (l) => {
+      const amount = archivedAmountDrafts[l.id]?.trim() || null;
+      const res = await fetch(`/api/musteri/admin/worklogs/${l.id}`, {
+        method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ amount }),
+      });
+      const json = await res.json();
+      return { id: l.id, ok: !!json.ok, amount: json.log?.amount as string | null | undefined, before: l.amount };
+    }));
+    setArchivedEntries((prev) => ({
+      ...prev,
+      [periodKey]: (prev[periodKey] ?? []).map((l) => {
+        const r = results.find((x) => x.id === l.id);
+        return r?.ok ? { ...l, amount: r.amount ?? null } : l;
+      }),
+    }));
+    const delta = results.reduce((s, r) => (r.ok ? s + (parseAmount(r.amount ?? null) - parseAmount(r.before)) : s), 0);
+    if (delta !== 0) {
+      setSummaries((prev) => prev.map((s) => (s.key === periodKey ? { ...s, total: s.total + delta } : s)));
+    }
+    setBulkSavingArchived(null);
+  }
 
   // Ödeme günü değişince (handleSavePaymentDay → router.refresh()) sunucudan gelen
   // yeni employee.currentPeriod/currentLogs/archivedSummary ile client state'i
@@ -560,6 +608,16 @@ export default function AdminEmployeeDetail({
                 Toplam {currentTotal.toLocaleString("tr-TR")} ₺
               </span>
               {currentLogs.length > 0 && (
+                <button
+                  onClick={handleBulkSaveCurrent}
+                  disabled={bulkSavingCurrent}
+                  className="text-[11px] font-semibold px-2.5 py-1 rounded-full transition-colors"
+                  style={{ background: "rgba(168,85,247,0.12)", color: "#c084fc" }}
+                >
+                  {bulkSavingCurrent ? "Kaydediliyor..." : "Toplu Kaydet"}
+                </button>
+              )}
+              {currentLogs.length > 0 && (
                 <a
                   href={`/api/musteri/admin/worklogs/pdf?userId=${employee.id}&periodEnd=${employee.currentPeriod.key}`}
                   className="text-[11px] font-semibold px-2.5 py-1 rounded-full transition-colors"
@@ -622,7 +680,20 @@ export default function AdminEmployeeDetail({
                   </div>
                 </div>
                 {expandedKey === summary.key && (
-                  <div className="divide-y" style={{ borderTop: "1px solid var(--border)", borderColor: "var(--border)" }}>
+                  <div style={{ borderTop: "1px solid var(--border)" }}>
+                    {loadingKey !== summary.key && (archivedEntries[summary.key] ?? []).length > 0 && (
+                      <div className="px-6 py-3 flex justify-end" style={{ borderBottom: "1px solid var(--border)" }}>
+                        <button
+                          onClick={() => handleBulkSaveArchived(summary.key)}
+                          disabled={bulkSavingArchived === summary.key}
+                          className="text-[11px] font-semibold px-2.5 py-1 rounded-full transition-colors"
+                          style={{ background: "rgba(168,85,247,0.12)", color: "#c084fc" }}
+                        >
+                          {bulkSavingArchived === summary.key ? "Kaydediliyor..." : "Toplu Kaydet"}
+                        </button>
+                      </div>
+                    )}
+                    <div className="divide-y" style={{ borderColor: "var(--border)" }}>
                     {loadingKey === summary.key ? (
                       <p className="text-[13px] text-[#555] text-center py-6">Yükleniyor...</p>
                     ) : (
@@ -639,6 +710,7 @@ export default function AdminEmployeeDetail({
                         />
                       ))
                     )}
+                    </div>
                   </div>
                 )}
               </div>

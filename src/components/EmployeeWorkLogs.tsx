@@ -138,6 +138,12 @@ export default function EmployeeWorkLogs({
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [addedElsewhere, setAddedElsewhere] = useState(false);
 
+  const [bulkMode, setBulkMode] = useState(false);
+  const [bulkDate, setBulkDate] = useState(() => new Date().toISOString().split("T")[0]);
+  const [bulkDescriptions, setBulkDescriptions] = useState<string[]>([""]);
+  const [bulkSaving, setBulkSaving] = useState(false);
+  const [bulkErr, setBulkErr] = useState("");
+
   const [summaries, setSummaries] = useState(archivedSummary);
   const [expandedKey, setExpandedKey] = useState<string | null>(null);
   const [loadingKey, setLoadingKey] = useState<string | null>(null);
@@ -174,6 +180,33 @@ export default function EmployeeWorkLogs({
       setDescription("");
     } else {
       setErr(json.error ?? "Hata.");
+    }
+  }
+
+  async function handleBulkSave(e: React.FormEvent) {
+    e.preventDefault();
+    const items = bulkDescriptions.map((d) => d.trim()).filter(Boolean);
+    if (items.length === 0) return;
+    setBulkSaving(true);
+    setBulkErr("");
+    setAddedElsewhere(false);
+    const res = await fetch("/api/musteri/calisan/worklogs/bulk", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ date: bulkDate, descriptions: items }),
+    });
+    const json = await res.json();
+    setBulkSaving(false);
+    if (json.ok) {
+      const logDate = new Date(json.logs[0].date);
+      if (logDate >= currentPeriod.start && logDate <= currentPeriod.end) {
+        setCurrentLogs((prev) => [...json.logs, ...prev]);
+      } else {
+        setAddedElsewhere(true);
+      }
+      setBulkDescriptions([""]);
+    } else {
+      setBulkErr(json.error ?? "Hata.");
     }
   }
 
@@ -271,42 +304,117 @@ export default function EmployeeWorkLogs({
         </div>
 
         {/* Yeni kayıt formu */}
-        <form onSubmit={handleAdd} className="rounded-2xl p-5 space-y-4 mb-8" style={{ background: "var(--surface)", border: "1px solid rgba(96,165,250,0.3)" }}>
-          <p className="font-semibold text-white text-[14px]">Yeni İş Kaydı</p>
-          <div className="grid grid-cols-1 sm:grid-cols-[160px_1fr] gap-3">
-            <div>
-              <label className="block text-[11px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1.5">Tarih</label>
-              <input
-                type="date"
-                required
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-lg text-[14px] text-white outline-none focus:ring-1 focus:ring-blue-500/50"
-                style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
-              />
-            </div>
-            <div>
-              <label className="block text-[11px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1.5">Ne yaptın?</label>
-              <input
-                required
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                placeholder="Örn: Alitel 03 dron videosu editlendi"
-                className="w-full px-3 py-2.5 rounded-lg text-[14px] text-white placeholder-[#555] outline-none focus:ring-1 focus:ring-blue-500/50"
-                style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
-              />
-            </div>
+        <div className="rounded-2xl p-5 space-y-4 mb-8" style={{ background: "var(--surface)", border: "1px solid rgba(96,165,250,0.3)" }}>
+          <div className="flex items-center justify-between gap-3">
+            <p className="font-semibold text-white text-[14px]">{bulkMode ? "Toplu İş Gir" : "Yeni İş Kaydı"}</p>
+            <button
+              type="button"
+              onClick={() => setBulkMode((v) => !v)}
+              className="text-[12px] font-semibold text-[#60a5fa] hover:text-white transition-colors px-2.5 py-1 rounded-lg"
+              style={{ background: "rgba(96,165,250,0.1)", border: "1px solid rgba(96,165,250,0.25)" }}
+            >
+              {bulkMode ? "Tekli Gir" : "Toplu Gir"}
+            </button>
           </div>
-          {err && <p className="text-[12px] text-red-400">{err}</p>}
-          {addedElsewhere && (
-            <p className="text-[12px]" style={{ color: "#60a5fa" }}>
-              Kaydedildi — seçtiğin tarih geçmiş bir döneme ait olduğu için aşağıdaki listede değil, ilgili arşiv döneminde görünecek.
-            </p>
+
+          {!bulkMode ? (
+            <form onSubmit={handleAdd} className="space-y-4">
+              <div className="grid grid-cols-1 sm:grid-cols-[160px_1fr] gap-3">
+                <div>
+                  <label className="block text-[11px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1.5">Tarih</label>
+                  <input
+                    type="date"
+                    required
+                    value={date}
+                    onChange={(e) => setDate(e.target.value)}
+                    className="w-full px-3 py-2.5 rounded-lg text-[14px] text-white outline-none focus:ring-1 focus:ring-blue-500/50"
+                    style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1.5">Ne yaptın?</label>
+                  <input
+                    required
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    placeholder="Örn: Alitel 03 dron videosu editlendi"
+                    className="w-full px-3 py-2.5 rounded-lg text-[14px] text-white placeholder-[#555] outline-none focus:ring-1 focus:ring-blue-500/50"
+                    style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
+                  />
+                </div>
+              </div>
+              {err && <p className="text-[12px] text-red-400">{err}</p>}
+              {addedElsewhere && (
+                <p className="text-[12px]" style={{ color: "#60a5fa" }}>
+                  Kaydedildi — seçtiğin tarih geçmiş bir döneme ait olduğu için aşağıdaki listede değil, ilgili arşiv döneminde görünecek.
+                </p>
+              )}
+              <button type="submit" disabled={saving} className="btn btn-primary text-sm px-5 py-2.5">
+                {saving ? "Ekleniyor..." : "Ekle"}
+              </button>
+            </form>
+          ) : (
+            <form onSubmit={handleBulkSave} className="space-y-4">
+              <div>
+                <label className="block text-[11px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1.5">Tarih</label>
+                <input
+                  type="date"
+                  required
+                  value={bulkDate}
+                  onChange={(e) => setBulkDate(e.target.value)}
+                  className="w-full sm:w-[220px] px-3 py-2.5 rounded-lg text-[14px] text-white outline-none focus:ring-1 focus:ring-blue-500/50"
+                  style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1.5">Yapılan İşler</label>
+                <div className="space-y-2">
+                  {bulkDescriptions.map((d, i) => (
+                    <div key={i} className="flex items-center gap-2">
+                      <input
+                        value={d}
+                        onChange={(e) => setBulkDescriptions((prev) => prev.map((v, j) => (j === i ? e.target.value : v)))}
+                        placeholder={`İş ${i + 1}...`}
+                        className="flex-1 min-w-0 px-3 py-2.5 rounded-lg text-[14px] text-white placeholder-[#555] outline-none focus:ring-1 focus:ring-blue-500/50"
+                        style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
+                      />
+                      {bulkDescriptions.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => setBulkDescriptions((prev) => prev.filter((_, j) => j !== i))}
+                          className="w-9 h-9 flex-shrink-0 flex items-center justify-center rounded-lg text-[#555] hover:text-[#f87171] transition-colors"
+                          style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
+                        >
+                          <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5" stroke="currentColor" strokeWidth="2.5">
+                            <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" />
+                          </svg>
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setBulkDescriptions((prev) => [...prev, ""])}
+                  className="mt-2 text-[12px] font-semibold text-[#60a5fa] hover:text-white transition-colors"
+                >
+                  + Satır Ekle
+                </button>
+              </div>
+
+              {bulkErr && <p className="text-[12px] text-red-400">{bulkErr}</p>}
+              {addedElsewhere && (
+                <p className="text-[12px]" style={{ color: "#60a5fa" }}>
+                  Kaydedildi — seçtiğin tarih geçmiş bir döneme ait olduğu için aşağıdaki listede değil, ilgili arşiv döneminde görünecek.
+                </p>
+              )}
+              <button type="submit" disabled={bulkSaving} className="btn btn-primary text-sm px-5 py-2.5">
+                {bulkSaving ? "Kaydediliyor..." : "Toplu Kaydet"}
+              </button>
+            </form>
           )}
-          <button type="submit" disabled={saving} className="btn btn-primary text-sm px-5 py-2.5">
-            {saving ? "Ekleniyor..." : "Ekle"}
-          </button>
-        </form>
+        </div>
 
         {/* Mevcut dönem */}
         <div className="mb-8">

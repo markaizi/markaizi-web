@@ -22,6 +22,7 @@ interface ColumnData {
   id: string;
   title: string;
   sortOrder: number;
+  triggersWorkLog: boolean;
   cards: CardData[];
 }
 
@@ -72,6 +73,7 @@ export default function WorkflowBoard() {
   const [renamingCol, setRenamingCol] = useState<string | null>(null);
   const [renameValue, setRenameValue] = useState("");
   const [colError, setColError] = useState("");
+  const [showArchive, setShowArchive] = useState(false);
 
   // ── Sürükleme: mouse'ta anında, dokunmada basılı tutunca (Pointer Events) ──
   const [dragCardId, setDragCardId] = useState<string | null>(null);
@@ -300,6 +302,38 @@ export default function WorkflowBoard() {
     }
   }
 
+  async function handleToggleTrigger(id: string, next: boolean) {
+    setColumns((prev) => prev.map((c) => (c.id === id ? { ...c, triggersWorkLog: next } : c)));
+    await fetch(`/api/musteri/is-akisi/columns/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ triggersWorkLog: next }),
+    });
+  }
+
+  function handleMoveColumn(id: string, direction: "left" | "right") {
+    setColumns((prev) => {
+      const idx = prev.findIndex((c) => c.id === id);
+      const swapIdx = direction === "left" ? idx - 1 : idx + 1;
+      if (idx === -1 || swapIdx < 0 || swapIdx >= prev.length) return prev;
+      const next = [...prev];
+      [next[idx], next[swapIdx]] = [next[swapIdx], next[idx]];
+      // Mevcut sortOrder değerleri dizi index'leriyle birebir örtüşmeyebilir (sütun
+      // silindiğinde boşluk kalır) — çakışmayı önlemek için TÜM sütunları yeni index'lerine
+      // göre yeniden numaralandırıyoruz, sadece yer değiştiren ikiliyi değil.
+      next.forEach((col, i) => {
+        if (col.sortOrder !== i) {
+          fetch(`/api/musteri/is-akisi/columns/${col.id}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ sortOrder: i }),
+          });
+        }
+      });
+      return next.map((col, i) => ({ ...col, sortOrder: i }));
+    });
+  }
+
   if (loading) {
     return <div className="py-20 text-center text-[#8a8a9a] text-[14px]">Yükleniyor...</div>;
   }
@@ -312,12 +346,27 @@ export default function WorkflowBoard() {
         </div>
       )}
 
+      {canManageCards && (
+        <div className="flex justify-end mb-3">
+          <button
+            onClick={() => setShowArchive(true)}
+            className="text-[12px] font-semibold text-[#8a8a9a] hover:text-[#c084fc] transition-colors flex items-center gap-1.5 px-3 py-1.5 rounded-lg"
+            style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+          >
+            <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5" stroke="currentColor" strokeWidth="2">
+              <path d="M3 7h18M5 7l1 13a1 1 0 001 1h10a1 1 0 001-1l1-13M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            Arşiv
+          </button>
+        </div>
+      )}
+
       <div
         ref={boardRef}
         className="flex gap-3 sm:gap-4 overflow-x-auto pb-4 snap-x snap-mandatory sm:snap-none"
         style={{ scrollbarWidth: "thin" }}
       >
-        {columns.map((col) => {
+        {columns.map((col, colIdx) => {
           const isDragTarget = dragOverCol === col.id && dragCardId !== null;
           return (
             <div
@@ -352,20 +401,55 @@ export default function WorkflowBoard() {
                     {col.title}
                   </button>
                 )}
-                <div className="flex items-center gap-2 flex-shrink-0">
-                  <span className="text-[11px] font-semibold text-[#8a8a9a] px-2 py-0.5 rounded-full" style={{ background: "var(--bg)" }}>
+                <div className="flex items-center gap-1 flex-shrink-0">
+                  <span className="text-[11px] font-semibold text-[#8a8a9a] px-2 py-0.5 rounded-full mr-0.5" style={{ background: "var(--bg)" }}>
                     {col.cards.length}
                   </span>
                   {canManageColumns && (
-                    <button
-                      onClick={() => handleDeleteColumn(col.id)}
-                      title="Sütunu sil"
-                      className="text-[#555] hover:text-[#f87171] transition-colors w-7 h-7 -mr-1.5 flex items-center justify-center rounded-lg"
-                    >
-                      <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5" stroke="currentColor" strokeWidth="2.5">
-                        <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" />
-                      </svg>
-                    </button>
+                    <>
+                      <button
+                        onClick={() => handleToggleTrigger(col.id, !col.triggersWorkLog)}
+                        title={col.triggersWorkLog ? "Bu sütuna taşınan kartlar otomatik iş kaydı oluşturur — kapatmak için tıkla" : "Bu sütuna taşınan kartlar otomatik iş kaydı oluştursun mu?"}
+                        className="w-6 h-6 flex items-center justify-center rounded-md transition-colors"
+                        style={{
+                          color: col.triggersWorkLog ? "#c084fc" : "#555",
+                          background: col.triggersWorkLog ? "rgba(168,85,247,0.15)" : "transparent",
+                        }}
+                      >
+                        <svg viewBox="0 0 24 24" fill={col.triggersWorkLog ? "currentColor" : "none"} className="w-3.5 h-3.5" stroke="currentColor" strokeWidth="2">
+                          <path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z" strokeLinejoin="round" />
+                        </svg>
+                      </button>
+                      <button
+                        onClick={() => handleMoveColumn(col.id, "left")}
+                        disabled={colIdx === 0}
+                        title="Sola taşı"
+                        className="w-6 h-6 flex items-center justify-center rounded-md text-[#555] hover:text-white disabled:opacity-25 disabled:hover:text-[#555] transition-colors"
+                      >
+                        <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5" stroke="currentColor" strokeWidth="2.5">
+                          <path d="M15 6l-6 6 6 6" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </button>
+                      <button
+                        onClick={() => handleMoveColumn(col.id, "right")}
+                        disabled={colIdx === columns.length - 1}
+                        title="Sağa taşı"
+                        className="w-6 h-6 flex items-center justify-center rounded-md text-[#555] hover:text-white disabled:opacity-25 disabled:hover:text-[#555] transition-colors"
+                      >
+                        <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5" stroke="currentColor" strokeWidth="2.5">
+                          <path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </button>
+                      <button
+                        onClick={() => handleDeleteColumn(col.id)}
+                        title="Sütunu sil"
+                        className="text-[#555] hover:text-[#f87171] transition-colors w-6 h-6 flex items-center justify-center rounded-md"
+                      >
+                        <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5" stroke="currentColor" strokeWidth="2.5">
+                          <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" />
+                        </svg>
+                      </button>
+                    </>
                   )}
                 </div>
               </div>
@@ -517,6 +601,116 @@ export default function WorkflowBoard() {
           onDeleted={handleDeleted}
         />
       )}
+
+      {showArchive && <ArchiveModal onClose={() => setShowArchive(false)} onRestored={load} />}
+    </div>
+  );
+}
+
+// ── Arşiv Modalı ─────────────────────────────────────────────────────────────
+
+interface ArchivedCard {
+  id: string;
+  title: string;
+  archivedAt: string;
+  column: { title: string };
+  assignee: { name: string } | null;
+}
+
+function ArchiveModal({ onClose, onRestored }: { onClose: () => void; onRestored: () => void }) {
+  const [cards, setCards] = useState<ArchivedCard[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [busyId, setBusyId] = useState<string | null>(null);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+    const res = await fetch("/api/musteri/is-akisi/cards/archived");
+    if (res.ok) {
+      const data = await res.json();
+      setCards(data.cards);
+    }
+    setLoading(false);
+  }, []);
+
+  useEffect(() => { load(); }, [load]);
+
+  async function handleRestore(id: string) {
+    setBusyId(id);
+    const res = await fetch(`/api/musteri/is-akisi/cards/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ archived: false }),
+    });
+    if (res.ok) {
+      setCards((prev) => prev.filter((c) => c.id !== id));
+      onRestored();
+    }
+    setBusyId(null);
+  }
+
+  async function handleDelete(id: string) {
+    if (!confirm("Bu kart kalıcı olarak silinsin mi?")) return;
+    setBusyId(id);
+    const res = await fetch(`/api/musteri/is-akisi/cards/${id}`, { method: "DELETE" });
+    if (res.ok) setCards((prev) => prev.filter((c) => c.id !== id));
+    setBusyId(null);
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-[1100] flex items-center justify-center px-4"
+      style={{ background: "rgba(0,0,0,0.75)", backdropFilter: "blur(8px)" }}
+      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+    >
+      <div
+        className="w-full max-w-[480px] rounded-2xl p-5 sm:p-7 relative max-h-[80vh] overflow-y-auto"
+        style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+      >
+        <button type="button" onClick={onClose} className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full transition-all hover:bg-white/[0.08]">
+          <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-[#8a8a9a]" stroke="currentColor" strokeWidth="2.5">
+            <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" />
+          </svg>
+        </button>
+
+        <h2 className="font-bold text-[17px] text-white mb-5">Arşivlenmiş Kartlar</h2>
+
+        {loading ? (
+          <p className="text-[13px] text-[#8a8a9a]">Yükleniyor...</p>
+        ) : cards.length === 0 ? (
+          <p className="text-[13px] text-[#8a8a9a]">Arşivde kart yok.</p>
+        ) : (
+          <div className="space-y-2">
+            {cards.map((c) => (
+              <div key={c.id} className="rounded-xl px-3.5 py-3 flex items-center justify-between gap-3" style={{ background: "var(--bg)", border: "1px solid var(--border)" }}>
+                <div className="min-w-0">
+                  <p className="text-[13px] font-semibold text-white truncate">{c.title}</p>
+                  <p className="text-[11px] text-[#8a8a9a] mt-0.5 truncate">
+                    {c.column.title}{c.assignee ? ` · ${c.assignee.name}` : ""}
+                  </p>
+                </div>
+                <div className="flex items-center gap-1.5 flex-shrink-0">
+                  <button
+                    onClick={() => handleRestore(c.id)}
+                    disabled={busyId === c.id}
+                    className="text-[11px] font-semibold text-[#c084fc] px-2.5 py-1.5 rounded-lg"
+                    style={{ background: "rgba(168,85,247,0.1)", border: "1px solid rgba(168,85,247,0.25)" }}
+                  >
+                    Geri Yükle
+                  </button>
+                  <button
+                    onClick={() => handleDelete(c.id)}
+                    disabled={busyId === c.id}
+                    className="text-[11px] font-semibold text-[#f87171] px-2.5 py-1.5 rounded-lg"
+                    style={{ background: "rgba(248,113,113,0.1)", border: "1px solid rgba(248,113,113,0.25)" }}
+                  >
+                    Sil
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -553,6 +747,7 @@ function CardModal({
   });
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [archiving, setArchiving] = useState(false);
   const [error, setError] = useState("");
 
   const canDelete = isEdit && (isAdmin || canDeleteAnyCard || (canManageCards && card?.creator.id === currentUserId));
@@ -596,6 +791,20 @@ function CardModal({
     const data = await res.json().catch(() => ({}));
     setError(data.error ?? "Silinemedi.");
     setDeleting(false);
+  }
+
+  async function handleArchive() {
+    if (!card) return;
+    setArchiving(true);
+    const res = await fetch(`/api/musteri/is-akisi/cards/${card.id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ archived: true }),
+    });
+    if (res.ok) { onDeleted(card.id); return; }
+    const data = await res.json().catch(() => ({}));
+    setError(data.error ?? "Arşivlenemedi.");
+    setArchiving(false);
   }
 
   return (
@@ -739,8 +948,15 @@ function CardModal({
 
         {!readOnly && (
           <div className="flex gap-3 mt-7">
+            {canDelete && isEdit && (
+              <button type="button" onClick={handleArchive} disabled={archiving || deleting}
+                className="text-[13px] font-semibold text-[#c084fc] px-4 py-2.5 rounded-xl transition-all"
+                style={{ background: "rgba(168,85,247,0.1)", border: "1px solid rgba(168,85,247,0.25)" }}>
+                {archiving ? "Arşivleniyor..." : "Arşivle"}
+              </button>
+            )}
             {canDelete && (
-              <button type="button" onClick={handleDelete} disabled={deleting}
+              <button type="button" onClick={handleDelete} disabled={deleting || archiving}
                 className="text-[13px] font-semibold text-[#f87171] px-4 py-2.5 rounded-xl transition-all"
                 style={{ background: "rgba(248,113,113,0.1)", border: "1px solid rgba(248,113,113,0.25)" }}>
                 {deleting ? "Siliniyor..." : "Sil"}
@@ -753,8 +969,15 @@ function CardModal({
         )}
         {readOnly && canDelete && (
           <div className="flex gap-3 mt-7">
-            <button type="button" onClick={handleDelete} disabled={deleting}
-              className="text-[13px] font-semibold text-[#f87171] px-4 py-2.5 rounded-xl transition-all w-full"
+            {isEdit && (
+              <button type="button" onClick={handleArchive} disabled={archiving || deleting}
+                className="text-[13px] font-semibold text-[#c084fc] px-4 py-2.5 rounded-xl transition-all flex-1"
+                style={{ background: "rgba(168,85,247,0.1)", border: "1px solid rgba(168,85,247,0.25)" }}>
+                {archiving ? "Arşivleniyor..." : "Arşivle"}
+              </button>
+            )}
+            <button type="button" onClick={handleDelete} disabled={deleting || archiving}
+              className="text-[13px] font-semibold text-[#f87171] px-4 py-2.5 rounded-xl transition-all flex-1"
               style={{ background: "rgba(248,113,113,0.1)", border: "1px solid rgba(248,113,113,0.25)" }}>
               {deleting ? "Siliniyor..." : "Sil"}
             </button>

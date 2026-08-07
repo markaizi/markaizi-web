@@ -8,6 +8,7 @@ export const runtime = "nodejs";
 const patchSchema = z.object({
   title: z.string().trim().min(1).max(60).optional(),
   sortOrder: z.number().int().optional(),
+  triggersWorkLog: z.boolean().optional(),
 });
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {

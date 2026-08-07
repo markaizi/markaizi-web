@@ -16,6 +16,7 @@ const patchSchema = z.object({
   clientId: z.string().optional().nullable(),
   columnId: z.string().optional(),
   sortOrder: z.number().int().optional(),
+  archived: z.boolean().optional(),
 });
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -27,7 +28,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
   }
-  const { dueDate, clientId, ...rest } = parsed.data;
+  const { dueDate, clientId, archived, ...rest } = parsed.data;
 
   if (clientId) {
     try {
@@ -36,6 +37,12 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       return NextResponse.json({ error: "Bu firmaya erişim yetkiniz yok." }, { status: 403 });
     }
   }
+
+  const before = await prisma.workflowCard.findUnique({
+    where: { id },
+    select: { columnId: true, workLog: { select: { id: true, amount: true } } },
+  });
+  if (!before) return NextResponse.json({ error: "Kart bulunamadı." }, { status: 404 });
 
   // Sütun değişiyorsa, kartı hedef sütunun sonuna taşı
   let sortOrder = rest.sortOrder;
@@ -57,6 +64,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       assigneeId: rest.assigneeId === undefined ? undefined : rest.assigneeId || null,
       clientId: clientId === undefined ? undefined : clientId || null,
       dueDate: dueDate === undefined ? undefined : dueDate ? new Date(dueDate) : null,
+      archivedAt: archived === undefined ? undefined : archived ? new Date() : null,
     },
     include: {
       assignee: { select: { id: true, name: true } },
@@ -64,6 +72,37 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       client: { select: { slug: true, name: true } },
     },
   });
+
+  // ── İş Akışı → İş Kaydı otomasyonu ──────────────────────────────────────
+  // Kartın taşındığı ana zarar vermemek için otomasyon en sona, ayrı bir
+  // try/catch içinde — burada bir hata olsa da kart taşıma işlemi başarılı sayılır.
+  try {
+    if (rest.columnId && rest.columnId !== before.columnId) {
+      const [fromCol, toCol] = await Promise.all([
+        prisma.workflowColumn.findUnique({ where: { id: before.columnId }, select: { triggersWorkLog: true } }),
+        prisma.workflowColumn.findUnique({ where: { id: rest.columnId }, select: { triggersWorkLog: true } }),
+      ]);
+
+      if (toCol?.triggersWorkLog && card.assigneeId && !before.workLog) {
+        await prisma.workLog.create({
+          data: { userId: card.assigneeId, date: new Date(), description: card.title, workflowCardId: card.id },
+        });
+      } else if (!toCol?.triggersWorkLog && fromCol?.triggersWorkLog && before.workLog && before.workLog.amount === null) {
+        // Tetikleyici sütundan, henüz fiyatlandırılmamış hâldeyken çıkarıldı — otomatik oluşan kaydı geri al.
+        await prisma.workLog.delete({ where: { id: before.workLog.id } });
+      }
+    } else if (rest.assigneeId && card.assigneeId && !before.workLog) {
+      // Sütun değişmedi ama atanan kişi eklendi — kart zaten tetikleyici bir sütundaysa iş kaydı oluştur.
+      const currentCol = await prisma.workflowColumn.findUnique({ where: { id: card.columnId }, select: { triggersWorkLog: true } });
+      if (currentCol?.triggersWorkLog) {
+        await prisma.workLog.create({
+          data: { userId: card.assigneeId, date: new Date(), description: card.title, workflowCardId: card.id },
+        });
+      }
+    }
+  } catch (e) {
+    console.error("İş Akışı → İş Kaydı otomasyonu başarısız:", e);
+  }
 
   return NextResponse.json({ ok: true, card });
 }
@@ -87,6 +126,9 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
     }
   }
 
+  // Kartı silmek, otomatik oluşan iş kaydını SİLMEZ — WorkLog.workflowCardId
+  // onDelete:SetNull ile null'a düşer, ücret/ödeme kaydı korunur (pano temizliği
+  // ile bordro kaydı birbirinden bağımsızdır).
   await prisma.workflowCard.delete({ where: { id } });
   return NextResponse.json({ ok: true });
 }

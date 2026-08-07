@@ -232,6 +232,12 @@ model WorkflowColumn {
   title     String
   sortOrder Int    @default(0)
 
+  // true ise: bir kart bu sütuna taşındığında, atanan çalışana otomatik iş
+  // kaydı (WorkLog) oluşturulur. Admin bunu istediği sütun(lar)a işaretleyebilir
+  // (örn. "Kontrol" veya "Tamamlandı") — sütun adları serbest metin olduğu için
+  // isme göre eşleştirme yapılmıyor, admin açıkça işaretliyor.
+  triggersWorkLog Boolean @default(false)
+
   cards WorkflowCard[]
 
   createdAt DateTime @default(now())
@@ -247,6 +253,10 @@ model WorkflowCard {
   dueDate      DateTime?
   sortOrder    Int              @default(0)
 
+  // Panoyu sadeleştirmek için admin arşivleyebilir (silmeden) — arşivli kartlar
+  // board GET'inde dönmez. Silme ayrı bir işlemdir ve bağlı iş kaydını etkilemez.
+  archivedAt DateTime?
+
   clientId   String?
   assigneeId String?
   creatorId  String
@@ -255,6 +265,7 @@ model WorkflowCard {
   client   Client?        @relation(fields: [clientId], references: [id], onDelete: SetNull)
   assignee User?          @relation("WorkflowAssignee", fields: [assigneeId], references: [id], onDelete: SetNull)
   creator  User           @relation("WorkflowCreator", fields: [creatorId], references: [id])
+  workLog  WorkLog?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -287,7 +298,13 @@ model WorkLog {
   description String
   amount      String? // admin doldurur, örn "250 ₺"
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // İş Akışı'ndaki bir karttan otomatik oluşturulduysa bağlantısı (opsiyonel).
+  // Kart silinirse bu alan null'a düşer, iş kaydı SİLİNMEZ (bkz. onDelete: SetNull) —
+  // pano temizliği ile ücret/ödeme kaydı birbirinden bağımsız kalır.
+  workflowCardId String? @unique
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  workflowCard WorkflowCard? @relation(fields: [workflowCardId], references: [id], onDelete: SetNull)
 
   createdAt DateTime @default(now())
 }

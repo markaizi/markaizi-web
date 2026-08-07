@@ -23,6 +23,7 @@ export async function GET() {
       orderBy: { sortOrder: "asc" },
       include: {
         cards: {
+          where: { archivedAt: null },
           orderBy: { sortOrder: "asc" },
           include: {
             assignee: { select: { id: true, name: true } },
