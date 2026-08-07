@@ -10,6 +10,7 @@ export interface EmployeeSummary {
   email: string;
   assignedCount: number;
   workflowAccess: boolean;
+  unpricedLogCount: number;
 }
 
 export default function AdminEmployeePanel({
@@ -132,6 +133,12 @@ export default function AdminEmployeePanel({
                   <span className="flex-shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full"
                     style={{ background: "rgba(138,138,154,0.12)", color: "#8a8a9a" }} title="İş Akışı erişimi kapalı">
                     İş Akışı Kapalı
+                  </span>
+                )}
+                {emp.unpricedLogCount > 0 && (
+                  <span className="flex-shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full"
+                    style={{ background: "rgba(34,211,238,0.12)", color: "#22d3ee" }} title={`${emp.unpricedLogCount} fiyatlandırılmamış iş kaydı`}>
+                    {emp.unpricedLogCount} yeni
                   </span>
                 )}
                 <span className="flex-shrink-0 text-[12px] px-2.5 py-1 rounded-full"

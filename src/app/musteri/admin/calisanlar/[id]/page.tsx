@@ -26,6 +26,7 @@ export default async function AdminEmployeeDetailPage({
       where: { id, role: "EMPLOYEE" },
       include: {
         assignments: { include: { client: { select: { id: true, slug: true, name: true } } } },
+        workLogs: { orderBy: { date: "desc" } },
       },
     }),
     prisma.client.findMany({
@@ -46,6 +47,13 @@ export default async function AdminEmployeeDetailPage({
     workflowCanManageCards: employee.workflowCanManageCards,
     workflowCanDeleteAnyCard: employee.workflowCanDeleteAnyCard,
     workflowCanManageColumns: employee.workflowCanManageColumns,
+    paymentDay: employee.paymentDay ?? "",
+    workLogs: employee.workLogs.map((l) => ({
+      id: l.id,
+      date: l.date.toISOString(),
+      description: l.description,
+      amount: l.amount,
+    })),
     assignments: employee.assignments.map((a) => ({
       id: a.id,
       client: a.client,

@@ -21,7 +21,7 @@ export default async function AdminPage() {
 
   const today = new Date();
 
-  const [rows, unreadNotes, employeeCount] = await Promise.all([
+  const [rows, unreadNotes, employeeCount, unpricedLogsRaw] = await Promise.all([
     prisma.client.findMany({
       where: { active: true },
       orderBy: { name: "asc" },
@@ -38,9 +38,21 @@ export default async function AdminPage() {
       _count: { id: true },
     }),
     prisma.user.count({ where: { role: "EMPLOYEE", active: true } }),
+    prisma.workLog.findMany({
+      where: { amount: null },
+      select: { userId: true, user: { select: { name: true } } },
+    }),
   ]);
 
   const unreadMap = new Map(unreadNotes.map((u) => [u.clientId, u._count.id]));
+
+  const unpricedMap = new Map<string, { name: string; count: number }>();
+  for (const log of unpricedLogsRaw) {
+    const cur = unpricedMap.get(log.userId);
+    if (cur) cur.count++;
+    else unpricedMap.set(log.userId, { name: log.user.name, count: 1 });
+  }
+  const unpricedWorkLogs = Array.from(unpricedMap.entries()).map(([id, v]) => ({ id, name: v.name, count: v.count }));
 
   const clients: AdminClientSummary[] = rows.map((c) => {
     const pendingInvoices = c.invoices.filter(i => i.status === InvoiceStatus.BEKLIYOR);
@@ -54,5 +66,5 @@ export default async function AdminPage() {
     };
   });
 
-  return <AdminPanel clients={clients} adminName={session.name} employeeCount={employeeCount} />;
+  return <AdminPanel clients={clients} adminName={session.name} employeeCount={employeeCount} unpricedWorkLogs={unpricedWorkLogs} />;
 }

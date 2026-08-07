@@ -12,6 +12,8 @@ export interface EmployeeDetailData {
   workflowCanManageCards: boolean;
   workflowCanDeleteAnyCard: boolean;
   workflowCanManageColumns: boolean;
+  paymentDay: string;
+  workLogs: { id: string; date: string; description: string; amount: string | null }[];
   assignments: {
     id: string;
     client: { id: string; slug: string; name: string };
@@ -22,6 +24,16 @@ export interface EmployeeDetailData {
     canViewInvoices: boolean;
     canManageInvoices: boolean;
   }[];
+}
+
+function parseAmount(raw: string | null): number {
+  if (!raw) return 0;
+  const digits = raw.replace(/[^\d]/g, "");
+  return digits ? parseInt(digits, 10) : 0;
+}
+
+function fmtLogDate(iso: string) {
+  return new Date(iso).toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" });
 }
 
 interface ClientOption { id: string; slug: string; name: string; }
@@ -176,6 +188,49 @@ export default function AdminEmployeeDetail({
       });
     }
   }
+
+  // ── Ödeme günü ────────────────────────────────────────────────────────────
+  const [paymentDay, setPaymentDay] = useState(employee.paymentDay);
+  const [paymentDaySaving, setPaymentDaySaving] = useState(false);
+
+  async function handleSavePaymentDay() {
+    setPaymentDaySaving(true);
+    await fetch(`/api/musteri/admin/employees/${employee.id}`, {
+      method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ paymentDay: paymentDay || null }),
+    });
+    setPaymentDaySaving(false);
+  }
+
+  // ── İş Kayıtları ──────────────────────────────────────────────────────────
+  const [workLogs, setWorkLogs] = useState(employee.workLogs);
+  const [amountDrafts, setAmountDrafts] = useState<Record<string, string>>(
+    () => Object.fromEntries(employee.workLogs.map((l) => [l.id, l.amount ?? ""]))
+  );
+  const [savingLogId, setSavingLogId] = useState<string | null>(null);
+  const [deletingLogId, setDeletingLogId] = useState<string | null>(null);
+
+  async function handleSaveAmount(logId: string) {
+    setSavingLogId(logId);
+    const amount = amountDrafts[logId]?.trim() || null;
+    const res = await fetch(`/api/musteri/admin/worklogs/${logId}`, {
+      method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ amount }),
+    });
+    const json = await res.json();
+    setSavingLogId(null);
+    if (json.ok) {
+      setWorkLogs((prev) => prev.map((l) => (l.id === logId ? { ...l, amount: json.log.amount } : l)));
+    }
+  }
+
+  async function handleDeleteLog(logId: string) {
+    if (!confirm("Bu iş kaydını sil?")) return;
+    setDeletingLogId(logId);
+    await fetch(`/api/musteri/admin/worklogs/${logId}`, { method: "DELETE" });
+    setWorkLogs((prev) => prev.filter((l) => l.id !== logId));
+    setDeletingLogId(null);
+  }
+
+  const totalEarned = workLogs.reduce((s, l) => s + parseAmount(l.amount), 0);
 
   const assignedCount = localAssign.size;
 
@@ -346,6 +401,73 @@ export default function AdminEmployeeDetail({
             })}
             {allClients.length === 0 && (
               <p className="text-[13px] text-[#8a8a9a] text-center py-8">Henüz firma yok.</p>
+            )}
+          </div>
+        </div>
+
+        {/* Ödeme Günü */}
+        <div className="rounded-2xl p-6 space-y-3" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+          <div>
+            <p className="font-semibold text-white text-[14px]">Ödeme Günü</p>
+            <p className="text-[12px] text-[#8a8a9a] mt-0.5">Çalışan kendi panelinde bunu görür. Örn: &quot;Her ayın 5&apos;i&quot;</p>
+          </div>
+          <div className="flex gap-2">
+            <input
+              value={paymentDay}
+              onChange={(e) => setPaymentDay(e.target.value)}
+              placeholder="Örn: Her ayın 5'i"
+              className="flex-1 px-3 py-2.5 rounded-lg text-[14px] text-white placeholder-[#555] outline-none focus:ring-1 focus:ring-purple-500/50"
+              style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
+            />
+            <button onClick={handleSavePaymentDay} disabled={paymentDaySaving} className="btn btn-primary text-sm px-4 py-2 flex-shrink-0">
+              {paymentDaySaving ? "..." : "Kaydet"}
+            </button>
+          </div>
+        </div>
+
+        {/* İş Kayıtları */}
+        <div className="rounded-2xl overflow-hidden" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+          <div className="px-6 py-4 flex items-center justify-between gap-3" style={{ borderBottom: "1px solid var(--border)" }}>
+            <div>
+              <p className="font-semibold text-white text-[14px]">İş Kayıtları</p>
+              <p className="text-[12px] text-[#8a8a9a] mt-0.5">Çalışanın günlük girdiği işler — karşısına ücret yaz.</p>
+            </div>
+            <span className="flex-shrink-0 text-[12px] font-semibold px-2.5 py-1 rounded-full" style={{ background: "rgba(52,211,153,0.12)", color: "#34d399" }}>
+              Toplam {totalEarned.toLocaleString("tr-TR")} ₺
+            </span>
+          </div>
+          <div className="divide-y" style={{ borderColor: "var(--border)" }}>
+            {workLogs.map((l) => (
+              <div key={l.id} className="px-6 py-4 flex items-center gap-3 flex-wrap">
+                <div className="min-w-0 flex-1">
+                  <p className="text-[11px] text-[#555] mb-1">{fmtLogDate(l.date)}</p>
+                  <p className="text-[13px] text-white">{l.description}</p>
+                </div>
+                <input
+                  value={amountDrafts[l.id] ?? ""}
+                  onChange={(e) => setAmountDrafts((d) => ({ ...d, [l.id]: e.target.value }))}
+                  placeholder="Örn: 250 ₺"
+                  className="w-28 px-2.5 py-1.5 rounded-lg text-[13px] text-white placeholder-[#555] outline-none focus:ring-1 focus:ring-purple-500/50 flex-shrink-0"
+                  style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
+                />
+                <button
+                  onClick={() => handleSaveAmount(l.id)}
+                  disabled={savingLogId === l.id}
+                  className="text-[11px] font-semibold text-[#c084fc] hover:text-white transition-colors flex-shrink-0"
+                >
+                  {savingLogId === l.id ? "..." : "Kaydet"}
+                </button>
+                <button
+                  onClick={() => handleDeleteLog(l.id)}
+                  disabled={deletingLogId === l.id}
+                  className="text-[11px] text-[#555] hover:text-red-400 transition-colors flex-shrink-0"
+                >
+                  {deletingLogId === l.id ? "..." : "Sil"}
+                </button>
+              </div>
+            ))}
+            {workLogs.length === 0 && (
+              <p className="text-[13px] text-[#8a8a9a] text-center py-8">Henüz iş kaydı yok.</p>
             )}
           </div>
         </div>

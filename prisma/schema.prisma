@@ -75,6 +75,9 @@ model User {
   // Müşteri/çalışana not yazma yetkisi (admin her zaman yazar)
   canWriteNotes Boolean @default(false)
 
+  // İş kayıtları — sadece EMPLOYEE için anlamlı. Ödeme günü admin tarafından girilir.
+  paymentDay String?
+
   // İş Akışı (kanban) yetkileri — sadece EMPLOYEE için anlamlı, ADMIN her zaman tam erişir
   workflowAccess           Boolean @default(true)  // panoyu hiç görebilir mi
   workflowCanManageCards   Boolean @default(true)  // kart ekle/düzenle/taşı/kendi kartını sil
@@ -87,6 +90,7 @@ model User {
   authoredNotes   Note[]        @relation("NoteAuthor")
   noteReads       NoteRead[]
   authoredAdReports AdReport[]  @relation("AdReportAuthor")
+  workLogs          WorkLog[]
 
   workflowCardsAssigned WorkflowCard[] @relation("WorkflowAssignee")
   workflowCardsCreated  WorkflowCard[] @relation("WorkflowCreator")
@@ -271,4 +275,18 @@ model AdReport {
   author User?  @relation("AdReportAuthor", fields: [authorId], references: [id], onDelete: SetNull)
 
   publishedAt DateTime @default(now())
+}
+
+// ── İş Kayıtları — çalışan (freelancer) yaptığı işi günlük olarak girer,
+// admin karşısına ücret yazar. Ödeme günü User.paymentDay'de tutulur. ──
+model WorkLog {
+  id          String   @id @default(cuid())
+  userId      String
+  date        DateTime
+  description String
+  amount      String? // admin doldurur, örn "250 ₺"
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
 }

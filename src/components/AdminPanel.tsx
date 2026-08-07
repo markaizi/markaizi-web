@@ -13,14 +13,22 @@ export interface AdminClientSummary {
 
 type Section = "dashboard" | "firmalar";
 
+export interface UnpricedWorkLog {
+  id: string;
+  name: string;
+  count: number;
+}
+
 export default function AdminPanel({
   clients,
   adminName,
   employeeCount,
+  unpricedWorkLogs = [],
 }: {
   clients: AdminClientSummary[];
   adminName: string;
   employeeCount: number;
+  unpricedWorkLogs?: UnpricedWorkLog[];
 }) {
   const router = useRouter();
   const [section, setSection] = useState<Section>("dashboard");
@@ -73,6 +81,7 @@ export default function AdminPanel({
             employeeCount={employeeCount}
             totalUnread={totalUnread}
             totalOverdue={totalOverdue}
+            unpricedWorkLogs={unpricedWorkLogs}
             onGoFirmalar={() => setSection("firmalar")}
             router={router}
           />
@@ -87,15 +96,17 @@ export default function AdminPanel({
 
 // ── Dashboard ─────────────────────────────────────────────────────────────────
 
-function Dashboard({ clients, adminName, employeeCount, totalUnread, totalOverdue, onGoFirmalar, router }: {
+function Dashboard({ clients, adminName, employeeCount, totalUnread, totalOverdue, unpricedWorkLogs, onGoFirmalar, router }: {
   clients: AdminClientSummary[];
   adminName: string;
   employeeCount: number;
   totalUnread: number;
   totalOverdue: number;
+  unpricedWorkLogs: UnpricedWorkLog[];
   onGoFirmalar: () => void;
   router: ReturnType<typeof useRouter>;
 }) {
+  const totalUnpriced = unpricedWorkLogs.reduce((s, e) => s + e.count, 0);
   return (
     <>
       {/* Selamlama */}
@@ -124,8 +135,8 @@ function Dashboard({ clients, adminName, employeeCount, totalUnread, totalOverdu
         ))}
       </div>
 
-      {/* Uyarı: gecikmiş fatura veya okunmamış not */}
-      {(totalOverdue > 0 || totalUnread > 0) && (
+      {/* Uyarı: gecikmiş fatura, bekleyen istek veya fiyatlandırılmamış iş kaydı */}
+      {(totalOverdue > 0 || totalUnread > 0 || totalUnpriced > 0) && (
         <div className="mb-6 space-y-2">
           {totalOverdue > 0 && (
             <div className="px-4 py-3 rounded-xl flex items-center gap-3"
@@ -157,6 +168,24 @@ function Dashboard({ clients, adminName, employeeCount, totalUnread, totalOverdu
                       {c.name}
                     </button>
                     {c.unreadNoteCount > 1 ? ` firmasından ${c.unreadNoteCount} isteğiniz var` : " firmasından bir isteğiniz var"}
+                    {i < arr.length - 1 ? " · " : ""}
+                  </span>
+                ))}
+              </p>
+            </div>
+          )}
+          {totalUnpriced > 0 && (
+            <div className="px-4 py-3 rounded-xl flex items-center gap-3"
+              style={{ background: "rgba(34,211,238,0.07)", border: "1px solid rgba(34,211,238,0.2)" }}>
+              <span className="text-[15px] flex-shrink-0">📝</span>
+              <p className="text-[13px]" style={{ color: "#22d3ee" }}>
+                {unpricedWorkLogs.map((e, i, arr) => (
+                  <span key={e.id}>
+                    <button onClick={() => router.push(`/musteri/admin/calisanlar/${e.id}`)}
+                      className="underline underline-offset-2 font-medium hover:opacity-80 transition-opacity">
+                      {e.name}
+                    </button>
+                    {e.count > 1 ? ` ${e.count} yeni iş kaydı girdi` : " yeni bir iş kaydı girdi"}
                     {i < arr.length - 1 ? " · " : ""}
                   </span>
                 ))}

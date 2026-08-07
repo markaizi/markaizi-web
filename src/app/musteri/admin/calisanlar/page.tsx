@@ -23,7 +23,7 @@ export default async function CalisanlarPage() {
       name: true,
       email: true,
       workflowAccess: true,
-      _count: { select: { assignments: true } },
+      _count: { select: { assignments: true, workLogs: { where: { amount: null } } } },
     },
     orderBy: { name: "asc" },
   });
@@ -35,6 +35,7 @@ export default async function CalisanlarPage() {
     email: e.email,
     assignedCount: e._count.assignments,
     workflowAccess: e.workflowAccess,
+    unpricedLogCount: e._count.workLogs,
   }));
 
   return <AdminEmployeePanel employees={data} />;

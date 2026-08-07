@@ -70,6 +70,12 @@ export default function EmployeeDashboard({
             >
               📅 Takvim
             </button>
+            <button
+              onClick={() => router.push("/musteri/calisan/is-kayitlarim")}
+              className="btn btn-outline text-sm px-4 py-2.5"
+            >
+              💰 İş Kayıtlarım
+            </button>
           </div>
         </div>
 
