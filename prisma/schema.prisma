@@ -75,8 +75,9 @@ model User {
   // Müşteri/çalışana not yazma yetkisi (admin her zaman yazar)
   canWriteNotes Boolean @default(false)
 
-  // İş kayıtları — sadece EMPLOYEE için anlamlı. Ödeme günü admin tarafından girilir.
-  paymentDay String?
+  // İş kayıtları — sadece EMPLOYEE için anlamlı. Ödeme günü (ayın kaçı, 1-31) admin
+  // tarafından girilir; iş kaydı dönem/arşiv sınırlarını hesaplamak için kullanılır.
+  paymentDay Int?
 
   // İş Akışı (kanban) yetkileri — sadece EMPLOYEE için anlamlı, ADMIN her zaman tam erişir
   workflowAccess           Boolean @default(true)  // panoyu hiç görebilir mi

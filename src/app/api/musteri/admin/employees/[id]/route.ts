@@ -17,7 +17,7 @@ const patchSchema = z.object({
   workflowCanDeleteAnyCard: z.boolean().optional(),
   workflowCanManageColumns: z.boolean().optional(),
   // İş kayıtları
-  paymentDay: z.string().max(120).nullable().optional(),
+  paymentDay: z.number().int().min(1).max(31).nullable().optional(),
 });
 
 export async function PATCH(

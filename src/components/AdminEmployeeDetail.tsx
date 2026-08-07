@@ -1,7 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+
+export interface WorkLogEntry { id: string; date: string; description: string; amount: string | null; }
+export interface ArchivedPeriodSummary { key: string; label: string; count: number; total: number; }
 
 export interface EmployeeDetailData {
   id: string;
@@ -12,8 +15,10 @@ export interface EmployeeDetailData {
   workflowCanManageCards: boolean;
   workflowCanDeleteAnyCard: boolean;
   workflowCanManageColumns: boolean;
-  paymentDay: string;
-  workLogs: { id: string; date: string; description: string; amount: string | null }[];
+  paymentDay: number | null;
+  currentPeriod: { key: string; label: string };
+  currentLogs: WorkLogEntry[];
+  archivedSummary: ArchivedPeriodSummary[];
   assignments: {
     id: string;
     client: { id: string; slug: string; name: string };
@@ -34,6 +39,46 @@ function parseAmount(raw: string | null): number {
 
 function fmtLogDate(iso: string) {
   return new Date(iso).toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" });
+}
+
+function WorkLogEditableRow({
+  log,
+  draftValue,
+  onDraftChange,
+  onSave,
+  onDelete,
+  saving,
+  deleting,
+}: {
+  log: WorkLogEntry;
+  draftValue: string;
+  onDraftChange: (v: string) => void;
+  onSave: () => void;
+  onDelete: () => void;
+  saving: boolean;
+  deleting: boolean;
+}) {
+  return (
+    <div className="px-6 py-4 flex items-center gap-3 flex-wrap">
+      <div className="min-w-0 flex-1">
+        <p className="text-[11px] text-[#555] mb-1">{fmtLogDate(log.date)}</p>
+        <p className="text-[13px] text-white">{log.description}</p>
+      </div>
+      <input
+        value={draftValue}
+        onChange={(e) => onDraftChange(e.target.value)}
+        placeholder="Örn: 250 ₺"
+        className="w-28 px-2.5 py-1.5 rounded-lg text-[13px] text-white placeholder-[#555] outline-none focus:ring-1 focus:ring-purple-500/50 flex-shrink-0"
+        style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
+      />
+      <button onClick={onSave} disabled={saving} className="text-[11px] font-semibold text-[#c084fc] hover:text-white transition-colors flex-shrink-0">
+        {saving ? "..." : "Kaydet"}
+      </button>
+      <button onClick={onDelete} disabled={deleting} className="text-[11px] text-[#555] hover:text-red-400 transition-colors flex-shrink-0">
+        {deleting ? "..." : "Sil"}
+      </button>
+    </div>
+  );
 }
 
 interface ClientOption { id: string; slug: string; name: string; }
@@ -190,21 +235,23 @@ export default function AdminEmployeeDetail({
   }
 
   // ── Ödeme günü ────────────────────────────────────────────────────────────
-  const [paymentDay, setPaymentDay] = useState(employee.paymentDay);
+  const [paymentDay, setPaymentDay] = useState<number | null>(employee.paymentDay);
   const [paymentDaySaving, setPaymentDaySaving] = useState(false);
 
-  async function handleSavePaymentDay() {
+  async function handleSavePaymentDay(val: number | null) {
+    setPaymentDay(val);
     setPaymentDaySaving(true);
     await fetch(`/api/musteri/admin/employees/${employee.id}`, {
-      method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ paymentDay: paymentDay || null }),
+      method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ paymentDay: val }),
     });
     setPaymentDaySaving(false);
+    router.refresh();
   }
 
-  // ── İş Kayıtları ──────────────────────────────────────────────────────────
-  const [workLogs, setWorkLogs] = useState(employee.workLogs);
+  // ── İş Kayıtları — mevcut dönem ──────────────────────────────────────────
+  const [currentLogs, setCurrentLogs] = useState(employee.currentLogs);
   const [amountDrafts, setAmountDrafts] = useState<Record<string, string>>(
-    () => Object.fromEntries(employee.workLogs.map((l) => [l.id, l.amount ?? ""]))
+    () => Object.fromEntries(employee.currentLogs.map((l) => [l.id, l.amount ?? ""]))
   );
   const [savingLogId, setSavingLogId] = useState<string | null>(null);
   const [deletingLogId, setDeletingLogId] = useState<string | null>(null);
@@ -218,7 +265,7 @@ export default function AdminEmployeeDetail({
     const json = await res.json();
     setSavingLogId(null);
     if (json.ok) {
-      setWorkLogs((prev) => prev.map((l) => (l.id === logId ? { ...l, amount: json.log.amount } : l)));
+      setCurrentLogs((prev) => prev.map((l) => (l.id === logId ? { ...l, amount: json.log.amount } : l)));
     }
   }
 
@@ -226,11 +273,87 @@ export default function AdminEmployeeDetail({
     if (!confirm("Bu iş kaydını sil?")) return;
     setDeletingLogId(logId);
     await fetch(`/api/musteri/admin/worklogs/${logId}`, { method: "DELETE" });
-    setWorkLogs((prev) => prev.filter((l) => l.id !== logId));
+    setCurrentLogs((prev) => prev.filter((l) => l.id !== logId));
     setDeletingLogId(null);
   }
 
-  const totalEarned = workLogs.reduce((s, l) => s + parseAmount(l.amount), 0);
+  const currentTotal = currentLogs.reduce((s, l) => s + parseAmount(l.amount), 0);
+
+  // ── İş Kayıtları — arşiv (lazy-load) ─────────────────────────────────────
+  const [summaries, setSummaries] = useState(employee.archivedSummary);
+  const [expandedKey, setExpandedKey] = useState<string | null>(null);
+  const [loadingKey, setLoadingKey] = useState<string | null>(null);
+  const [archivedEntries, setArchivedEntries] = useState<Record<string, WorkLogEntry[]>>({});
+  const [archivedAmountDrafts, setArchivedAmountDrafts] = useState<Record<string, string>>({});
+  const [archivedSavingId, setArchivedSavingId] = useState<string | null>(null);
+  const [archivedDeletingId, setArchivedDeletingId] = useState<string | null>(null);
+
+  // Ödeme günü değişince (handleSavePaymentDay → router.refresh()) sunucudan gelen
+  // yeni employee.currentPeriod/currentLogs/archivedSummary ile client state'i
+  // yeniden senkronize et — useState'in ilk değeri prop değişince kendiliğinden
+  // güncellenmez.
+  useEffect(() => {
+    setCurrentLogs(employee.currentLogs);
+    setAmountDrafts(Object.fromEntries(employee.currentLogs.map((l) => [l.id, l.amount ?? ""])));
+    setSummaries(employee.archivedSummary);
+    setArchivedEntries({});
+    setArchivedAmountDrafts({});
+    setExpandedKey(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [employee.currentPeriod.key]);
+
+  async function handleExpandPeriod(periodKey: string) {
+    if (expandedKey === periodKey) { setExpandedKey(null); return; }
+    setExpandedKey(periodKey);
+    if (archivedEntries[periodKey]) return;
+    setLoadingKey(periodKey);
+    const res = await fetch(`/api/musteri/admin/worklogs/period?userId=${employee.id}&periodEnd=${periodKey}`);
+    const json = await res.json();
+    setLoadingKey(null);
+    if (json.logs) {
+      setArchivedEntries((prev) => ({ ...prev, [periodKey]: json.logs }));
+      setArchivedAmountDrafts((prev) => ({
+        ...prev,
+        ...Object.fromEntries(json.logs.map((l: WorkLogEntry) => [l.id, l.amount ?? ""])),
+      }));
+    }
+  }
+
+  async function handleSaveArchivedAmount(periodKey: string, logId: string) {
+    setArchivedSavingId(logId);
+    const before = (archivedEntries[periodKey] ?? []).find((l) => l.id === logId);
+    const amount = archivedAmountDrafts[logId]?.trim() || null;
+    const res = await fetch(`/api/musteri/admin/worklogs/${logId}`, {
+      method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ amount }),
+    });
+    const json = await res.json();
+    setArchivedSavingId(null);
+    if (json.ok) {
+      setArchivedEntries((prev) => ({
+        ...prev,
+        [periodKey]: (prev[periodKey] ?? []).map((l) => (l.id === logId ? { ...l, amount: json.log.amount } : l)),
+      }));
+      const delta = parseAmount(json.log.amount) - parseAmount(before?.amount ?? null);
+      if (delta !== 0) {
+        setSummaries((prev) => prev.map((s) => (s.key === periodKey ? { ...s, total: s.total + delta } : s)));
+      }
+    }
+  }
+
+  async function handleDeleteArchivedLog(periodKey: string, logId: string) {
+    if (!confirm("Bu iş kaydını sil?")) return;
+    setArchivedDeletingId(logId);
+    const before = (archivedEntries[periodKey] ?? []).find((l) => l.id === logId);
+    await fetch(`/api/musteri/admin/worklogs/${logId}`, { method: "DELETE" });
+    setArchivedEntries((prev) => ({
+      ...prev,
+      [periodKey]: (prev[periodKey] ?? []).filter((l) => l.id !== logId),
+    }));
+    setSummaries((prev) => prev.map((s) => (s.key === periodKey
+      ? { ...s, count: s.count - 1, total: s.total - parseAmount(before?.amount ?? null) }
+      : s)));
+    setArchivedDeletingId(null);
+  }
 
   const assignedCount = localAssign.size;
 
@@ -409,68 +532,119 @@ export default function AdminEmployeeDetail({
         <div className="rounded-2xl p-6 space-y-3" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
           <div>
             <p className="font-semibold text-white text-[14px]">Ödeme Günü</p>
-            <p className="text-[12px] text-[#8a8a9a] mt-0.5">Çalışan kendi panelinde bunu görür. Örn: &quot;Her ayın 5&apos;i&quot;</p>
+            <p className="text-[12px] text-[#8a8a9a] mt-0.5">İş kayıtları bu güne göre dönemlere ayrılıp arşivlenir. Çalışan kendi panelinde bunu görür.</p>
           </div>
-          <div className="flex gap-2">
-            <input
-              value={paymentDay}
-              onChange={(e) => setPaymentDay(e.target.value)}
-              placeholder="Örn: Her ayın 5'i"
-              className="flex-1 px-3 py-2.5 rounded-lg text-[14px] text-white placeholder-[#555] outline-none focus:ring-1 focus:ring-purple-500/50"
-              style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
-            />
-            <button onClick={handleSavePaymentDay} disabled={paymentDaySaving} className="btn btn-primary text-sm px-4 py-2 flex-shrink-0">
-              {paymentDaySaving ? "..." : "Kaydet"}
-            </button>
-          </div>
+          <select
+            value={paymentDay ?? ""}
+            onChange={(e) => handleSavePaymentDay(e.target.value ? Number(e.target.value) : null)}
+            disabled={paymentDaySaving}
+            className="w-full px-3 py-2.5 rounded-lg text-[14px] text-white outline-none focus:ring-1 focus:ring-purple-500/50"
+            style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
+          >
+            <option value="">Belirtilmedi (takvim ayına göre arşivlenir)</option>
+            {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
+              <option key={d} value={d}>Her ayın {d}. günü</option>
+            ))}
+          </select>
         </div>
 
-        {/* İş Kayıtları */}
+        {/* İş Kayıtları — Mevcut Dönem */}
         <div className="rounded-2xl overflow-hidden" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
-          <div className="px-6 py-4 flex items-center justify-between gap-3" style={{ borderBottom: "1px solid var(--border)" }}>
+          <div className="px-6 py-4 flex items-center justify-between gap-3 flex-wrap" style={{ borderBottom: "1px solid var(--border)" }}>
             <div>
-              <p className="font-semibold text-white text-[14px]">İş Kayıtları</p>
+              <p className="font-semibold text-white text-[14px]">Bu Dönem — {employee.currentPeriod.label}</p>
               <p className="text-[12px] text-[#8a8a9a] mt-0.5">Çalışanın günlük girdiği işler — karşısına ücret yaz.</p>
             </div>
-            <span className="flex-shrink-0 text-[12px] font-semibold px-2.5 py-1 rounded-full" style={{ background: "rgba(52,211,153,0.12)", color: "#34d399" }}>
-              Toplam {totalEarned.toLocaleString("tr-TR")} ₺
-            </span>
+            <div className="flex items-center gap-2 flex-shrink-0">
+              <span className="text-[12px] font-semibold px-2.5 py-1 rounded-full" style={{ background: "rgba(52,211,153,0.12)", color: "#34d399" }}>
+                Toplam {currentTotal.toLocaleString("tr-TR")} ₺
+              </span>
+              {currentLogs.length > 0 && (
+                <a
+                  href={`/api/musteri/admin/worklogs/pdf?userId=${employee.id}&periodEnd=${employee.currentPeriod.key}`}
+                  className="text-[11px] font-semibold px-2.5 py-1 rounded-full transition-colors"
+                  style={{ background: "rgba(96,165,250,0.12)", color: "#60a5fa" }}
+                >
+                  PDF İndir
+                </a>
+              )}
+            </div>
           </div>
           <div className="divide-y" style={{ borderColor: "var(--border)" }}>
-            {workLogs.map((l) => (
-              <div key={l.id} className="px-6 py-4 flex items-center gap-3 flex-wrap">
-                <div className="min-w-0 flex-1">
-                  <p className="text-[11px] text-[#555] mb-1">{fmtLogDate(l.date)}</p>
-                  <p className="text-[13px] text-white">{l.description}</p>
-                </div>
-                <input
-                  value={amountDrafts[l.id] ?? ""}
-                  onChange={(e) => setAmountDrafts((d) => ({ ...d, [l.id]: e.target.value }))}
-                  placeholder="Örn: 250 ₺"
-                  className="w-28 px-2.5 py-1.5 rounded-lg text-[13px] text-white placeholder-[#555] outline-none focus:ring-1 focus:ring-purple-500/50 flex-shrink-0"
-                  style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
-                />
-                <button
-                  onClick={() => handleSaveAmount(l.id)}
-                  disabled={savingLogId === l.id}
-                  className="text-[11px] font-semibold text-[#c084fc] hover:text-white transition-colors flex-shrink-0"
-                >
-                  {savingLogId === l.id ? "..." : "Kaydet"}
-                </button>
-                <button
-                  onClick={() => handleDeleteLog(l.id)}
-                  disabled={deletingLogId === l.id}
-                  className="text-[11px] text-[#555] hover:text-red-400 transition-colors flex-shrink-0"
-                >
-                  {deletingLogId === l.id ? "..." : "Sil"}
-                </button>
-              </div>
+            {currentLogs.map((l) => (
+              <WorkLogEditableRow
+                key={l.id}
+                log={l}
+                draftValue={amountDrafts[l.id] ?? ""}
+                onDraftChange={(v) => setAmountDrafts((d) => ({ ...d, [l.id]: v }))}
+                onSave={() => handleSaveAmount(l.id)}
+                onDelete={() => handleDeleteLog(l.id)}
+                saving={savingLogId === l.id}
+                deleting={deletingLogId === l.id}
+              />
             ))}
-            {workLogs.length === 0 && (
-              <p className="text-[13px] text-[#8a8a9a] text-center py-8">Henüz iş kaydı yok.</p>
+            {currentLogs.length === 0 && (
+              <p className="text-[13px] text-[#8a8a9a] text-center py-8">Bu dönemde henüz iş kaydı yok.</p>
             )}
           </div>
         </div>
+
+        {/* İş Kayıtları — Arşiv */}
+        {summaries.some((s) => s.count > 0) && (
+          <div className="space-y-3">
+            <p className="text-[13px] font-bold uppercase tracking-wide text-[#8a8a9a] px-1">Geçmiş Dönemler</p>
+            {summaries.filter((s) => s.count > 0).map((summary) => (
+              <div key={summary.key} className="rounded-2xl overflow-hidden" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+                <div className="flex items-center justify-between gap-3 px-5 py-4 flex-wrap">
+                  <button
+                    onClick={() => handleExpandPeriod(summary.key)}
+                    className="flex items-center gap-3 text-left flex-1 min-w-0"
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" className={`w-4 h-4 text-[#555] flex-shrink-0 transition-transform ${expandedKey === summary.key ? "rotate-180" : ""}`} stroke="currentColor" strokeWidth="2.5">
+                      <path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                    <div className="min-w-0">
+                      <p className="text-[14px] font-semibold text-white">{summary.label}</p>
+                      <p className="text-[12px] text-[#8a8a9a] mt-0.5">{summary.count} kayıt</p>
+                    </div>
+                  </button>
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    <span className="text-[13px] font-bold" style={{ color: "#34d399" }}>
+                      {summary.total > 0 ? `${summary.total.toLocaleString("tr-TR")} ₺` : "—"}
+                    </span>
+                    <a
+                      href={`/api/musteri/admin/worklogs/pdf?userId=${employee.id}&periodEnd=${summary.key}`}
+                      className="text-[11px] font-semibold px-2.5 py-1 rounded-full transition-colors"
+                      style={{ background: "rgba(96,165,250,0.12)", color: "#60a5fa" }}
+                    >
+                      PDF
+                    </a>
+                  </div>
+                </div>
+                {expandedKey === summary.key && (
+                  <div className="divide-y" style={{ borderTop: "1px solid var(--border)", borderColor: "var(--border)" }}>
+                    {loadingKey === summary.key ? (
+                      <p className="text-[13px] text-[#555] text-center py-6">Yükleniyor...</p>
+                    ) : (
+                      (archivedEntries[summary.key] ?? []).map((l) => (
+                        <WorkLogEditableRow
+                          key={l.id}
+                          log={l}
+                          draftValue={archivedAmountDrafts[l.id] ?? ""}
+                          onDraftChange={(v) => setArchivedAmountDrafts((d) => ({ ...d, [l.id]: v }))}
+                          onSave={() => handleSaveArchivedAmount(summary.key, l.id)}
+                          onDelete={() => handleDeleteArchivedLog(summary.key, l.id)}
+                          saving={archivedSavingId === l.id}
+                          deleting={archivedDeletingId === l.id}
+                        />
+                      ))
+                    )}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
       </main>
     </div>
   );

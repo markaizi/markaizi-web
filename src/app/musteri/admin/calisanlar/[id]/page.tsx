@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { getCurrentPeriod, groupByPeriod } from "@/lib/workLogPeriods";
 import AdminEmployeeDetail, { type EmployeeDetailData } from "@/components/AdminEmployeeDetail";
 
 export const dynamic = "force-dynamic";
@@ -26,7 +27,6 @@ export default async function AdminEmployeeDetailPage({
       where: { id, role: "EMPLOYEE" },
       include: {
         assignments: { include: { client: { select: { id: true, slug: true, name: true } } } },
-        workLogs: { orderBy: { date: "desc" } },
       },
     }),
     prisma.client.findMany({
@@ -38,6 +38,22 @@ export default async function AdminEmployeeDetailPage({
 
   if (!employee) notFound();
 
+  const paymentDay = employee.paymentDay ?? null;
+  const currentPeriod = getCurrentPeriod(paymentDay);
+
+  const [currentLogs, olderLogsLight] = await Promise.all([
+    prisma.workLog.findMany({
+      where: { userId: employee.id, date: { gte: currentPeriod.start, lte: currentPeriod.end } },
+      orderBy: { date: "desc" },
+    }),
+    prisma.workLog.findMany({
+      where: { userId: employee.id, date: { lt: currentPeriod.start } },
+      select: { id: true, date: true, amount: true },
+    }),
+  ]);
+
+  const { archived } = groupByPeriod(olderLogsLight, (l) => l.date, paymentDay);
+
   const data: EmployeeDetailData = {
     id: employee.id,
     username: employee.username ?? "",
@@ -47,12 +63,22 @@ export default async function AdminEmployeeDetailPage({
     workflowCanManageCards: employee.workflowCanManageCards,
     workflowCanDeleteAnyCard: employee.workflowCanDeleteAnyCard,
     workflowCanManageColumns: employee.workflowCanManageColumns,
-    paymentDay: employee.paymentDay ?? "",
-    workLogs: employee.workLogs.map((l) => ({
+    paymentDay,
+    currentPeriod: { key: currentPeriod.key, label: currentPeriod.label },
+    currentLogs: currentLogs.map((l) => ({
       id: l.id,
       date: l.date.toISOString(),
       description: l.description,
       amount: l.amount,
+    })),
+    archivedSummary: archived.map((a) => ({
+      key: a.period.key,
+      label: a.period.label,
+      count: a.items.length,
+      total: a.items.reduce((s, i) => {
+        const digits = (i.amount ?? "").replace(/[^\d]/g, "");
+        return s + (digits ? parseInt(digits, 10) : 0);
+      }, 0),
     })),
     assignments: employee.assignments.map((a) => ({
       id: a.id,

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 export interface EmployeeSummary {
@@ -11,6 +11,88 @@ export interface EmployeeSummary {
   assignedCount: number;
   workflowAccess: boolean;
   unpricedLogCount: number;
+}
+
+interface MonthlySummaryRow { id: string; name: string; count: number; total: number; }
+
+function prevMonth(y: number, m0: number): [number, number] {
+  return m0 === 0 ? [y - 1, 11] : [y, m0 - 1];
+}
+function nextMonth(y: number, m0: number): [number, number] {
+  return m0 === 11 ? [y + 1, 0] : [y, m0 + 1];
+}
+
+function MonthlyWorkLogReport() {
+  const now = new Date();
+  const [[y, m0], setYm] = useState<[number, number]>(prevMonth(now.getFullYear(), now.getMonth()));
+  const [rows, setRows] = useState<MonthlySummaryRow[]>([]);
+  const [grandTotal, setGrandTotal] = useState(0);
+  const [loading, setLoading] = useState(true);
+
+  const monthKey = `${y}-${String(m0 + 1).padStart(2, "0")}`;
+  const monthLabel = new Date(y, m0, 1).toLocaleDateString("tr-TR", { month: "long", year: "numeric" });
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    fetch(`/api/musteri/admin/worklogs/summary?month=${monthKey}`)
+      .then((r) => r.json())
+      .then((json) => {
+        if (cancelled) return;
+        setRows(json.rows ?? []);
+        setGrandTotal(json.grandTotal ?? 0);
+      })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, [monthKey]);
+
+  return (
+    <div className="rounded-2xl overflow-hidden mb-6" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+      <div className="px-5 py-4 flex items-center justify-between gap-3 flex-wrap" style={{ borderBottom: "1px solid var(--border)" }}>
+        <div>
+          <p className="font-semibold text-white text-[14px]">Aylık İş Kayıtları Raporu</p>
+          <p className="text-[12px] text-[#8a8a9a] mt-0.5">Ay bittiğinde tüm çalışanların kayıtlarını toplu PDF olarak indir.</p>
+        </div>
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <button onClick={() => setYm(prevMonth(y, m0))} className="w-7 h-7 rounded-lg flex items-center justify-center transition-colors hover:bg-white/5" style={{ border: "1px solid var(--border)" }}>
+            <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5 text-[#8a8a9a]" stroke="currentColor" strokeWidth="2.5"><path d="M15 18l-6-6 6-6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          </button>
+          <span className="text-[13px] font-semibold text-white w-32 text-center">{monthLabel}</span>
+          <button onClick={() => setYm(nextMonth(y, m0))} className="w-7 h-7 rounded-lg flex items-center justify-center transition-colors hover:bg-white/5" style={{ border: "1px solid var(--border)" }}>
+            <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5 text-[#8a8a9a]" stroke="currentColor" strokeWidth="2.5"><path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div className="px-5 py-4">
+        {loading ? (
+          <p className="text-[13px] text-[#555] text-center py-4">Yükleniyor...</p>
+        ) : rows.length === 0 ? (
+          <p className="text-[13px] text-[#8a8a9a] text-center py-4">{monthLabel} için kayıt yok.</p>
+        ) : (
+          <>
+            <div className="space-y-2 mb-4">
+              {rows.map((r) => (
+                <div key={r.id} className="flex items-center justify-between text-[13px]">
+                  <span className="text-white">{r.name} <span className="text-[#555]">· {r.count} kayıt</span></span>
+                  <span className="font-semibold" style={{ color: "#34d399" }}>{r.total.toLocaleString("tr-TR")} ₺</span>
+                </div>
+              ))}
+            </div>
+            <div className="flex items-center justify-between pt-3" style={{ borderTop: "1px solid var(--border)" }}>
+              <span className="text-[13px] font-bold text-white">Genel Toplam: {grandTotal.toLocaleString("tr-TR")} ₺</span>
+              <a
+                href={`/api/musteri/admin/worklogs/pdf?month=${monthKey}`}
+                className="btn btn-primary text-sm px-4 py-2"
+              >
+                PDF İndir
+              </a>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
 }
 
 export default function AdminEmployeePanel({
@@ -75,6 +157,8 @@ export default function AdminEmployeePanel({
           </div>
           <button onClick={() => setShowForm(true)} className="btn btn-primary text-sm px-5 py-2.5 self-start sm:self-auto">+ Yeni Çalışan</button>
         </div>
+
+        <MonthlyWorkLogReport />
 
         {showForm && (
           <form onSubmit={handleCreate} className="rounded-2xl p-6 mb-6 space-y-4"
