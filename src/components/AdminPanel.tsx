@@ -107,6 +107,7 @@ function Dashboard({ clients, adminName, employeeCount, totalUnread, totalOverdu
   router: ReturnType<typeof useRouter>;
 }) {
   const totalUnpriced = unpricedWorkLogs.reduce((s, e) => s + e.count, 0);
+  const totalPending = clients.reduce((s, c) => s + c.pendingInvoiceCount, 0);
   return (
     <>
       {/* Selamlama */}
@@ -118,20 +119,21 @@ function Dashboard({ clients, adminName, employeeCount, totalUnread, totalOverdu
       {/* Hızlı özet çubukları */}
       <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-8">
         {[
-          { label: "Aktif Firma", value: clients.length, color: "#c084fc", bg: "rgba(192,132,252,0.1)", border: "rgba(192,132,252,0.2)" },
-          { label: "Çalışan", value: employeeCount, color: "#34d399", bg: "rgba(52,211,153,0.1)", border: "rgba(52,211,153,0.2)" },
+          { label: "Aktif Firma", value: clients.length, color: "#c084fc", bg: "rgba(192,132,252,0.1)", border: "rgba(192,132,252,0.2)", onClick: onGoFirmalar },
+          { label: "Çalışan", value: employeeCount, color: "#34d399", bg: "rgba(52,211,153,0.1)", border: "rgba(52,211,153,0.2)", onClick: () => router.push("/musteri/admin/calisanlar") },
           {
             label: totalOverdue > 0 ? "Gecikmiş Fatura" : "Bekleyen İstek",
             value: totalOverdue > 0 ? totalOverdue : totalUnread,
             color: totalOverdue > 0 ? "#f87171" : "#fb923c",
             bg: totalOverdue > 0 ? "rgba(248,113,113,0.1)" : "rgba(251,146,60,0.1)",
             border: totalOverdue > 0 ? "rgba(248,113,113,0.2)" : "rgba(251,146,60,0.2)",
+            onClick: () => router.push(totalOverdue > 0 ? "/musteri/admin/odemeler" : "/musteri/admin/istekler"),
           },
         ].map(stat => (
-          <div key={stat.label} className="rounded-2xl p-3 sm:p-4" style={{ background: stat.bg, border: `1px solid ${stat.border}` }}>
+          <button key={stat.label} onClick={stat.onClick} className="rounded-2xl p-3 sm:p-4 text-left transition-transform active:scale-[0.98]" style={{ background: stat.bg, border: `1px solid ${stat.border}` }}>
             <p className="text-[20px] sm:text-[28px] font-black leading-tight" style={{ color: stat.color }}>{stat.value}</p>
             <p className="text-[10.5px] sm:text-[12px] text-[#8a8a9a] mt-0.5 leading-snug">{stat.label}</p>
-          </div>
+          </button>
         ))}
       </div>
 
@@ -221,6 +223,61 @@ function Dashboard({ clients, adminName, employeeCount, totalUnread, totalOverdu
           <p className="text-[17px] font-bold text-white mb-1">Firmalar</p>
           <p className="text-[13px] text-[#8a8a9a]">{clients.length} aktif firma</p>
           <div className="absolute right-5 top-1/2 -translate-y-1/2 text-[#555] group-hover:text-[#c084fc] transition-colors">
+            <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="currentColor" strokeWidth="2">
+              <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+        </button>
+
+        {/* Ödemeler */}
+        <button onClick={() => router.push("/musteri/admin/odemeler")}
+          className="group rounded-2xl p-6 text-left transition-all duration-200 relative overflow-hidden"
+          style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+          onMouseEnter={e => {
+            (e.currentTarget as HTMLElement).style.borderColor = "rgba(248,113,113,0.4)";
+            (e.currentTarget as HTMLElement).style.background = "rgba(248,113,113,0.06)";
+          }}
+          onMouseLeave={e => {
+            (e.currentTarget as HTMLElement).style.borderColor = "var(--border)";
+            (e.currentTarget as HTMLElement).style.background = "var(--surface)";
+          }}>
+          <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4"
+            style={{ background: "rgba(248,113,113,0.12)", border: "1px solid rgba(248,113,113,0.2)" }}>
+            <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="#f87171" strokeWidth="2">
+              <rect x="2" y="5" width="20" height="14" rx="2" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M2 10h20" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+          <p className="text-[17px] font-bold text-white mb-1">Ödemeler</p>
+          <p className="text-[13px] text-[#8a8a9a]">{totalPending > 0 ? `${totalPending} bekleyen fatura` : "Bekleyen fatura yok"}</p>
+          <div className="absolute right-5 top-1/2 -translate-y-1/2 text-[#555] group-hover:text-[#f87171] transition-colors">
+            <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="currentColor" strokeWidth="2">
+              <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+        </button>
+
+        {/* Gelen İstekler */}
+        <button onClick={() => router.push("/musteri/admin/istekler")}
+          className="group rounded-2xl p-6 text-left transition-all duration-200 relative overflow-hidden"
+          style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+          onMouseEnter={e => {
+            (e.currentTarget as HTMLElement).style.borderColor = "rgba(45,212,191,0.4)";
+            (e.currentTarget as HTMLElement).style.background = "rgba(45,212,191,0.06)";
+          }}
+          onMouseLeave={e => {
+            (e.currentTarget as HTMLElement).style.borderColor = "var(--border)";
+            (e.currentTarget as HTMLElement).style.background = "var(--surface)";
+          }}>
+          <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4"
+            style={{ background: "rgba(45,212,191,0.12)", border: "1px solid rgba(45,212,191,0.2)" }}>
+            <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="#2dd4bf" strokeWidth="2">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+          <p className="text-[17px] font-bold text-white mb-1">Gelen İstekler</p>
+          <p className="text-[13px] text-[#8a8a9a]">{totalUnread > 0 ? `${totalUnread} yeni istek` : "Bekleyen istek yok"}</p>
+          <div className="absolute right-5 top-1/2 -translate-y-1/2 text-[#555] group-hover:text-[#2dd4bf] transition-colors">
             <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="currentColor" strokeWidth="2">
               <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
@@ -360,23 +417,49 @@ function FirmalarView({ clients, onBack, router }: {
   onBack: () => void;
   router: ReturnType<typeof useRouter>;
 }) {
+  const [query, setQuery] = useState("");
+  const filtered = query.trim()
+    ? clients.filter((c) => c.name.toLowerCase().includes(query.trim().toLowerCase()))
+    : clients;
+
   return (
     <>
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-4 gap-3">
         <div>
           <h2 className="font-black text-[22px] text-white mb-1">Firmalar</h2>
-          <p className="text-[13px] text-[#8a8a9a]">{clients.length} aktif firma</p>
+          <p className="text-[13px] text-[#8a8a9a]">
+            {query.trim() ? `${filtered.length} / ${clients.length} firma` : `${clients.length} aktif firma`}
+          </p>
         </div>
         <button onClick={() => router.push("/musteri/admin/yeni")}
-          className="text-[13px] px-4 py-2 rounded-xl font-semibold transition-all"
+          className="text-[13px] px-4 py-2 rounded-xl font-semibold transition-all flex-shrink-0"
           style={{ background: "rgba(168,85,247,0.15)", border: "1px solid rgba(168,85,247,0.3)", color: "#c084fc" }}>
           + Yeni Firma
         </button>
       </div>
 
+      <div className="relative mb-6">
+        <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#555]" stroke="currentColor" strokeWidth="2">
+          <circle cx="11" cy="11" r="8" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M21 21l-4.35-4.35" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Firma ara..."
+          className="w-full pl-10 pr-4 py-3 rounded-xl text-[14px] text-white placeholder-[#555] outline-none focus:ring-1 focus:ring-purple-500/50"
+          style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+        />
+      </div>
+
+      {filtered.length === 0 && (
+        <p className="text-[13px] text-[#555] text-center py-10">&quot;{query}&quot; ile eşleşen firma yok.</p>
+      )}
+
       {/* Mobil: kart listesi */}
       <div className="md:hidden space-y-2">
-        {clients.map((client) => {
+        {filtered.map((client) => {
           const isOverdue = client.overdueInvoiceCount > 0;
           return (
             <div key={client.slug}
@@ -440,9 +523,9 @@ function FirmalarView({ clients, onBack, router }: {
         </div>
 
         {/* Satırlar */}
-        {clients.map((client, i) => {
+        {filtered.map((client, i) => {
           const isOverdue = client.overdueInvoiceCount > 0;
-          const isLast = i === clients.length - 1;
+          const isLast = i === filtered.length - 1;
           return (
             <div key={client.slug}
               onClick={() => router.push(`/musteri/admin/${client.slug}`)}

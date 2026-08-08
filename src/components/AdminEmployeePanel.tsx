@@ -105,6 +105,13 @@ export default function AdminEmployeePanel({
   const [form, setForm] = useState({ username: "", name: "", email: "", password: "" });
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
+  const [query, setQuery] = useState("");
+  const filtered = query.trim()
+    ? employees.filter((e) => {
+        const q = query.trim().toLowerCase();
+        return e.name.toLowerCase().includes(q) || e.username.toLowerCase().includes(q) || e.email.toLowerCase().includes(q);
+      })
+    : employees;
 
   async function handleLogout() {
     try { await fetch("/api/musteri/auth/logout", { method: "POST" }); } catch { /* ignore */ }
@@ -160,6 +167,23 @@ export default function AdminEmployeePanel({
 
         <MonthlyWorkLogReport />
 
+        {employees.length > 5 && (
+          <div className="relative mb-4">
+            <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-[#555]" stroke="currentColor" strokeWidth="2">
+              <circle cx="11" cy="11" r="8" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M21 21l-4.35-4.35" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Çalışan ara..."
+              className="w-full pl-10 pr-4 py-3 rounded-xl text-[14px] text-white placeholder-[#555] outline-none focus:ring-1 focus:ring-purple-500/50"
+              style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+            />
+          </div>
+        )}
+
         {showForm && (
           <form onSubmit={handleCreate} className="rounded-2xl p-6 mb-6 space-y-4"
             style={{ background: "var(--surface)", border: "1px solid rgba(168,85,247,0.3)" }}>
@@ -192,15 +216,17 @@ export default function AdminEmployeePanel({
         <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid var(--border)" }}>
           {employees.length === 0 ? (
             <p className="text-[13px] text-[#8a8a9a] text-center py-12">Henüz çalışan yok.</p>
+          ) : filtered.length === 0 ? (
+            <p className="text-[13px] text-[#555] text-center py-12">&quot;{query}&quot; ile eşleşen çalışan yok.</p>
           ) : (
-            employees.map((emp, i) => (
+            filtered.map((emp, i) => (
               <div
                 key={emp.id}
                 onClick={() => router.push(`/musteri/admin/calisanlar/${emp.id}`)}
                 className="group flex items-center gap-3 px-5 py-4 cursor-pointer transition-colors"
                 style={{
                   background: "var(--surface)",
-                  borderBottom: i < employees.length - 1 ? "1px solid var(--border)" : "none",
+                  borderBottom: i < filtered.length - 1 ? "1px solid var(--border)" : "none",
                 }}
                 onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.025)")}
                 onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.background = "var(--surface)")}

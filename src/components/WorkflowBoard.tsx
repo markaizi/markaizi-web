@@ -58,18 +58,31 @@ interface PressState {
   scrollEl: HTMLElement | null;
 }
 
-export default function WorkflowBoard() {
-  const [columns, setColumns] = useState<ColumnData[]>([]);
-  const [employees, setEmployees] = useState<PersonOption[]>([]);
-  const [clients, setClients] = useState<ClientOption[]>([]);
-  const [currentUserId, setCurrentUserId] = useState("");
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [canCreateCards, setCanCreateCards] = useState(true);
-  const [canDragCards, setCanDragCards] = useState(true);
-  const [canWriteRevisionNote, setCanWriteRevisionNote] = useState(false);
-  const [canDeleteAnyCard, setCanDeleteAnyCard] = useState(false);
-  const [canManageColumns, setCanManageColumns] = useState(false);
-  const [loading, setLoading] = useState(true);
+interface BoardInitialData {
+  columns: ColumnData[];
+  employees: PersonOption[];
+  clients: ClientOption[];
+  currentUserId: string;
+  isAdmin: boolean;
+  canCreateCards: boolean;
+  canDragCards: boolean;
+  canWriteRevisionNote: boolean;
+  canDeleteAnyCard: boolean;
+  canManageColumns: boolean;
+}
+
+export default function WorkflowBoard({ initialData }: { initialData?: BoardInitialData }) {
+  const [columns, setColumns] = useState<ColumnData[]>(initialData?.columns ?? []);
+  const [employees, setEmployees] = useState<PersonOption[]>(initialData?.employees ?? []);
+  const [clients, setClients] = useState<ClientOption[]>(initialData?.clients ?? []);
+  const [currentUserId, setCurrentUserId] = useState(initialData?.currentUserId ?? "");
+  const [isAdmin, setIsAdmin] = useState(initialData?.isAdmin ?? false);
+  const [canCreateCards, setCanCreateCards] = useState(initialData?.canCreateCards ?? true);
+  const [canDragCards, setCanDragCards] = useState(initialData?.canDragCards ?? true);
+  const [canWriteRevisionNote, setCanWriteRevisionNote] = useState(initialData?.canWriteRevisionNote ?? false);
+  const [canDeleteAnyCard, setCanDeleteAnyCard] = useState(initialData?.canDeleteAnyCard ?? false);
+  const [canManageColumns, setCanManageColumns] = useState(initialData?.canManageColumns ?? false);
+  const [loading, setLoading] = useState(!initialData);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [modal, setModal] = useState<{ mode: "create" | "edit"; columnId?: string; card?: CardData } | null>(null);
   const [addingColumn, setAddingColumn] = useState(false);
@@ -115,7 +128,10 @@ export default function WorkflowBoard() {
     setLoading(false);
   }, []);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    if (!initialData) load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [load]);
 
   async function handleMoveCard(cardId: string, targetColumnId: string) {
     const card = columns.flatMap((c) => c.cards).find((c) => c.id === cardId);

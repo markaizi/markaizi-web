@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { getWorkflowBoardData } from "@/lib/workflowBoardData";
 import WorkflowBoard from "@/components/WorkflowBoard";
 
 export const dynamic = "force-dynamic";
@@ -18,6 +19,10 @@ export default async function CalisanIsAkisiPage() {
 
   const me = await prisma.user.findUnique({ where: { id: session.uid }, select: { workflowAccess: true } });
   if (!me?.workflowAccess) redirect("/musteri/calisan");
+
+  // Pano verisi sunucuda hazırlanır — sayfa açılır açılmaz dolu gelir,
+  // istemci tarafında ayrı bir "Yükleniyor" adımına gerek kalmaz.
+  const initialData = JSON.parse(JSON.stringify(await getWorkflowBoardData(session)));
 
   return (
     <div className="min-h-screen" style={{ background: "var(--bg)" }}>
@@ -37,7 +42,7 @@ export default async function CalisanIsAkisiPage() {
           <h1 className="font-black text-[20px] sm:text-[24px] text-white mb-1">İş Akışı</h1>
           <p className="text-[12px] sm:text-[13px] text-[#8a8a9a]">Kartları sürükleyerek durum değiştirin, tıklayarak düzenleyin.</p>
         </div>
-        <WorkflowBoard />
+        <WorkflowBoard initialData={initialData} />
       </main>
     </div>
   );
