@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { z } from "zod";
-import { logDigestEvent } from "@/lib/digest";
 
 export const runtime = "nodejs";
 
@@ -68,7 +67,7 @@ export async function POST(
   }
 
   const { clientSlug } = await params;
-  const client = await prisma.client.findUnique({ where: { slug: clientSlug }, select: { id: true, name: true } });
+  const client = await prisma.client.findUnique({ where: { slug: clientSlug }, select: { id: true } });
   if (!client) return NextResponse.json({ error: "Firma bulunamadı." }, { status: 404 });
   if (session.clientId !== client.id) return NextResponse.json({ error: "Yetkisiz." }, { status: 403 });
 
@@ -86,8 +85,6 @@ export async function POST(
     },
     include: { author: { select: { name: true } } },
   });
-
-  await logDigestEvent("NOTE", `${client.name}: ${parsed.data.text}`);
 
   return NextResponse.json({
     ok: true,

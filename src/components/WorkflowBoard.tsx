@@ -25,7 +25,6 @@ interface ColumnData {
   sortOrder: number;
   triggersWorkLog: boolean;
   triggersContentItem: boolean;
-  notifyOnEntry: boolean;
   adminOnly: boolean;
   cards: CardData[];
 }
@@ -353,15 +352,6 @@ export default function WorkflowBoard({ initialData }: { initialData?: BoardInit
     });
   }
 
-  async function handleToggleNotify(id: string, next: boolean) {
-    setColumns((prev) => prev.map((c) => (c.id === id ? { ...c, notifyOnEntry: next } : c)));
-    await fetch(`/api/musteri/is-akisi/columns/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ notifyOnEntry: next }),
-    });
-  }
-
   function handleContentLinked(cardId: string, contentItem: { id: string; scheduledDate: string }) {
     setColumns((prev) => prev.map((col) => ({
       ...col,
@@ -538,20 +528,6 @@ export default function WorkflowBoard({ initialData }: { initialData?: BoardInit
                         <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5" stroke="currentColor" strokeWidth="2">
                           <rect x="3" y="4" width="18" height="17" rx="2" />
                           <path d="M3 9h18M8 2v4M16 2v4" strokeLinecap="round" />
-                        </svg>
-                      </button>
-                      <button
-                        onClick={() => handleToggleNotify(col.id, !col.notifyOnEntry)}
-                        title={col.notifyOnEntry ? "Bu sütuna kart taşındığında akşam özetine eklenir — kapatmak için tıkla" : "Bu sütuna kart taşındığında akşam özet e-postasına eklensin mi?"}
-                        className="w-6 h-6 flex items-center justify-center rounded-md transition-colors"
-                        style={{
-                          color: col.notifyOnEntry ? "#fbbf24" : "#555",
-                          background: col.notifyOnEntry ? "rgba(251,191,36,0.15)" : "transparent",
-                        }}
-                      >
-                        <svg viewBox="0 0 24 24" fill={col.notifyOnEntry ? "currentColor" : "none"} className="w-3.5 h-3.5" stroke="currentColor" strokeWidth="2">
-                          <path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" strokeLinecap="round" strokeLinejoin="round" />
-                          <path d="M13.73 21a2 2 0 0 1-3.46 0" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
                       </button>
                       <button

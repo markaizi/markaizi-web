@@ -10,7 +10,6 @@ const patchSchema = z.object({
   sortOrder: z.number().int().optional(),
   triggersWorkLog: z.boolean().optional(),
   triggersContentItem: z.boolean().optional(),
-  notifyOnEntry: z.boolean().optional(),
   adminOnly: z.boolean().optional(),
 });
 

@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/auth";
-import { logDigestEvent } from "@/lib/digest";
 
 export const runtime = "nodejs";
 
@@ -29,8 +28,6 @@ export async function POST(req: NextRequest) {
       description: parsed.data.description,
     },
   });
-
-  await logDigestEvent("WORKLOG", `${session.name}: ${parsed.data.description}`);
 
   return NextResponse.json({
     ok: true,

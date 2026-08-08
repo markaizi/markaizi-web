@@ -3,7 +3,6 @@ import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { requireWorkflowAccess } from "@/lib/staffGuard";
 import { assertCanAccessClient } from "@/lib/auth";
-import { logDigestEvent } from "@/lib/digest";
 
 export const runtime = "nodejs";
 
@@ -88,11 +87,11 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     }
   }
 
-  let toCol: { adminOnly: boolean; triggersWorkLog: boolean; notifyOnEntry: boolean; title: string } | null = null;
+  let toCol: { adminOnly: boolean; triggersWorkLog: boolean } | null = null;
   if (rest.columnId && rest.columnId !== before.columnId) {
     toCol = await prisma.workflowColumn.findUnique({
       where: { id: rest.columnId },
-      select: { adminOnly: true, triggersWorkLog: true, notifyOnEntry: true, title: true },
+      select: { adminOnly: true, triggersWorkLog: true },
     });
     if (toCol?.adminOnly && !isAdmin) {
       return NextResponse.json({ error: "Bu sütuna yalnızca admin kart taşıyabilir." }, { status: 403 });
@@ -152,14 +151,6 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     }
   } catch (e) {
     console.error("İş Akışı → İş Kaydı otomasyonu başarısız:", e);
-  }
-
-  // ── İş Akışı → Günlük özet ───────────────────────────────────────────────
-  // Admin belirli bir sütunu (ör. "Kontrol") işaretlemişse, kart o sütuna her
-  // taşındığında akşam özetine bir satır eklenir (anlık e-posta gitmez).
-  if (rest.columnId && rest.columnId !== before.columnId && toCol?.notifyOnEntry) {
-    const clientPart = card.client ? ` (${card.client.name})` : "";
-    await logDigestEvent("CARD_ENTRY", `"${card.title}"${clientPart} → ${toCol.title}`);
   }
 
   return NextResponse.json({ ok: true, card });
