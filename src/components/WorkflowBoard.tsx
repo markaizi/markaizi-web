@@ -16,6 +16,7 @@ interface CardData {
   assignee: { id: string; name: string } | null;
   creator: { id: string; name: string };
   client: { slug: string; name: string } | null;
+  contentItem: { id: string; scheduledDate: string } | null;
 }
 
 interface ColumnData {
@@ -23,6 +24,7 @@ interface ColumnData {
   title: string;
   sortOrder: number;
   triggersWorkLog: boolean;
+  triggersContentItem: boolean;
   adminOnly: boolean;
   cards: CardData[];
 }
@@ -341,6 +343,22 @@ export default function WorkflowBoard({ initialData }: { initialData?: BoardInit
     });
   }
 
+  async function handleToggleContentTrigger(id: string, next: boolean) {
+    setColumns((prev) => prev.map((c) => (c.id === id ? { ...c, triggersContentItem: next } : c)));
+    await fetch(`/api/musteri/is-akisi/columns/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ triggersContentItem: next }),
+    });
+  }
+
+  function handleContentLinked(cardId: string, contentItem: { id: string; scheduledDate: string }) {
+    setColumns((prev) => prev.map((col) => ({
+      ...col,
+      cards: col.cards.map((c) => (c.id === cardId ? { ...c, contentItem } : c)),
+    })));
+  }
+
   async function handleToggleAdminOnly(id: string, next: boolean) {
     setColumns((prev) => prev.map((c) => (c.id === id ? { ...c, adminOnly: next } : c)));
     await fetch(`/api/musteri/is-akisi/columns/${id}`, {
@@ -496,6 +514,20 @@ export default function WorkflowBoard({ initialData }: { initialData?: BoardInit
                       >
                         <svg viewBox="0 0 24 24" fill={col.triggersWorkLog ? "currentColor" : "none"} className="w-3.5 h-3.5" stroke="currentColor" strokeWidth="2">
                           <path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z" strokeLinejoin="round" />
+                        </svg>
+                      </button>
+                      <button
+                        onClick={() => handleToggleContentTrigger(col.id, !col.triggersContentItem)}
+                        title={col.triggersContentItem ? "Bu sütuna taşınan kartlarda İçerik Takvimi'ne ekleme seçeneği görünür — kapatmak için tıkla" : "Bu sütuna taşınan kartlarda İçerik Takvimi'ne ekleme seçeneği görünsün mü?"}
+                        className="w-6 h-6 flex items-center justify-center rounded-md transition-colors"
+                        style={{
+                          color: col.triggersContentItem ? "#2dd4bf" : "#555",
+                          background: col.triggersContentItem ? "rgba(45,212,191,0.15)" : "transparent",
+                        }}
+                      >
+                        <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5" stroke="currentColor" strokeWidth="2">
+                          <rect x="3" y="4" width="18" height="17" rx="2" />
+                          <path d="M3 9h18M8 2v4M16 2v4" strokeLinecap="round" />
                         </svg>
                       </button>
                       <button
@@ -682,6 +714,7 @@ export default function WorkflowBoard({ initialData }: { initialData?: BoardInit
           onClose={() => setModal(null)}
           onSaved={handleSaved}
           onDeleted={handleDeleted}
+          onContentLinked={handleContentLinked}
         />
       )}
 
@@ -811,7 +844,7 @@ function ArchiveModal({ onClose, onRestored }: { onClose: () => void; onRestored
 // ── Kart Modalı ──────────────────────────────────────────────────────────────
 
 function CardModal({
-  state, columns, employees, clients, currentUserId, isAdmin, canCreateCards, canWriteRevisionNote, canDeleteAnyCard, onClose, onSaved, onDeleted,
+  state, columns, employees, clients, currentUserId, isAdmin, canCreateCards, canWriteRevisionNote, canDeleteAnyCard, onClose, onSaved, onDeleted, onContentLinked,
 }: {
   state: { mode: "create" | "edit"; columnId?: string; card?: CardData };
   columns: ColumnData[];
@@ -825,6 +858,7 @@ function CardModal({
   onClose: () => void;
   onSaved: (card: CardData) => void;
   onDeleted: (id: string) => void;
+  onContentLinked: (cardId: string, contentItem: { id: string; scheduledDate: string }) => void;
 }) {
   const isEdit = state.mode === "edit";
   const card = state.card;
@@ -852,10 +886,34 @@ function CardModal({
   const [deleting, setDeleting] = useState(false);
   const [archiving, setArchiving] = useState(false);
   const [error, setError] = useState("");
+  const [contentItem, setContentItem] = useState(card?.contentItem ?? null);
+  const [contentDate, setContentDate] = useState(() => new Date().toISOString().slice(0, 10));
+  const [contentSaving, setContentSaving] = useState(false);
+  const [contentError, setContentError] = useState("");
 
   // Arşivleme her zaman yalnızca admin'e açık; silme izni ayrıca kilitli sütunlarda (locked) herkes için kapanır.
   const canArchive = isEdit && isAdmin;
   const canDelete = isEdit && !locked && (isAdmin || canDeleteAnyCard || (canCreateCards && card?.creator.id === currentUserId));
+  const canAddToContent = isEdit && !readOnly && !!card?.client && !!cardColumn?.triggersContentItem && !contentItem;
+
+  async function handleAddToContent() {
+    if (!card) return;
+    setContentSaving(true);
+    setContentError("");
+    const res = await fetch(`/api/musteri/is-akisi/cards/${card.id}/content-item`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ scheduledDate: contentDate }),
+    });
+    const data = await res.json().catch(() => ({}));
+    if (res.ok) {
+      setContentItem(data.contentItem);
+      onContentLinked(card.id, data.contentItem);
+    } else {
+      setContentError(data.error ?? "Eklenemedi.");
+    }
+    setContentSaving(false);
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -1069,6 +1127,43 @@ function CardModal({
                   <option key={c.id} value={c.id}>{c.name}</option>
                 ))}
               </select>
+            </div>
+          )}
+
+          {contentItem && (
+            <div className="px-3.5 py-2.5 rounded-xl flex items-center gap-2" style={{ background: "rgba(45,212,191,0.08)", border: "1px solid rgba(45,212,191,0.25)" }}>
+              <span className="text-[13px]">✓</span>
+              <p className="text-[12.5px] font-medium" style={{ color: "#2dd4bf" }}>
+                İçerik Takvimi&apos;nde — {new Date(contentItem.scheduledDate).toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" })}
+              </p>
+            </div>
+          )}
+
+          {canAddToContent && (
+            <div className="p-3.5 rounded-xl" style={{ background: "rgba(45,212,191,0.06)", border: "1px dashed rgba(45,212,191,0.3)" }}>
+              <label className="block text-[11px] font-semibold uppercase tracking-wide mb-1.5" style={{ color: "#2dd4bf" }}>
+                📅 İçerik Takvimine Ekle
+              </label>
+              <div className="flex gap-2">
+                <input
+                  type="date"
+                  value={contentDate}
+                  onChange={(e) => setContentDate(e.target.value)}
+                  className="flex-1 min-w-0 px-3 py-2 rounded-lg text-[13px] text-white outline-none"
+                  style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
+                />
+                <button
+                  type="button"
+                  onClick={handleAddToContent}
+                  disabled={contentSaving}
+                  className="text-[12px] font-semibold px-3.5 rounded-lg flex-shrink-0"
+                  style={{ background: "rgba(45,212,191,0.15)", color: "#2dd4bf", border: "1px solid rgba(45,212,191,0.3)" }}
+                >
+                  {contentSaving ? "..." : "Ekle"}
+                </button>
+              </div>
+              {contentError && <p className="text-[11px] mt-1.5" style={{ color: "#f87171" }}>{contentError}</p>}
+              <p className="text-[11px] text-[#666] mt-1.5">Yayınlanma tarihini gir, kart doğrudan {card?.client?.name} için İçerik Takvimi&apos;ne eklensin.</p>
             </div>
           )}
         </div>

@@ -26,6 +26,7 @@ export async function getWorkflowBoardData(session: SessionPayload) {
             assignee: { select: { id: true, name: true } },
             creator: { select: { id: true, name: true } },
             client: { select: { slug: true, name: true } },
+            contentItem: { select: { id: true, scheduledDate: true } },
           },
         },
       },

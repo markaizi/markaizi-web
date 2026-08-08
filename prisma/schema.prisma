@@ -173,8 +173,13 @@ model ContentItem {
   completedAt   DateTime?
   publishedAt   DateTime?
 
-  client   Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  assignee User?  @relation("ContentAssignee", fields: [assigneeId], references: [id], onDelete: SetNull)
+  // İş Akışı'ndaki bir karttan otomatik oluşturulduysa bağlantısı (opsiyonel).
+  // Kart silinirse bu alan null'a düşer, içerik kaydı SİLİNMEZ (bkz. onDelete: SetNull).
+  workflowCardId String? @unique
+
+  client       Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  assignee     User?         @relation("ContentAssignee", fields: [assigneeId], references: [id], onDelete: SetNull)
+  workflowCard WorkflowCard? @relation(fields: [workflowCardId], references: [id], onDelete: SetNull)
 
   createdAt DateTime @default(now())
 }
@@ -245,6 +250,11 @@ model WorkflowColumn {
   // isme göre eşleştirme yapılmıyor, admin açıkça işaretliyor.
   triggersWorkLog Boolean @default(false)
 
+  // true ise: bu sütuna taşınan kartlarda, kart bir firmaya bağlıysa "İçerik
+  // Takvimine Ekle" seçeneği görünür — yayınlanma tarihi girilip onaylanınca
+  // o firmanın İçerik Takvimi'ne otomatik bir ContentItem eklenir.
+  triggersContentItem Boolean @default(false)
+
   // true ise: bu sütuna sadece ADMIN kart taşıyabilir/kart ekleyebilir; sütundaki
   // kartlara (taşıma, düzenleme, silme) ADMIN dışında kimse dokunamaz — kart o
   // sütundayken çalışanlar için salt-okunur ve sürüklenemez hale gelir.
@@ -278,6 +288,7 @@ model WorkflowCard {
   assignee User?          @relation("WorkflowAssignee", fields: [assigneeId], references: [id], onDelete: SetNull)
   creator  User           @relation("WorkflowCreator", fields: [creatorId], references: [id])
   workLog  WorkLog?
+  contentItem ContentItem?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
