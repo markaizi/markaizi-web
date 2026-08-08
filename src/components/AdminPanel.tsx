@@ -257,6 +257,33 @@ function Dashboard({ clients, adminName, employeeCount, totalUnread, totalOverdu
           </div>
         </button>
 
+        {/* Ekonomi */}
+        <button onClick={() => router.push("/musteri/admin/ekonomi")}
+          className="group rounded-2xl p-6 text-left transition-all duration-200 relative overflow-hidden"
+          style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+          onMouseEnter={e => {
+            (e.currentTarget as HTMLElement).style.borderColor = "rgba(52,211,153,0.4)";
+            (e.currentTarget as HTMLElement).style.background = "rgba(52,211,153,0.06)";
+          }}
+          onMouseLeave={e => {
+            (e.currentTarget as HTMLElement).style.borderColor = "var(--border)";
+            (e.currentTarget as HTMLElement).style.background = "var(--surface)";
+          }}>
+          <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4"
+            style={{ background: "rgba(52,211,153,0.12)", border: "1px solid rgba(52,211,153,0.2)" }}>
+            <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="#34d399" strokeWidth="2">
+              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+          <p className="text-[17px] font-bold text-white mb-1">Ekonomi</p>
+          <p className="text-[13px] text-[#8a8a9a]">Gelir, gider, kasa</p>
+          <div className="absolute right-5 top-1/2 -translate-y-1/2 text-[#555] group-hover:text-[#34d399] transition-colors">
+            <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="currentColor" strokeWidth="2">
+              <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+        </button>
+
         {/* Gelen İstekler */}
         <button onClick={() => router.push("/musteri/admin/istekler")}
           className="group rounded-2xl p-6 text-left transition-all duration-200 relative overflow-hidden"

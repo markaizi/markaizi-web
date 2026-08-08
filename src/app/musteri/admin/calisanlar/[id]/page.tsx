@@ -11,6 +11,12 @@ export const metadata: Metadata = {
   title: "Çalışan — Admin",
 };
 
+function parseAmount(raw: string | null): number {
+  if (!raw) return 0;
+  const digits = raw.replace(/[^\d]/g, "");
+  return digits ? parseInt(digits, 10) : 0;
+}
+
 export default async function AdminEmployeeDetailPage({
   params,
 }: {
@@ -54,6 +60,13 @@ export default async function AdminEmployeeDetailPage({
 
   const { archived } = groupByPeriod(olderLogsLight, (l) => l.date, paymentDay);
 
+  const payrollPayments = await prisma.payrollPayment.findMany({
+    where: { userId: employee.id },
+    orderBy: { date: "desc" },
+  });
+  const donemOdemeleri = payrollPayments.filter((p) => p.kind === "DONEM_ODEMESI");
+  const avanslar = payrollPayments.filter((p) => p.kind === "AVANS");
+
   const data: EmployeeDetailData = {
     id: employee.id,
     username: employee.username ?? "",
@@ -73,14 +86,29 @@ export default async function AdminEmployeeDetailPage({
       description: l.description,
       amount: l.amount,
     })),
-    archivedSummary: archived.map((a) => ({
-      key: a.period.key,
-      label: a.period.label,
-      count: a.items.length,
-      total: a.items.reduce((s, i) => {
-        const digits = (i.amount ?? "").replace(/[^\d]/g, "");
-        return s + (digits ? parseInt(digits, 10) : 0);
-      }, 0),
+    archivedSummary: archived.map((a) => {
+      const total = a.items.reduce((s, i) => s + parseAmount(i.amount), 0);
+      const advancesInPeriod = avanslar
+        .filter((av) => av.date >= a.period.start && av.date <= a.period.end)
+        .reduce((s, av) => s + parseAmount(av.amount), 0);
+      const paid = donemOdemeleri.some((p) => p.periodKey === a.period.key);
+      return {
+        key: a.period.key,
+        label: a.period.label,
+        count: a.items.length,
+        total,
+        advancesInPeriod,
+        remaining: Math.max(0, total - advancesInPeriod),
+        paid,
+      };
+    }),
+    paymentHistory: payrollPayments.map((p) => ({
+      id: p.id,
+      kind: p.kind,
+      amount: parseAmount(p.amount),
+      description: p.description,
+      periodLabel: p.periodLabel,
+      date: p.date.toISOString(),
     })),
     assignments: employee.assignments.map((a) => ({
       id: a.id,

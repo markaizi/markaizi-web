@@ -4,7 +4,14 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 export interface WorkLogEntry { id: string; date: string; description: string; amount: string | null; }
-export interface ArchivedPeriodSummary { key: string; label: string; count: number; total: number; }
+export interface ArchivedPeriodSummary {
+  key: string; label: string; count: number; total: number;
+  advancesInPeriod: number; remaining: number; paid: boolean;
+}
+export interface PaymentHistoryEntry {
+  id: string; kind: "AVANS" | "DONEM_ODEMESI"; amount: number;
+  description: string | null; periodLabel: string | null; date: string;
+}
 
 export interface EmployeeDetailData {
   id: string;
@@ -21,6 +28,7 @@ export interface EmployeeDetailData {
   currentPeriod: { key: string; label: string };
   currentLogs: WorkLogEntry[];
   archivedSummary: ArchivedPeriodSummary[];
+  paymentHistory: PaymentHistoryEntry[];
   assignments: {
     id: string;
     client: { id: string; slug: string; name: string };
@@ -409,6 +417,63 @@ export default function AdminEmployeeDetail({
     setArchivedDeletingId(null);
   }
 
+  // ── Avans / Ara Ödeme ─────────────────────────────────────────────────────
+  const [showAdvanceForm, setShowAdvanceForm] = useState(false);
+  const [advanceAmount, setAdvanceAmount] = useState("");
+  const [advanceDesc, setAdvanceDesc] = useState("");
+  const [advanceDate, setAdvanceDate] = useState(() => new Date().toISOString().slice(0, 10));
+  const [advanceSaving, setAdvanceSaving] = useState(false);
+  const [advanceError, setAdvanceError] = useState("");
+  const [paymentHistory, setPaymentHistory] = useState(employee.paymentHistory);
+
+  async function handleAddAdvance(e: React.FormEvent) {
+    e.preventDefault();
+    if (!advanceAmount.trim()) return;
+    setAdvanceSaving(true);
+    setAdvanceError("");
+    const res = await fetch(`/api/musteri/admin/employees/${employee.id}/advance`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ amount: advanceAmount.trim(), description: advanceDesc.trim() || undefined, date: advanceDate }),
+    });
+    const json = await res.json();
+    setAdvanceSaving(false);
+    if (!res.ok) { setAdvanceError(json.error ?? "Kaydedilemedi."); return; }
+    setPaymentHistory((prev) => [
+      { id: json.payment.id, kind: "AVANS", amount: parseAmount(advanceAmount), description: advanceDesc.trim() || null, periodLabel: null, date: new Date(advanceDate).toISOString() },
+      ...prev,
+    ]);
+    setAdvanceAmount("");
+    setAdvanceDesc("");
+    setShowAdvanceForm(false);
+    router.refresh();
+  }
+
+  // ── Dönem Ödemesi ─────────────────────────────────────────────────────────
+  const [payingKey, setPayingKey] = useState<string | null>(null);
+  const [payErrorKey, setPayErrorKey] = useState<string | null>(null);
+  const [payError, setPayError] = useState<string | null>(null);
+
+  async function handlePayPeriod(periodKey: string) {
+    setPayingKey(periodKey);
+    setPayErrorKey(null);
+    setPayError(null);
+    const res = await fetch(`/api/musteri/admin/employees/${employee.id}/period-payment`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ periodEnd: periodKey }),
+    });
+    const json = await res.json();
+    setPayingKey(null);
+    if (!res.ok) { setPayErrorKey(periodKey); setPayError(json.error ?? "Ödeme kaydedilemedi."); return; }
+    setSummaries((prev) => prev.map((s) => (s.key === periodKey ? { ...s, paid: true } : s)));
+    setPaymentHistory((prev) => [
+      { id: json.payment.id, kind: "DONEM_ODEMESI", amount: json.remaining, description: null, periodLabel: summaries.find((s) => s.key === periodKey)?.label ?? null, date: new Date().toISOString() },
+      ...prev,
+    ]);
+    router.refresh();
+  }
+
   const [showAssignments, setShowAssignments] = useState(false);
   const assignedCount = localAssign.size;
 
@@ -559,6 +624,72 @@ export default function AdminEmployeeDetail({
           </select>
         </div>
 
+        {/* Avans / Ara Ödeme */}
+        <div className="rounded-2xl p-6 space-y-3" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+          <div className="flex items-center justify-between gap-3 flex-wrap">
+            <div>
+              <p className="font-semibold text-white text-[14px]">Avans / Ara Ödeme</p>
+              <p className="text-[12px] text-[#8a8a9a] mt-0.5">Döneme bağlı olmadan istenildiği an verilebilir — anında Ekonomi&apos;ye gider yazılır.</p>
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowAdvanceForm((v) => !v)}
+              className="text-[13px] font-semibold px-4 py-2 rounded-xl transition-all flex-shrink-0"
+              style={{ background: "rgba(251,191,36,0.1)", border: "1px solid rgba(251,191,36,0.25)", color: "#fbbf24" }}
+            >
+              {showAdvanceForm ? "İptal" : "+ Avans Ver"}
+            </button>
+          </div>
+          {showAdvanceForm && (
+            <form onSubmit={handleAddAdvance} className="space-y-3 pt-1">
+              <div className="grid grid-cols-2 gap-3">
+                <input
+                  value={advanceAmount}
+                  onChange={(e) => setAdvanceAmount(e.target.value)}
+                  placeholder="Örn: 2.000 ₺"
+                  className="w-full px-3.5 py-2.5 rounded-xl text-[14px] text-white placeholder-[#555] outline-none"
+                  style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
+                />
+                <input
+                  type="date"
+                  value={advanceDate}
+                  onChange={(e) => setAdvanceDate(e.target.value)}
+                  className="w-full px-3.5 py-2.5 rounded-xl text-[14px] text-white outline-none"
+                  style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
+                />
+              </div>
+              <input
+                value={advanceDesc}
+                onChange={(e) => setAdvanceDesc(e.target.value)}
+                placeholder="Açıklama (opsiyonel)"
+                className="w-full px-3.5 py-2.5 rounded-xl text-[14px] text-white placeholder-[#555] outline-none"
+                style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
+              />
+              {advanceError && <p className="text-[12px]" style={{ color: "#f87171" }}>{advanceError}</p>}
+              <button type="submit" disabled={advanceSaving} className="btn btn-primary text-sm px-5 py-2">
+                {advanceSaving ? "Kaydediliyor..." : "Avansı Kaydet"}
+              </button>
+            </form>
+          )}
+          {paymentHistory.length > 0 && (
+            <div className="pt-2 space-y-1.5" style={{ borderTop: paymentHistory.length > 0 ? "1px solid var(--border)" : undefined }}>
+              <p className="text-[11px] font-semibold text-[#8a8a9a] uppercase tracking-wide pt-2">Ödeme Geçmişi</p>
+              {paymentHistory.map((p) => (
+                <div key={p.id} className="flex items-center justify-between gap-3 text-[13px] py-1">
+                  <span className="text-[#c8c8d8] truncate">
+                    {p.kind === "AVANS" ? "Avans" : `Dönem Ödemesi${p.periodLabel ? ` — ${p.periodLabel}` : ""}`}
+                    {p.description ? ` · ${p.description}` : ""}
+                  </span>
+                  <span className="flex-shrink-0 flex items-center gap-2">
+                    <span className="text-[#555] text-[11px]">{fmtLogDate(p.date)}</span>
+                    <span className="font-bold" style={{ color: "#f87171" }}>{p.amount.toLocaleString("tr-TR")} ₺</span>
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
         {/* İş Kayıtları — Mevcut Dönem */}
         <div className="rounded-2xl overflow-hidden" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
           <div className="px-6 py-4 flex items-center justify-between gap-3 flex-wrap" style={{ borderBottom: "1px solid var(--border)" }}>
@@ -641,6 +772,32 @@ export default function AdminEmployeeDetail({
                       PDF
                     </a>
                   </div>
+                </div>
+                <div className="px-5 pb-4 flex items-center justify-between gap-3 flex-wrap" style={{ borderTop: "1px solid var(--border)" }}>
+                  <div className="pt-3 min-w-0">
+                    {summary.paid ? (
+                      <span className="text-[12px] font-semibold" style={{ color: "#34d399" }}>✓ Ödendi</span>
+                    ) : summary.advancesInPeriod > 0 ? (
+                      <p className="text-[12px] text-[#8a8a9a]">
+                        Bu dönemde avans: {summary.advancesInPeriod.toLocaleString("tr-TR")} ₺ · Ödenecek: <span className="font-semibold text-white">{summary.remaining.toLocaleString("tr-TR")} ₺</span>
+                      </p>
+                    ) : (
+                      <p className="text-[12px] text-[#8a8a9a]">Ödenecek: <span className="font-semibold text-white">{summary.remaining.toLocaleString("tr-TR")} ₺</span></p>
+                    )}
+                    {payErrorKey === summary.key && payError && (
+                      <p className="text-[11px] mt-1" style={{ color: "#f87171" }}>{payError}</p>
+                    )}
+                  </div>
+                  {!summary.paid && (
+                    <button
+                      onClick={() => handlePayPeriod(summary.key)}
+                      disabled={payingKey === summary.key}
+                      className="pt-3 text-[12px] font-semibold flex-shrink-0"
+                      style={{ color: "#34d399" }}
+                    >
+                      {payingKey === summary.key ? "Ödeniyor..." : "Öde"}
+                    </button>
+                  )}
                 </div>
                 {expandedKey === summary.key && (
                   <div style={{ borderTop: "1px solid var(--border)" }}>

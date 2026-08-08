@@ -36,6 +36,11 @@ export async function PATCH(
     data: {
       ...rest,
       ...(dueDate !== undefined ? { dueDate: dueDate ? new Date(dueDate) : null } : {}),
+      // Ekonomi ekranındaki aylık gelir hesabı paidAt'e göre gruplanır — durum
+      // ODENDI'ye geçince otomatik set edilir, geri alınırsa temizlenir.
+      ...(rest.status !== undefined
+        ? { paidAt: rest.status === "ODENDI" && before.status !== "ODENDI" ? new Date() : rest.status !== "ODENDI" ? null : undefined }
+        : {}),
     },
   });
 

@@ -58,6 +58,16 @@ enum WorkflowPriority {
   YUKSEK
 }
 
+enum TransactionType {
+  GELIR
+  GIDER
+}
+
+enum PaymentKind {
+  AVANS
+  DONEM_ODEMESI
+}
+
 // ── Modeller ─────────────────────────────────────────────
 model User {
   id           String  @id @default(cuid())
@@ -99,6 +109,7 @@ model User {
   noteReads       NoteRead[]
   authoredAdReports AdReport[]  @relation("AdReportAuthor")
   workLogs          WorkLog[]
+  payrollPayments   PayrollPayment[]
 
   workflowCardsAssigned WorkflowCard[] @relation("WorkflowAssignee")
   workflowCardsCreated  WorkflowCard[] @relation("WorkflowCreator")
@@ -205,6 +216,11 @@ model Invoice {
   amount   String
   status   InvoiceStatus @default(BEKLIYOR)
   dueDate  DateTime?
+
+  // status ODENDI olduğunda otomatik set edilir, geri alınırsa null'a döner.
+  // Ekonomi ekranındaki aylık gelir hesabı buna göre gruplanır (period serbest
+  // metin olduğu için tarih hesaplaması için güvenilir değil).
+  paidAt DateTime?
 
   client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
 }
@@ -330,4 +346,48 @@ model WorkLog {
   workflowCard WorkflowCard? @relation(fields: [workflowCardId], references: [id], onDelete: SetNull)
 
   createdAt DateTime @default(now())
+}
+
+// ── Ekonomi — ajans genelinde gelir/gider defteri. Ödenen faturalar (Invoice.paidAt
+// üzerinden) ve personel ödemeleri (PayrollPayment, aşağıda) buraya yazılmaz — okuma
+// anında birleştirilir; bu tablo yalnızca elle girilen kayıtlar ile personel ödemesi
+// otomasyonunun ürettiği kayıtları tutar (tek gerçek gider kaynağı).
+model Transaction {
+  id          String          @id @default(cuid())
+  type        TransactionType
+  amount      String
+  description String
+  date        DateTime
+  authorId    String?
+
+  payrollPayment PayrollPayment?
+
+  createdAt DateTime @default(now())
+}
+
+// ── Personel ödemeleri — avans (döneme bağlı olmadan istenildiği an) ve dönem
+// kapatma (bir iş kaydı döneminin toplamından o dönemdeki avanslar düşülüp kalanı
+// öder) ayrı kind'lerle tutulur. periodKey null ise avans demektir, sınırsız
+// olabilir; DONEM_ODEMESI ise userId+periodKey başına bir kez (çift ödeme engeli).
+model PayrollPayment {
+  id          String      @id @default(cuid())
+  userId      String
+  kind        PaymentKind
+  amount      String
+  description String?
+  date        DateTime    @default(now())
+
+  // DONEM_ODEMESI için: kapatılan dönemin anahtarı (bkz. workLogPeriods.ts) ve
+  // görüntüleme için etiket snapshot'ı. AVANS'ta ikisi de null kalır.
+  periodKey   String?
+  periodLabel String?
+
+  transactionId String?      @unique
+  transaction   Transaction? @relation(fields: [transactionId], references: [id], onDelete: SetNull)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, periodKey])
 }
