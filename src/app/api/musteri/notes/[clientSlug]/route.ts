@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { z } from "zod";
+import { sendAdminNotification, escapeHtml } from "@/lib/mail";
 
 export const runtime = "nodejs";
 
@@ -67,7 +68,7 @@ export async function POST(
   }
 
   const { clientSlug } = await params;
-  const client = await prisma.client.findUnique({ where: { slug: clientSlug }, select: { id: true } });
+  const client = await prisma.client.findUnique({ where: { slug: clientSlug }, select: { id: true, name: true } });
   if (!client) return NextResponse.json({ error: "Firma bulunamadı." }, { status: 404 });
   if (session.clientId !== client.id) return NextResponse.json({ error: "Yetkisiz." }, { status: 403 });
 
@@ -85,6 +86,20 @@ export async function POST(
     },
     include: { author: { select: { name: true } } },
   });
+
+  await sendAdminNotification(
+    `[Panel] ${client.name} — Yeni Müşteri İsteği`,
+    "Yeni Müşteri İsteği",
+    `
+      <div style="background:rgba(168,85,247,0.08);border:1px solid rgba(168,85,247,0.2);border-radius:8px;padding:12px 16px;margin-bottom:20px;display:inline-block">
+        <span style="font-size:11px;font-weight:700;color:#8a8a9a;text-transform:uppercase;letter-spacing:1px">Firma</span><br>
+        <span style="font-size:17px;font-weight:800;color:#c084fc">${escapeHtml(client.name)}</span>
+      </div>
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:16px 20px">
+        <p style="margin:0;font-size:15px;color:#c8c8d8;line-height:1.7;white-space:pre-wrap">${escapeHtml(parsed.data.text)}</p>
+      </div>
+    `
+  );
 
   return NextResponse.json({
     ok: true,

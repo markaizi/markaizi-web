@@ -255,6 +255,10 @@ model WorkflowColumn {
   // o firmanın İçerik Takvimi'ne otomatik bir ContentItem eklenir.
   triggersContentItem Boolean @default(false)
 
+  // true ise: bir kart bu sütuna taşındığında admin'e e-posta bildirimi gider —
+  // panele girmeden "kart kontrole geldi" gibi olaylardan haberdar olmak için.
+  notifyOnEntry Boolean @default(false)
+
   // true ise: bu sütuna sadece ADMIN kart taşıyabilir/kart ekleyebilir; sütundaki
   // kartlara (taşıma, düzenleme, silme) ADMIN dışında kimse dokunamaz — kart o
   // sütundayken çalışanlar için salt-okunur ve sürüklenemez hale gelir.

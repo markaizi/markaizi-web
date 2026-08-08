@@ -3,6 +3,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { requireWorkflowAccess } from "@/lib/staffGuard";
 import { assertCanAccessClient } from "@/lib/auth";
+import { sendAdminNotification, escapeHtml } from "@/lib/mail";
 
 export const runtime = "nodejs";
 
@@ -87,11 +88,11 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     }
   }
 
-  let toCol: { adminOnly: boolean; triggersWorkLog: boolean } | null = null;
+  let toCol: { adminOnly: boolean; triggersWorkLog: boolean; notifyOnEntry: boolean; title: string } | null = null;
   if (rest.columnId && rest.columnId !== before.columnId) {
     toCol = await prisma.workflowColumn.findUnique({
       where: { id: rest.columnId },
-      select: { adminOnly: true, triggersWorkLog: true },
+      select: { adminOnly: true, triggersWorkLog: true, notifyOnEntry: true, title: true },
     });
     if (toCol?.adminOnly && !isAdmin) {
       return NextResponse.json({ error: "Bu sütuna yalnızca admin kart taşıyabilir." }, { status: 403 });
@@ -151,6 +152,26 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     }
   } catch (e) {
     console.error("İş Akışı → İş Kaydı otomasyonu başarısız:", e);
+  }
+
+  // ── İş Akışı → E-posta bildirimi ────────────────────────────────────────
+  // Admin belirli bir sütunu (ör. "Kontrol") bildirimli işaretlemişse, kart o
+  // sütuna her taşındığında panele girmeden haber alınabilsin diye e-posta gider.
+  if (rest.columnId && rest.columnId !== before.columnId && toCol?.notifyOnEntry) {
+    await sendAdminNotification(
+      `[Panel] ${card.title} — "${toCol.title}" sütununa taşındı`,
+      "Kart Sütun Değiştirdi",
+      `
+        <div style="background:rgba(45,212,191,0.08);border:1px solid rgba(45,212,191,0.2);border-radius:8px;padding:12px 16px;margin-bottom:20px;display:inline-block">
+          <span style="font-size:11px;font-weight:700;color:#8a8a9a;text-transform:uppercase;letter-spacing:1px">Sütun</span><br>
+          <span style="font-size:17px;font-weight:800;color:#2dd4bf">${escapeHtml(toCol.title)}</span>
+        </div>
+        <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:16px 20px">
+          <p style="margin:0 0 6px;font-size:15px;font-weight:700;color:#fff">${escapeHtml(card.title)}</p>
+          ${card.client ? `<p style="margin:0;font-size:13px;color:#8a8a9a">${escapeHtml(card.client.name)}</p>` : ""}
+        </div>
+      `
+    );
   }
 
   return NextResponse.json({ ok: true, card });
