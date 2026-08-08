@@ -70,6 +70,7 @@ export default function WorkflowBoard() {
   const [canDeleteAnyCard, setCanDeleteAnyCard] = useState(false);
   const [canManageColumns, setCanManageColumns] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [modal, setModal] = useState<{ mode: "create" | "edit"; columnId?: string; card?: CardData } | null>(null);
   const [addingColumn, setAddingColumn] = useState(false);
   const [newColumnTitle, setNewColumnTitle] = useState("");
@@ -92,8 +93,14 @@ export default function WorkflowBoard() {
   }, [dragCardId]);
 
   const load = useCallback(async () => {
+    setLoadError(null);
     const res = await fetch("/api/musteri/is-akisi/board");
-    if (!res.ok) return;
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}));
+      setLoadError(body.error ?? "Pano yüklenemedi.");
+      setLoading(false);
+      return;
+    }
     const data = await res.json();
     setColumns(data.columns);
     setEmployees(data.employees);
@@ -352,6 +359,17 @@ export default function WorkflowBoard() {
 
   if (loading) {
     return <div className="py-20 text-center text-[#8a8a9a] text-[14px]">Yükleniyor...</div>;
+  }
+
+  if (loadError) {
+    return (
+      <div className="py-20 text-center">
+        <p className="text-[14px] mb-4" style={{ color: "#f87171" }}>{loadError}</p>
+        <button onClick={() => { setLoading(true); load(); }} className="btn btn-outline text-sm px-5 py-2">
+          Tekrar Dene
+        </button>
+      </div>
+    );
   }
 
   return (
@@ -669,14 +687,19 @@ interface ArchivedCard {
 function ArchiveModal({ onClose, onRestored }: { onClose: () => void; onRestored: () => void }) {
   const [cards, setCards] = useState<ArchivedCard[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
+    setLoadError(null);
     const res = await fetch("/api/musteri/is-akisi/cards/archived");
     if (res.ok) {
       const data = await res.json();
       setCards(data.cards);
+    } else {
+      const body = await res.json().catch(() => ({}));
+      setLoadError(body.error ?? "Arşiv yüklenemedi.");
     }
     setLoading(false);
   }, []);
@@ -725,6 +748,11 @@ function ArchiveModal({ onClose, onRestored }: { onClose: () => void; onRestored
 
         {loading ? (
           <p className="text-[13px] text-[#8a8a9a]">Yükleniyor...</p>
+        ) : loadError ? (
+          <div className="text-center py-4">
+            <p className="text-[13px] mb-3" style={{ color: "#f87171" }}>{loadError}</p>
+            <button onClick={load} className="btn btn-outline text-sm px-4 py-1.5">Tekrar Dene</button>
+          </div>
         ) : cards.length === 0 ? (
           <p className="text-[13px] text-[#8a8a9a]">Arşivde kart yok.</p>
         ) : (

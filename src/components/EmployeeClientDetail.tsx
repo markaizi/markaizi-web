@@ -39,6 +39,14 @@ export interface EmployeeClientData {
   }[];
 }
 
+// "YYYY-MM-DD" → "10 Eylül 2026"
+function fmtDate(raw: string): string {
+  if (!raw) return raw;
+  const dt = new Date(raw + "T00:00:00");
+  if (isNaN(dt.getTime())) return raw;
+  return dt.toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" });
+}
+
 const STATUS_LABEL: Record<string, string> = {
   PLANLANDI: "Planlandı", DUZENLENIYOR: "Düzenleniyor", HAZIR: "Hazır", YAYINLANDI: "Yayınlandı",
   ODENDI: "Ödendi", BEKLIYOR: "Bekliyor", GUNU_GELMEDI: "Günü Gelmedi",
@@ -96,7 +104,7 @@ export default function EmployeeClientDetail({ data, unreadNoteCount = 0 }: { da
           <span className="text-[#555] flex-shrink-0">/</span>
           <span className="text-[14px] font-semibold text-white truncate">{data.name}</span>
         </div>
-        <button onClick={handleLogout} className="text-[12px] text-[#8a8a9a] hover:text-[#f87171] flex items-center gap-1.5 flex-shrink-0 transition-colors">
+        <button onClick={handleLogout} className="text-[12px] text-[#8a8a9a] hover:text-[#f87171] flex items-center gap-1.5 flex-shrink-0 transition-colors min-h-[44px] px-1">
           <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth="2">
             <path d="M18.364 5.636A9 9 0 1 1 5.636 18.364" strokeLinecap="round"/>
             <path d="M12 3v9" strokeLinecap="round"/>
@@ -120,10 +128,10 @@ export default function EmployeeClientDetail({ data, unreadNoteCount = 0 }: { da
           <p className="text-[14px] text-[#8a8a9a] text-center py-16">Bu firmada henüz görüntüleme yetkiniz yok.</p>
         ) : (
           <>
-            <div className="flex gap-1 mb-7 flex-wrap">
+            <div className="flex gap-1 mb-7 overflow-x-auto pb-1 -mx-6 px-6 sm:mx-0 sm:px-0 sm:flex-wrap" style={{ scrollbarWidth: "none" }}>
               {tabs.map((t) => (
                 <button key={t.key} onClick={() => setTab(t.key)}
-                  className="px-4 py-2 rounded-full text-[13px] font-medium transition-all flex items-center gap-1.5"
+                  className="px-4 py-2 rounded-full text-[13px] font-medium transition-all flex items-center gap-1.5 flex-shrink-0 whitespace-nowrap"
                   style={{
                     background: tab === t.key ? "rgba(96,165,250,0.2)" : "var(--surface)",
                     border: `1px solid ${tab === t.key ? "rgba(96,165,250,0.4)" : "var(--border)"}`,
@@ -202,7 +210,7 @@ function EmpIceriklerTab({ slug, contentItems, canManage, router }: {
             <div className="min-w-0 flex-1">
               <p className="text-white text-[14px] font-semibold">{ci.title}</p>
               {ci.description && <p className="text-[12px] text-[#8a8a9a] mt-0.5">{ci.description}</p>}
-              <p className="text-[11px] text-[#555] mt-1">{ci.scheduledDate}{ci.publishedAt ? ` · Yayınlandı: ${ci.publishedAt}` : ""}</p>
+              <p className="text-[11px] text-[#555] mt-1">{fmtDate(ci.scheduledDate)}{ci.publishedAt ? ` · Yayınlandı: ${fmtDate(ci.publishedAt)}` : ""}</p>
             </div>
             <div className="flex items-center gap-2 flex-shrink-0">
               <span className="text-[11px] font-semibold px-2.5 py-1 rounded-full"
@@ -303,7 +311,7 @@ function EmpGuncellemelerTab({ slug, updates, canManage, router }: {
           </span>
           <div className="flex-1 min-w-0">
             <p className="text-white text-[13px] leading-relaxed whitespace-pre-wrap">{u.text}</p>
-            <p className="text-[11px] text-[#555] mt-1">{u.date}</p>
+            <p className="text-[11px] text-[#555] mt-1">{fmtDate(u.date)}</p>
           </div>
         </div>
       ))}
@@ -384,7 +392,7 @@ function EmpFaturalarTab({ slug, invoices, canManage, router }: {
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="text-white text-[14px] font-semibold">{inv.period}</p>
-              <p className="text-[13px] text-[#8a8a9a] mt-0.5">{inv.amount}{inv.dueDate ? ` · Vade: ${inv.dueDate}` : ""}</p>
+              <p className="text-[13px] text-[#8a8a9a] mt-0.5">{inv.amount}{inv.dueDate ? ` · Vade: ${fmtDate(inv.dueDate)}` : ""}</p>
             </div>
             <div className="flex items-center gap-2 flex-shrink-0">
               <span className="text-[11px] px-2.5 py-1 rounded-full"

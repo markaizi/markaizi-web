@@ -26,7 +26,7 @@ export default function AdminCalendarView() {
           <span className="text-[#555]">/</span>
           <span className="text-[14px] font-semibold text-white">Takvim</span>
         </div>
-        <button onClick={handleLogout} className="text-[12px] text-[#8a8a9a] hover:text-[#f87171] transition-colors flex items-center gap-1.5">
+        <button onClick={handleLogout} className="text-[12px] text-[#8a8a9a] hover:text-[#f87171] transition-colors flex items-center gap-1.5 min-h-[44px] px-1">
           <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth="2">
             <path d="M18.364 5.636A9 9 0 1 1 5.636 18.364" strokeLinecap="round"/>
             <path d="M12 3v9" strokeLinecap="round"/>

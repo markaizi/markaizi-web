@@ -275,7 +275,7 @@ export default function EmployeeWorkLogs({
           <span className="text-[#555]">/</span>
           <span className="text-[14px] font-semibold text-white">İş Kayıtlarım</span>
         </div>
-        <button onClick={handleLogout} className="text-[12px] text-[#8a8a9a] hover:text-[#f87171] transition-colors flex items-center gap-1.5">
+        <button onClick={handleLogout} className="text-[12px] text-[#8a8a9a] hover:text-[#f87171] transition-colors flex items-center gap-1.5 min-h-[44px] px-1">
           <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth="2">
             <path d="M18.364 5.636A9 9 0 1 1 5.636 18.364" strokeLinecap="round"/>
             <path d="M12 3v9" strokeLinecap="round"/>
@@ -290,8 +290,10 @@ export default function EmployeeWorkLogs({
           <p className="text-[14px] text-[#8a8a9a]">Merhaba {employeeName} — yaptığın işleri günlük olarak buraya ekle.</p>
         </div>
 
+        {/* Mobilde form önce gelsin (asıl amaç kayıt eklemek), masaüstünde özet önce */}
+        <div className="flex flex-col">
         {/* Özet */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+        <div className="order-2 sm:order-1 grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
           <div className="rounded-2xl p-5" style={{ background: "rgba(52,211,153,0.08)", border: "1px solid rgba(52,211,153,0.2)" }}>
             <p className="text-[11px] font-bold uppercase tracking-wide" style={{ color: "#34d399" }}>Bu Dönem Kazancı</p>
             <p className="text-[28px] font-black text-white mt-1">{currentTotal > 0 ? `${currentTotal.toLocaleString("tr-TR")} ₺` : "—"}</p>
@@ -304,7 +306,7 @@ export default function EmployeeWorkLogs({
         </div>
 
         {/* Yeni kayıt formu */}
-        <div className="rounded-2xl p-5 space-y-4 mb-8" style={{ background: "var(--surface)", border: "1px solid rgba(96,165,250,0.3)" }}>
+        <div className="order-1 sm:order-2 rounded-2xl p-5 space-y-4 mb-8" style={{ background: "var(--surface)", border: "1px solid rgba(96,165,250,0.3)" }}>
           <div className="flex items-center justify-between gap-3">
             <p className="font-semibold text-white text-[14px]">{bulkMode ? "Toplu İş Gir" : "Yeni İş Kaydı"}</p>
             <button
@@ -414,6 +416,7 @@ export default function EmployeeWorkLogs({
               </button>
             </form>
           )}
+        </div>
         </div>
 
         {/* Mevcut dönem */}

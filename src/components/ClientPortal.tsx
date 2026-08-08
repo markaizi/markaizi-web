@@ -15,6 +15,14 @@ function fmtAmount(raw: string): string {
   return num.toLocaleString("tr-TR") + " ₺";
 }
 
+// "YYYY-MM-DD" → "10 Eylül 2026"
+function fmtDate(raw: string): string {
+  if (!raw) return raw;
+  const dt = new Date(raw + "T00:00:00");
+  if (isNaN(dt.getTime())) return raw;
+  return dt.toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" });
+}
+
 const TABS: { id: Tab; label: string; emoji: string }[] = [
   { id: "website",  label: "Website",             emoji: "🌐" },
   { id: "updates",  label: "Güncellemeler",        emoji: "📝" },
@@ -94,7 +102,7 @@ function Dashboard({
             Admin Paneli
           </a>
         ) : (
-          <button onClick={onLogout} className="text-[12px] text-[#8a8a9a] hover:text-[#f87171] transition-colors flex items-center gap-1.5 flex-shrink-0">
+          <button onClick={onLogout} className="text-[12px] text-[#8a8a9a] hover:text-[#f87171] transition-colors flex items-center gap-1.5 flex-shrink-0 min-h-[44px] px-1">
             <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth="2">
               <path d="M18.364 5.636A9 9 0 1 1 5.636 18.364" strokeLinecap="round"/>
               <path d="M12 3v9" strokeLinecap="round"/>
@@ -236,7 +244,7 @@ function QuickSummary({ client, onNavigate }: { client: ClientData; onNavigate: 
                 bg: "rgba(96,165,250,0.08)",
                 labelColor: "#93c5fd",
                 label: "Yeni ajans güncellemesi",
-                sub: `${latestUpdate.date} — ${latestUpdate.text}`,
+                sub: `${fmtDate(latestUpdate.date)} — ${latestUpdate.text}`,
               }
             : null,
           unseenReport
@@ -337,7 +345,7 @@ function WebsiteTab({ client }: { client: ClientData }) {
               className="text-[11px] font-semibold px-2.5 py-1 rounded-lg flex-shrink-0 whitespace-nowrap mt-0.5"
               style={{ background: "rgba(96,165,250,0.1)", color: "#60a5fa" }}
             >
-              {u.date}
+              {fmtDate(u.date)}
             </span>
             <p className="text-[14px] text-[#c8c8d8] leading-relaxed whitespace-pre-wrap">{u.text}</p>
           </div>
@@ -365,7 +373,7 @@ function UpdatesTab({ client }: { client: ClientData }) {
               className="text-[11px] font-semibold px-2.5 py-1 rounded-lg flex-shrink-0 whitespace-nowrap mt-0.5"
               style={{ background: "rgba(168,85,247,0.1)", color: "#c084fc" }}
             >
-              {u.date}
+              {fmtDate(u.date)}
             </span>
             <p className="text-[14px] text-[#c8c8d8] leading-relaxed whitespace-pre-wrap">{u.text}</p>
           </div>
@@ -410,7 +418,7 @@ function InvoiceTab({ client }: { client: ClientData }) {
               <div>
                 <p className="text-[13px] text-white font-medium">{inv.period}</p>
                 {inv.dueDate && (
-                  <p className="text-[11px] text-[#8a8a9a] mt-0.5">Son ödeme: {inv.dueDate}</p>
+                  <p className="text-[11px] text-[#8a8a9a] mt-0.5">Son ödeme: {fmtDate(inv.dueDate)}</p>
                 )}
               </div>
               <span className="text-[11px] font-bold px-2.5 py-1 rounded-full flex-shrink-0" style={statusStyle(inv.status)}>
@@ -443,7 +451,7 @@ function InvoiceTab({ client }: { client: ClientData }) {
             }}
           >
             <span className="text-[13px] text-white">{inv.period}</span>
-            <span className="text-[13px] text-[#8a8a9a]">{inv.dueDate ?? "—"}</span>
+            <span className="text-[13px] text-[#8a8a9a]">{inv.dueDate ? fmtDate(inv.dueDate) : "—"}</span>
             <span className="text-[15px] font-black gradient-text text-center">{fmtAmount(inv.amount)}</span>
             <div className="flex justify-end">
               <span className="text-[11px] font-bold px-3 py-1 rounded-full" style={statusStyle(inv.status)}>

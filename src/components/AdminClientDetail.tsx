@@ -96,6 +96,14 @@ function fmtAmount(raw: string): string {
   return num.toLocaleString("tr-TR") + " ₺";
 }
 
+// "YYYY-MM-DD" (tarih girişlerinden gelen ham format) → "10 Eylül 2026"
+function fmtDate(raw: string): string {
+  if (!raw) return raw;
+  const dt = new Date(raw + "T00:00:00");
+  if (isNaN(dt.getTime())) return raw;
+  return dt.toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" });
+}
+
 // ── Paylaşılan UI ─────────────────────────────────────────────────────────────
 
 function Field({
@@ -165,7 +173,7 @@ function SaveBtn({ loading, label = "Kaydet" }: { loading: boolean; label?: stri
 function DeleteBtn({ onClick, loading }: { onClick: () => void; loading: boolean }) {
   return (
     <button type="button" onClick={onClick} disabled={loading}
-      className="text-[12px] text-red-400 hover:text-red-300 transition-colors px-2 py-1 rounded">
+      className="text-[12px] text-red-400 hover:text-red-300 transition-colors px-3 min-h-[44px] inline-flex items-center rounded">
       {loading ? "..." : "Sil"}
     </button>
   );
@@ -174,7 +182,7 @@ function DeleteBtn({ onClick, loading }: { onClick: () => void; loading: boolean
 function EditBtn({ onClick }: { onClick: () => void }) {
   return (
     <button type="button" onClick={onClick}
-      className="text-[12px] text-[#8a8a9a] hover:text-purple-400 transition-colors px-2 py-1 rounded">
+      className="text-[12px] text-[#8a8a9a] hover:text-purple-400 transition-colors px-3 min-h-[44px] inline-flex items-center rounded">
       Düzenle
     </button>
   );
@@ -214,7 +222,7 @@ export default function AdminClientDetail({ data, unreadNoteCount = 0 }: { data:
         </div>
         <button
           onClick={handleLogout}
-          className="text-[12px] text-[#8a8a9a] hover:text-[#f87171] transition-colors flex items-center gap-1.5 flex-shrink-0"
+          className="text-[12px] text-[#8a8a9a] hover:text-[#f87171] transition-colors flex items-center gap-1.5 flex-shrink-0 min-h-[44px] px-1"
         >
           <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth="2">
             <path d="M18.364 5.636A9 9 0 1 1 5.636 18.364" strokeLinecap="round"/>
@@ -239,8 +247,8 @@ export default function AdminClientDetail({ data, unreadNoteCount = 0 }: { data:
           </div>
         </div>
 
-        {/* Sekmeler */}
-        <div className="flex gap-1 mb-7 flex-wrap">
+        {/* Sekmeler — yatay kaydırmalı, mobilde kırılmıyor */}
+        <div className="flex gap-1 mb-7 overflow-x-auto pb-1 -mx-6 px-6 sm:mx-0 sm:px-0 sm:flex-wrap" style={{ scrollbarWidth: "none" }}>
           {(["genel", "icerikler", "guncellemeler", "faturalar", "raporlar", "notlar", "kullanici"] as const).map((t) => {
             const labels: Record<typeof t, string> = {
               genel: "Genel",
@@ -255,7 +263,7 @@ export default function AdminClientDetail({ data, unreadNoteCount = 0 }: { data:
               <button
                 key={t}
                 onClick={() => setTab(t)}
-                className="px-4 py-2 rounded-full text-[13px] font-medium transition-all flex items-center gap-1.5"
+                className="px-4 py-2 rounded-full text-[13px] font-medium transition-all flex items-center gap-1.5 flex-shrink-0 whitespace-nowrap"
                 style={{
                   background: tab === t ? "rgba(168,85,247,0.2)" : "var(--surface)",
                   border: `1px solid ${tab === t ? "rgba(168,85,247,0.4)" : "var(--border)"}`,
@@ -493,7 +501,7 @@ function GuncellemelerTab({ slug, updates, router }: { slug: string; updates: Up
           </span>
           <div className="flex-1 min-w-0">
             <p className="text-white text-[13px] leading-relaxed whitespace-pre-wrap">{u.text}</p>
-            <p className="text-[11px] text-[#555] mt-1">{u.date}</p>
+            <p className="text-[11px] text-[#555] mt-1">{fmtDate(u.date)}</p>
           </div>
           <div className="flex items-center gap-1.5 flex-shrink-0">
             <EditBtn onClick={() => startEdit(u)} />
@@ -636,7 +644,7 @@ function FaturalarTab({ slug, invoices, router }: { slug: string; invoices: Invo
           <div className="flex items-start justify-between gap-3">
             <div>
               <p className="text-white text-[14px] font-semibold leading-snug">{inv.period}</p>
-              <p className="text-[13px] text-[#8a8a9a] mt-0.5">{fmtAmount(inv.amount)}{inv.dueDate ? ` · Vade: ${inv.dueDate}` : ""}</p>
+              <p className="text-[13px] text-[#8a8a9a] mt-0.5">{fmtAmount(inv.amount)}{inv.dueDate ? ` · Vade: ${fmtDate(inv.dueDate)}` : ""}</p>
             </div>
             <div className="flex items-center gap-2 flex-shrink-0">
               <span className="text-[12px] font-medium px-2 py-1 rounded-full" style={{ color: STATUS_COLOR[inv.status], background: `${STATUS_COLOR[inv.status]}18` }}>{STATUS_LABEL[inv.status]}</span>
@@ -945,8 +953,8 @@ function IceriklerTab({
                 <p className="text-[12px] text-[#8a8a9a] mt-0.5 leading-relaxed">{ci.description}</p>
               )}
               <p className="text-[11px] text-[#555] mt-1">
-                {ci.scheduledDate}
-                {ci.publishedAt ? ` · Yayınlandı: ${ci.publishedAt}` : ""}
+                {fmtDate(ci.scheduledDate)}
+                {ci.publishedAt ? ` · Yayınlandı: ${fmtDate(ci.publishedAt)}` : ""}
               </p>
             </div>
             <div className="flex items-center gap-2 flex-shrink-0">

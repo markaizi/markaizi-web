@@ -64,7 +64,7 @@ export default function AdminPanel({
           </span>
         </div>
         <button onClick={handleLogout}
-          className="text-[12px] text-[#8a8a9a] hover:text-[#f87171] transition-colors flex items-center gap-1.5">
+          className="text-[12px] text-[#8a8a9a] hover:text-[#f87171] transition-colors flex items-center gap-1.5 min-h-[44px] px-1">
           <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth="2">
             <path d="M18.364 5.636A9 9 0 1 1 5.636 18.364" strokeLinecap="round"/>
             <path d="M12 3v9" strokeLinecap="round"/>
@@ -116,7 +116,7 @@ function Dashboard({ clients, adminName, employeeCount, totalUnread, totalOverdu
       </div>
 
       {/* Hızlı özet çubukları */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-8">
+      <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-8">
         {[
           { label: "Aktif Firma", value: clients.length, color: "#c084fc", bg: "rgba(192,132,252,0.1)", border: "rgba(192,132,252,0.2)" },
           { label: "Çalışan", value: employeeCount, color: "#34d399", bg: "rgba(52,211,153,0.1)", border: "rgba(52,211,153,0.2)" },
@@ -128,9 +128,9 @@ function Dashboard({ clients, adminName, employeeCount, totalUnread, totalOverdu
             border: totalOverdue > 0 ? "rgba(248,113,113,0.2)" : "rgba(251,146,60,0.2)",
           },
         ].map(stat => (
-          <div key={stat.label} className="rounded-2xl p-4" style={{ background: stat.bg, border: `1px solid ${stat.border}` }}>
-            <p className="text-[28px] font-black" style={{ color: stat.color }}>{stat.value}</p>
-            <p className="text-[12px] text-[#8a8a9a] mt-0.5">{stat.label}</p>
+          <div key={stat.label} className="rounded-2xl p-3 sm:p-4" style={{ background: stat.bg, border: `1px solid ${stat.border}` }}>
+            <p className="text-[20px] sm:text-[28px] font-black leading-tight" style={{ color: stat.color }}>{stat.value}</p>
+            <p className="text-[10.5px] sm:text-[12px] text-[#8a8a9a] mt-0.5 leading-snug">{stat.label}</p>
           </div>
         ))}
       </div>
@@ -374,8 +374,62 @@ function FirmalarView({ clients, onBack, router }: {
         </button>
       </div>
 
-      {/* Tablo */}
-      <div className="rounded-2xl overflow-hidden" style={{ border: "1px solid var(--border)" }}>
+      {/* Mobil: kart listesi */}
+      <div className="md:hidden space-y-2">
+        {clients.map((client) => {
+          const isOverdue = client.overdueInvoiceCount > 0;
+          return (
+            <div key={client.slug}
+              onClick={() => router.push(`/musteri/admin/${client.slug}`)}
+              className="rounded-xl p-4 cursor-pointer transition-colors active:bg-white/[0.04]"
+              style={{
+                background: isOverdue ? "rgba(248,113,113,0.05)" : "var(--surface)",
+                border: `1px solid ${isOverdue ? "rgba(248,113,113,0.2)" : "var(--border)"}`,
+              }}>
+              <div className="flex items-center gap-3">
+                <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 text-[13px] font-black"
+                  style={{ background: "rgba(168,85,247,0.12)", border: "1px solid rgba(168,85,247,0.2)", color: "#c084fc" }}>
+                  {client.name.charAt(0).toUpperCase()}
+                </div>
+                <p className="text-white font-semibold text-[14px] truncate flex-1 min-w-0">{client.name}</p>
+                <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-[#444] flex-shrink-0" stroke="currentColor" strokeWidth="2.5">
+                  <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+              {(isOverdue || client.pendingInvoiceCount > 0 || client.unreadNoteCount > 0) && (
+                <div className="flex items-center gap-1.5 flex-wrap mt-2.5 pl-12">
+                  {client.overdueInvoiceCount > 0 ? (
+                    <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full"
+                      style={{ background: "rgba(248,113,113,0.15)", color: "#f87171" }}>
+                      {client.overdueInvoiceCount} gecikmiş fatura
+                    </span>
+                  ) : client.pendingInvoiceCount > 0 ? (
+                    <span className="text-[11px] font-semibold px-2 py-0.5 rounded-full"
+                      style={{ background: "rgba(251,191,36,0.12)", color: "#fbbf24" }}>
+                      {client.pendingInvoiceCount} bekleyen fatura
+                    </span>
+                  ) : null}
+                  {client.unreadNoteCount > 0 && (
+                    <span className="text-[11px] font-bold px-2 py-0.5 rounded-full"
+                      style={{ background: "rgba(251,146,60,0.15)", color: "#fb923c" }}>
+                      {client.unreadNoteCount} yeni istek
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
+
+        {clients.length === 0 && (
+          <div className="px-5 py-12 text-center rounded-xl" style={{ border: "1px solid var(--border)" }}>
+            <p className="text-[14px] text-[#555]">Henüz firma eklenmemiş.</p>
+          </div>
+        )}
+      </div>
+
+      {/* Masaüstü: tablo */}
+      <div className="hidden md:block rounded-2xl overflow-hidden" style={{ border: "1px solid var(--border)" }}>
         {/* Başlık */}
         <div className="grid grid-cols-[1fr_auto_auto_auto] gap-3 px-5 py-3 text-[11px] font-bold uppercase tracking-wider text-[#555]"
           style={{ background: "var(--surface-2,#0a0a0f)", borderBottom: "1px solid var(--border)" }}>
