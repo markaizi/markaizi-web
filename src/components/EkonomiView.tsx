@@ -187,7 +187,7 @@ export default function EkonomiView({ data }: { data: EkonomiData }) {
                     <button
                       onClick={() => handleDelete(f.id)}
                       disabled={deletingId === f.id}
-                      className="w-7 h-7 flex items-center justify-center rounded-md text-[#555] hover:text-[#f87171] transition-colors flex-shrink-0"
+                      className="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-md text-[#555] hover:text-[#f87171] transition-colors flex-shrink-0 -mr-2.5"
                     >
                       <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5" stroke="currentColor" strokeWidth="2.5">
                         <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" />
@@ -208,7 +208,24 @@ export default function EkonomiView({ data }: { data: EkonomiData }) {
         {/* Aylık geçmiş */}
         <div>
           <p className="text-[13px] font-bold uppercase tracking-wide text-[#8a8a9a] px-1 mb-3">Aylık Geçmiş</p>
-          <div className="rounded-2xl overflow-hidden" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+
+          {/* Mobil: kart listesi */}
+          <div className="md:hidden space-y-2">
+            {data.monthlyHistory.map((m) => (
+              <div key={m.key} className="rounded-xl px-4 py-3" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-[14px] font-semibold text-white">{m.label}</span>
+                  <span className="text-[15px] font-black flex-shrink-0" style={{ color: m.net >= 0 ? "#c084fc" : "#f87171" }}>{fmtTL(m.net)}</span>
+                </div>
+                <p className="text-[12px] text-[#8a8a9a] mt-1">
+                  Gelir <span style={{ color: "#34d399" }}>{fmtTL(m.gelir)}</span> · Gider <span style={{ color: "#f87171" }}>{fmtTL(m.gider)}</span>
+                </p>
+              </div>
+            ))}
+          </div>
+
+          {/* Masaüstü: tablo */}
+          <div className="hidden md:block rounded-2xl overflow-hidden" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
             <div className="grid grid-cols-4 px-4 py-2.5 text-[11px] font-bold uppercase tracking-wide text-[#8a8a9a]" style={{ borderBottom: "1px solid var(--border)" }}>
               <span>Ay</span>
               <span className="text-right">Gelir</span>

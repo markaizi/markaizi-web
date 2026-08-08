@@ -634,7 +634,7 @@ export default function AdminEmployeeDetail({
             <button
               type="button"
               onClick={() => setShowAdvanceForm((v) => !v)}
-              className="text-[13px] font-semibold px-4 py-2 rounded-xl transition-all flex-shrink-0"
+              className="text-[13px] font-semibold px-4 min-h-[44px] rounded-xl transition-all flex-shrink-0"
               style={{ background: "rgba(251,191,36,0.1)", border: "1px solid rgba(251,191,36,0.25)", color: "#fbbf24" }}
             >
               {showAdvanceForm ? "İptal" : "+ Avans Ver"}
@@ -792,8 +792,8 @@ export default function AdminEmployeeDetail({
                     <button
                       onClick={() => handlePayPeriod(summary.key)}
                       disabled={payingKey === summary.key}
-                      className="pt-3 text-[12px] font-semibold flex-shrink-0"
-                      style={{ color: "#34d399" }}
+                      className="mt-3 text-[12px] font-semibold px-3.5 min-h-[44px] rounded-lg transition-colors flex-shrink-0"
+                      style={{ background: "rgba(52,211,153,0.12)", color: "#34d399", border: "1px solid rgba(52,211,153,0.25)" }}
                     >
                       {payingKey === summary.key ? "Ödeniyor..." : "Öde"}
                     </button>
