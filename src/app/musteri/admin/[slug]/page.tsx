@@ -6,6 +6,12 @@ import AdminClientDetail, { type ClientDetailData } from "@/components/AdminClie
 
 export const dynamic = "force-dynamic";
 
+function parseAmount(raw: string | null): number {
+  if (!raw) return 0;
+  const digits = raw.replace(/[^\d]/g, "");
+  return digits ? parseInt(digits, 10) : 0;
+}
+
 export async function generateMetadata(
   { params }: { params: Promise<{ slug: string }> }
 ): Promise<Metadata> {
@@ -49,6 +55,18 @@ export default async function AdminClientPage({
 
   if (!client) notFound();
 
+  // Kârlılık: bu firmanın kartlarına bağlı, fiyatlandırılmış iş kayıtları toplamı.
+  const [pricedLogs, unpricedWorkLogCount] = await Promise.all([
+    prisma.workLog.findMany({
+      where: { amount: { not: null }, workflowCard: { clientId: client.id } },
+      select: { amount: true },
+    }),
+    prisma.workLog.count({
+      where: { amount: null, workflowCard: { clientId: client.id } },
+    }),
+  ]);
+  const laborCost = pricedLogs.reduce((s, l) => s + parseAmount(l.amount), 0);
+
   const data: ClientDetailData = {
     id: client.id,
     slug: client.slug,
@@ -84,6 +102,8 @@ export default async function AdminClientPage({
       publishedAt: ci.publishedAt?.toISOString().split("T")[0] ?? null,
     })),
     users: client.users.map((u) => ({ ...u, username: u.username ?? null })),
+    laborCost,
+    unpricedWorkLogCount,
     adReports: client.adReports.map((r) => ({
       id: r.id,
       platform: r.platform,

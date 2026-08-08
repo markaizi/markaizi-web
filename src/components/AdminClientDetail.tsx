@@ -41,6 +41,8 @@ export interface ClientDetailData {
     publishedAt: string | null;
   }[];
   users: { id: string; username: string | null; name: string; email: string }[];
+  laborCost: number;
+  unpricedWorkLogCount: number;
   adReports: {
     id: string;
     platform: "META" | "GOOGLE" | "WEBSITE";
@@ -94,6 +96,11 @@ function fmtAmount(raw: string): string {
   const num = parseInt(digits, 10);
   if (isNaN(num)) return raw;
   return num.toLocaleString("tr-TR") + " ₺";
+}
+
+function parseAmountNum(raw: string): number {
+  const digits = raw.replace(/[^\d]/g, "");
+  return digits ? parseInt(digits, 10) : 0;
 }
 
 // "YYYY-MM-DD" (tarih girişlerinden gelen ham format) → "10 Eylül 2026"
@@ -308,6 +315,11 @@ function GenelTab({ data, router }: { data: ClientDetailData; router: ReturnType
   const [err, setErr] = useState("");
   const [ok, setOk] = useState(false);
 
+  const revenue = data.invoices
+    .filter((i) => i.status === "ODENDI")
+    .reduce((s, i) => s + parseAmountNum(i.amount), 0);
+  const profit = revenue - data.laborCost;
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
@@ -332,6 +344,28 @@ function GenelTab({ data, router }: { data: ClientDetailData; router: ReturnType
 
   return (
     <div className="space-y-5">
+      <div className="rounded-2xl p-5" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+        <p className="text-[13px] font-semibold text-white mb-3">Kârlılık</p>
+        <div className="grid grid-cols-3 gap-3">
+          <div className="rounded-xl p-3.5" style={{ background: "rgba(52,211,153,0.08)", border: "1px solid rgba(52,211,153,0.2)" }}>
+            <p className="text-[10px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1">Gelir</p>
+            <p className="text-[16px] sm:text-[18px] font-black" style={{ color: "#34d399" }}>{revenue.toLocaleString("tr-TR")} ₺</p>
+          </div>
+          <div className="rounded-xl p-3.5" style={{ background: "rgba(248,113,113,0.08)", border: "1px solid rgba(248,113,113,0.2)" }}>
+            <p className="text-[10px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1">İşçilik</p>
+            <p className="text-[16px] sm:text-[18px] font-black" style={{ color: "#f87171" }}>{data.laborCost.toLocaleString("tr-TR")} ₺</p>
+          </div>
+          <div className="rounded-xl p-3.5" style={{ background: profit >= 0 ? "rgba(168,85,247,0.08)" : "rgba(248,113,113,0.08)", border: `1px solid ${profit >= 0 ? "rgba(168,85,247,0.2)" : "rgba(248,113,113,0.2)"}` }}>
+            <p className="text-[10px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1">Kâr</p>
+            <p className="text-[16px] sm:text-[18px] font-black" style={{ color: profit >= 0 ? "#c084fc" : "#f87171" }}>{profit.toLocaleString("tr-TR")} ₺</p>
+          </div>
+        </div>
+        <p className="text-[11px] text-[#666] mt-3">
+          Gelir: ödenmiş faturalar toplamı · İşçilik: bu firmanın kartlarına bağlı fiyatlandırılmış iş kayıtları toplamı
+          {data.unpricedWorkLogCount > 0 && ` · ${data.unpricedWorkLogCount} iş kaydı henüz fiyatlandırılmadı, işçilik eksik hesaplanmış olabilir`}
+        </p>
+      </div>
+
       <form onSubmit={handleSubmit} className="rounded-2xl p-6 space-y-4" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
         <Field label="Firma Adı">
           <Input required value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} />
