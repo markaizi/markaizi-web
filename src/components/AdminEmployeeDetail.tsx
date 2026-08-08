@@ -403,6 +403,7 @@ export default function AdminEmployeeDetail({
     setArchivedDeletingId(null);
   }
 
+  const [showAssignments, setShowAssignments] = useState(false);
   const assignedCount = localAssign.size;
 
   return (
@@ -514,66 +515,22 @@ export default function AdminEmployeeDetail({
           </div>
         </div>
 
-        {/* Firma Atamaları */}
-        <div className="rounded-2xl overflow-hidden" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
-          <div className="px-6 py-4" style={{ borderBottom: "1px solid var(--border)" }}>
+        {/* Firma Atamaları — özet + ayrı modal */}
+        <div className="rounded-2xl p-6 flex items-center justify-between gap-3 flex-wrap" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+          <div>
             <p className="font-semibold text-white text-[14px]">Firma Atamaları</p>
-            <p className="text-[12px] text-[#8a8a9a] mt-0.5">Hangi firmalara erişebileceğini ve hangi bölümleri görüp yönetebileceğini seç.</p>
+            <p className="text-[12px] text-[#8a8a9a] mt-0.5">
+              {assignedCount > 0 ? `${assignedCount} firmaya atanmış — erişim ve yetkileri buradan düzenle.` : "Henüz firma atanmadı."}
+            </p>
           </div>
-          <div className="divide-y" style={{ borderColor: "var(--border)" }}>
-            {allClients.map((client) => {
-              const assigned = localAssign.get(client.id);
-              return (
-                <div key={client.id}>
-                  <label className="flex items-center gap-3 px-6 py-3 cursor-pointer hover:bg-white/[0.02] transition-colors select-none">
-                    <input
-                      type="checkbox"
-                      checked={!!assigned}
-                      onChange={() => handleToggleClient(client)}
-                      className="w-4 h-4 rounded accent-purple-500 cursor-pointer flex-shrink-0"
-                    />
-                    <span className="text-[14px] text-white font-medium flex-1">{client.name}</span>
-                    {assigned && <span className="text-[11px] text-[#c084fc]">atandı</span>}
-                  </label>
-
-                  {assigned && (
-                    <div className="px-6 pb-4 grid grid-cols-2 gap-x-6 gap-y-3" style={{ paddingLeft: "3.25rem" }}>
-                      {SECTIONS.map((sec) => {
-                        const state = getState(assigned[sec.viewKey], assigned[sec.manageKey]);
-                        return (
-                          <div key={sec.label}>
-                            <p className="text-[10px] font-semibold text-[#555] uppercase tracking-wide mb-1.5">{sec.label}</p>
-                            <div className="flex rounded-lg overflow-hidden" style={{ border: "1px solid var(--border)" }}>
-                              {(["yok", "goruntule", "duzenle"] as SectionState[]).map((s) => (
-                                <button
-                                  key={s}
-                                  onClick={() => handleSectionChange(client.id, sec, s)}
-                                  className="flex-1 text-[11px] py-1 transition-colors"
-                                  style={{
-                                    background: state === s
-                                      ? s === "yok" ? "rgba(138,138,154,0.2)" : s === "goruntule" ? "rgba(96,165,250,0.2)" : "rgba(168,85,247,0.2)"
-                                      : "transparent",
-                                    color: state === s
-                                      ? s === "yok" ? "#8a8a9a" : s === "goruntule" ? "#60a5fa" : "#c084fc"
-                                      : "#555",
-                                    fontWeight: state === s ? 600 : 400,
-                                  }}>
-                                  {s === "yok" ? "Yok" : s === "goruntule" ? "Görüntüle" : "Düzenle"}
-                                </button>
-                              ))}
-                            </div>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-            {allClients.length === 0 && (
-              <p className="text-[13px] text-[#8a8a9a] text-center py-8">Henüz firma yok.</p>
-            )}
-          </div>
+          <button
+            type="button"
+            onClick={() => setShowAssignments(true)}
+            className="text-[13px] font-semibold px-4 py-2 rounded-xl transition-all flex-shrink-0"
+            style={{ background: "rgba(168,85,247,0.1)", border: "1px solid rgba(168,85,247,0.25)", color: "#c084fc" }}
+          >
+            Firma Atamalarını Düzenle
+          </button>
         </div>
 
         {/* Ödeme Günü */}
@@ -718,6 +675,114 @@ export default function AdminEmployeeDetail({
           </div>
         )}
       </main>
+
+      {showAssignments && (
+        <AssignmentsModal
+          allClients={allClients}
+          localAssign={localAssign}
+          onToggleClient={handleToggleClient}
+          onSectionChange={handleSectionChange}
+          onClose={() => setShowAssignments(false)}
+        />
+      )}
+    </div>
+  );
+}
+
+// ── Firma Atamaları Modalı ────────────────────────────────────────────────────
+
+function AssignmentsModal({
+  allClients, localAssign, onToggleClient, onSectionChange, onClose,
+}: {
+  allClients: ClientOption[];
+  localAssign: Map<string, LocalAssign>;
+  onToggleClient: (client: ClientOption) => void;
+  onSectionChange: (clientId: string, section: typeof SECTIONS[number], state: SectionState) => void;
+  onClose: () => void;
+}) {
+  return (
+    <div
+      className="fixed inset-0 z-[1100] flex items-center justify-center px-4"
+      style={{ background: "rgba(0,0,0,0.75)", backdropFilter: "blur(8px)" }}
+      onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
+    >
+      <div
+        className="w-full max-w-[560px] rounded-2xl relative max-h-[85vh] flex flex-col overflow-hidden"
+        style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+      >
+        <div className="px-6 py-5 flex items-start justify-between gap-3" style={{ borderBottom: "1px solid var(--border)" }}>
+          <div>
+            <h2 className="font-bold text-[17px] text-white">Firma Atamaları</h2>
+            <p className="text-[12px] text-[#8a8a9a] mt-0.5">Hangi firmalara erişebileceğini ve hangi bölümleri görüp yönetebileceğini seç.</p>
+          </div>
+          <button type="button" onClick={onClose} className="w-8 h-8 flex-shrink-0 flex items-center justify-center rounded-full transition-all hover:bg-white/[0.08]">
+            <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-[#8a8a9a]" stroke="currentColor" strokeWidth="2.5">
+              <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" />
+            </svg>
+          </button>
+        </div>
+
+        <div className="overflow-y-auto divide-y" style={{ borderColor: "var(--border)" }}>
+          {allClients.map((client) => {
+            const assigned = localAssign.get(client.id);
+            return (
+              <div key={client.id}>
+                <label className="flex items-center gap-3 px-6 py-3 cursor-pointer hover:bg-white/[0.02] transition-colors select-none">
+                  <input
+                    type="checkbox"
+                    checked={!!assigned}
+                    onChange={() => onToggleClient(client)}
+                    className="w-4 h-4 rounded accent-purple-500 cursor-pointer flex-shrink-0"
+                  />
+                  <span className="text-[14px] text-white font-medium flex-1">{client.name}</span>
+                  {assigned && <span className="text-[11px] text-[#c084fc]">atandı</span>}
+                </label>
+
+                {assigned && (
+                  <div className="px-6 pb-4 grid grid-cols-2 gap-x-6 gap-y-3" style={{ paddingLeft: "3.25rem" }}>
+                    {SECTIONS.map((sec) => {
+                      const state = getState(assigned[sec.viewKey], assigned[sec.manageKey]);
+                      return (
+                        <div key={sec.label}>
+                          <p className="text-[10px] font-semibold text-[#555] uppercase tracking-wide mb-1.5">{sec.label}</p>
+                          <div className="flex rounded-lg overflow-hidden" style={{ border: "1px solid var(--border)" }}>
+                            {(["yok", "goruntule", "duzenle"] as SectionState[]).map((s) => (
+                              <button
+                                key={s}
+                                onClick={() => onSectionChange(client.id, sec, s)}
+                                className="flex-1 text-[11px] py-1 transition-colors"
+                                style={{
+                                  background: state === s
+                                    ? s === "yok" ? "rgba(138,138,154,0.2)" : s === "goruntule" ? "rgba(96,165,250,0.2)" : "rgba(168,85,247,0.2)"
+                                    : "transparent",
+                                  color: state === s
+                                    ? s === "yok" ? "#8a8a9a" : s === "goruntule" ? "#60a5fa" : "#c084fc"
+                                    : "#555",
+                                  fontWeight: state === s ? 600 : 400,
+                                }}>
+                                {s === "yok" ? "Yok" : s === "goruntule" ? "Görüntüle" : "Düzenle"}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+          {allClients.length === 0 && (
+            <p className="text-[13px] text-[#8a8a9a] text-center py-8">Henüz firma yok.</p>
+          )}
+        </div>
+
+        <div className="px-6 py-4" style={{ borderTop: "1px solid var(--border)" }}>
+          <button type="button" onClick={onClose} className="btn btn-primary text-sm px-5 py-2 w-full">
+            Bitti
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
