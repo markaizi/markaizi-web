@@ -12,7 +12,9 @@ export interface EmployeeDetailData {
   name: string;
   email: string;
   workflowAccess: boolean;
-  workflowCanManageCards: boolean;
+  workflowCanCreateCards: boolean;
+  workflowCanDragCards: boolean;
+  workflowCanWriteRevisionNote: boolean;
   workflowCanDeleteAnyCard: boolean;
   workflowCanManageColumns: boolean;
   paymentDay: number | null;
@@ -117,7 +119,9 @@ const DEFAULT_PERMS: Omit<LocalAssign, "id"> = {
 
 const WORKFLOW_TOGGLES = [
   { key: "workflowAccess" as const, label: "Erişim", desc: "İş Akışı panosunu görebilir. Kapalıysa diğer yetkiler etkisiz." },
-  { key: "workflowCanManageCards" as const, label: "Kart Yönetimi", desc: "Kart ekler, düzenler, taşır, kendi oluşturduğu kartı siler." },
+  { key: "workflowCanCreateCards" as const, label: "Kart Açma ve Düzenleme", desc: "Yeni kart oluşturur; başlık, öncelik, tarih, atanan kişi ve firma alanlarını düzenler; kendi oluşturduğu kartı siler. Kapalıysa sadece açıklama ekleyebilir." },
+  { key: "workflowCanDragCards" as const, label: "Kart Taşıma (Sürükleme)", desc: "Kartları sütunlar arasında sürükleyip taşıyabilir." },
+  { key: "workflowCanWriteRevisionNote" as const, label: "Revize Notu Yazma", desc: "Kartlara revize notu ekleyebilir/düzenleyebilir. Kapalıysa sadece admin yazabilir." },
   { key: "workflowCanDeleteAnyCard" as const, label: "Tüm Kartları Silme", desc: "Başkasının oluşturduğu kartları da silebilir." },
   { key: "workflowCanManageColumns" as const, label: "Sütun Yönetimi", desc: "Sütun ekler, yeniden adlandırır, siler." },
 ];
@@ -160,7 +164,9 @@ export default function AdminEmployeeDetail({
   // ── İş Akışı yetkileri ───────────────────────────────────────────────────
   const [wf, setWf] = useState({
     workflowAccess: employee.workflowAccess,
-    workflowCanManageCards: employee.workflowCanManageCards,
+    workflowCanCreateCards: employee.workflowCanCreateCards,
+    workflowCanDragCards: employee.workflowCanDragCards,
+    workflowCanWriteRevisionNote: employee.workflowCanWriteRevisionNote,
     workflowCanDeleteAnyCard: employee.workflowCanDeleteAnyCard,
     workflowCanManageColumns: employee.workflowCanManageColumns,
   });

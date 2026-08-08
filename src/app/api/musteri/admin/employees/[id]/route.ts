@@ -13,7 +13,9 @@ const patchSchema = z.object({
   password: z.string().min(6).max(128).optional(),
   // İş Akışı yetkileri
   workflowAccess: z.boolean().optional(),
-  workflowCanManageCards: z.boolean().optional(),
+  workflowCanCreateCards: z.boolean().optional(),
+  workflowCanDragCards: z.boolean().optional(),
+  workflowCanWriteRevisionNote: z.boolean().optional(),
   workflowCanDeleteAnyCard: z.boolean().optional(),
   workflowCanManageColumns: z.boolean().optional(),
   // İş kayıtları

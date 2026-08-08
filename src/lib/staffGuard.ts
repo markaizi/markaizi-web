@@ -94,17 +94,17 @@ export async function requireWorkflowAccess() {
   return { session, err: null };
 }
 
-/** ADMIN veya workflowCanManageCards=true olan EMPLOYEE — kart ekle/düzenle/taşı. */
-export async function requireWorkflowManageCards() {
+/** ADMIN veya workflowCanCreateCards=true olan EMPLOYEE — kart oluşturur/temel alanları düzenler. */
+export async function requireWorkflowCreateCards() {
   const session = await getSession();
   if (!session || session.role === "CLIENT") return { session: null, err: forbidden() };
   if (!(await checkActive(session.uid))) return { session: null, err: disabled() };
   if (session.role === "ADMIN") return { session, err: null };
   const user = await prisma.user.findUnique({
     where: { id: session.uid },
-    select: { workflowAccess: true, workflowCanManageCards: true },
+    select: { workflowAccess: true, workflowCanCreateCards: true },
   });
-  if (!user?.workflowAccess || !user.workflowCanManageCards) return { session: null, err: forbidden() };
+  if (!user?.workflowAccess || !user.workflowCanCreateCards) return { session: null, err: forbidden() };
   return { session, err: null };
 }
 

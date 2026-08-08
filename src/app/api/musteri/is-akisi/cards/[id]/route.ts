@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
-import { requireWorkflowManageCards, requireWorkflowAccess } from "@/lib/staffGuard";
+import { requireWorkflowAccess } from "@/lib/staffGuard";
 import { assertCanAccessClient } from "@/lib/auth";
 
 export const runtime = "nodejs";
@@ -20,7 +20,7 @@ const patchSchema = z.object({
 });
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const { session, err } = await requireWorkflowManageCards();
+  const { session, err } = await requireWorkflowAccess();
   if (err) return err;
   const { id } = await params;
 
@@ -59,6 +59,32 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   // (taşıyamaz, düzenleyemez, silemez) — sütun "kilitli" sayılır.
   if (before.column.adminOnly && !isAdmin) {
     return NextResponse.json({ error: "Bu sütundaki kartlara yalnızca admin dokunabilir." }, { status: 403 });
+  }
+
+  // Alan bazlı yetki kontrolü — açıklama (description) hariç her şey ayrı bir
+  // yetkiye bağlı: temel alanlar (başlık/öncelik/tarih/atanan/firma) kart açma
+  // yetkisi ister, sütun değişikliği (taşıma) sürükleme yetkisi ister, revize
+  // notu ise kendi ayrı yetkisini ister. Açıklama, pano erişimi olan herkese açık.
+  if (!isAdmin) {
+    const me = await prisma.user.findUnique({
+      where: { id: session!.uid },
+      select: { workflowCanCreateCards: true, workflowCanDragCards: true, workflowCanWriteRevisionNote: true },
+    });
+    const wantsMove = rest.columnId !== undefined || rest.sortOrder !== undefined;
+    const wantsCoreEdit =
+      rest.title !== undefined || rest.priority !== undefined || dueDate !== undefined ||
+      rest.assigneeId !== undefined || clientId !== undefined;
+    const wantsRevisionNote = rest.revisionNote !== undefined;
+
+    if (wantsMove && !me?.workflowCanDragCards) {
+      return NextResponse.json({ error: "Kart taşıma yetkiniz yok." }, { status: 403 });
+    }
+    if (wantsCoreEdit && !me?.workflowCanCreateCards) {
+      return NextResponse.json({ error: "Bu alanları düzenleme yetkiniz yok." }, { status: 403 });
+    }
+    if (wantsRevisionNote && !me?.workflowCanWriteRevisionNote) {
+      return NextResponse.json({ error: "Revize notu yazma yetkiniz yok." }, { status: 403 });
+    }
   }
 
   let toCol: { adminOnly: boolean; triggersWorkLog: boolean } | null = null;
@@ -147,9 +173,9 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
     }
     const me = await prisma.user.findUnique({
       where: { id: session!.uid },
-      select: { workflowCanDeleteAnyCard: true, workflowCanManageCards: true },
+      select: { workflowCanDeleteAnyCard: true, workflowCanCreateCards: true },
     });
-    const canDeleteOwn = me?.workflowCanManageCards && card.creatorId === session!.uid;
+    const canDeleteOwn = me?.workflowCanCreateCards && card.creatorId === session!.uid;
     if (!me?.workflowCanDeleteAnyCard && !canDeleteOwn) {
       return NextResponse.json({ error: "Bu kartı silme yetkiniz yok." }, { status: 403 });
     }

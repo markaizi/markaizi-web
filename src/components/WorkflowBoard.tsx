@@ -64,7 +64,9 @@ export default function WorkflowBoard() {
   const [clients, setClients] = useState<ClientOption[]>([]);
   const [currentUserId, setCurrentUserId] = useState("");
   const [isAdmin, setIsAdmin] = useState(false);
-  const [canManageCards, setCanManageCards] = useState(true);
+  const [canCreateCards, setCanCreateCards] = useState(true);
+  const [canDragCards, setCanDragCards] = useState(true);
+  const [canWriteRevisionNote, setCanWriteRevisionNote] = useState(false);
   const [canDeleteAnyCard, setCanDeleteAnyCard] = useState(false);
   const [canManageColumns, setCanManageColumns] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -98,7 +100,9 @@ export default function WorkflowBoard() {
     setClients(data.clients);
     setCurrentUserId(data.currentUserId);
     setIsAdmin(data.isAdmin);
-    setCanManageCards(data.canManageCards);
+    setCanCreateCards(data.canCreateCards);
+    setCanDragCards(data.canDragCards);
+    setCanWriteRevisionNote(data.canWriteRevisionNote);
     setCanDeleteAnyCard(data.canDeleteAnyCard);
     setCanManageColumns(data.canManageColumns);
     setLoading(false);
@@ -358,7 +362,7 @@ export default function WorkflowBoard() {
         </div>
       )}
 
-      {canManageCards && (
+      {canCreateCards && (
         <div className="flex justify-end mb-3">
           <button
             onClick={() => setShowArchive(true)}
@@ -497,7 +501,7 @@ export default function WorkflowBoard() {
               {/* Kartlar */}
               <div className="wf-cards-scroll flex-1 overflow-y-auto px-2 py-2 sm:px-2.5 sm:py-2.5 flex flex-col gap-1.5" style={{ minHeight: 80 }}>
                 {col.cards.map((card) => {
-                  const interactive = canManageCards && !locked;
+                  const interactive = canDragCards && !locked;
                   return (
                   <div
                     key={card.id}
@@ -564,7 +568,7 @@ export default function WorkflowBoard() {
               </div>
 
               {/* Kart ekle */}
-              {canManageCards && !locked && (
+              {canCreateCards && !locked && (
                 <button
                   onClick={() => setModal({ mode: "create", columnId: col.id })}
                   className="mx-2 mb-2 sm:mx-2.5 sm:mb-2.5 text-[12px] font-semibold text-[#8a8a9a] hover:text-[#c084fc] py-2.5 rounded-lg transition-colors text-left px-1.5"
@@ -638,7 +642,8 @@ export default function WorkflowBoard() {
           clients={clients}
           currentUserId={currentUserId}
           isAdmin={isAdmin}
-          canManageCards={canManageCards}
+          canCreateCards={canCreateCards}
+          canWriteRevisionNote={canWriteRevisionNote}
           canDeleteAnyCard={canDeleteAnyCard}
           onClose={() => setModal(null)}
           onSaved={handleSaved}
@@ -762,7 +767,7 @@ function ArchiveModal({ onClose, onRestored }: { onClose: () => void; onRestored
 // ── Kart Modalı ──────────────────────────────────────────────────────────────
 
 function CardModal({
-  state, columns, employees, clients, currentUserId, isAdmin, canManageCards, canDeleteAnyCard, onClose, onSaved, onDeleted,
+  state, columns, employees, clients, currentUserId, isAdmin, canCreateCards, canWriteRevisionNote, canDeleteAnyCard, onClose, onSaved, onDeleted,
 }: {
   state: { mode: "create" | "edit"; columnId?: string; card?: CardData };
   columns: ColumnData[];
@@ -770,7 +775,8 @@ function CardModal({
   clients: ClientOption[];
   currentUserId: string;
   isAdmin: boolean;
-  canManageCards: boolean;
+  canCreateCards: boolean;
+  canWriteRevisionNote: boolean;
   canDeleteAnyCard: boolean;
   onClose: () => void;
   onSaved: (card: CardData) => void;
@@ -780,9 +786,14 @@ function CardModal({
   const card = state.card;
   const cardColumn = columns.find((c) => c.id === (card?.columnId ?? state.columnId));
   const locked = !isAdmin && !!cardColumn?.adminOnly;
-  // canManageCards=false olan kullanıcı bir karta tıklarsa (görüntüleme amaçlı) salt-okunur açılır;
-  // admin-only bir sütundaki kart ise (locked) admin dışında herkes için de salt-okunur.
-  const readOnly = isEdit && (!canManageCards || locked);
+  // Alan bazlı erişim: temel alanlar (başlık/öncelik/tarih/atanan/firma) "kart açma" yetkisi
+  // ister; açıklama pano erişimi olan herkese açık (admin-only sütun hariç); revize notu
+  // ayrı, varsayılan kapalı bir yetkiyle korunur. Admin-only sütunda (locked) admin dışında
+  // hiçbir alan düzenlenemez.
+  const readOnly = isEdit && (!canCreateCards || locked);
+  const descriptionDisabled = isEdit && locked;
+  const revisionNoteDisabled = !(isAdmin || canWriteRevisionNote) || (isEdit && locked);
+  const canSubmitAnything = !isEdit || !readOnly || !descriptionDisabled || !revisionNoteDisabled;
   const [title, setTitle] = useState(card?.title ?? "");
   const [description, setDescription] = useState(card?.description ?? "");
   const [revisionNote, setRevisionNote] = useState(card?.revisionNote ?? "");
@@ -800,7 +811,7 @@ function CardModal({
 
   // Arşivleme her zaman yalnızca admin'e açık; silme izni ayrıca kilitli sütunlarda (locked) herkes için kapanır.
   const canArchive = isEdit && isAdmin;
-  const canDelete = isEdit && !locked && (isAdmin || canDeleteAnyCard || (canManageCards && card?.creator.id === currentUserId));
+  const canDelete = isEdit && !locked && (isAdmin || canDeleteAnyCard || (canCreateCards && card?.creator.id === currentUserId));
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -808,16 +819,33 @@ function CardModal({
     setSaving(true);
     setError("");
 
-    const body = {
-      title: title.trim(),
-      description: description.trim() || null,
-      revisionNote: revisionNote.trim() || null,
-      priority,
-      dueDate: dueDate || null,
-      assigneeId: assigneeId || null,
-      clientId: clientId || null,
-      ...(isEdit ? {} : { columnId: state.columnId }),
-    };
+    // Sadece gerçekten düzenleyebildiği alanları gönder — sunucu, isteğe eklenmiş her alan
+    // için ilgili yetkiyi tek tek kontrol ediyor; örneğin sadece açıklama yazma hakkı olan
+    // biri title/priority gönderirse (değişmemiş olsa bile) reddedilir.
+    let body: Record<string, unknown>;
+    if (!isEdit) {
+      body = {
+        title: title.trim(),
+        description: description.trim() || null,
+        revisionNote: revisionNoteDisabled ? undefined : revisionNote.trim() || null,
+        priority,
+        dueDate: dueDate || null,
+        assigneeId: assigneeId || null,
+        clientId: clientId || null,
+        columnId: state.columnId,
+      };
+    } else {
+      body = {};
+      if (!readOnly) {
+        body.title = title.trim();
+        body.priority = priority;
+        body.dueDate = dueDate || null;
+        body.assigneeId = assigneeId || null;
+        body.clientId = clientId || null;
+      }
+      if (!descriptionDisabled) body.description = description.trim() || null;
+      if (!revisionNoteDisabled) body.revisionNote = revisionNote.trim() || null;
+    }
 
     const url = isEdit ? `/api/musteri/is-akisi/cards/${card!.id}` : "/api/musteri/is-akisi/cards";
     const method = isEdit ? "PATCH" : "POST";
@@ -883,7 +911,7 @@ function CardModal({
                 ? { background: "rgba(168,85,247,0.15)", color: "#c084fc" }
                 : { background: "rgba(138,138,154,0.15)", color: "#8a8a9a" }}
             >
-              {locked ? "Sadece Admin Dokunabilir" : "Salt Görüntüleme"}
+              {locked ? "Sadece Admin Dokunabilir" : "Sadece Açıklama Ekleyebilirsin"}
             </span>
           )}
         </div>
@@ -909,7 +937,7 @@ function CardModal({
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               rows={3}
-              disabled={readOnly}
+              disabled={descriptionDisabled}
               placeholder="Detaylar..."
               className="w-full px-3.5 py-2.5 rounded-xl text-[14px] text-white placeholder-[#555] outline-none resize-y disabled:opacity-70"
               style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
@@ -924,12 +952,14 @@ function CardModal({
               value={revisionNote}
               onChange={(e) => setRevisionNote(e.target.value)}
               rows={2}
-              disabled={readOnly}
+              disabled={revisionNoteDisabled}
               placeholder="Örn. Logo daha büyük olsun, renk tonu koyulaştırılsın..."
               className="w-full px-3.5 py-2.5 rounded-xl text-[14px] text-white placeholder-[#555] outline-none resize-y disabled:opacity-70"
               style={{ background: "var(--bg)", border: "1px solid rgba(251,146,60,0.3)" }}
             />
-            {!readOnly && (
+            {revisionNoteDisabled ? (
+              <p className="text-[11px] text-[#666] mt-1.5">Revize notu yazma yetkin yok.</p>
+            ) : (
               <p className="text-[11px] text-[#666] mt-1.5">
                 Bir not yazarsan kartın üzerinde turuncu vurgu ile görünür. İş tamamlanınca temizleyebilirsin.
               </p>
@@ -1001,7 +1031,7 @@ function CardModal({
 
         {error && <p className="text-[12px] text-red-400 mt-4">{error}</p>}
 
-        {!readOnly && (
+        {canSubmitAnything && (
           <div className="flex gap-3 mt-7">
             {canArchive && (
               <button type="button" onClick={handleArchive} disabled={archiving || deleting}
@@ -1020,24 +1050,6 @@ function CardModal({
             <button type="submit" disabled={saving} className="btn btn-primary flex-1">
               {saving ? "Kaydediliyor..." : isEdit ? "Kaydet" : "Kartı Oluştur"}
             </button>
-          </div>
-        )}
-        {readOnly && (canDelete || canArchive) && (
-          <div className="flex gap-3 mt-7">
-            {canArchive && (
-              <button type="button" onClick={handleArchive} disabled={archiving || deleting}
-                className="text-[13px] font-semibold text-[#c084fc] px-4 py-2.5 rounded-xl transition-all flex-1"
-                style={{ background: "rgba(168,85,247,0.1)", border: "1px solid rgba(168,85,247,0.25)" }}>
-                {archiving ? "Arşivleniyor..." : "Arşivle"}
-              </button>
-            )}
-            {canDelete && (
-              <button type="button" onClick={handleDelete} disabled={deleting || archiving}
-                className="text-[13px] font-semibold text-[#f87171] px-4 py-2.5 rounded-xl transition-all flex-1"
-                style={{ background: "rgba(248,113,113,0.1)", border: "1px solid rgba(248,113,113,0.25)" }}>
-                {deleting ? "Siliniyor..." : "Sil"}
-              </button>
-            )}
           </div>
         )}
       </form>

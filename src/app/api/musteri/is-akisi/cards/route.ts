@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
-import { requireWorkflowManageCards } from "@/lib/staffGuard";
+import { requireWorkflowCreateCards } from "@/lib/staffGuard";
 import { assertCanAccessClient } from "@/lib/auth";
 
 export const runtime = "nodejs";
@@ -18,7 +18,7 @@ const schema = z.object({
 });
 
 export async function POST(req: NextRequest) {
-  const { session, err } = await requireWorkflowManageCards();
+  const { session, err } = await requireWorkflowCreateCards();
   if (err) return err;
 
   const parsed = schema.safeParse(await req.json());
@@ -39,6 +39,12 @@ export async function POST(req: NextRequest) {
     const column = await prisma.workflowColumn.findUnique({ where: { id: columnId }, select: { adminOnly: true } });
     if (column?.adminOnly) {
       return NextResponse.json({ error: "Bu sütuna yalnızca admin kart ekleyebilir." }, { status: 403 });
+    }
+    if (revisionNote) {
+      const me = await prisma.user.findUnique({ where: { id: session!.uid }, select: { workflowCanWriteRevisionNote: true } });
+      if (!me?.workflowCanWriteRevisionNote) {
+        return NextResponse.json({ error: "Revize notu yazma yetkiniz yok." }, { status: 403 });
+      }
     }
   }
 

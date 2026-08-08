@@ -79,11 +79,18 @@ model User {
   // tarafından girilir; iş kaydı dönem/arşiv sınırlarını hesaplamak için kullanılır.
   paymentDay Int?
 
-  // İş Akışı (kanban) yetkileri — sadece EMPLOYEE için anlamlı, ADMIN her zaman tam erişir
-  workflowAccess           Boolean @default(true)  // panoyu hiç görebilir mi
-  workflowCanManageCards   Boolean @default(true)  // kart ekle/düzenle/taşı/kendi kartını sil
-  workflowCanDeleteAnyCard Boolean @default(false) // başkasının kartını da silebilir
-  workflowCanManageColumns Boolean @default(false) // sütun ekle/yeniden adlandır/sil
+  // İş Akışı (kanban) yetkileri — sadece EMPLOYEE için anlamlı, ADMIN her zaman tam erişir.
+  // Kart açma/düzenleme ile sürükleme bilinçli olarak ayrı tutuluyor: bir çalışana sadece
+  // "kartları sürükle" (drag-only) ya da sadece "kart oluştur/düzenle" (sürüklemeden) yetkisi
+  // verilebilir. Açıklama (description) alanı ise bu ikisinden bağımsız — pano erişimi olan
+  // herkes girdiği bir kartın açıklamasına not ekleyebilir; revize notu ise ayrı, varsayılan
+  // kapalı bir yetkiyle korunur (sadece admin'in açıkça izin verdiği kişiler yazabilir).
+  workflowAccess               Boolean @default(true)  // panoyu hiç görebilir mi
+  workflowCanCreateCards       Boolean @default(true)  // kart oluşturur, başlık/öncelik/tarih/atanan/firma düzenler, kendi kartını siler
+  workflowCanDragCards         Boolean @default(true)  // kartları sütunlar arası sürükleyip taşıyabilir
+  workflowCanWriteRevisionNote Boolean @default(false) // kartlara revize notu ekleyebilir/düzenleyebilir
+  workflowCanDeleteAnyCard     Boolean @default(false) // başkasının kartını da silebilir
+  workflowCanManageColumns     Boolean @default(false) // sütun ekle/yeniden adlandır/sil
 
   assignments     Assignment[]
   authoredUpdates Update[]      @relation("UpdateAuthor")

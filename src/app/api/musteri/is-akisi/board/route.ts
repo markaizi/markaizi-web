@@ -48,15 +48,25 @@ export async function GET() {
   ]);
 
   const isAdmin = session!.role === "ADMIN";
-  let canManageCards = isAdmin;
+  let canCreateCards = isAdmin;
+  let canDragCards = isAdmin;
+  let canWriteRevisionNote = isAdmin;
   let canDeleteAnyCard = isAdmin;
   let canManageColumns = isAdmin;
   if (!isAdmin) {
     const me = await prisma.user.findUnique({
       where: { id: session!.uid },
-      select: { workflowCanManageCards: true, workflowCanDeleteAnyCard: true, workflowCanManageColumns: true },
+      select: {
+        workflowCanCreateCards: true,
+        workflowCanDragCards: true,
+        workflowCanWriteRevisionNote: true,
+        workflowCanDeleteAnyCard: true,
+        workflowCanManageColumns: true,
+      },
     });
-    canManageCards = !!me?.workflowCanManageCards;
+    canCreateCards = !!me?.workflowCanCreateCards;
+    canDragCards = !!me?.workflowCanDragCards;
+    canWriteRevisionNote = !!me?.workflowCanWriteRevisionNote;
     canDeleteAnyCard = !!me?.workflowCanDeleteAnyCard;
     canManageColumns = !!me?.workflowCanManageColumns;
   }
@@ -64,6 +74,6 @@ export async function GET() {
   return NextResponse.json({
     columns, employees, clients,
     currentUserId: session!.uid,
-    isAdmin, canManageCards, canDeleteAnyCard, canManageColumns,
+    isAdmin, canCreateCards, canDragCards, canWriteRevisionNote, canDeleteAnyCard, canManageColumns,
   });
 }
