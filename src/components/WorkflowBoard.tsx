@@ -542,7 +542,7 @@ export default function WorkflowBoard({ initialData }: { initialData?: BoardInit
                       </button>
                       <button
                         onClick={() => handleToggleNotify(col.id, !col.notifyOnEntry)}
-                        title={col.notifyOnEntry ? "Bu sütuna kart taşındığında admin'e e-posta gider — kapatmak için tıkla" : "Bu sütuna kart taşındığında admin'e e-posta bildirimi gitsin mi?"}
+                        title={col.notifyOnEntry ? "Bu sütuna kart taşındığında akşam özetine eklenir — kapatmak için tıkla" : "Bu sütuna kart taşındığında akşam özet e-postasına eklensin mi?"}
                         className="w-6 h-6 flex items-center justify-center rounded-md transition-colors"
                         style={{
                           color: col.notifyOnEntry ? "#fbbf24" : "#555",

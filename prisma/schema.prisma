@@ -58,6 +58,12 @@ enum WorkflowPriority {
   YUKSEK
 }
 
+enum DigestEventType {
+  NOTE
+  WORKLOG
+  CARD_ENTRY
+}
+
 // ── Modeller ─────────────────────────────────────────────
 model User {
   id           String  @id @default(cuid())
@@ -334,4 +340,16 @@ model WorkLog {
   workflowCard WorkflowCard? @relation(fields: [workflowCardId], references: [id], onDelete: SetNull)
 
   createdAt DateTime @default(now())
+}
+
+// ── Günlük özet e-postası — anlık bildirim yerine, müşteri isteği/iş kaydı/
+// kart hareketi gibi olaylar burada birikir; her akşam cron tek e-posta olarak
+// gönderir ve gönderilenleri sentAt ile işaretler. summary kalıcı bir metin
+// snapshot'ı — kaynak kayıt (not/kart) sonradan silinse/değişse bile özet sabit kalır.
+model DigestEvent {
+  id        String          @id @default(cuid())
+  type      DigestEventType
+  summary   String
+  createdAt DateTime        @default(now())
+  sentAt    DateTime?
 }
