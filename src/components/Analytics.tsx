@@ -1,9 +1,27 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Script from "next/script";
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 const PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID;
 
+// Analytics/reklam script'leri yalnızca kullanıcı çerez bandında "Tümünü Kabul
+// Et"e bastıysa yüklenir — KVKK/GDPR gereği, onay öncesi hiçbir izleme
+// script'i çalışmamalı. CookieBanner "cookie-consent-change" olayını
+// tetikleyerek sayfa yenilemeden anında burayı güncelletir.
 export default function Analytics() {
+  const [consented, setConsented] = useState(false);
+
+  useEffect(() => {
+    const check = () => setConsented(localStorage.getItem("cookie_consent") === "all");
+    check();
+    window.addEventListener("cookie-consent-change", check);
+    return () => window.removeEventListener("cookie-consent-change", check);
+  }, []);
+
+  if (!consented) return null;
+
   return (
     <>
       {/* ── Google Analytics 4 ─────────────────── */}
