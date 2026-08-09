@@ -63,8 +63,7 @@ export default function Navbar() {
           scrolled
             ? {
                 background: "rgba(5,5,5,0.85)",
-                backdropFilter: "blur(20px)",
-                WebkitBackdropFilter: "blur(20px)",
+                WebkitBackdropFilter: "blur(20px)", backdropFilter: "blur(20px)",
                 borderBottom: "1px solid var(--border)",
                 padding: "14px 0",
               }
@@ -188,7 +187,7 @@ export default function Navbar() {
         className="fixed inset-0 z-[999] flex flex-col transition-transform duration-300"
         style={{
           background: "rgba(5,5,5,0.97)",
-          backdropFilter: "blur(20px)",
+          WebkitBackdropFilter: "blur(20px)", backdropFilter: "blur(20px)",
           transform: open ? "translateX(0)" : "translateX(100%)",
         }}
       >
@@ -275,7 +274,7 @@ function LoginModal({ onClose }: { onClose: () => void }) {
     <div
       ref={overlayRef}
       className="fixed inset-0 z-[1100] flex items-center justify-center px-4"
-      style={{ background: "rgba(0,0,0,0.75)", backdropFilter: "blur(8px)" }}
+      style={{ background: "rgba(0,0,0,0.75)", WebkitBackdropFilter: "blur(8px)", backdropFilter: "blur(8px)" }}
       onClick={(e) => { if (e.target === overlayRef.current) onClose(); }}
     >
       <div

@@ -138,10 +138,10 @@ export default function Hero() {
           {/* Görsel — sabit */}
           <div className="relative z-10 w-full">
             <Image
-              src="/herobanner.png"
+              src="/herobanner.webp"
               alt="Dijital Pazarlama"
               width={800}
-              height={800}
+              height={533}
               priority
               style={{
                 width: "100%",
@@ -163,7 +163,7 @@ export default function Hero() {
                 ...icon.style,
                 background: "rgba(12,12,22,0.88)",
                 border: "1px solid rgba(168,85,247,0.28)",
-                backdropFilter: "blur(12px)",
+                WebkitBackdropFilter: "blur(12px)", backdropFilter: "blur(12px)",
                 boxShadow: "0 4px 20px rgba(0,0,0,0.35), 0 0 10px rgba(168,85,247,0.08)",
                 animation: "floatIcon 4s ease-in-out infinite",
                 animationDelay: icon.delay,
