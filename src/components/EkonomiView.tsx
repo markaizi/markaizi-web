@@ -170,8 +170,10 @@ export default function EkonomiView({ data }: { data: EkonomiData }) {
             </div>
             {type === "GIDER" && (
               <select
+                id="ekonomi-kategori"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
+                aria-label="Gider kategorisi"
                 className="w-full px-3.5 py-2.5 rounded-xl text-[14px] text-white outline-none"
                 style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
               >
@@ -180,7 +182,9 @@ export default function EkonomiView({ data }: { data: EkonomiData }) {
                 ))}
               </select>
             )}
+            <label htmlFor="ekonomi-aciklama" className="sr-only">Açıklama</label>
             <input
+              id="ekonomi-aciklama"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               placeholder="Açıklama — örn. Ofis kirası"
@@ -188,21 +192,29 @@ export default function EkonomiView({ data }: { data: EkonomiData }) {
               style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
             />
             <div className="grid grid-cols-2 gap-3">
-              <input
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-                onBlur={(e) => setAmount(fmtAmount(e.target.value))}
-                placeholder="Örn: 5.000 ₺"
-                className="w-full px-3.5 py-2.5 rounded-xl text-[14px] text-white placeholder-[#555] outline-none"
-                style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
-              />
-              <input
-                type="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
-                className="w-full px-3.5 py-2.5 rounded-xl text-[14px] text-white outline-none"
-                style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
-              />
+              <div>
+                <label htmlFor="ekonomi-tutar" className="sr-only">Tutar</label>
+                <input
+                  id="ekonomi-tutar"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
+                  onBlur={(e) => setAmount(fmtAmount(e.target.value))}
+                  placeholder="Örn: 5.000 ₺"
+                  className="w-full px-3.5 py-2.5 rounded-xl text-[14px] text-white placeholder-[#555] outline-none"
+                  style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
+                />
+              </div>
+              <div>
+                <label htmlFor="ekonomi-tarih" className="sr-only">Tarih</label>
+                <input
+                  id="ekonomi-tarih"
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  className="w-full px-3.5 py-2.5 rounded-xl text-[14px] text-white outline-none"
+                  style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
+                />
+              </div>
             </div>
             {error && <p className="text-[12px]" style={{ color: "#f87171" }}>{error}</p>}
             <button type="submit" disabled={saving} className="btn btn-primary w-full">

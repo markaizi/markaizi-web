@@ -187,6 +187,15 @@ input:focus, select:focus, textarea:focus {
   box-shadow: 0 0 0 3px rgba(168,85,247,0.1);
 }
 
+/* ── Klavye Odak Halkası ───────────────────
+   Yalnızca klavyeyle gezinirken görünür (fare tıklamasında görünmez) —
+   buton/link gibi form dışı etkileşimli öğeler için. */
+a:focus-visible, button:focus-visible, summary:focus-visible, [tabindex]:focus-visible {
+  outline: 2px solid rgba(168,85,247,0.7);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
 /* ── Mobil form alanı yazı boyutu ──────────
    iOS Safari, 16px altındaki yazı boyutuna sahip bir alana odaklanınca
    sayfayı otomatik yakınlaştırıp geri çıkarmıyor. Panel alanları 14px

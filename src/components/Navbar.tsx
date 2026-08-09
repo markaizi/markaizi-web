@@ -278,6 +278,9 @@ function LoginModal({ onClose }: { onClose: () => void }) {
       onClick={(e) => { if (e.target === overlayRef.current) onClose(); }}
     >
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="login-modal-title"
         className="w-full max-w-[380px] rounded-2xl p-8 relative"
         style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
       >
@@ -302,7 +305,7 @@ function LoginModal({ onClose }: { onClose: () => void }) {
               <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </div>
-          <h2 className="font-bold text-[18px] text-white mb-1">Müşteri Girişi</h2>
+          <h2 id="login-modal-title" className="font-bold text-[18px] text-white mb-1">Müşteri Girişi</h2>
           <p className="text-[13px] text-[#8a8a9a]">Panele erişmek için bilgilerinizi girin</p>
         </div>
 

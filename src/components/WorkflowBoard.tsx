@@ -755,6 +755,12 @@ function ArchiveModal({ onClose, onRestored }: { onClose: () => void; onRestored
 
   useEffect(() => { load(); }, [load]);
 
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) { if (e.key === "Escape") onClose(); }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
   async function handleRestore(id: string) {
     setBusyId(id);
     const res = await fetch(`/api/musteri/is-akisi/cards/${id}`, {
@@ -784,16 +790,19 @@ function ArchiveModal({ onClose, onRestored }: { onClose: () => void; onRestored
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
     >
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="archive-modal-title"
         className="w-full max-w-[480px] rounded-2xl p-5 sm:p-7 relative max-h-[80vh] overflow-y-auto"
         style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
       >
-        <button type="button" onClick={onClose} className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full transition-all hover:bg-white/[0.08]">
+        <button type="button" onClick={onClose} aria-label="Kapat" className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full transition-all hover:bg-white/[0.08]">
           <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-[#8a8a9a]" stroke="currentColor" strokeWidth="2.5">
             <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" />
           </svg>
         </button>
 
-        <h2 className="font-bold text-[17px] text-white mb-5">Arşivlenmiş Kartlar</h2>
+        <h2 id="archive-modal-title" className="font-bold text-[17px] text-white mb-5">Arşivlenmiş Kartlar</h2>
 
         {loading ? (
           <p className="text-[13px] text-[#8a8a9a]">Yükleniyor...</p>
@@ -987,6 +996,12 @@ function CardModal({
     setArchiving(false);
   }
 
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) { if (e.key === "Escape") onClose(); }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
   return (
     <div
       className="fixed inset-0 z-[1100] flex items-center justify-center px-4"
@@ -995,17 +1010,20 @@ function CardModal({
     >
       <form
         onSubmit={handleSubmit}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="card-modal-title"
         className="w-full max-w-[440px] rounded-2xl p-5 sm:p-7 relative max-h-[88vh] overflow-y-auto"
         style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
       >
-        <button type="button" onClick={onClose} className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full transition-all hover:bg-white/[0.08]">
+        <button type="button" onClick={onClose} aria-label="Kapat" className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full transition-all hover:bg-white/[0.08]">
           <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 text-[#8a8a9a]" stroke="currentColor" strokeWidth="2.5">
             <path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" />
           </svg>
         </button>
 
         <div className="flex items-center gap-2 mb-6">
-          <h2 className="font-bold text-[17px] text-white">{isEdit ? "Kartı Düzenle" : "Yeni Kart"}</h2>
+          <h2 id="card-modal-title" className="font-bold text-[17px] text-white">{isEdit ? "Kartı Düzenle" : "Yeni Kart"}</h2>
           {readOnly && (
             <span
               className="text-[10px] font-bold uppercase tracking-wide px-2 py-0.5 rounded-full"

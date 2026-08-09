@@ -76,6 +76,12 @@ export default function EmployeeDashboard({
             >
               💰 İş Kayıtlarım
             </button>
+            <button
+              onClick={() => router.push("/musteri/calisan/profil")}
+              className="btn btn-outline text-sm px-4 py-2.5"
+            >
+              👤 Profil
+            </button>
           </div>
         </div>
 
