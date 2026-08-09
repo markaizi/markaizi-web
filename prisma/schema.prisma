@@ -359,6 +359,7 @@ model Transaction {
   description String
   date        DateTime
   authorId    String?
+  category    String? // yalnızca GIDER için anlamlı; GELIR'de boş bırakılır
 
   payrollPayment PayrollPayment?
 

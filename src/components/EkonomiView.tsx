@@ -7,8 +7,34 @@ export interface EkonomiData {
   currentMonthLabel: string;
   currentMonth: { gelir: number; gider: number; net: number };
   bekleyenFaturaToplam: number;
+  gecikmisFaturaToplam: number;
   monthlyHistory: { key: string; label: string; gelir: number; gider: number; net: number }[];
-  feed: { id: string; type: "GELIR" | "GIDER"; amount: number; description: string; date: string; deletable: boolean }[];
+  feed: { id: string; type: "GELIR" | "GIDER"; amount: number; description: string; date: string; category: string | null; deletable: boolean }[];
+}
+
+const GIDER_KATEGORILERI = ["Kira/Ofis", "Personel/Maaş", "Reklam Bütçesi", "Yazılım/Abonelik", "Vergi/SGK", "Diğer"];
+
+function csvEscape(value: string): string {
+  return `"${value.replace(/"/g, '""')}"`;
+}
+
+function downloadCsv(data: EkonomiData) {
+  const header = ["Tarih", "Tür", "Açıklama", "Kategori", "Tutar"];
+  const rows = data.feed.map((f) => [
+    fmtDate(f.date),
+    f.type === "GELIR" ? "Gelir" : "Gider",
+    f.description,
+    f.category ?? "",
+    String(f.amount),
+  ]);
+  const csv = "﻿" + [header, ...rows].map((r) => r.map(csvEscape).join(";")).join("\r\n");
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `ekonomi-${data.currentMonthLabel.replace(/\s+/g, "-").toLowerCase()}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
 }
 
 function fmtTL(n: number): string {
@@ -31,6 +57,7 @@ export default function EkonomiView({ data }: { data: EkonomiData }) {
   const router = useRouter();
   const [feed, setFeed] = useState(data.feed);
   const [type, setType] = useState<"GELIR" | "GIDER">("GIDER");
+  const [category, setCategory] = useState(GIDER_KATEGORILERI[0]);
   const [amount, setAmount] = useState("");
   const [description, setDescription] = useState("");
   const [date, setDate] = useState(() => new Date().toISOString().slice(0, 10));
@@ -51,7 +78,7 @@ export default function EkonomiView({ data }: { data: EkonomiData }) {
     const res = await fetch("/api/musteri/admin/transactions", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ type, amount: amount.trim(), description: description.trim(), date }),
+      body: JSON.stringify({ type, amount: amount.trim(), description: description.trim(), date, category: type === "GIDER" ? category : undefined }),
     });
     const json = await res.json().catch(() => ({}));
     setSaving(false);
@@ -60,7 +87,7 @@ export default function EkonomiView({ data }: { data: EkonomiData }) {
     setDescription("");
     router.refresh();
     setFeed((prev) => [
-      { id: json.transaction.id, type, amount: parseInt(amount.replace(/[^\d]/g, ""), 10) || 0, description: description.trim(), date: new Date(date).toISOString(), deletable: true },
+      { id: json.transaction.id, type, amount: parseInt(amount.replace(/[^\d]/g, ""), 10) || 0, description: description.trim(), date: new Date(date).toISOString(), category: type === "GIDER" ? category : null, deletable: true },
       ...prev,
     ]);
   }
@@ -112,9 +139,12 @@ export default function EkonomiView({ data }: { data: EkonomiData }) {
             <p className="text-[10px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1">Kasada Kalan</p>
             <p className="text-[16px] sm:text-[19px] font-black" style={{ color: kasaColor }}>{fmtTL(data.currentMonth.net)}</p>
           </div>
-          <div className="rounded-2xl p-4" style={{ background: "rgba(251,191,36,0.08)", border: "1px solid rgba(251,191,36,0.2)" }}>
+          <div className="rounded-2xl p-4" style={{ background: data.gecikmisFaturaToplam > 0 ? "rgba(248,113,113,0.08)" : "rgba(251,191,36,0.08)", border: `1px solid ${data.gecikmisFaturaToplam > 0 ? "rgba(248,113,113,0.2)" : "rgba(251,191,36,0.2)"}` }}>
             <p className="text-[10px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1">Bekleyen Fatura</p>
-            <p className="text-[16px] sm:text-[19px] font-black" style={{ color: "#fbbf24" }}>{fmtTL(data.bekleyenFaturaToplam)}</p>
+            <p className="text-[16px] sm:text-[19px] font-black" style={{ color: data.gecikmisFaturaToplam > 0 ? "#f87171" : "#fbbf24" }}>{fmtTL(data.bekleyenFaturaToplam)}</p>
+            {data.gecikmisFaturaToplam > 0 && (
+              <p className="text-[10px] mt-1 font-semibold" style={{ color: "#f87171" }}>{fmtTL(data.gecikmisFaturaToplam)} gecikmiş</p>
+            )}
           </div>
         </div>
 
@@ -138,6 +168,18 @@ export default function EkonomiView({ data }: { data: EkonomiData }) {
                 Gelir
               </button>
             </div>
+            {type === "GIDER" && (
+              <select
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+                className="w-full px-3.5 py-2.5 rounded-xl text-[14px] text-white outline-none"
+                style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
+              >
+                {GIDER_KATEGORILERI.map((k) => (
+                  <option key={k} value={k}>{k}</option>
+                ))}
+              </select>
+            )}
             <input
               value={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -171,13 +213,30 @@ export default function EkonomiView({ data }: { data: EkonomiData }) {
 
         {/* Bu ayın hareketleri */}
         <div className="mb-8">
-          <p className="text-[13px] font-bold uppercase tracking-wide text-[#8a8a9a] px-1 mb-3">Bu Ayın Hareketleri</p>
+          <div className="flex items-center justify-between px-1 mb-3">
+            <p className="text-[13px] font-bold uppercase tracking-wide text-[#8a8a9a]">Bu Ayın Hareketleri</p>
+            {feed.length > 0 && (
+              <button
+                onClick={() => downloadCsv({ ...data, feed })}
+                className="text-[11px] font-semibold px-3 py-1.5 rounded-full transition-colors flex items-center gap-1.5"
+                style={{ background: "var(--surface)", border: "1px solid var(--border)", color: "#8a8a9a" }}
+              >
+                <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5" stroke="currentColor" strokeWidth="2">
+                  <path d="M12 3v12m0 0l-4-4m4 4l4-4M4 21h16" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                CSV İndir
+              </button>
+            )}
+          </div>
           <div className="space-y-2">
             {feed.map((f) => (
               <div key={f.id} className="rounded-xl px-4 py-3 flex items-center justify-between gap-3" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
                 <div className="min-w-0">
                   <p className="text-[13.5px] font-semibold text-white truncate">{f.description}</p>
-                  <p className="text-[11px] text-[#8a8a9a] mt-0.5">{fmtDate(f.date)}</p>
+                  <p className="text-[11px] text-[#8a8a9a] mt-0.5">
+                    {fmtDate(f.date)}
+                    {f.category && <span className="ml-1.5 opacity-80">· {f.category}</span>}
+                  </p>
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
                   <span className="text-[14px] font-bold" style={{ color: f.type === "GELIR" ? "#34d399" : "#f87171" }}>

@@ -44,12 +44,12 @@ export default async function EkonomiPage() {
     }),
     prisma.transaction.findMany({
       where: { date: { gte: historyStart } },
-      select: { id: true, type: true, amount: true, description: true, date: true, payrollPayment: { select: { id: true } } },
+      select: { id: true, type: true, amount: true, description: true, date: true, category: true, payrollPayment: { select: { id: true } } },
       orderBy: { date: "desc" },
     }),
     prisma.invoice.findMany({
       where: { status: { in: ["BEKLIYOR", "GUNU_GELMEDI"] } },
-      select: { amount: true },
+      select: { amount: true, dueDate: true },
     }),
   ]);
 
@@ -76,6 +76,10 @@ export default async function EkonomiPage() {
 
   const currentMonth = monthlyHistory[0] ?? { gelir: 0, gider: 0, net: 0 };
   const bekleyenFaturaToplam = pendingInvoices.reduce((s, i) => s + parseAmount(i.amount), 0);
+  const today = new Date();
+  const gecikmisFaturaToplam = pendingInvoices
+    .filter((i) => i.dueDate && i.dueDate < today)
+    .reduce((s, i) => s + parseAmount(i.amount), 0);
 
   // Bu ayın birleşik hareket listesi (ödenen faturalar + transaction'lar)
   const feed = [
@@ -87,6 +91,7 @@ export default async function EkonomiPage() {
         amount: parseAmount(i.amount),
         description: `${i.client.name} — ${i.period}`,
         date: i.paidAt!.toISOString(),
+        category: null as string | null,
         deletable: false,
       })),
     ...transactions
@@ -97,6 +102,7 @@ export default async function EkonomiPage() {
         amount: parseAmount(t.amount),
         description: t.description,
         date: t.date.toISOString(),
+        category: t.category,
         deletable: !t.payrollPayment,
       })),
   ].sort((a, b) => (a.date < b.date ? 1 : -1));
@@ -105,6 +111,7 @@ export default async function EkonomiPage() {
     currentMonthLabel: monthLabel(now),
     currentMonth: { gelir: currentMonth.gelir, gider: currentMonth.gider, net: currentMonth.net },
     bekleyenFaturaToplam,
+    gecikmisFaturaToplam,
     monthlyHistory,
     feed,
   };

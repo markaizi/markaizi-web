@@ -11,6 +11,7 @@ const postSchema = z.object({
   amount: z.string().trim().min(1).max(100),
   description: z.string().trim().min(1).max(300),
   date: z.string().refine((v) => !isNaN(new Date(v).getTime()), { message: "Geçersiz tarih." }),
+  category: z.string().trim().max(50).optional(),
 });
 
 // Elle girilen gelir/gider kaydı — Ekonomi ekranındaki genel deftere düşer.
@@ -29,6 +30,7 @@ export async function POST(req: NextRequest) {
       amount: parsed.data.amount,
       description: parsed.data.description,
       date: new Date(parsed.data.date),
+      category: parsed.data.type === "GIDER" ? parsed.data.category || null : null,
       authorId: session!.uid,
     },
   });
