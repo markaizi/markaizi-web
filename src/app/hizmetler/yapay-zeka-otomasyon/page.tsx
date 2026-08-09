@@ -25,6 +25,7 @@ export default function YapayZekaOtomasyonPage() {
     <ServicePageTemplate
       badge="Yeni Nesil Hizmetler"
       icon={ICON}
+      path="/hizmetler/yapay-zeka-otomasyon"
       title="Yapay Zeka & Otomasyon"
       subtitle="AI destekli araçlarla görseller, reklam filmleri ve videolar üretiyoruz. İçerik süreçlerinizi otomatikleştirerek markanızı rekabette öne taşıyoruz."
       description={[

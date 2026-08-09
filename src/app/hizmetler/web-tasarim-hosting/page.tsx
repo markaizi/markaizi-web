@@ -19,6 +19,7 @@ export default function WebTasarimPage() {
     <ServicePageTemplate
         badge="Dijital Altyapı"
         icon={ICON}
+        path="/hizmetler/web-tasarim-hosting"
         title="Web Tasarım & Hosting"
         subtitle="Ziyaretçiyi müşteriye dönüştüren, hızlı yüklenen ve her cihazda mükemmel görünen web siteleri tasarlıyoruz. Domain'den yayına tek adımda."
         description={[

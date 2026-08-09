@@ -19,6 +19,7 @@ export default function MetaReklamlariPage() {
     <ServicePageTemplate
       badge="Reklam Yönetimi"
       icon={ICON}
+      path="/hizmetler/meta-reklamlari"
       title="Meta Reklamları"
       subtitle="Instagram ve Facebook'ta tam hedefleme gücüyle reklam kampanyaları kuruyoruz. Yatırımınızın karşılığını maksimize etmek için veriyi merkeze koyuyoruz."
       description={[

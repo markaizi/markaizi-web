@@ -3,6 +3,9 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/sections/Footer";
 import WhatsApp from "@/components/WhatsApp";
 import ServiceFAQ, { FAQItem } from "@/components/ServiceFAQ";
+import Breadcrumb from "@/components/Breadcrumb";
+import JsonLd from "@/components/JsonLd";
+import { SITE_URL, ORG_NAME, breadcrumbJsonLd } from "@/lib/seo";
 
 export interface ServicePageProps {
   title: string;
@@ -12,6 +15,7 @@ export interface ServicePageProps {
   faq?: FAQItem[]; // hizmete özel sıkça sorulan sorular
   icon: React.ReactNode;
   badge: string;
+  path: string; // ör. "/hizmetler/sosyal-medya-yonetimi"
 }
 
 export default function ServicePageTemplate({
@@ -22,6 +26,7 @@ export default function ServicePageTemplate({
   faq,
   icon,
   badge,
+  path,
 }: ServicePageProps) {
   const faqJsonLd = faq && faq.length > 0
     ? {
@@ -35,14 +40,32 @@ export default function ServicePageTemplate({
       }
     : null;
 
+  const serviceJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    name: title,
+    serviceType: title,
+    description: subtitle,
+    url: `${SITE_URL}${path}`,
+    provider: {
+      "@type": "ProfessionalService",
+      name: `${ORG_NAME} Dijital Reklam Ajansı`,
+      url: SITE_URL,
+    },
+    areaServed: { "@type": "City", name: "Ankara" },
+  };
+
+  const breadcrumb = breadcrumbJsonLd([
+    { name: "Ana Sayfa", path: "/" },
+    { name: "Hizmetler", path: "/#hizmetler" },
+    { name: title, path },
+  ]);
+
   return (
     <>
-      {faqJsonLd && (
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
-        />
-      )}
+      <JsonLd data={serviceJsonLd} />
+      <JsonLd data={breadcrumb} />
+      {faqJsonLd && <JsonLd data={faqJsonLd} />}
       <Navbar />
       <main>
         {/* ── Hero ── */}
@@ -67,6 +90,8 @@ export default function ServicePageTemplate({
           />
 
           <div className="max-w-[1200px] mx-auto px-6 relative z-10">
+            <Breadcrumb items={[{ name: "Ana Sayfa", path: "/" }, { name: "Hizmetler", path: "/#hizmetler" }, { name: title }]} />
+
             {/* Geri dön */}
             <Link
               href="/#hizmetler"

@@ -21,6 +21,7 @@ export default function SosyalMedyaPage() {
     <ServicePageTemplate
       badge="Hizmetlerimiz"
       icon={ICON}
+      path="/hizmetler/sosyal-medya-yonetimi"
       title="Sosyal Medya Yönetimi"
       subtitle="Markanızın sesini Instagram, Facebook ve TikTok'ta en güçlü şekilde duyuruyoruz. Strateji, içerik ve topluluk yönetimini tamamen üstleniyoruz."
       description={[

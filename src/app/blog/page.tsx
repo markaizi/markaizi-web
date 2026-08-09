@@ -3,6 +3,9 @@ import Link from "next/link";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/sections/Footer";
 import WhatsApp from "@/components/WhatsApp";
+import Breadcrumb from "@/components/Breadcrumb";
+import JsonLd from "@/components/JsonLd";
+import { breadcrumbJsonLd } from "@/lib/seo";
 import { BLOG_POSTS } from "@/lib/blog-data";
 
 export const metadata: Metadata = {
@@ -11,9 +14,15 @@ export const metadata: Metadata = {
   alternates: { canonical: "https://markaizi.com.tr/blog" },
 };
 
+const breadcrumb = breadcrumbJsonLd([
+  { name: "Ana Sayfa", path: "/" },
+  { name: "Blog", path: "/blog" },
+]);
+
 export default function BlogPage() {
   return (
     <>
+      <JsonLd data={breadcrumb} />
       <Navbar />
       <main>
         {/* Hero */}
@@ -21,6 +30,7 @@ export default function BlogPage() {
           <div className="absolute top-[-150px] left-[-100px] w-[400px] h-[400px] rounded-full pointer-events-none"
             style={{ background: "radial-gradient(circle,rgba(124,58,237,0.2) 0%,transparent 70%)", filter: "blur(80px)" }} />
           <div className="max-w-[1200px] mx-auto px-6 relative z-10 text-center">
+            <Breadcrumb className="justify-center" items={[{ name: "Ana Sayfa", path: "/" }, { name: "Blog" }]} />
             <span className="section-tag">Blog</span>
             <h1 className="font-black leading-tight mt-4 mb-4" style={{ fontSize: "clamp(32px,5vw,52px)" }}>
               Dijital Pazarlama <span className="gradient-text">Rehberleri</span>

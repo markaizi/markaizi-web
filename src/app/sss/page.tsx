@@ -1,6 +1,9 @@
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/sections/Footer";
 import WhatsApp from "@/components/WhatsApp";
+import Breadcrumb from "@/components/Breadcrumb";
+import JsonLd from "@/components/JsonLd";
+import { breadcrumbJsonLd } from "@/lib/seo";
 
 const FAQS = [
   {
@@ -92,6 +95,11 @@ const faqJsonLd = {
   ),
 };
 
+const breadcrumb = breadcrumbJsonLd([
+  { name: "Ana Sayfa", path: "/" },
+  { name: "SSS", path: "/sss" },
+]);
+
 export default function SSSPage() {
   return (
     <>
@@ -99,6 +107,7 @@ export default function SSSPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
+      <JsonLd data={breadcrumb} />
       <Navbar />
       <main>
         {/* Hero */}
@@ -106,6 +115,7 @@ export default function SSSPage() {
           <div className="absolute top-[-150px] right-[-100px] w-[400px] h-[400px] rounded-full pointer-events-none"
             style={{ background: "radial-gradient(circle,rgba(236,72,153,0.15) 0%,transparent 70%)", filter: "blur(80px)" }} />
           <div className="max-w-[860px] mx-auto px-6 relative z-10 text-center">
+            <Breadcrumb className="justify-center" items={[{ name: "Ana Sayfa", path: "/" }, { name: "SSS" }]} />
             <span className="section-tag">SSS</span>
             <h1 className="font-black leading-tight mt-4 mb-4" style={{ fontSize: "clamp(32px,5vw,52px)" }}>
               Sıkça Sorulan <span className="gradient-text">Sorular</span>

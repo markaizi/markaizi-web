@@ -3,6 +3,23 @@ import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import CookieBanner from "@/components/CookieBanner";
 import Analytics from "@/components/Analytics";
+import JsonLd from "@/components/JsonLd";
+import { SITE_URL, ORG_NAME, LOGO_URL, SAME_AS } from "@/lib/seo";
+
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: ORG_NAME,
+  url: SITE_URL,
+  inLanguage: "tr-TR",
+  publisher: {
+    "@type": "Organization",
+    name: ORG_NAME,
+    url: SITE_URL,
+    logo: LOGO_URL,
+    sameAs: SAME_AS,
+  },
+};
 
 const inter = Inter({
   variable: "--font-inter",
@@ -55,6 +72,7 @@ export default function RootLayout({
   return (
     <html lang="tr" className={`${inter.variable} ${spaceGrotesk.variable}`}>
       <body className="antialiased">
+        <JsonLd data={websiteJsonLd} />
         <Analytics />
 {children}
         <CookieBanner />

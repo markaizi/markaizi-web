@@ -21,6 +21,7 @@ export default function GoogleReklamlariPage() {
     <ServicePageTemplate
       badge="Reklam Yönetimi"
       icon={ICON}
+      path="/hizmetler/google-reklamlari"
       title="Google Reklamları"
       subtitle="Ürününüzü veya hizmetinizi Google'da aktif olarak arayanların karşısına çıkıyoruz. Arama niyetiyle gelen kullanıcı, en değerli kullanıcıdır."
       description={[

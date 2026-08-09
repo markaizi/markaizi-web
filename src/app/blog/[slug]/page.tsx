@@ -3,6 +3,9 @@ import { notFound } from "next/navigation";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/sections/Footer";
 import WhatsApp from "@/components/WhatsApp";
+import Breadcrumb from "@/components/Breadcrumb";
+import JsonLd from "@/components/JsonLd";
+import { breadcrumbJsonLd } from "@/lib/seo";
 import { BLOG_POSTS, getPostBySlug } from "@/lib/blog-data";
 
 export function generateStaticParams() {
@@ -65,12 +68,19 @@ export default async function BlogPostPage({
     articleSection: post.category,
   };
 
+  const breadcrumb = breadcrumbJsonLd([
+    { name: "Ana Sayfa", path: "/" },
+    { name: "Blog", path: "/blog" },
+    { name: post.title, path: `/blog/${post.slug}` },
+  ]);
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
       />
+      <JsonLd data={breadcrumb} />
       <Navbar />
       <main>
         {/* Hero */}
@@ -86,6 +96,7 @@ export default async function BlogPostPage({
             }}
           />
           <div className="max-w-[760px] mx-auto px-6 relative z-10">
+            <Breadcrumb items={[{ name: "Ana Sayfa", path: "/" }, { name: "Blog", path: "/blog" }, { name: post.title }]} />
             <div className="flex items-center gap-3 mb-5">
               <a
                 href="/blog"

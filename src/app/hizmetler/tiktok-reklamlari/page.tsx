@@ -19,6 +19,7 @@ export default function TikTokReklamlariPage() {
     <ServicePageTemplate
       badge="Reklam Yönetimi"
       icon={ICON}
+      path="/hizmetler/tiktok-reklamlari"
       title="TikTok Reklamları"
       subtitle="Türkiye'nin en hızlı büyüyen platformunda markanızı öne çıkarıyoruz. TikTok'un güçlü algoritmasını ve reklam araçlarını sizin için kullanıyoruz."
       description={[

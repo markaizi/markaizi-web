@@ -4,6 +4,9 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/sections/Footer";
 import WhatsApp from "@/components/WhatsApp";
 import ServiceFAQ, { FAQItem } from "@/components/ServiceFAQ";
+import Breadcrumb from "@/components/Breadcrumb";
+import JsonLd from "@/components/JsonLd";
+import { breadcrumbJsonLd } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Mobilya Reklam Ajansı — Siteler / Ankara | markaizi",
@@ -119,11 +122,17 @@ const faqJsonLd = {
   })),
 };
 
+const breadcrumb = breadcrumbJsonLd([
+  { name: "Ana Sayfa", path: "/" },
+  { name: "Mobilya Reklam Ajansı", path: "/mobilya-reklam-ajansi" },
+]);
+
 export default function MobilyaReklamAjansiPage() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
+      <JsonLd data={breadcrumb} />
       <Navbar />
       <main>
         {/* ── Hero ── */}
@@ -139,6 +148,7 @@ export default function MobilyaReklamAjansiPage() {
 
           <div className="max-w-[1200px] mx-auto px-6 relative z-10">
             <div className="max-w-[780px]">
+              <Breadcrumb items={[{ name: "Ana Sayfa", path: "/" }, { name: "Mobilya Reklam Ajansı" }]} />
               <span className="section-tag">Siteler / Ankara</span>
               <h1
                 className="font-black leading-tight mb-5 mt-2"
