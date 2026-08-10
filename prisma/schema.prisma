@@ -113,9 +113,24 @@ model User {
 
   workflowCardsAssigned WorkflowCard[] @relation("WorkflowAssignee")
   workflowCardsCreated  WorkflowCard[] @relation("WorkflowCreator")
+  passwordResetTokens   PasswordResetToken[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+// Self-service şifre sıfırlama — e-posta ile gönderilen tek kullanımlık,
+// süreli token. Kullanıcı var/yok bilgisi sızdırılmasın diye istek endpoint'i
+// her zaman aynı genel mesajı döner (bkz. /api/musteri/auth/forgot).
+model PasswordResetToken {
+  id        String    @id @default(cuid())
+  userId    String
+  token     String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Client {
@@ -391,4 +406,21 @@ model PayrollPayment {
   createdAt DateTime @default(now())
 
   @@unique([userId, periodKey])
+}
+
+enum SubmissionType {
+  CONTACT
+  CV
+  WEB_TEKLIF
+}
+
+// Halka açık form gönderimlerinin veritabanı yedeği — e-posta gönderimi
+// başarısız olsa bile talep kaybolmasın diye önce buraya yazılır.
+model Submission {
+  id        String         @id @default(cuid())
+  type      SubmissionType
+  data      Json
+  emailSent Boolean        @default(false)
+  read      Boolean        @default(false)
+  createdAt DateTime       @default(now())
 }

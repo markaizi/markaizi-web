@@ -21,7 +21,7 @@ export default async function AdminPage() {
 
   const today = new Date();
 
-  const [rows, unreadNotes, employeeCount, unpricedLogsRaw] = await Promise.all([
+  const [rows, unreadNotes, employeeCount, unpricedLogsRaw, unreadSubmissionCount] = await Promise.all([
     prisma.client.findMany({
       where: { active: true },
       orderBy: { name: "asc" },
@@ -42,6 +42,7 @@ export default async function AdminPage() {
       where: { amount: null },
       select: { userId: true, user: { select: { name: true } } },
     }),
+    prisma.submission.count({ where: { read: false } }),
   ]);
 
   const unreadMap = new Map(unreadNotes.map((u) => [u.clientId, u._count.id]));
@@ -66,5 +67,5 @@ export default async function AdminPage() {
     };
   });
 
-  return <AdminPanel clients={clients} adminName={session.name} employeeCount={employeeCount} unpricedWorkLogs={unpricedWorkLogs} />;
+  return <AdminPanel clients={clients} adminName={session.name} employeeCount={employeeCount} unpricedWorkLogs={unpricedWorkLogs} unreadSubmissionCount={unreadSubmissionCount} />;
 }

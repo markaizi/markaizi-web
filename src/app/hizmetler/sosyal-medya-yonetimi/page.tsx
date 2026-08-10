@@ -22,6 +22,10 @@ export default function SosyalMedyaPage() {
       badge="Hizmetlerimiz"
       icon={ICON}
       path="/hizmetler/sosyal-medya-yonetimi"
+      relatedPosts={[
+        { slug: "instagram-algoritmasi", title: "Instagram Algoritması 2026" },
+        { slug: "mobilya-magazalari-icin-instagram", title: "Instagram'da Mobilya Satışı" },
+      ]}
       title="Sosyal Medya Yönetimi"
       subtitle="Markanızın sesini Instagram, Facebook ve TikTok'ta en güçlü şekilde duyuruyoruz. Strateji, içerik ve topluluk yönetimini tamamen üstleniyoruz."
       description={[

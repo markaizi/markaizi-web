@@ -20,6 +20,7 @@ export default function MetaReklamlariPage() {
       badge="Reklam Yönetimi"
       icon={ICON}
       path="/hizmetler/meta-reklamlari"
+      relatedPosts={[{ slug: "meta-ads-roas", title: "Meta Ads'de ROAS Artırma" }]}
       title="Meta Reklamları"
       subtitle="Instagram ve Facebook'ta tam hedefleme gücüyle reklam kampanyaları kuruyoruz. Yatırımınızın karşılığını maksimize etmek için veriyi merkeze koyuyoruz."
       description={[

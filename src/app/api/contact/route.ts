@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 import { escapeHtml, isValidEmail, cleanStr, cleanPhone, rateLimit, getClientIp } from "@/lib/security";
+import { prisma } from "@/lib/db";
 
 export async function POST(req: NextRequest) {
   try {
@@ -30,6 +31,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Geçersiz e-posta adresi." }, { status: 400 });
     }
 
+    // Önce veritabanına yaz — e-posta gönderimi başarısız olsa bile talep kaybolmasın.
+    const submission = await prisma.submission.create({
+      data: { type: "CONTACT", data: { name, email, phone, service, message } },
+    });
+
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
@@ -38,7 +44,8 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    await transporter.sendMail({
+    try {
+      await transporter.sendMail({
       from: `"markaizi İletişim" <${process.env.GMAIL_USER}>`,
       to: process.env.GMAIL_USER,
       replyTo: email,
@@ -78,7 +85,11 @@ export async function POST(req: NextRequest) {
           </div>
         </div>
       `,
-    });
+      });
+      await prisma.submission.update({ where: { id: submission.id }, data: { emailSent: true } });
+    } catch (err) {
+      console.error("Contact e-posta gönderim hatası (talep kaydedildi):", err);
+    }
 
     return NextResponse.json({ success: true });
   } catch (err) {

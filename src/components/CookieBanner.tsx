@@ -69,7 +69,7 @@ export default function CookieBanner() {
         <div className="flex gap-2 flex-shrink-0">
           <button
             onClick={reject}
-            className="px-4 py-2 text-[13px] font-semibold rounded-full transition-all"
+            className="px-4 py-2 min-h-[44px] text-[13px] font-semibold rounded-full transition-all"
             style={{
               background: "transparent",
               border: "1px solid var(--border)",
@@ -88,7 +88,7 @@ export default function CookieBanner() {
           </button>
           <button
             onClick={accept}
-            className="px-5 py-2 text-[13px] font-semibold rounded-full text-white transition-all"
+            className="px-5 py-2 min-h-[44px] text-[13px] font-semibold rounded-full text-white transition-all"
             style={{ background: "var(--grad)", boxShadow: "var(--glow-sm)" }}
             onMouseEnter={(e) => {
               (e.currentTarget as HTMLElement).style.boxShadow = "var(--glow)";

@@ -1,10 +1,19 @@
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { rateLimit } from "@/lib/security";
 import { NextResponse } from "next/server";
 
 const unauth = () => NextResponse.json({ error: "Yetkisiz." }, { status: 401 });
 const forbidden = () => NextResponse.json({ error: "Bu işlem için yetkiniz yok." }, { status: 403 });
 const disabled = () => NextResponse.json({ error: "Hesabınız devre dışı." }, { status: 403 });
+const rateLimited = (retryAfter: number) =>
+  NextResponse.json({ error: "Çok fazla istek. Lütfen biraz sonra tekrar deneyin." }, { status: 429, headers: { "Retry-After": String(retryAfter) } });
+
+// Panel endpoint'leri için oturum başına best-effort hız sınırı — tüm staff guard'ları kullanır.
+function checkRateLimit(uid: string): NextResponse | null {
+  const rl = rateLimit(`panel:${uid}`, 120, 60_000);
+  return rl.ok ? null : rateLimited(rl.retryAfter);
+}
 
 export type AssignmentPerms = {
   id: string;
@@ -26,6 +35,8 @@ export async function requireStaffForSlug(slug: string) {
   const session = await getSession();
   if (!session) return { session: null, perms: null, err: unauth() };
   if (!(await checkActive(session.uid))) return { session: null, perms: null, err: disabled() };
+  const rl = checkRateLimit(session.uid);
+  if (rl) return { session: null, perms: null, err: rl };
   if (session.role === "ADMIN") return { session, perms: null, err: null };
   if (session.role === "EMPLOYEE") {
     const hit = await prisma.assignment.findFirst({
@@ -41,6 +52,8 @@ export async function requireInvoiceManageForSlug(slug: string) {
   const session = await getSession();
   if (!session) return { session: null, err: unauth() };
   if (!(await checkActive(session.uid))) return { session: null, err: disabled() };
+  const rl = checkRateLimit(session.uid);
+  if (rl) return { session: null, err: rl };
   if (session.role === "ADMIN") return { session, err: null };
   if (session.role === "EMPLOYEE") {
     const hit = await prisma.assignment.findFirst({
@@ -56,6 +69,8 @@ export async function requireInvoiceManageById(id: string) {
   const session = await getSession();
   if (!session) return { session: null, err: unauth() };
   if (!(await checkActive(session.uid))) return { session: null, err: disabled() };
+  const rl = checkRateLimit(session.uid);
+  if (rl) return { session: null, err: rl };
   if (session.role === "ADMIN") return { session, err: null };
   if (session.role === "EMPLOYEE") {
     const invoice = await prisma.invoice.findUnique({
@@ -72,6 +87,8 @@ export async function requireStaffForContentItem(id: string) {
   const session = await getSession();
   if (!session) return { session: null, err: unauth() };
   if (!(await checkActive(session.uid))) return { session: null, err: disabled() };
+  const rl = checkRateLimit(session.uid);
+  if (rl) return { session: null, err: rl };
   if (session.role === "ADMIN") return { session, err: null };
   if (session.role === "EMPLOYEE") {
     const item = await prisma.contentItem.findUnique({
@@ -88,6 +105,8 @@ export async function requireWorkflowAccess() {
   const session = await getSession();
   if (!session || session.role === "CLIENT") return { session: null, err: forbidden() };
   if (!(await checkActive(session.uid))) return { session: null, err: disabled() };
+  const rl = checkRateLimit(session.uid);
+  if (rl) return { session: null, err: rl };
   if (session.role === "ADMIN") return { session, err: null };
   const user = await prisma.user.findUnique({ where: { id: session.uid }, select: { workflowAccess: true } });
   if (!user?.workflowAccess) return { session: null, err: forbidden() };
@@ -99,6 +118,8 @@ export async function requireWorkflowCreateCards() {
   const session = await getSession();
   if (!session || session.role === "CLIENT") return { session: null, err: forbidden() };
   if (!(await checkActive(session.uid))) return { session: null, err: disabled() };
+  const rl = checkRateLimit(session.uid);
+  if (rl) return { session: null, err: rl };
   if (session.role === "ADMIN") return { session, err: null };
   const user = await prisma.user.findUnique({
     where: { id: session.uid },
@@ -113,6 +134,8 @@ export async function requireWorkflowManageColumns() {
   const session = await getSession();
   if (!session || session.role === "CLIENT") return { session: null, err: forbidden() };
   if (!(await checkActive(session.uid))) return { session: null, err: disabled() };
+  const rl = checkRateLimit(session.uid);
+  if (rl) return { session: null, err: rl };
   if (session.role === "ADMIN") return { session, err: null };
   const user = await prisma.user.findUnique({
     where: { id: session.uid },
@@ -127,6 +150,8 @@ export async function requireStaffForReport(id: string) {
   const session = await getSession();
   if (!session) return { session: null, err: unauth() };
   if (!(await checkActive(session.uid))) return { session: null, err: disabled() };
+  const rl = checkRateLimit(session.uid);
+  if (rl) return { session: null, err: rl };
   if (session.role === "ADMIN") return { session, err: null };
   if (session.role === "EMPLOYEE") {
     const report = await prisma.adReport.findUnique({
@@ -143,6 +168,8 @@ export async function requireStaffForUpdate(id: string) {
   const session = await getSession();
   if (!session) return { session: null, err: unauth() };
   if (!(await checkActive(session.uid))) return { session: null, err: disabled() };
+  const rl = checkRateLimit(session.uid);
+  if (rl) return { session: null, err: rl };
   if (session.role === "ADMIN") return { session, err: null };
   if (session.role === "EMPLOYEE") {
     const upd = await prisma.update.findUnique({

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 import { escapeHtml, isValidEmail, cleanStr, cleanPhone, rateLimit, getClientIp } from "@/lib/security";
+import { prisma } from "@/lib/db";
 
 export async function POST(req: NextRequest) {
   try {
@@ -54,6 +55,11 @@ export async function POST(req: NextRequest) {
       deadline: cleanStr(raw.deadline, 80),
       notes: cleanStr(raw.notes, 5000),
     };
+
+    // Önce veritabanına yaz — e-posta gönderimi başarısız olsa bile talep kaybolmasın.
+    const submission = await prisma.submission.create({
+      data: { type: "WEB_TEKLIF", data: d },
+    });
 
     const transporter = nodemailer.createTransport({
       service: "gmail",
@@ -135,13 +141,18 @@ export async function POST(req: NextRequest) {
       </div>
     `;
 
-    await transporter.sendMail({
-      from: `"markaizi Web Teklif" <${process.env.GMAIL_USER}>`,
-      to: process.env.GMAIL_USER,
-      replyTo: d.email,
-      subject: `[Web Teklif] ${d.siteType || "Site"} — ${d.name}${d.businessName ? ` (${d.businessName})` : ""}`.slice(0, 200),
-      html,
-    });
+    try {
+      await transporter.sendMail({
+        from: `"markaizi Web Teklif" <${process.env.GMAIL_USER}>`,
+        to: process.env.GMAIL_USER,
+        replyTo: d.email,
+        subject: `[Web Teklif] ${d.siteType || "Site"} — ${d.name}${d.businessName ? ` (${d.businessName})` : ""}`.slice(0, 200),
+        html,
+      });
+      await prisma.submission.update({ where: { id: submission.id }, data: { emailSent: true } });
+    } catch (err) {
+      console.error("Web teklif e-posta gönderim hatası (talep kaydedildi):", err);
+    }
 
     return NextResponse.json({ success: true });
   } catch (err) {

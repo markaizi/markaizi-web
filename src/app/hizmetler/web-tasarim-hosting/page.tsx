@@ -20,6 +20,7 @@ export default function WebTasarimPage() {
         badge="Dijital Altyapı"
         icon={ICON}
         path="/hizmetler/web-tasarim-hosting"
+        relatedPosts={[{ slug: "core-web-vitals", title: "Core Web Vitals Rehberi" }]}
         title="Web Tasarım & Hosting"
         subtitle="Ziyaretçiyi müşteriye dönüştüren, hızlı yüklenen ve her cihazda mükemmel görünen web siteleri tasarlıyoruz. Domain'den yayına tek adımda."
         description={[

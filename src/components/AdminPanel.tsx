@@ -24,11 +24,13 @@ export default function AdminPanel({
   adminName,
   employeeCount,
   unpricedWorkLogs = [],
+  unreadSubmissionCount = 0,
 }: {
   clients: AdminClientSummary[];
   adminName: string;
   employeeCount: number;
   unpricedWorkLogs?: UnpricedWorkLog[];
+  unreadSubmissionCount?: number;
 }) {
   const router = useRouter();
   const [section, setSection] = useState<Section>("dashboard");
@@ -82,6 +84,7 @@ export default function AdminPanel({
             totalUnread={totalUnread}
             totalOverdue={totalOverdue}
             unpricedWorkLogs={unpricedWorkLogs}
+            unreadSubmissionCount={unreadSubmissionCount}
             onGoFirmalar={() => setSection("firmalar")}
             router={router}
           />
@@ -96,13 +99,14 @@ export default function AdminPanel({
 
 // ── Dashboard ─────────────────────────────────────────────────────────────────
 
-function Dashboard({ clients, adminName, employeeCount, totalUnread, totalOverdue, unpricedWorkLogs, onGoFirmalar, router }: {
+function Dashboard({ clients, adminName, employeeCount, totalUnread, totalOverdue, unpricedWorkLogs, unreadSubmissionCount, onGoFirmalar, router }: {
   clients: AdminClientSummary[];
   adminName: string;
   employeeCount: number;
   totalUnread: number;
   totalOverdue: number;
   unpricedWorkLogs: UnpricedWorkLog[];
+  unreadSubmissionCount: number;
   onGoFirmalar: () => void;
   router: ReturnType<typeof useRouter>;
 }) {
@@ -394,6 +398,34 @@ function Dashboard({ clients, adminName, employeeCount, totalUnread, totalOverdu
               <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </div>
+        </button>
+
+        {/* Gelen Talepler */}
+        <button onClick={() => router.push("/musteri/admin/gelen-talepler")}
+          className="group rounded-2xl p-6 text-left transition-all duration-200 relative overflow-hidden"
+          style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+          onMouseEnter={e => {
+            (e.currentTarget as HTMLElement).style.borderColor = "rgba(96,165,250,0.4)";
+            (e.currentTarget as HTMLElement).style.background = "rgba(96,165,250,0.05)";
+          }}
+          onMouseLeave={e => {
+            (e.currentTarget as HTMLElement).style.borderColor = "var(--border)";
+            (e.currentTarget as HTMLElement).style.background = "var(--surface)";
+          }}>
+          <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4"
+            style={{ background: "rgba(96,165,250,0.1)", border: "1px solid rgba(96,165,250,0.2)" }}>
+            <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="#60a5fa" strokeWidth="2">
+              <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+          <p className="text-[17px] font-bold text-white mb-1">Gelen Talepler</p>
+          <p className="text-[13px] text-[#8a8a9a]">{unreadSubmissionCount > 0 ? `${unreadSubmissionCount} okunmamış talep` : "İletişim, CV, teklif formları"}</p>
+          {unreadSubmissionCount > 0 && (
+            <div className="absolute right-5 top-5 w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold"
+              style={{ background: "#f87171", color: "#fff" }}>
+              {unreadSubmissionCount}
+            </div>
+          )}
         </button>
 
         {/* Profilim */}

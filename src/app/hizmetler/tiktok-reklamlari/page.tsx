@@ -20,6 +20,7 @@ export default function TikTokReklamlariPage() {
       badge="Reklam Yönetimi"
       icon={ICON}
       path="/hizmetler/tiktok-reklamlari"
+      relatedPosts={[{ slug: "tiktok-for-business", title: "TikTok For Business Rehberi" }]}
       title="TikTok Reklamları"
       subtitle="Türkiye'nin en hızlı büyüyen platformunda markanızı öne çıkarıyoruz. TikTok'un güçlü algoritmasını ve reklam araçlarını sizin için kullanıyoruz."
       description={[

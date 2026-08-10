@@ -129,9 +129,8 @@ export default function LoginForm() {
         </form>
 
         <p className="text-[12px] text-[#555] text-center mt-5">
-          Şifrenizi unuttuysanız{" "}
-          <a href="https://wa.me/905520772700" className="text-[#c084fc] underline underline-offset-2">
-            WhatsApp&apos;tan yazın
+          <a href="/musteri/sifremi-unuttum" className="text-[#c084fc] underline underline-offset-2">
+            Şifremi unuttum
           </a>
         </p>
       </div>

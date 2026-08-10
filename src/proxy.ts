@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { SESSION_COOKIE, verifySession } from "@/lib/session";
 
+// Oturum gerektirmeyen sayfalar — giriş ve şifre sıfırlama akışı.
+const PUBLIC_PATHS = ["/musteri/giris", "/musteri/sifremi-unuttum", "/musteri/sifre-sifirla"];
+
 /**
  * /musteri/** rotalarını korur.
- * - /musteri/giris → serbest
+ * - PUBLIC_PATHS → serbest (giriş + şifre sıfırlama akışı)
  * - Geçersiz/eksik oturum → /musteri/giris'e yönlendir
  * - /musteri/admin/** → yalnızca ADMIN
  *
@@ -13,8 +16,7 @@ import { SESSION_COOKIE, verifySession } from "@/lib/session";
 export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // Giriş sayfası serbest
-  if (pathname === "/musteri/giris") return NextResponse.next();
+  if (PUBLIC_PATHS.includes(pathname)) return NextResponse.next();
 
   const token = req.cookies.get(SESSION_COOKIE)?.value;
   const session = token ? await verifySession(token) : null;

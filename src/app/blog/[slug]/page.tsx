@@ -12,6 +12,16 @@ export function generateStaticParams() {
   return BLOG_POSTS.map((p) => ({ slug: p.slug }));
 }
 
+// Kategoriye göre ilgili hizmet sayfası — blog yazısından hizmete geri dönüş linki için.
+const CATEGORY_SERVICE: Record<string, { href: string; label: string }> = {
+  "Sosyal Medya": { href: "/hizmetler/sosyal-medya-yonetimi", label: "Sosyal Medya Yönetimi" },
+  "TikTok": { href: "/hizmetler/tiktok-reklamlari", label: "TikTok Reklamları" },
+  "Google Ads": { href: "/hizmetler/google-reklamlari", label: "Google Reklamları" },
+  "Meta Reklamları": { href: "/hizmetler/meta-reklamlari", label: "Meta Reklamları" },
+  "Web Tasarım": { href: "/hizmetler/web-tasarim-hosting", label: "Web Tasarım & Hosting" },
+  "İçerik Üretimi": { href: "/hizmetler/yapay-zeka-otomasyon", label: "Yapay Zeka & Otomasyon" },
+};
+
 export async function generateMetadata({
   params,
 }: {
@@ -187,6 +197,20 @@ export default async function BlogPostPage({
                     Mobilya Reklam Ajansı
                   </a>{" "}
                   sayfamızda bulabilirsiniz.
+                </p>
+              )}
+
+              {/* Diğer kategoriler → ilgili hizmet sayfası iç linki */}
+              {CATEGORY_SERVICE[post.category] && (
+                <p className="mt-6 text-[14px] text-[#8a8a9a] leading-relaxed">
+                  Bu konuda size özel çalışabileceğimiz{" "}
+                  <a
+                    href={CATEGORY_SERVICE[post.category].href}
+                    className="text-[#c084fc] underline underline-offset-2 hover:text-white transition-colors"
+                  >
+                    {CATEGORY_SERVICE[post.category].label}
+                  </a>{" "}
+                  hizmetimize göz atın.
                 </p>
               )}
             </div>

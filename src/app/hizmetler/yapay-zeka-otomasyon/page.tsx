@@ -26,6 +26,7 @@ export default function YapayZekaOtomasyonPage() {
       badge="Yeni Nesil Hizmetler"
       icon={ICON}
       path="/hizmetler/yapay-zeka-otomasyon"
+      relatedPosts={[{ slug: "yapay-zeka-icerik", title: "Yapay Zeka ile İçerik Üretimi" }]}
       title="Yapay Zeka & Otomasyon"
       subtitle="AI destekli araçlarla görseller, reklam filmleri ve videolar üretiyoruz. İçerik süreçlerinizi otomatikleştirerek markanızı rekabette öne taşıyoruz."
       description={[

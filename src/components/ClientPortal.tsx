@@ -102,13 +102,21 @@ function Dashboard({
             Admin Paneli
           </a>
         ) : (
-          <button onClick={onLogout} className="text-[12px] text-[#8a8a9a] hover:text-[#f87171] transition-colors flex items-center gap-1.5 flex-shrink-0 min-h-[44px] px-1">
-            <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth="2">
-              <path d="M18.364 5.636A9 9 0 1 1 5.636 18.364" strokeLinecap="round"/>
-              <path d="M12 3v9" strokeLinecap="round"/>
-            </svg>
-            Çıkış
-          </button>
+          <div className="flex items-center gap-4 flex-shrink-0">
+            <a href="/musteri/profil" className="text-[12px] text-[#8a8a9a] hover:text-white transition-colors flex items-center gap-1.5 min-h-[44px] px-1">
+              <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth="2">
+                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              Profil
+            </a>
+            <button onClick={onLogout} className="text-[12px] text-[#8a8a9a] hover:text-[#f87171] transition-colors flex items-center gap-1.5 min-h-[44px] px-1">
+              <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth="2">
+                <path d="M18.364 5.636A9 9 0 1 1 5.636 18.364" strokeLinecap="round"/>
+                <path d="M12 3v9" strokeLinecap="round"/>
+              </svg>
+              Çıkış
+            </button>
+          </div>
         )}
       </header>
 

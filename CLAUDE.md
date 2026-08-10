@@ -30,7 +30,7 @@ src/
         ├── Hero.tsx         → Hero bölümü, animasyonlu ikonlar ("use client")
         ├── Services.tsx     → 6 hizmet kartı ("use client")
         ├── About.tsx        → Sayaç animasyonu, gradient kart ("use client")
-        ├── Portfolio.tsx    → Logo grid + testimonial slider ("use client")
+        ├── Portfolio.tsx    → Marka logo grid'i ("use client")
         ├── Pricing.tsx      → 3 fiyat paketi ("use client")
         ├── Contact.tsx      → İletişim formu + panel ("use client")
         └── Footer.tsx       → Footer (server component)
@@ -47,11 +47,6 @@ Font: Inter (Google Fonts)
 ## Deploy Akışı
 - `git push origin main` → Vercel otomatik deploy eder (GitHub bağlı)
 - Manuel: `vercel --prod`
-
-## Güncellenmesi Gereken Placeholder'lar
-- WhatsApp: `wa.me/905320000000` → `src/components/WhatsApp.tsx`
-- E-posta: `info@markaizi.com` → `Contact.tsx` + `Footer.tsx`
-- Telefon: `+90 (532) 000 00 00` → `Contact.tsx` + `Footer.tsx`
 
 ## Önemli Notlar
 - Hero animasyonlu ikonlar yalnızca `lg:` breakpoint'te görünür (hidden → block)

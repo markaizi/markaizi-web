@@ -65,7 +65,7 @@ export default function Footer() {
               { label: "Çerez Politikası", href: "/cerez-politikasi" },
               { label: "Kullanım Şartları", href: "/kullanim-sartlari" },
             ].map((l) => (
-              <a key={l.label} href={l.href} className="text-[13px] text-[#8a8a9a] hover:text-white transition-colors">
+              <a key={l.label} href={l.href} className="text-[13px] text-[#8a8a9a] hover:text-white transition-colors inline-flex items-center min-h-[44px] py-1">
                 {l.label}
               </a>
             ))}

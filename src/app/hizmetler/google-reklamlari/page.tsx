@@ -22,6 +22,7 @@ export default function GoogleReklamlariPage() {
       badge="Reklam Yönetimi"
       icon={ICON}
       path="/hizmetler/google-reklamlari"
+      relatedPosts={[{ slug: "google-ads-butce-optimizasyonu", title: "Google Ads Bütçe Optimizasyonu" }]}
       title="Google Reklamları"
       subtitle="Ürününüzü veya hizmetinizi Google'da aktif olarak arayanların karşısına çıkıyoruz. Arama niyetiyle gelen kullanıcı, en değerli kullanıcıdır."
       description={[

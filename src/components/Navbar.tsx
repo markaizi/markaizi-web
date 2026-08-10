@@ -38,6 +38,13 @@ export default function Navbar() {
     document.body.style.overflow = (open || loginOpen) ? "hidden" : "";
   }, [open, loginOpen]);
 
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpen(false); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [open]);
+
   const close      = () => setOpen(false);
   const closeLogin = () => setLoginOpen(false);
 
@@ -143,7 +150,7 @@ export default function Navbar() {
             {session ? (
               <a
                 href={session.redirect}
-                className="flex items-center gap-1.5 px-3 py-2 rounded-full transition-all text-[13px] font-medium"
+                className="flex items-center gap-1.5 px-3 py-2 min-h-[44px] rounded-full transition-all text-[13px] font-medium"
                 style={{ border: "1px solid rgba(168,85,247,0.3)", color: "#c084fc", background: "rgba(168,85,247,0.1)" }}
               >
                 <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 flex-shrink-0" stroke="currentColor" strokeWidth="2">
@@ -155,7 +162,7 @@ export default function Navbar() {
               <button
                 onClick={() => setLoginOpen(true)}
                 aria-label="Müşteri Girişi"
-                className="flex items-center gap-1.5 px-3 py-2 rounded-full transition-all hover:bg-white/[0.08] text-[13px] font-medium"
+                className="flex items-center gap-1.5 px-3 py-2 min-h-[44px] rounded-full transition-all hover:bg-white/[0.08] text-[13px] font-medium"
                 style={{ border: "1px solid var(--border)", color: "#c084fc" }}
               >
                 <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 flex-shrink-0" stroke="currentColor" strokeWidth="2">
@@ -168,7 +175,7 @@ export default function Navbar() {
           <button
             onClick={() => setOpen((v) => !v)}
             aria-label="Menüyü aç"
-            className="flex flex-col gap-[5px] p-1 z-[1001] relative"
+            className="flex flex-col items-center justify-center gap-[5px] min-w-[44px] min-h-[44px] z-[1001] relative"
           >
             {[
               open ? { transform: "translateY(7px) rotate(45deg)" } : {},
@@ -184,7 +191,7 @@ export default function Navbar() {
 
       {/* Mobile Menu */}
       <div
-        className="fixed inset-0 z-[999] flex flex-col transition-transform duration-300"
+        className="fixed inset-0 z-[10000] flex flex-col transition-transform duration-300"
         style={{
           background: "rgba(5,5,5,0.97)",
           WebkitBackdropFilter: "blur(20px)", backdropFilter: "blur(20px)",
@@ -350,9 +357,8 @@ function LoginModal({ onClose }: { onClose: () => void }) {
         </form>
 
         <p className="text-[12px] text-[#555] text-center mt-5">
-          Şifrenizi unuttuysanız{" "}
-          <a href="https://wa.me/905520772700" className="text-[#c084fc] underline underline-offset-2">
-            WhatsApp&apos;tan yazın
+          <a href="/musteri/sifremi-unuttum" className="text-[#c084fc] underline underline-offset-2">
+            Şifremi unuttum
           </a>
         </p>
       </div>

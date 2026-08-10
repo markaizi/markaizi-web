@@ -74,7 +74,7 @@ export default function Hero() {
     <section
       id="hero"
       className="min-h-screen flex items-center relative overflow-hidden"
-      style={{ padding: "100px 0 80px" }}
+      style={{ padding: "100px 0 80px", minHeight: "100dvh" }}
     >
       {/* Orbs */}
       {[

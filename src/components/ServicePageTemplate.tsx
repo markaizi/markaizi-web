@@ -16,6 +16,7 @@ export interface ServicePageProps {
   icon: React.ReactNode;
   badge: string;
   path: string; // ör. "/hizmetler/sosyal-medya-yonetimi"
+  relatedPosts?: { slug: string; title: string }[]; // ilgili blog yazıları
 }
 
 export default function ServicePageTemplate({
@@ -27,6 +28,7 @@ export default function ServicePageTemplate({
   icon,
   badge,
   path,
+  relatedPosts,
 }: ServicePageProps) {
   const faqJsonLd = faq && faq.length > 0
     ? {
@@ -165,6 +167,32 @@ export default function ServicePageTemplate({
         {faq && faq.length > 0 && (
           <section className="py-20" style={{ background: "var(--bg)" }}>
             <ServiceFAQ faqs={faq} />
+          </section>
+        )}
+
+        {/* ── İlgili Rehberler ── */}
+        {relatedPosts && relatedPosts.length > 0 && (
+          <section className="py-16" style={{ background: "var(--bg)" }}>
+            <div className="max-w-[760px] mx-auto px-6 text-center">
+              <h2 className="font-black text-[24px] mb-3">
+                {title} Hakkında <span className="gradient-text">Daha Fazlası</span>
+              </h2>
+              <p className="text-[#8a8a9a] text-[15px] mb-6">
+                Bu konuda hazırladığımız rehberlere göz atın:
+              </p>
+              <div className="flex flex-col sm:flex-row flex-wrap gap-3 justify-center">
+                {relatedPosts.map((p) => (
+                  <Link
+                    key={p.slug}
+                    href={`/blog/${p.slug}`}
+                    className="text-[14px] font-semibold text-[#c084fc] px-5 py-2.5 rounded-full transition-all hover:bg-white/[0.06]"
+                    style={{ border: "1px solid rgba(168,85,247,0.3)" }}
+                  >
+                    {p.title} →
+                  </Link>
+                ))}
+              </div>
+            </div>
           </section>
         )}
 

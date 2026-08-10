@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 import { escapeHtml, isValidEmail, cleanStr, cleanPhone, rateLimit, getClientIp } from "@/lib/security";
 import { CV_SKILLS } from "@/lib/cv-skills";
+import { prisma } from "@/lib/db";
 
 export async function POST(req: NextRequest) {
   try {
@@ -38,6 +39,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Geçersiz e-posta adresi." }, { status: 400 });
     }
 
+    // Önce veritabanına yaz — e-posta gönderimi başarısız olsa bile başvuru kaybolmasın.
+    const submission = await prisma.submission.create({
+      data: { type: "CV", data: { name, email, phone, age, medeni, ucretBeklenti, sosyalMedya, referanslar, about, skills } },
+    });
+
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: { user: process.env.GMAIL_USER, pass: process.env.GMAIL_APP_PASSWORD },
@@ -59,7 +65,8 @@ export async function POST(req: NextRequest) {
         </tr>`;
     }).join("");
 
-    await transporter.sendMail({
+    try {
+      await transporter.sendMail({
       from: `"markaizi İK" <${process.env.GMAIL_USER}>`,
       to: process.env.GMAIL_USER,
       replyTo: email,
@@ -92,7 +99,11 @@ export async function POST(req: NextRequest) {
           </div>
         </div>
       `,
-    });
+      });
+      await prisma.submission.update({ where: { id: submission.id }, data: { emailSent: true } });
+    } catch (err) {
+      console.error("CV e-posta gönderim hatası (başvuru kaydedildi):", err);
+    }
 
     return NextResponse.json({ success: true });
   } catch (err) {
