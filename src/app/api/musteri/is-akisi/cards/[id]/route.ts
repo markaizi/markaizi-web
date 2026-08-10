@@ -153,7 +153,10 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     console.error("İş Akışı → İş Kaydı otomasyonu başarısız:", e);
   }
 
-  return NextResponse.json({ ok: true, card });
+  return NextResponse.json({
+    ok: true,
+    card: { ...card, dueDate: card.dueDate ? card.dueDate.toISOString().slice(0, 10) : null },
+  });
 }
 
 export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {

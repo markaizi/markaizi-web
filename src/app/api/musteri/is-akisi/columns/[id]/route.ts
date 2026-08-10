@@ -11,6 +11,7 @@ const patchSchema = z.object({
   triggersWorkLog: z.boolean().optional(),
   triggersContentItem: z.boolean().optional(),
   adminOnly: z.boolean().optional(),
+  hiddenFromEmployees: z.boolean().optional(),
 });
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -25,6 +26,9 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
   if (parsed.data.adminOnly !== undefined && session!.role !== "ADMIN") {
     return NextResponse.json({ error: "Bu sütunu yalnızca admin kilitleyebilir." }, { status: 403 });
+  }
+  if (parsed.data.hiddenFromEmployees !== undefined && session!.role !== "ADMIN") {
+    return NextResponse.json({ error: "Bu sütunu yalnızca admin gizleyebilir." }, { status: 403 });
   }
 
   const column = await prisma.workflowColumn.update({ where: { id }, data: parsed.data });

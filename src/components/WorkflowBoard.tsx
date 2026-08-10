@@ -26,6 +26,7 @@ interface ColumnData {
   triggersWorkLog: boolean;
   triggersContentItem: boolean;
   adminOnly: boolean;
+  hiddenFromEmployees: boolean;
   cards: CardData[];
 }
 
@@ -368,6 +369,15 @@ export default function WorkflowBoard({ initialData }: { initialData?: BoardInit
     });
   }
 
+  async function handleToggleHidden(id: string, next: boolean) {
+    setColumns((prev) => prev.map((c) => (c.id === id ? { ...c, hiddenFromEmployees: next } : c)));
+    await fetch(`/api/musteri/is-akisi/columns/${id}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ hiddenFromEmployees: next }),
+    });
+  }
+
   function handleMoveColumn(id: string, direction: "left" | "right") {
     setColumns((prev) => {
       const idx = prev.findIndex((c) => c.id === id);
@@ -441,7 +451,7 @@ export default function WorkflowBoard({ initialData }: { initialData?: BoardInit
             <div
               key={col.id}
               data-column-id={col.id}
-              className="flex-shrink-0 w-[82vw] max-w-[320px] sm:w-[280px] sm:max-w-none snap-center max-h-[calc(100vh-235px)] sm:max-h-[calc(100vh-210px)] rounded-2xl flex flex-col"
+              className="flex-shrink-0 w-[82vw] max-w-[320px] sm:w-auto sm:flex-1 sm:min-w-[280px] sm:max-w-[420px] snap-center max-h-[calc(100vh-235px)] sm:max-h-[calc(100vh-210px)] rounded-2xl flex flex-col"
               style={{
                 background: isDragTarget ? "rgba(168,85,247,0.06)" : "var(--surface)",
                 border: `1px solid ${isDragTarget ? "rgba(168,85,247,0.4)" : "var(--border)"}`,
@@ -501,6 +511,29 @@ export default function WorkflowBoard({ initialData }: { initialData?: BoardInit
                             <rect x="5" y="11" width="14" height="9" rx="2" />
                             <path d="M8 11V7a4 4 0 0 1 8 0v4" />
                           </svg>
+                        </button>
+                      )}
+                      {isAdmin && (
+                        <button
+                          onClick={() => handleToggleHidden(col.id, !col.hiddenFromEmployees)}
+                          title={col.hiddenFromEmployees ? "Bu sütun çalışanlardan gizli — yalnızca sen görüyorsun (göstermek için tıkla)" : "Bu sütunu çalışanlardan gizle — panoda yalnızca sen görebilirsin"}
+                          className="w-6 h-6 flex items-center justify-center rounded-md transition-colors"
+                          style={{
+                            color: col.hiddenFromEmployees ? "#fb923c" : "#555",
+                            background: col.hiddenFromEmployees ? "rgba(251,146,60,0.15)" : "transparent",
+                          }}
+                        >
+                          {col.hiddenFromEmployees ? (
+                            <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5" stroke="currentColor" strokeWidth="2">
+                              <path d="M17.94 17.94A10.94 10.94 0 0112 20c-7 0-10-8-10-8a18.5 18.5 0 015.06-5.94M9.9 4.24A10.94 10.94 0 0112 4c7 0 10 8 10 8a18.5 18.5 0 01-2.16 3.19M14.12 14.12a3 3 0 11-4.24-4.24" strokeLinecap="round" strokeLinejoin="round" />
+                              <path d="M1 1l22 22" strokeLinecap="round" />
+                            </svg>
+                          ) : (
+                            <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5" stroke="currentColor" strokeWidth="2">
+                              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" strokeLinecap="round" strokeLinejoin="round" />
+                              <circle cx="12" cy="12" r="3" />
+                            </svg>
+                          )}
                         </button>
                       )}
                       <button

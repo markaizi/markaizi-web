@@ -69,8 +69,21 @@ export async function getWorkflowBoardData(session: SessionPayload) {
     canManageColumns = !!me?.workflowCanManageColumns;
   }
 
+  // dueDate Prisma'dan tam DateTime olarak gelir; istemci tarafı (fmtDate,
+  // <input type="date">) "YYYY-MM-DD" bekliyor — burada tek noktadan normalize edilir.
+  // hiddenFromEmployees=true olan sütunlar çalışanlara panoda hiç gösterilmez.
+  const normalizedColumns = columns
+    .filter((col) => isAdmin || !col.hiddenFromEmployees)
+    .map((col) => ({
+      ...col,
+      cards: col.cards.map((card) => ({
+        ...card,
+        dueDate: card.dueDate ? card.dueDate.toISOString().slice(0, 10) : null,
+      })),
+    }));
+
   return {
-    columns, employees, clients,
+    columns: normalizedColumns, employees, clients,
     currentUserId: session.uid,
     isAdmin, canCreateCards, canDragCards, canWriteRevisionNote, canDeleteAnyCard, canManageColumns,
   };

@@ -73,5 +73,8 @@ export async function POST(req: NextRequest) {
     },
   });
 
-  return NextResponse.json({ ok: true, card });
+  return NextResponse.json({
+    ok: true,
+    card: { ...card, dueDate: card.dueDate ? card.dueDate.toISOString().slice(0, 10) : null },
+  });
 }

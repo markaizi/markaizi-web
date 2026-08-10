@@ -291,6 +291,12 @@ model WorkflowColumn {
   // sütundayken çalışanlar için salt-okunur ve sürüklenemez hale gelir.
   adminOnly Boolean @default(false)
 
+  // true ise: bu sütun panoda yalnızca ADMIN'e görünür, çalışanlara hiç
+  // gösterilmez (adminOnly'den farklı — o kartlara dokunmayı kısıtlar ama
+  // sütun yine de görünür kalır). Panoyu sadeleştirmek ve çalışan kafası
+  // karışmasın diye kullanılır.
+  hiddenFromEmployees Boolean @default(false)
+
   cards WorkflowCard[]
 
   createdAt DateTime @default(now())
