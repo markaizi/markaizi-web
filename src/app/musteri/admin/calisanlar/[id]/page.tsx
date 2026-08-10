@@ -78,6 +78,7 @@ export default async function AdminEmployeeDetailPage({
     workflowCanWriteRevisionNote: employee.workflowCanWriteRevisionNote,
     workflowCanDeleteAnyCard: employee.workflowCanDeleteAnyCard,
     workflowCanManageColumns: employee.workflowCanManageColumns,
+    workflowSeeAllCards: employee.workflowSeeAllCards,
     paymentDay,
     currentPeriod: { key: currentPeriod.key, label: currentPeriod.label },
     currentLogs: currentLogs.map((l) => ({

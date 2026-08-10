@@ -24,6 +24,7 @@ export interface EmployeeDetailData {
   workflowCanWriteRevisionNote: boolean;
   workflowCanDeleteAnyCard: boolean;
   workflowCanManageColumns: boolean;
+  workflowSeeAllCards: boolean;
   paymentDay: number | null;
   currentPeriod: { key: string; label: string };
   currentLogs: WorkLogEntry[];
@@ -132,6 +133,7 @@ const WORKFLOW_TOGGLES = [
   { key: "workflowCanWriteRevisionNote" as const, label: "Revize Notu Yazma", desc: "Kartlara revize notu ekleyebilir/düzenleyebilir. Kapalıysa sadece admin yazabilir." },
   { key: "workflowCanDeleteAnyCard" as const, label: "Tüm Kartları Silme", desc: "Başkasının oluşturduğu kartları da silebilir." },
   { key: "workflowCanManageColumns" as const, label: "Sütun Yönetimi", desc: "Sütun ekler, yeniden adlandırır, siler." },
+  { key: "workflowSeeAllCards" as const, label: "Tüm Kartları Görme", desc: "Kapalıysa panoda yalnızca kendine atanmış kartları ve kimseye atanmamış kartları görür." },
 ];
 
 export default function AdminEmployeeDetail({
@@ -177,6 +179,7 @@ export default function AdminEmployeeDetail({
     workflowCanWriteRevisionNote: employee.workflowCanWriteRevisionNote,
     workflowCanDeleteAnyCard: employee.workflowCanDeleteAnyCard,
     workflowCanManageColumns: employee.workflowCanManageColumns,
+    workflowSeeAllCards: employee.workflowSeeAllCards,
   });
   const [wfLoading, setWfLoading] = useState<string | null>(null);
 

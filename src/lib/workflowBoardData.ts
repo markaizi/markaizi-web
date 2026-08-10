@@ -51,6 +51,7 @@ export async function getWorkflowBoardData(session: SessionPayload) {
   let canWriteRevisionNote = isAdmin;
   let canDeleteAnyCard = isAdmin;
   let canManageColumns = isAdmin;
+  let seeAllCards = true;
   if (!isAdmin) {
     const me = await prisma.user.findUnique({
       where: { id: session.uid },
@@ -60,6 +61,7 @@ export async function getWorkflowBoardData(session: SessionPayload) {
         workflowCanWriteRevisionNote: true,
         workflowCanDeleteAnyCard: true,
         workflowCanManageColumns: true,
+        workflowSeeAllCards: true,
       },
     });
     canCreateCards = !!me?.workflowCanCreateCards;
@@ -67,19 +69,23 @@ export async function getWorkflowBoardData(session: SessionPayload) {
     canWriteRevisionNote = !!me?.workflowCanWriteRevisionNote;
     canDeleteAnyCard = !!me?.workflowCanDeleteAnyCard;
     canManageColumns = !!me?.workflowCanManageColumns;
+    seeAllCards = me?.workflowSeeAllCards ?? true;
   }
 
   // dueDate Prisma'dan tam DateTime olarak gelir; istemci tarafı (fmtDate,
   // <input type="date">) "YYYY-MM-DD" bekliyor — burada tek noktadan normalize edilir.
   // hiddenFromEmployees=true olan sütunlar çalışanlara panoda hiç gösterilmez.
+  // seeAllCards=false olan çalışan yalnızca kendine atanmış + sahipsiz kartları görür.
   const normalizedColumns = columns
     .filter((col) => isAdmin || !col.hiddenFromEmployees)
     .map((col) => ({
       ...col,
-      cards: col.cards.map((card) => ({
-        ...card,
-        dueDate: card.dueDate ? card.dueDate.toISOString().slice(0, 10) : null,
-      })),
+      cards: col.cards
+        .filter((card) => seeAllCards || !card.assigneeId || card.assigneeId === session.uid)
+        .map((card) => ({
+          ...card,
+          dueDate: card.dueDate ? card.dueDate.toISOString().slice(0, 10) : null,
+        })),
     }));
 
   return {

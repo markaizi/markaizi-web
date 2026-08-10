@@ -102,6 +102,10 @@ model User {
   workflowCanDeleteAnyCard     Boolean @default(false) // başkasının kartını da silebilir
   workflowCanManageColumns     Boolean @default(false) // sütun ekle/yeniden adlandır/sil
 
+  // true (varsayılan) ise panodaki tüm kartları görür. false ise yalnızca kendine
+  // atanmış kartları + hiç kimseye atanmamış kartları görür (sahipsiz kart herkese açık).
+  workflowSeeAllCards Boolean @default(true)
+
   assignments     Assignment[]
   authoredUpdates Update[]      @relation("UpdateAuthor")
   authoredContent ContentItem[] @relation("ContentAssignee")
