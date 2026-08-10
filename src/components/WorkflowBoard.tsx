@@ -1106,7 +1106,6 @@ function CardModal({
               onChange={(e) => setRevisionNote(e.target.value)}
               rows={2}
               disabled={revisionNoteDisabled}
-              placeholder="Örn. Logo daha büyük olsun, renk tonu koyulaştırılsın..."
               className="w-full px-3.5 py-2.5 rounded-xl text-[14px] text-white placeholder-[#555] outline-none resize-y disabled:opacity-70"
               style={{ background: "var(--bg)", border: "1px solid rgba(251,146,60,0.3)" }}
             />
@@ -1135,15 +1134,23 @@ function CardModal({
               </select>
             </div>
             <div>
-              <label className="block text-[11px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1.5">Bitiş Tarihi</label>
-              <input
-                type="date"
-                value={dueDate}
-                onChange={(e) => setDueDate(e.target.value)}
-                disabled={readOnly}
-                className="w-full px-3.5 py-2.5 rounded-xl text-[14px] text-white outline-none disabled:opacity-70"
-                style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
-              />
+              <label className="block text-[11px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1.5">Çekim Tarihi</label>
+              {readOnly ? (
+                <p className="w-full px-3.5 py-2.5 rounded-xl text-[14px] text-white"
+                  style={{ background: "var(--bg)", border: "1px solid var(--border)", opacity: 0.7 }}>
+                  {dueDate
+                    ? new Date(dueDate + "T00:00:00").toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" })
+                    : "—"}
+                </p>
+              ) : (
+                <input
+                  type="date"
+                  value={dueDate}
+                  onChange={(e) => setDueDate(e.target.value)}
+                  className="w-full px-3.5 py-2.5 rounded-xl text-[14px] text-white outline-none"
+                  style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
+                />
+              )}
             </div>
           </div>
 
@@ -1163,21 +1170,30 @@ function CardModal({
             </select>
           </div>
 
-          {clients.length > 0 && (
+          {(clients.length > 0 || (readOnly && card?.client)) && (
             <div>
               <label className="block text-[11px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1.5">Firma (opsiyonel)</label>
-              <select
-                value={clientId}
-                onChange={(e) => setClientId(e.target.value)}
-                disabled={readOnly}
-                className="w-full px-3.5 py-2.5 rounded-xl text-[14px] text-white outline-none disabled:opacity-70"
-                style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
-              >
-                <option value="">Yok</option>
-                {clients.map((c) => (
-                  <option key={c.id} value={c.id}>{c.name}</option>
-                ))}
-              </select>
+              {readOnly ? (
+                // Salt-okunur görünümde firma adı doğrudan karttan gösterilir — çalışanın
+                // atanmadığı bir firma seçenek listesinde (clients) bulunmayabilir, bu yüzden
+                // <select>'e bağımlı kalmadan gerçek ismi buradan basıyoruz.
+                <p className="w-full px-3.5 py-2.5 rounded-xl text-[14px] text-white"
+                  style={{ background: "var(--bg)", border: "1px solid var(--border)", opacity: 0.7 }}>
+                  {card?.client?.name ?? "Yok"}
+                </p>
+              ) : (
+                <select
+                  value={clientId}
+                  onChange={(e) => setClientId(e.target.value)}
+                  className="w-full px-3.5 py-2.5 rounded-xl text-[14px] text-white outline-none"
+                  style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
+                >
+                  <option value="">Yok</option>
+                  {clients.map((c) => (
+                    <option key={c.id} value={c.id}>{c.name}</option>
+                  ))}
+                </select>
+              )}
             </div>
           )}
 
