@@ -137,23 +137,26 @@ export default function WorkflowBoard({ initialData }: { initialData?: BoardInit
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [load]);
 
-  // Çalışan başına kart sayısı — sadece admin görür. Arşivlenmiş kartlar zaten
-  // board verisinde gelmiyor (bkz. workflowBoardData.ts), o yüzden burada tekrar
-  // filtrelemeye gerek yok. Sahipsiz kartlar ayrı bir satırda gösterilir.
+  // Çalışan başına kart sayısı — sadece admin görür ve sadece "Yapılacak"
+  // sütunundaki kartları sayar (tamamlanan/kontrol/revize dahil edilmez —
+  // amaç kimin üzerinde ne kadar iş kaldığını görmek). Sütun admin tarafından
+  // yeniden adlandırılmışsa en soldaki (sortOrder en düşük) sütuna düşülür.
+  const statsColumn = useMemo(
+    () => columns.find((c) => c.title === "Yapılacak") ?? columns[0],
+    [columns]
+  );
   const employeeCardCounts = useMemo(() => {
     const counts = new Map<string, number>();
     let unassigned = 0;
-    for (const col of columns) {
-      for (const card of col.cards) {
-        if (card.assignee) counts.set(card.assignee.id, (counts.get(card.assignee.id) ?? 0) + 1);
-        else unassigned += 1;
-      }
+    for (const card of statsColumn?.cards ?? []) {
+      if (card.assignee) counts.set(card.assignee.id, (counts.get(card.assignee.id) ?? 0) + 1);
+      else unassigned += 1;
     }
     const rows = employees
       .map((e) => ({ id: e.id, name: e.name, count: counts.get(e.id) ?? 0 }))
       .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, "tr"));
     return { rows, unassigned, total: rows.reduce((s, r) => s + r.count, 0) + unassigned };
-  }, [columns, employees]);
+  }, [statsColumn, employees]);
 
   async function handleMoveCard(cardId: string, targetColumnId: string) {
     const card = columns.flatMap((c) => c.cards).find((c) => c.id === cardId);
@@ -479,7 +482,10 @@ export default function WorkflowBoard({ initialData }: { initialData?: BoardInit
       {isAdmin && showEmployeeStats && (
         <div className="mb-4 rounded-2xl p-4" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
           <div className="flex items-center justify-between mb-3">
-            <p className="text-[13px] font-semibold text-white">Çalışan Başına Kart Sayısı</p>
+            <div>
+              <p className="text-[13px] font-semibold text-white">Çalışan Başına Kart Sayısı</p>
+              <p className="text-[11px] text-[#8a8a9a] mt-0.5">yalnızca &quot;{statsColumn?.title ?? "—"}&quot; sütunu</p>
+            </div>
             <p className="text-[12px] text-[#8a8a9a]">{employeeCardCounts.total} kart</p>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
