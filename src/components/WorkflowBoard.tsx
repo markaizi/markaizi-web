@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 
 type Priority = "DUSUK" | "ORTA" | "YUKSEK";
 
@@ -94,6 +94,7 @@ export default function WorkflowBoard({ initialData }: { initialData?: BoardInit
   const [renameValue, setRenameValue] = useState("");
   const [colError, setColError] = useState("");
   const [showArchive, setShowArchive] = useState(false);
+  const [showEmployeeStats, setShowEmployeeStats] = useState(false);
 
   // ── Sürükleme: mouse'ta anında, dokunmada basılı tutunca (Pointer Events) ──
   const [dragCardId, setDragCardId] = useState<string | null>(null);
@@ -135,6 +136,24 @@ export default function WorkflowBoard({ initialData }: { initialData?: BoardInit
     if (!initialData) load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [load]);
+
+  // Çalışan başına kart sayısı — sadece admin görür. Arşivlenmiş kartlar zaten
+  // board verisinde gelmiyor (bkz. workflowBoardData.ts), o yüzden burada tekrar
+  // filtrelemeye gerek yok. Sahipsiz kartlar ayrı bir satırda gösterilir.
+  const employeeCardCounts = useMemo(() => {
+    const counts = new Map<string, number>();
+    let unassigned = 0;
+    for (const col of columns) {
+      for (const card of col.cards) {
+        if (card.assignee) counts.set(card.assignee.id, (counts.get(card.assignee.id) ?? 0) + 1);
+        else unassigned += 1;
+      }
+    }
+    const rows = employees
+      .map((e) => ({ id: e.id, name: e.name, count: counts.get(e.id) ?? 0 }))
+      .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, "tr"));
+    return { rows, unassigned, total: rows.reduce((s, r) => s + r.count, 0) + unassigned };
+  }, [columns, employees]);
 
   async function handleMoveCard(cardId: string, targetColumnId: string) {
     const card = columns.flatMap((c) => c.cards).find((c) => c.id === cardId);
@@ -424,18 +443,61 @@ export default function WorkflowBoard({ initialData }: { initialData?: BoardInit
         </div>
       )}
 
-      {canCreateCards && (
-        <div className="flex justify-end mb-3">
-          <button
-            onClick={() => setShowArchive(true)}
-            className="text-[12px] font-semibold text-[#8a8a9a] hover:text-[#c084fc] transition-colors flex items-center gap-1.5 px-3 py-1.5 rounded-lg"
-            style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
-          >
-            <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5" stroke="currentColor" strokeWidth="2">
-              <path d="M3 7h18M5 7l1 13a1 1 0 001 1h10a1 1 0 001-1l1-13M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-            Arşiv
-          </button>
+      {(canCreateCards || isAdmin) && (
+        <div className="flex justify-end gap-2 mb-3">
+          {isAdmin && (
+            <button
+              onClick={() => setShowEmployeeStats((v) => !v)}
+              className="text-[12px] font-semibold transition-colors flex items-center gap-1.5 px-3 py-1.5 rounded-lg"
+              style={{
+                background: showEmployeeStats ? "rgba(192,132,252,0.14)" : "var(--surface)",
+                border: `1px solid ${showEmployeeStats ? "rgba(192,132,252,0.4)" : "var(--border)"}`,
+                color: showEmployeeStats ? "#c084fc" : "#8a8a9a",
+              }}
+            >
+              <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5" stroke="currentColor" strokeWidth="2">
+                <path d="M9 17v-6M13 17V7M17 17v-3M4 21h16a1 1 0 001-1V4a1 1 0 00-1-1H4a1 1 0 00-1 1v16a1 1 0 001 1z" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              Çalışan Kartları
+            </button>
+          )}
+          {canCreateCards && (
+            <button
+              onClick={() => setShowArchive(true)}
+              className="text-[12px] font-semibold text-[#8a8a9a] hover:text-[#c084fc] transition-colors flex items-center gap-1.5 px-3 py-1.5 rounded-lg"
+              style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+            >
+              <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5" stroke="currentColor" strokeWidth="2">
+                <path d="M3 7h18M5 7l1 13a1 1 0 001 1h10a1 1 0 001-1l1-13M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              Arşiv
+            </button>
+          )}
+        </div>
+      )}
+
+      {isAdmin && showEmployeeStats && (
+        <div className="mb-4 rounded-2xl p-4" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+          <div className="flex items-center justify-between mb-3">
+            <p className="text-[13px] font-semibold text-white">Çalışan Başına Kart Sayısı</p>
+            <p className="text-[12px] text-[#8a8a9a]">{employeeCardCounts.total} kart</p>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+            {employeeCardCounts.rows.map((r) => (
+              <div key={r.id} className="flex items-center justify-between gap-2 px-3 py-2 rounded-xl"
+                style={{ background: "var(--bg)", border: "1px solid var(--border)" }}>
+                <span className="text-[13px] text-white truncate">{r.name}</span>
+                <span className="text-[13px] font-bold flex-shrink-0" style={{ color: r.count > 0 ? "#c084fc" : "#555" }}>{r.count}</span>
+              </div>
+            ))}
+            {employeeCardCounts.unassigned > 0 && (
+              <div className="flex items-center justify-between gap-2 px-3 py-2 rounded-xl"
+                style={{ background: "var(--bg)", border: "1px dashed var(--border)" }}>
+                <span className="text-[13px] text-[#8a8a9a] truncate">Atanmamış</span>
+                <span className="text-[13px] font-bold text-[#fbbf24] flex-shrink-0">{employeeCardCounts.unassigned}</span>
+              </div>
+            )}
+          </div>
         </div>
       )}
 
