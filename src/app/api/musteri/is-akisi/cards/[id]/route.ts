@@ -6,6 +6,18 @@ import { assertCanAccessClient } from "@/lib/auth";
 
 export const runtime = "nodejs";
 
+// Kart, tetikleyici sütuna taşındığında otomatik oluşan İş Kaydı'nın açıklaması
+// yalnızca kart başlığı olursa zamanla hangi firmaya ait olduğu unutuluyordu —
+// firma adı ve (varsa) çekim tarihi de açıklamaya gömülür.
+function buildWorkLogDescription(card: { title: string; dueDate: Date | null; client: { name: string } | null }): string {
+  let desc = card.title;
+  if (card.client) desc += ` — ${card.client.name}`;
+  if (card.dueDate) {
+    desc += ` (${card.dueDate.toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" })})`;
+  }
+  return desc;
+}
+
 const patchSchema = z.object({
   title: z.string().trim().min(1).max(160).optional(),
   description: z.string().trim().max(2000).optional().nullable(),
@@ -134,7 +146,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     if (rest.columnId && rest.columnId !== before.columnId) {
       if (toCol?.triggersWorkLog && card.assigneeId && !before.workLog) {
         await prisma.workLog.create({
-          data: { userId: card.assigneeId, date: new Date(), description: card.title, workflowCardId: card.id },
+          data: { userId: card.assigneeId, date: new Date(), description: buildWorkLogDescription(card), workflowCardId: card.id },
         });
       } else if (!toCol?.triggersWorkLog && before.column.triggersWorkLog && before.workLog && before.workLog.amount === null) {
         // Tetikleyici sütundan, henüz fiyatlandırılmamış hâldeyken çıkarıldı — otomatik oluşan kaydı geri al.
@@ -145,7 +157,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       const currentCol = await prisma.workflowColumn.findUnique({ where: { id: card.columnId }, select: { triggersWorkLog: true } });
       if (currentCol?.triggersWorkLog) {
         await prisma.workLog.create({
-          data: { userId: card.assigneeId, date: new Date(), description: card.title, workflowCardId: card.id },
+          data: { userId: card.assigneeId, date: new Date(), description: buildWorkLogDescription(card), workflowCardId: card.id },
         });
       }
     }

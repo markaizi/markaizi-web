@@ -95,6 +95,13 @@ export default function WorkflowBoard({ initialData }: { initialData?: BoardInit
   const [colError, setColError] = useState("");
   const [showArchive, setShowArchive] = useState(false);
   const [showEmployeeStats, setShowEmployeeStats] = useState(false);
+  // Kart, İçerik Takvimi'ne ekleme işaretli bir sütuna sürüklenince açılan
+  // hızlı tarih sorma penceresi — bkz. handleMoveCard.
+  const [contentPrompt, setContentPrompt] = useState<{
+    cardId: string; cardTitle: string; clientName: string; dueDate: string | null;
+  } | null>(null);
+  const [contentPromptSaving, setContentPromptSaving] = useState(false);
+  const [contentPromptError, setContentPromptError] = useState("");
 
   // ── Sürükleme: mouse'ta anında, dokunmada basılı tutunca (Pointer Events) ──
   const [dragCardId, setDragCardId] = useState<string | null>(null);
@@ -180,7 +187,35 @@ export default function WorkflowBoard({ initialData }: { initialData?: BoardInit
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ columnId: targetColumnId }),
     });
-    if (!res.ok) load(); // başarısızsa sunucudan tazele
+    if (!res.ok) { load(); return; } // başarısızsa sunucudan tazele
+
+    // Hedef sütun "İçerik Takvimi'ne ekle" ile işaretliyse ve kartın bağlı
+    // bir firması varsa, yayın tarihini sormak için hemen bir pencere aç —
+    // admin kartı manuel açıp düğmeyi bulmak zorunda kalmasın.
+    if (canCreateCards && targetCol?.triggersContentItem && card.client && !card.contentItem) {
+      setContentPrompt({
+        cardId,
+        cardTitle: card.title,
+        clientName: card.client.name,
+        dueDate: card.dueDate,
+      });
+    }
+  }
+
+  async function handleContentPromptSubmit(date: string) {
+    if (!contentPrompt) return;
+    setContentPromptSaving(true);
+    setContentPromptError("");
+    const res = await fetch(`/api/musteri/is-akisi/cards/${contentPrompt.cardId}/content-item`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ scheduledDate: date }),
+    });
+    const json = await res.json().catch(() => ({}));
+    setContentPromptSaving(false);
+    if (!res.ok) { setContentPromptError(json.error ?? "Eklenemedi."); return; }
+    handleContentLinked(contentPrompt.cardId, json.contentItem);
+    setContentPrompt(null);
   }
 
   function autoScrollBoard(clientX: number) {
@@ -820,6 +855,76 @@ export default function WorkflowBoard({ initialData }: { initialData?: BoardInit
       )}
 
       {showArchive && <ArchiveModal onClose={() => setShowArchive(false)} onRestored={load} />}
+
+      {contentPrompt && (
+        <ContentDatePromptModal
+          prompt={contentPrompt}
+          saving={contentPromptSaving}
+          error={contentPromptError}
+          onSubmit={handleContentPromptSubmit}
+          onSkip={() => { setContentPrompt(null); setContentPromptError(""); }}
+        />
+      )}
+    </div>
+  );
+}
+
+// ── İçerik Takvimi hızlı tarih sorma penceresi ──────────────────────────────
+// Kart, "İçerik Takvimi'ne ekle" işaretli bir sütuna sürüklenince otomatik açılır.
+
+function ContentDatePromptModal({
+  prompt, saving, error, onSubmit, onSkip,
+}: {
+  prompt: { cardId: string; cardTitle: string; clientName: string; dueDate: string | null };
+  saving: boolean;
+  error: string;
+  onSubmit: (date: string) => void;
+  onSkip: () => void;
+}) {
+  // Varsayılan tarih: kartın çekim tarihi varsa o, yoksa bugün — admin çoğu
+  // zaman yayın tarihini çekim tarihiyle aynı ya da yakın seçer.
+  const [date, setDate] = useState(prompt.dueDate ?? new Date().toISOString().slice(0, 10));
+
+  return (
+    <div
+      className="fixed inset-0 z-[70] flex items-center justify-center p-4"
+      style={{ background: "rgba(0,0,0,0.6)" }}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="content-prompt-title"
+    >
+      <div
+        className="w-full max-w-sm rounded-2xl p-5"
+        style={{ background: "var(--surface)", border: "1px solid rgba(45,212,191,0.35)" }}
+      >
+        <p id="content-prompt-title" className="font-bold text-[16px] text-white mb-1">İçerik Takvimine Ekle</p>
+        <p className="text-[13px] text-[#8a8a9a] mb-4">
+          <span className="text-white font-semibold">{prompt.cardTitle}</span> — {prompt.clientName} için yayınlanma tarihini seç.
+        </p>
+        <label className="block text-[11px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1.5">Yayınlanma Tarihi</label>
+        <input
+          type="date"
+          autoFocus
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+          className="w-full px-3.5 py-2.5 rounded-xl text-[14px] text-white outline-none"
+          style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
+        />
+        {error && <p className="text-[12px] mt-2" style={{ color: "#f87171" }}>{error}</p>}
+        <div className="flex gap-2 mt-4">
+          <button
+            onClick={() => onSubmit(date)}
+            disabled={saving || !date}
+            className="flex-1 text-[13px] font-semibold py-2.5 rounded-xl transition-colors disabled:opacity-60"
+            style={{ background: "rgba(45,212,191,0.15)", color: "#2dd4bf", border: "1px solid rgba(45,212,191,0.35)" }}
+          >
+            {saving ? "Ekleniyor..." : "Ekle"}
+          </button>
+          <button onClick={onSkip} disabled={saving} className="btn btn-outline text-sm px-5 py-2.5">
+            Şimdi Değil
+          </button>
+        </div>
+      </div>
     </div>
   );
 }
