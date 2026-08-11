@@ -8,6 +8,11 @@ export interface EkonomiData {
   currentMonth: { gelir: number; gider: number; net: number };
   bekleyenFaturaToplam: number;
   gecikmisFaturaToplam: number;
+  faturaOzet: {
+    gunuGelmedi: { adet: number; toplam: number };
+    bekliyor: { adet: number; toplam: number };
+    gecikmede: { adet: number; toplam: number };
+  };
   monthlyHistory: { key: string; label: string; gelir: number; gider: number; net: number }[];
   feed: { id: string; type: "GELIR" | "GIDER"; amount: number; description: string; date: string; category: string | null; deletable: boolean }[];
 }
@@ -140,11 +145,41 @@ export default function EkonomiView({ data }: { data: EkonomiData }) {
             <p className="text-[16px] sm:text-[19px] font-black" style={{ color: kasaColor }}>{fmtTL(data.currentMonth.net)}</p>
           </div>
           <div className="rounded-2xl p-4" style={{ background: data.gecikmisFaturaToplam > 0 ? "rgba(248,113,113,0.08)" : "rgba(251,191,36,0.08)", border: `1px solid ${data.gecikmisFaturaToplam > 0 ? "rgba(248,113,113,0.2)" : "rgba(251,191,36,0.2)"}` }}>
-            <p className="text-[10px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1">Bekleyen Fatura</p>
+            <p className="text-[10px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1">Tahsil Edilecek</p>
             <p className="text-[16px] sm:text-[19px] font-black" style={{ color: data.gecikmisFaturaToplam > 0 ? "#f87171" : "#fbbf24" }}>{fmtTL(data.bekleyenFaturaToplam)}</p>
-            {data.gecikmisFaturaToplam > 0 && (
-              <p className="text-[10px] mt-1 font-semibold" style={{ color: "#f87171" }}>{fmtTL(data.gecikmisFaturaToplam)} gecikmiş</p>
-            )}
+            <p className="text-[10px] mt-1 text-[#8a8a9a]">vadesi gelmiş faturalar</p>
+          </div>
+        </div>
+
+        {/* Fatura durumu — vade tarihine göre otomatik ayrışır. Vadesi gelmemiş
+            faturalar burada ayrı durur, "Tahsil Edilecek" rakamına karışmaz. */}
+        <div className="mb-8">
+          <div className="flex items-baseline justify-between mb-3">
+            <h2 className="text-[15px] font-bold text-white">Fatura Durumu</h2>
+            <a href="/musteri/admin/odemeler" className="text-[12px] text-[#c084fc] hover:text-white transition-colors">Ödemeler →</a>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <FaturaKutu
+              baslik="Günü Gelmedi"
+              aciklama="vadesi henüz gelmedi"
+              renk="#8a8a9a"
+              adet={data.faturaOzet.gunuGelmedi.adet}
+              toplam={data.faturaOzet.gunuGelmedi.toplam}
+            />
+            <FaturaKutu
+              baslik="Bekliyor"
+              aciklama="vadesi geldi, tahsil edilmeli"
+              renk="#fbbf24"
+              adet={data.faturaOzet.bekliyor.adet}
+              toplam={data.faturaOzet.bekliyor.toplam}
+            />
+            <FaturaKutu
+              baslik="Gecikmede"
+              aciklama="vadesi 7+ gün geçti"
+              renk="#f87171"
+              adet={data.faturaOzet.gecikmede.adet}
+              toplam={data.faturaOzet.gecikmede.toplam}
+            />
           </div>
         </div>
 
@@ -314,6 +349,32 @@ export default function EkonomiView({ data }: { data: EkonomiData }) {
           </div>
         </div>
       </main>
+    </div>
+  );
+}
+
+// Fatura durumu kutusu — adet + toplam tutar
+function FaturaKutu({
+  baslik, aciklama, renk, adet, toplam,
+}: {
+  baslik: string; aciklama: string; renk: string; adet: number; toplam: number;
+}) {
+  const bos = adet === 0;
+  return (
+    <div className="rounded-2xl p-4" style={{
+      background: bos ? "var(--surface)" : `${renk}14`,
+      border: `1px solid ${bos ? "var(--border)" : `${renk}38`}`,
+    }}>
+      <div className="flex items-center gap-2 mb-1.5">
+        <span className="w-2 h-2 rounded-full flex-shrink-0" style={{ background: bos ? "#3a3a44" : renk }} />
+        <p className="text-[11px] font-bold uppercase tracking-wide" style={{ color: bos ? "#8a8a9a" : renk }}>{baslik}</p>
+      </div>
+      <p className="text-[18px] font-black text-white">
+        {fmtTL(toplam)}
+      </p>
+      <p className="text-[11px] text-[#8a8a9a] mt-0.5">
+        {adet} fatura · {aciklama}
+      </p>
     </div>
   );
 }

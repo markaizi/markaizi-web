@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { getInvoiceStage } from "@/lib/invoiceStage";
 import AdminClientDetail, { type ClientDetailData } from "@/components/AdminClientDetail";
 
 export const dynamic = "force-dynamic";
@@ -90,7 +91,9 @@ export default async function AdminClientPage({
       id: i.id,
       period: i.period,
       amount: i.amount,
-      status: i.status,
+      // Ödendi/ödenmedi saklanan durum; görünen aşama vade tarihinden hesaplanır.
+      paid: i.status === "ODENDI",
+      stage: getInvoiceStage(i),
       dueDate: i.dueDate?.toISOString().split("T")[0] ?? null,
     })),
     contentItems: client.contentItems.map((ci) => ({

@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import EkonomiView, { type EkonomiData } from "@/components/EkonomiView";
+import { getInvoiceStage } from "@/lib/invoiceStage";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
@@ -48,8 +49,8 @@ export default async function EkonomiPage() {
       orderBy: { date: "desc" },
     }),
     prisma.invoice.findMany({
-      where: { status: { in: ["BEKLIYOR", "GUNU_GELMEDI"] } },
-      select: { amount: true, dueDate: true },
+      where: { status: { not: "ODENDI" } },
+      select: { amount: true, dueDate: true, status: true },
     }),
   ]);
 
@@ -75,11 +76,26 @@ export default async function EkonomiPage() {
     .sort((a, b) => (a.key < b.key ? 1 : -1));
 
   const currentMonth = monthlyHistory[0] ?? { gelir: 0, gider: 0, net: 0 };
-  const bekleyenFaturaToplam = pendingInvoices.reduce((s, i) => s + parseAmount(i.amount), 0);
-  const today = new Date();
-  const gecikmisFaturaToplam = pendingInvoices
-    .filter((i) => i.dueDate && i.dueDate < today)
-    .reduce((s, i) => s + parseAmount(i.amount), 0);
+
+  // Ödenmemiş faturalar vade tarihine göre üç gruba ayrılır — böylece vadesi
+  // henüz gelmemiş faturalar "tahsil edilecek" rakamını şişirmez.
+  const faturaOzet = {
+    gunuGelmedi: { adet: 0, toplam: 0 },
+    bekliyor: { adet: 0, toplam: 0 },
+    gecikmede: { adet: 0, toplam: 0 },
+  };
+  for (const inv of pendingInvoices) {
+    const stage = getInvoiceStage(inv);
+    const bucket =
+      stage === "GUNU_GELMEDI" ? faturaOzet.gunuGelmedi
+      : stage === "GECIKMEDI" ? faturaOzet.gecikmede
+      : faturaOzet.bekliyor;
+    bucket.adet += 1;
+    bucket.toplam += parseAmount(inv.amount);
+  }
+  // Şimdi tahsil edilmesi gerekenler: vadesi gelmiş (bekliyor) + gecikmiş.
+  const bekleyenFaturaToplam = faturaOzet.bekliyor.toplam + faturaOzet.gecikmede.toplam;
+  const gecikmisFaturaToplam = faturaOzet.gecikmede.toplam;
 
   // Bu ayın birleşik hareket listesi (ödenen faturalar + transaction'lar)
   const feed = [
@@ -112,6 +128,7 @@ export default async function EkonomiPage() {
     currentMonth: { gelir: currentMonth.gelir, gider: currentMonth.gider, net: currentMonth.net },
     bekleyenFaturaToplam,
     gecikmisFaturaToplam,
+    faturaOzet,
     monthlyHistory,
     feed,
   };

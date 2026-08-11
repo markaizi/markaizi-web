@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import { INVOICE_STAGE_COLOR, INVOICE_STAGE_LABEL, type InvoiceStage } from "@/lib/invoiceStage";
 import Notes from "@/components/Notes";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -29,7 +30,10 @@ export interface ClientDetailData {
     id: string;
     period: string;
     amount: string;
-    status: "ODENDI" | "BEKLIYOR" | "GUNU_GELMEDI";
+    /** Saklanan gerçek durum: ödendi mi? */
+    paid: boolean;
+    /** Vade tarihinden hesaplanan görünen aşama (sunucuda üretilir). */
+    stage: InvoiceStage;
     dueDate: string | null;
   }[];
   contentItems: {
@@ -57,15 +61,15 @@ export interface ClientDetailData {
 
 // ── Yardımcılar ───────────────────────────────────────────────────────────────
 
+// Not: fatura durum etiketleri/renkleri src/lib/invoiceStage.ts'ten gelir —
+// aşama vade tarihinden hesaplandığı için burada tekrarlanmaz.
 const STATUS_LABEL: Record<string, string> = {
-  ODENDI: "Ödendi",
-  BEKLIYOR: "Bekliyor",
-  GUNU_GELMEDI: "Günü Gelmedi",
+  PLANLANDI: "Planlandı",
+  DUZENLENIYOR: "Düzenleniyor",
+  HAZIR: "Hazır",
+  YAYINLANDI: "Yayınlandı",
 };
 const STATUS_COLOR: Record<string, string> = {
-  ODENDI: "#34d399",
-  BEKLIYOR: "#fbbf24",
-  GUNU_GELMEDI: "#8a8a9a",
   PLANLANDI: "#8a8a9a",
   DUZENLENIYOR: "#fbbf24",
   HAZIR: "#60a5fa",
@@ -316,7 +320,7 @@ function GenelTab({ data, router }: { data: ClientDetailData; router: ReturnType
   const [ok, setOk] = useState(false);
 
   const revenue = data.invoices
-    .filter((i) => i.status === "ODENDI")
+    .filter((i) => i.paid)
     .reduce((s, i) => s + parseAmountNum(i.amount), 0);
   const profit = revenue - data.laborCost;
 
@@ -583,7 +587,7 @@ function GuncellemelerTab({ slug, updates, router }: { slug: string; updates: Up
 type Invoice = ClientDetailData["invoices"][number];
 
 function FaturalarTab({ slug, invoices, router }: { slug: string; invoices: Invoice[]; router: ReturnType<typeof useRouter> }) {
-  const emptyForm = { period: "", amount: "", status: "BEKLIYOR" as Invoice["status"], dueDate: "" };
+  const emptyForm = { period: "", amount: "", paid: false, dueDate: "" };
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState(emptyForm);
   const [loading, setLoading] = useState(false);
@@ -596,7 +600,7 @@ function FaturalarTab({ slug, invoices, router }: { slug: string; invoices: Invo
 
   function startEdit(inv: Invoice) {
     setEditingId(inv.id);
-    setEditForm({ period: inv.period, amount: inv.amount, status: inv.status, dueDate: inv.dueDate ?? "" });
+    setEditForm({ period: inv.period, amount: inv.amount, paid: inv.paid, dueDate: inv.dueDate ?? "" });
     setEditErr("");
   }
 
@@ -608,7 +612,12 @@ function FaturalarTab({ slug, invoices, router }: { slug: string; invoices: Invo
     const res = await fetch(`/api/musteri/admin/invoices/${editingId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...editForm, dueDate: editForm.dueDate || null }),
+      body: JSON.stringify({
+        period: editForm.period,
+        amount: editForm.amount,
+        status: editForm.paid ? "ODENDI" : "BEKLIYOR",
+        dueDate: editForm.dueDate || null,
+      }),
     });
     const json = await res.json();
     setEditLoading(false);
@@ -623,7 +632,12 @@ function FaturalarTab({ slug, invoices, router }: { slug: string; invoices: Invo
     const res = await fetch(`/api/musteri/admin/clients/${slug}/invoices`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...form, dueDate: form.dueDate || null }),
+      body: JSON.stringify({
+        period: form.period,
+        amount: form.amount,
+        status: form.paid ? "ODENDI" : "BEKLIYOR",
+        dueDate: form.dueDate || null,
+      }),
     });
     const json = await res.json();
     setLoading(false);
@@ -644,6 +658,10 @@ function FaturalarTab({ slug, invoices, router }: { slug: string; invoices: Invo
       {invoices.map((inv) => editingId === inv.id ? (
         <form key={inv.id} onSubmit={handleSave} className="rounded-2xl p-5 space-y-4" style={{ background: "var(--surface)", border: "1px solid rgba(168,85,247,0.4)" }}>
           <p className="font-semibold text-white text-[14px]">Faturayı Düzenle</p>
+          <p className="text-[12px] text-[#8a8a9a] -mt-2">
+            &quot;Günü Gelmedi&quot; / &quot;Bekliyor&quot; / &quot;Gecikmede&quot; vade tarihine göre
+            otomatik belirlenir — elle seçilmez.
+          </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Field label="Dönem">
               <Input required value={editForm.period} onChange={(e) => setEditForm((x) => ({ ...x, period: e.target.value }))} placeholder="Haziran 2026" />
@@ -656,11 +674,11 @@ function FaturalarTab({ slug, invoices, router }: { slug: string; invoices: Invo
             </Field>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <Field label="Durum">
-              <Select value={editForm.status} onChange={(e) => setEditForm((x) => ({ ...x, status: e.target.value as Invoice["status"] }))}>
-                <option value="BEKLIYOR">Bekliyor</option>
+            <Field label="Ödeme Durumu">
+              <Select value={editForm.paid ? "ODENDI" : "BEKLIYOR"}
+                onChange={(e) => setEditForm((x) => ({ ...x, paid: e.target.value === "ODENDI" }))}>
+                <option value="BEKLIYOR">Ödenmedi</option>
                 <option value="ODENDI">Ödendi</option>
-                <option value="GUNU_GELMEDI">Günü Gelmedi</option>
               </Select>
             </Field>
             <Field label="Vade Tarihi (opsiyonel)">
@@ -681,7 +699,7 @@ function FaturalarTab({ slug, invoices, router }: { slug: string; invoices: Invo
               <p className="text-[13px] text-[#8a8a9a] mt-0.5">{fmtAmount(inv.amount)}{inv.dueDate ? ` · Vade: ${fmtDate(inv.dueDate)}` : ""}</p>
             </div>
             <div className="flex items-center gap-2 flex-shrink-0">
-              <span className="text-[12px] font-medium px-2 py-1 rounded-full" style={{ color: STATUS_COLOR[inv.status], background: `${STATUS_COLOR[inv.status]}18` }}>{STATUS_LABEL[inv.status]}</span>
+              <span className="text-[12px] font-medium px-2 py-1 rounded-full" style={{ color: INVOICE_STAGE_COLOR[inv.stage], background: `${INVOICE_STAGE_COLOR[inv.stage]}18` }}>{INVOICE_STAGE_LABEL[inv.stage]}</span>
               <EditBtn onClick={() => startEdit(inv)} />
               <DeleteBtn onClick={() => handleDelete(inv.id)} loading={deleting === inv.id} />
             </div>
@@ -710,11 +728,11 @@ function FaturalarTab({ slug, invoices, router }: { slug: string; invoices: Invo
             </Field>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <Field label="Durum">
-              <Select value={form.status} onChange={(e) => setForm((x) => ({ ...x, status: e.target.value as Invoice["status"] }))}>
-                <option value="BEKLIYOR">Bekliyor</option>
+            <Field label="Ödeme Durumu">
+              <Select value={form.paid ? "ODENDI" : "BEKLIYOR"}
+                onChange={(e) => setForm((x) => ({ ...x, paid: e.target.value === "ODENDI" }))}>
+                <option value="BEKLIYOR">Ödenmedi</option>
                 <option value="ODENDI">Ödendi</option>
-                <option value="GUNU_GELMEDI">Günü Gelmedi</option>
               </Select>
             </Field>
             <Field label="Vade Tarihi (opsiyonel)">

@@ -18,9 +18,16 @@ enum Role {
   CLIENT
 }
 
+// Yalnızca ÖDENDİ / ÖDENMEDİ ayrımını tutar. Faturanın görünen aşaması
+// ("Günü Gelmedi" / "Bekliyor" / "Gecikmede") burada SAKLANMAZ — vade tarihinden
+// her okumada hesaplanır (bkz. src/lib/invoiceStage.ts). Saklandığı dönemde
+// zamanla bayatlıyordu: vadesi 1 ay sonra olan fatura da, vadesi 11 gün geçmiş
+// fatura da "Bekliyor" görünüyordu.
 enum InvoiceStatus {
   ODENDI
   BEKLIYOR
+  /// KULLANIMDAN KALDIRILDI — yeni kayıtlarda yazılmaz, okunurken ödenmemiş
+  /// sayılır. Enum değeri yalnızca eski kayıtlar için duruyor.
   GUNU_GELMEDI
 }
 

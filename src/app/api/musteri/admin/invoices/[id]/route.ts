@@ -2,12 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { requireInvoiceManageById } from "@/lib/staffGuard";
-import { InvoiceStatus } from "@prisma/client";
 
 export const runtime = "nodejs";
 
+// Yalnızca ödendi/ödenmedi yazılabilir — "Günü Gelmedi"/"Gecikmede" aşamaları
+// vade tarihinden hesaplanır, elle atanmaz (bkz. src/lib/invoiceStage.ts).
 const patchSchema = z.object({
-  status: z.nativeEnum(InvoiceStatus).optional(),
+  status: z.enum(["ODENDI", "BEKLIYOR"]).optional(),
   amount: z.string().min(1).max(100).optional(),
   period: z.string().min(1).max(100).optional(),
   dueDate: z.string().nullable().optional(),
@@ -45,7 +46,8 @@ export async function PATCH(
   });
 
   // Fatura yeni "Ödendi" olduysa ve firmanın tekrarlayan ödeme planı varsa
-  // sonraki dönemin faturasını otomatik oluştur ("Günü Gelmedi" durumuyla).
+  // sonraki dönemin faturasını otomatik oluştur. Ödenmemiş olarak açılır;
+  // vadesi ileride olduğu için panelde kendiliğinden "Günü Gelmedi" görünür.
   const { client } = before;
   if (rest.status === "ODENDI" && before.status !== "ODENDI" && client.billingPeriod && client.billingAmount) {
     const base = updated.dueDate ?? before.dueDate ?? new Date();
@@ -59,7 +61,7 @@ export async function PATCH(
         period: client.billingPeriod === "HAFTALIK" ? "Haftalık Ödeme" : "Aylık Ödeme",
         amount: client.billingAmount,
         dueDate: next,
-        status: "GUNU_GELMEDI",
+        status: "BEKLIYOR",
       },
     });
   }

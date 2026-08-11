@@ -405,8 +405,15 @@ const statusStyle = (s: string) => {
   if (s === "Ödendi")       return { background: "rgba(52,211,153,0.12)",  color: "#34d399",  border: "1px solid rgba(52,211,153,0.25)"  };
   if (s === "Bekliyor")     return { background: "rgba(251,191,36,0.12)",  color: "#fbbf24",  border: "1px solid rgba(251,191,36,0.25)"  };
   if (s === "Günü Gelmedi") return { background: "rgba(99,102,241,0.12)",  color: "#818cf8",  border: "1px solid rgba(99,102,241,0.25)"  };
+  if (s === "Gecikmede")    return { background: "rgba(248,113,113,0.12)", color: "#f87171",  border: "1px solid rgba(248,113,113,0.25)" };
   return {};
 };
+
+const invoiceBadge = (s: string) =>
+  s === "Ödendi" ? "✓ Ödendi"
+  : s === "Günü Gelmedi" ? "📅 Günü Gelmedi"
+  : s === "Gecikmede" ? "⚠ Gecikmede"
+  : "⏳ Bekliyor";
 
 function InvoiceTab({ client }: { client: ClientData }) {
   if (!client.invoices?.length) {
@@ -430,7 +437,7 @@ function InvoiceTab({ client }: { client: ClientData }) {
                 )}
               </div>
               <span className="text-[11px] font-bold px-2.5 py-1 rounded-full flex-shrink-0" style={statusStyle(inv.status)}>
-                {inv.status === "Ödendi" ? "✓ Ödendi" : inv.status === "Günü Gelmedi" ? "📅 Günü Gelmedi" : "⏳ Bekliyor"}
+                {invoiceBadge(inv.status)}
               </span>
             </div>
             <p className="text-[15px] font-black gradient-text text-center">{fmtAmount(inv.amount)}</p>
@@ -463,7 +470,7 @@ function InvoiceTab({ client }: { client: ClientData }) {
             <span className="text-[15px] font-black gradient-text text-center">{fmtAmount(inv.amount)}</span>
             <div className="flex justify-end">
               <span className="text-[11px] font-bold px-3 py-1 rounded-full" style={statusStyle(inv.status)}>
-                {inv.status === "Ödendi" ? "✓ Ödendi" : inv.status === "Günü Gelmedi" ? "📅 Günü Gelmedi" : "⏳ Bekliyor"}
+                {invoiceBadge(inv.status)}
               </span>
             </div>
           </div>

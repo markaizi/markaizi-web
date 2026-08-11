@@ -4,10 +4,10 @@
  * Böylece mevcut portal UI'ı değişmeden DB'den beslenir.
  */
 import { prisma } from "@/lib/db";
+import { getInvoiceStage, INVOICE_STAGE_LABEL } from "@/lib/invoiceStage";
 import type { ClientData, InvoiceStatus, RequestStatus } from "@/lib/clients";
 import {
   UpdateKind,
-  InvoiceStatus as DbInvoiceStatus,
   RequestStatus as DbRequestStatus,
 } from "@prisma/client";
 
@@ -17,11 +17,8 @@ const fmtShort = new Intl.DateTimeFormat("tr-TR", { day: "numeric", month: "long
 const trDate = (d: Date | null | undefined) => (d ? fmtFull.format(d) : "");
 const trDateShort = (d: Date | null | undefined) => (d ? fmtShort.format(d) : "");
 
-const INVOICE_STATUS: Record<DbInvoiceStatus, InvoiceStatus> = {
-  ODENDI: "Ödendi",
-  BEKLIYOR: "Bekliyor",
-  GUNU_GELMEDI: "Günü Gelmedi",
-};
+// Fatura durumu artık sabit eşlemeyle değil, vade tarihinden hesaplanır —
+// böylece müşteri de "Günü Gelmedi / Bekliyor / Gecikmede" ayrımını doğru görür.
 
 const REQUEST_STATUS: Record<DbRequestStatus, RequestStatus> = {
   BEKLIYOR: "Bekliyor",
@@ -69,7 +66,7 @@ export async function getClientView(slug: string): Promise<ClientView | null> {
     invoices: client.invoices.map((inv) => ({
       period: inv.period,
       amount: inv.amount,
-      status: INVOICE_STATUS[inv.status],
+      status: INVOICE_STAGE_LABEL[getInvoiceStage(inv)] as InvoiceStatus,
       dueDate: inv.dueDate ? trDate(inv.dueDate) : undefined,
     })),
     invoiceNote: client.invoiceNote ?? undefined,

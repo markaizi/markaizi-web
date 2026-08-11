@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { INVOICE_STAGE_COLOR, INVOICE_STAGE_LABEL, type InvoiceStage } from "@/lib/invoiceStage";
 import Notes from "@/components/Notes";
 
 export interface EmployeeClientData {
@@ -24,7 +25,10 @@ export interface EmployeeClientData {
   }[];
   invoices: {
     id: string; period: string; amount: string;
-    status: "ODENDI" | "BEKLIYOR" | "GUNU_GELMEDI";
+    /** Saklanan gerçek durum: ödendi mi? */
+    paid: boolean;
+    /** Vade tarihinden hesaplanan görünen aşama (sunucuda üretilir). */
+    stage: InvoiceStage;
     dueDate: string | null;
   }[];
   adReports: {
@@ -47,13 +51,13 @@ function fmtDate(raw: string): string {
   return dt.toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" });
 }
 
+// Not: fatura durum etiketleri/renkleri src/lib/invoiceStage.ts'ten gelir —
+// aşama vade tarihinden hesaplandığı için burada tekrarlanmaz.
 const STATUS_LABEL: Record<string, string> = {
   PLANLANDI: "Planlandı", DUZENLENIYOR: "Düzenleniyor", HAZIR: "Hazır", YAYINLANDI: "Yayınlandı",
-  ODENDI: "Ödendi", BEKLIYOR: "Bekliyor", GUNU_GELMEDI: "Günü Gelmedi",
 };
 const STATUS_COLOR: Record<string, string> = {
   PLANLANDI: "#8a8a9a", DUZENLENIYOR: "#fbbf24", HAZIR: "#60a5fa", YAYINLANDI: "#34d399",
-  ODENDI: "#34d399", BEKLIYOR: "#fbbf24", GUNU_GELMEDI: "#8a8a9a",
 };
 const CONTENT_STATUS_BG: Record<string, string> = {
   PLANLANDI: "rgba(138,138,154,0.12)", DUZENLENIYOR: "rgba(251,191,36,0.12)",
@@ -62,7 +66,6 @@ const CONTENT_STATUS_BG: Record<string, string> = {
 const PLATFORM_LABEL: Record<string, string> = { META: "Meta", GOOGLE: "Google", WEBSITE: "Website" };
 const PLATFORM_COLOR: Record<string, string> = { META: "#60a5fa", GOOGLE: "#34d399", WEBSITE: "#c084fc" };
 type ContentStatus = EmployeeClientData["contentItems"][number]["status"];
-type InvoiceStatus = EmployeeClientData["invoices"][number]["status"];
 type AdReport = EmployeeClientData["adReports"][number];
 
 type TabKey = "icerikler" | "guncellemeler" | "faturalar" | "raporlar" | "notlar";
@@ -363,7 +366,7 @@ function EmpFaturalarTab({ slug, invoices, canManage, router }: {
   canManage: boolean; router: ReturnType<typeof useRouter>;
 }) {
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ period: "", amount: "", status: "BEKLIYOR" as InvoiceStatus, dueDate: "" });
+  const [form, setForm] = useState({ period: "", amount: "", paid: false, dueDate: "" });
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
 
@@ -371,16 +374,22 @@ function EmpFaturalarTab({ slug, invoices, canManage, router }: {
     e.preventDefault(); setLoading(true); setErr("");
     const res = await fetch(`/api/musteri/admin/clients/${slug}/invoices`, {
       method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...form, dueDate: form.dueDate || null }),
+      body: JSON.stringify({
+        period: form.period,
+        amount: form.amount,
+        status: form.paid ? "ODENDI" : "BEKLIYOR",
+        dueDate: form.dueDate || null,
+      }),
     });
     const json = await res.json(); setLoading(false);
-    if (json.ok) { setShowForm(false); setForm({ period: "", amount: "", status: "BEKLIYOR", dueDate: "" }); router.refresh(); }
+    if (json.ok) { setShowForm(false); setForm({ period: "", amount: "", paid: false, dueDate: "" }); router.refresh(); }
     else setErr(json.error ?? "Hata.");
   }
 
-  async function handleStatusChange(id: string, status: InvoiceStatus) {
+  async function handlePaidChange(id: string, paid: boolean) {
     await fetch(`/api/musteri/admin/invoices/${id}`, {
-      method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ status }),
+      method: "PATCH", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status: paid ? "ODENDI" : "BEKLIYOR" }),
     });
     router.refresh();
   }
@@ -396,16 +405,16 @@ function EmpFaturalarTab({ slug, invoices, canManage, router }: {
             </div>
             <div className="flex items-center gap-2 flex-shrink-0">
               <span className="text-[11px] px-2.5 py-1 rounded-full"
-                style={{ background: "rgba(138,138,154,0.12)", color: STATUS_COLOR[inv.status] }}>
-                {STATUS_LABEL[inv.status]}
+                style={{ background: `${INVOICE_STAGE_COLOR[inv.stage]}1f`, color: INVOICE_STAGE_COLOR[inv.stage] }}>
+                {INVOICE_STAGE_LABEL[inv.stage]}
               </span>
               {canManage && (
-                <select value={inv.status} onChange={(e) => handleStatusChange(inv.id, e.target.value as InvoiceStatus)}
+                <select value={inv.paid ? "ODENDI" : "BEKLIYOR"}
+                  onChange={(e) => handlePaidChange(inv.id, e.target.value === "ODENDI")}
                   className="rounded-lg text-[11px] outline-none"
-                  style={{ background: "var(--bg)", border: "1px solid var(--border)", padding: "3px 6px", color: STATUS_COLOR[inv.status] }}>
+                  style={{ background: "var(--bg)", border: "1px solid var(--border)", padding: "3px 6px", color: INVOICE_STAGE_COLOR[inv.stage] }}>
+                  <option value="BEKLIYOR">Ödenmedi</option>
                   <option value="ODENDI">Ödendi</option>
-                  <option value="BEKLIYOR">Bekliyor</option>
-                  <option value="GUNU_GELMEDI">Günü Gelmedi</option>
                 </select>
               )}
             </div>
@@ -433,13 +442,13 @@ function EmpFaturalarTab({ slug, invoices, canManage, router }: {
                 style={{ background: "var(--bg)", border: "1px solid var(--border)" }} />
             </div>
             <div>
-              <label className="block text-[11px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1.5">Durum</label>
-              <select value={form.status} onChange={(e) => setForm((f) => ({ ...f, status: e.target.value as InvoiceStatus }))}
+              <label className="block text-[11px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1.5">Ödeme Durumu</label>
+              <select value={form.paid ? "ODENDI" : "BEKLIYOR"}
+                onChange={(e) => setForm((f) => ({ ...f, paid: e.target.value === "ODENDI" }))}
                 className="w-full px-3 py-2 rounded-lg text-[14px] text-white outline-none"
                 style={{ background: "var(--bg)", border: "1px solid var(--border)" }}>
-                <option value="BEKLIYOR">Bekliyor</option>
+                <option value="BEKLIYOR">Ödenmedi</option>
                 <option value="ODENDI">Ödendi</option>
-                <option value="GUNU_GELMEDI">Günü Gelmedi</option>
               </select>
             </div>
             <div>

@@ -3,7 +3,7 @@
  * Gerçek veri Prisma'dan gelir (src/lib/clientView.ts), bu dosya sadece tipleri tanımlar.
  */
 
-export type InvoiceStatus = "Ödendi" | "Bekliyor" | "Günü Gelmedi";
+export type InvoiceStatus = "Ödendi" | "Bekliyor" | "Günü Gelmedi" | "Gecikmede";
 export type RequestStatus = "Bekliyor" | "Yapıldı";
 export type ReportPlatform = "META" | "GOOGLE" | "WEBSITE";
 

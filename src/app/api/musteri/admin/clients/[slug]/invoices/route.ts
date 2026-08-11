@@ -2,14 +2,15 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { requireInvoiceManageForSlug } from "@/lib/staffGuard";
-import { InvoiceStatus } from "@prisma/client";
 
 export const runtime = "nodejs";
 
+// Yalnızca ödendi/ödenmedi yazılabilir — "Günü Gelmedi"/"Gecikmede" aşamaları
+// vade tarihinden hesaplanır, elle atanmaz (bkz. src/lib/invoiceStage.ts).
 const schema = z.object({
   period: z.string().min(1).max(100),
   amount: z.string().min(1).max(100),
-  status: z.nativeEnum(InvoiceStatus).default("BEKLIYOR"),
+  status: z.enum(["ODENDI", "BEKLIYOR"]).default("BEKLIYOR"),
   dueDate: z.string().nullable().optional(),
 });
 

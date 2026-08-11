@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { InvoiceStatus } from "@prisma/client";
 import AdminPanel, { type AdminClientSummary } from "@/components/AdminPanel";
+import { getInvoiceStage } from "@/lib/invoiceStage";
 
 export const dynamic = "force-dynamic";
 
@@ -56,8 +56,11 @@ export default async function AdminPage() {
   const unpricedWorkLogs = Array.from(unpricedMap.entries()).map(([id, v]) => ({ id, name: v.name, count: v.count }));
 
   const clients: AdminClientSummary[] = rows.map((c) => {
-    const pendingInvoices = c.invoices.filter(i => i.status === InvoiceStatus.BEKLIYOR);
-    const overdueInvoices = pendingInvoices.filter(i => i.dueDate && new Date(i.dueDate) < today);
+    // Aşama vade tarihinden hesaplanır. Rozetlerde yalnızca aksiyon gereken
+    // faturalar sayılır — vadesi gelmemiş olanlar sayıya girmez.
+    const stages = c.invoices.map((i) => getInvoiceStage(i, today));
+    const pendingInvoices = stages.filter((s) => s === "BEKLIYOR" || s === "GECIKMEDI");
+    const overdueInvoices = stages.filter((s) => s === "GECIKMEDI");
     return {
       slug: c.slug,
       name: c.name,
