@@ -79,12 +79,18 @@ export async function getWorkflowBoardData(session: SessionPayload) {
   const isIdle =
     !isAdmin && !!todoColumn && !todoColumn.cards.some((card) => card.assigneeId === session.uid);
 
+  // "Tamamlandı" sütunu herkese açık — kim neyi bitirmiş herkes görsün, moral/takım
+  // görünürlüğü için. Admin yeniden adlandırırsa en sağdaki (sortOrder en yüksek)
+  // sütuna düşülür. hiddenFromEmployees ile bu sütun tamamen gizlenmişse (aşağıdaki
+  // filter'da eleniyor) bu istisna da devreye girmez — admin'in gizleme kararı önceliklidir.
+  const doneColumn = columns.find((c) => c.title === "Tamamlandı") ?? columns[columns.length - 1];
+
   // dueDate Prisma'dan tam DateTime olarak gelir; istemci tarafı (fmtDate,
   // <input type="date">) "YYYY-MM-DD" bekliyor — burada tek noktadan normalize edilir.
   // hiddenFromEmployees=true olan sütunlar çalışanlara panoda hiç gösterilmez.
   // seeAllCards=false olan çalışan yalnızca kendine atanmış + sahipsiz kartları görür —
-  // ANCAK "Yapılacak" sütununda hiç kartı kalmadıysa (isIdle) o sütunda istisnai
-  // olarak herkesin kartını görür, çünkü kimin yükünü hafifletebileceğini görmesi gerekir.
+  // ANCAK "Yapılacak" sütununda hiç kartı kalmadıysa (isIdle) o sütunda, "Tamamlandı"
+  // sütununda ise her zaman istisnai olarak herkesin kartını görür.
   const normalizedColumns = columns
     .filter((col) => isAdmin || !col.hiddenFromEmployees)
     .map((col) => ({
@@ -92,6 +98,7 @@ export async function getWorkflowBoardData(session: SessionPayload) {
       cards: col.cards
         .filter((card) => {
           if (seeAllCards) return true;
+          if (col.id === doneColumn?.id) return true;
           if (!card.assigneeId || card.assigneeId === session.uid) return true;
           return isIdle && col.id === todoColumn?.id;
         })
