@@ -17,6 +17,7 @@ interface CardData {
   creator: { id: string; name: string };
   client: { slug: string; name: string } | null;
   contentItem: { id: string; scheduledDate: string } | null;
+  requestedBy: { id: string; name: string } | null;
 }
 
 interface ColumnData {
@@ -72,6 +73,7 @@ interface BoardInitialData {
   canWriteRevisionNote: boolean;
   canDeleteAnyCard: boolean;
   canManageColumns: boolean;
+  isIdle: boolean;
 }
 
 export default function WorkflowBoard({ initialData }: { initialData?: BoardInitialData }) {
@@ -85,6 +87,7 @@ export default function WorkflowBoard({ initialData }: { initialData?: BoardInit
   const [canWriteRevisionNote, setCanWriteRevisionNote] = useState(initialData?.canWriteRevisionNote ?? false);
   const [canDeleteAnyCard, setCanDeleteAnyCard] = useState(initialData?.canDeleteAnyCard ?? false);
   const [canManageColumns, setCanManageColumns] = useState(initialData?.canManageColumns ?? false);
+  const [isIdle, setIsIdle] = useState(initialData?.isIdle ?? false);
   const [loading, setLoading] = useState(!initialData);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [modal, setModal] = useState<{ mode: "create" | "edit"; columnId?: string; card?: CardData } | null>(null);
@@ -136,6 +139,7 @@ export default function WorkflowBoard({ initialData }: { initialData?: BoardInit
     setCanWriteRevisionNote(data.canWriteRevisionNote);
     setCanDeleteAnyCard(data.canDeleteAnyCard);
     setCanManageColumns(data.canManageColumns);
+    setIsIdle(data.isIdle);
     setLoading(false);
   }, []);
 
@@ -415,6 +419,19 @@ export default function WorkflowBoard({ initialData }: { initialData?: BoardInit
       ...col,
       cards: col.cards.map((c) => (c.id === cardId ? { ...c, contentItem } : c)),
     })));
+  }
+
+  function handleAssignmentRequested(cardId: string, requestedBy: { id: string; name: string } | null) {
+    setColumns((prev) => prev.map((col) => ({
+      ...col,
+      cards: col.cards.map((c) => (c.id === cardId ? { ...c, requestedBy } : c)),
+    })));
+  }
+
+  // Onay/red sonrası atama ve isIdle değişebileceği (talep eden artık "elinde iş
+  // var" durumuna geçebilir) için basit çözüm: panoyu sunucudan tazele.
+  function handleAssignmentResolved() {
+    load();
   }
 
   async function handleToggleAdminOnly(id: string, next: boolean) {
@@ -704,6 +721,7 @@ export default function WorkflowBoard({ initialData }: { initialData?: BoardInit
               <div className="wf-cards-scroll flex-1 overflow-y-auto px-2 py-2 sm:px-2.5 sm:py-2.5 flex flex-col gap-1.5" style={{ minHeight: 80 }}>
                 {col.cards.map((card) => {
                   const interactive = canDragCards && !locked;
+                  const urgent = card.priority === "YUKSEK";
                   return (
                   <div
                     key={card.id}
@@ -715,9 +733,9 @@ export default function WorkflowBoard({ initialData }: { initialData?: BoardInit
                     onClick={!interactive ? () => setModal({ mode: "edit", card }) : undefined}
                     className="rounded-lg px-2.5 py-2 transition-all select-none"
                     style={{
-                      background: "var(--surface-2, #141420)",
+                      background: urgent && !card.revisionNote ? "rgba(248,113,113,0.06)" : "var(--surface-2, #141420)",
                       border: "1px solid var(--border)",
-                      borderLeft: card.revisionNote ? "3px solid #fb923c" : "1px solid var(--border)",
+                      borderLeft: card.revisionNote ? "3px solid #fb923c" : urgent ? "3px solid #f87171" : "1px solid var(--border)",
                       opacity: dragCardId === card.id ? 0.35 : 1,
                       cursor: !interactive ? "pointer" : dragCardId === card.id ? "grabbing" : "grab",
                       touchAction: "none",
@@ -731,8 +749,21 @@ export default function WorkflowBoard({ initialData }: { initialData?: BoardInit
                         style={{ background: PRIORITY_COLOR[card.priority] }}
                         title={PRIORITY_LABEL[card.priority]}
                       />
-                      <p className="text-[12.5px] font-semibold text-white truncate">{card.title}</p>
+                      <p className="text-[12.5px] font-semibold text-white truncate flex-1">{card.title}</p>
+                      {urgent && (
+                        <span className="text-[8.5px] font-black px-1.5 py-0.5 rounded-full flex-shrink-0" style={{ background: "rgba(248,113,113,0.18)", color: "#f87171" }}>
+                          ACİL
+                        </span>
+                      )}
                     </div>
+
+                    {card.requestedBy && (
+                      <div className="mt-1.5 px-2 py-1 rounded-md flex items-center gap-1"
+                        style={{ background: "rgba(192,132,252,0.1)", border: "1px solid rgba(192,132,252,0.25)" }}>
+                        <span className="text-[10px] flex-shrink-0">✋</span>
+                        <p className="text-[10px] font-medium truncate" style={{ color: "#c084fc" }}>{card.requestedBy.name} talep etti</p>
+                      </div>
+                    )}
 
                     {(card.client || card.dueDate) && (
                       <div className="flex flex-wrap items-center gap-1 mt-1">
@@ -847,6 +878,9 @@ export default function WorkflowBoard({ initialData }: { initialData?: BoardInit
           canCreateCards={canCreateCards}
           canWriteRevisionNote={canWriteRevisionNote}
           canDeleteAnyCard={canDeleteAnyCard}
+          isIdle={isIdle}
+          onAssignmentRequested={handleAssignmentRequested}
+          onAssignmentResolved={handleAssignmentResolved}
           onClose={() => setModal(null)}
           onSaved={handleSaved}
           onDeleted={handleDeleted}
@@ -1059,7 +1093,7 @@ function ArchiveModal({ onClose, onRestored }: { onClose: () => void; onRestored
 // ── Kart Modalı ──────────────────────────────────────────────────────────────
 
 function CardModal({
-  state, columns, employees, clients, currentUserId, isAdmin, canCreateCards, canWriteRevisionNote, canDeleteAnyCard, onClose, onSaved, onDeleted, onContentLinked,
+  state, columns, employees, clients, currentUserId, isAdmin, canCreateCards, canWriteRevisionNote, canDeleteAnyCard, isIdle, onClose, onSaved, onDeleted, onContentLinked, onAssignmentRequested, onAssignmentResolved,
 }: {
   state: { mode: "create" | "edit"; columnId?: string; card?: CardData };
   columns: ColumnData[];
@@ -1070,15 +1104,20 @@ function CardModal({
   canCreateCards: boolean;
   canWriteRevisionNote: boolean;
   canDeleteAnyCard: boolean;
+  isIdle: boolean;
   onClose: () => void;
   onSaved: (card: CardData) => void;
   onDeleted: (id: string) => void;
   onContentLinked: (cardId: string, contentItem: { id: string; scheduledDate: string }) => void;
+  onAssignmentRequested: (cardId: string, requestedBy: { id: string; name: string } | null) => void;
+  onAssignmentResolved: () => void;
 }) {
   const isEdit = state.mode === "edit";
   const card = state.card;
   const cardColumn = columns.find((c) => c.id === (card?.columnId ?? state.columnId));
   const locked = !isAdmin && !!cardColumn?.adminOnly;
+  const todoColumn = columns.find((c) => c.title === "Yapılacak") ?? columns[0];
+  const isTodoColumn = !!card && cardColumn?.id === todoColumn?.id;
   // Alan bazlı erişim: temel alanlar (başlık/öncelik/tarih/atanan/firma) "kart açma" yetkisi
   // ister; açıklama pano erişimi olan herkese açık (admin-only sütun hariç); revize notu
   // ayrı, varsayılan kapalı bir yetkiyle korunur. Admin-only sütunda (locked) admin dışında
@@ -1105,11 +1144,56 @@ function CardModal({
   const [contentDate, setContentDate] = useState(() => new Date().toISOString().slice(0, 10));
   const [contentSaving, setContentSaving] = useState(false);
   const [contentError, setContentError] = useState("");
+  const [requestedBy, setRequestedBy] = useState(card?.requestedBy ?? null);
+  const [requestSaving, setRequestSaving] = useState(false);
+  const [requestError, setRequestError] = useState("");
 
   // Arşivleme her zaman yalnızca admin'e açık; silme izni ayrıca kilitli sütunlarda (locked) herkes için kapanır.
   const canArchive = isEdit && isAdmin;
   const canDelete = isEdit && !locked && (isAdmin || canDeleteAnyCard || (canCreateCards && card?.creator.id === currentUserId));
   const canAddToContent = isEdit && !readOnly && !!card?.client && !!cardColumn?.triggersContentItem && !contentItem;
+
+  // "Bana ata" talebi — elinde Yapılacak sütununda hiç kart kalmayan çalışan,
+  // başkasına atanmış bir Yapılacak kartı için talep gönderebilir; admin onaylar.
+  const canRequestAssignment =
+    isEdit && !isAdmin && isIdle && isTodoColumn && !!card?.assignee && card.assignee.id !== currentUserId && !requestedBy;
+  const iRequestedThis = requestedBy?.id === currentUserId;
+  const canResolveRequest = isEdit && isAdmin && !!requestedBy;
+
+  async function handleRequestAssignment() {
+    if (!card) return;
+    setRequestSaving(true);
+    setRequestError("");
+    const res = await fetch(`/api/musteri/is-akisi/cards/${card.id}/assignment-request`, { method: "POST" });
+    const data = await res.json().catch(() => ({}));
+    setRequestSaving(false);
+    if (!res.ok) { setRequestError(data.error ?? "Talep gönderilemedi."); return; }
+    setRequestedBy(data.requestedBy);
+    onAssignmentRequested(card.id, data.requestedBy);
+  }
+
+  async function handleWithdrawRequest() {
+    if (!card) return;
+    setRequestSaving(true);
+    setRequestError("");
+    const res = await fetch(`/api/musteri/is-akisi/cards/${card.id}/assignment-request`, { method: "DELETE" });
+    setRequestSaving(false);
+    if (!res.ok) { const d = await res.json().catch(() => ({})); setRequestError(d.error ?? "İşlem başarısız."); return; }
+    setRequestedBy(null);
+    onAssignmentRequested(card.id, null);
+  }
+
+  async function handleApproveRequest() {
+    if (!card) return;
+    setRequestSaving(true);
+    setRequestError("");
+    const res = await fetch(`/api/musteri/is-akisi/cards/${card.id}/assignment-request`, { method: "PATCH" });
+    const data = await res.json().catch(() => ({}));
+    setRequestSaving(false);
+    if (!res.ok) { setRequestError(data.error ?? "Onaylanamadı."); return; }
+    onAssignmentResolved();
+    onClose();
+  }
 
   async function handleAddToContent() {
     if (!card) return;
@@ -1367,6 +1451,51 @@ function CardModal({
                   ))}
                 </select>
               )}
+            </div>
+          )}
+
+          {/* Atama talebi — talep gönderme (idle çalışan), bekleme durumu (talep
+              eden), ya da onay/red (admin) — tek bloğa sığdırılmış üç görünüm. */}
+          {(canRequestAssignment || requestedBy) && (
+            <div className="p-3.5 rounded-xl" style={{ background: "rgba(192,132,252,0.06)", border: "1px dashed rgba(192,132,252,0.3)" }}>
+              {requestedBy ? (
+                <>
+                  <p className="text-[12.5px] font-medium" style={{ color: "#c084fc" }}>
+                    ✋ {iRequestedThis ? "Talebinizi gönderdiniz" : `${requestedBy.name} bu kartı istiyor`} — {card?.assignee?.name} kişisinden {canResolveRequest ? "onayınızı bekliyor" : "admin onayı bekleniyor"}.
+                  </p>
+                  <div className="flex gap-2 mt-2.5">
+                    {canResolveRequest && (
+                      <button type="button" onClick={handleApproveRequest} disabled={requestSaving}
+                        className="text-[12px] font-semibold px-3.5 py-2 rounded-lg flex-shrink-0"
+                        style={{ background: "rgba(52,211,153,0.15)", color: "#34d399", border: "1px solid rgba(52,211,153,0.3)" }}>
+                        {requestSaving ? "..." : "Onayla"}
+                      </button>
+                    )}
+                    {(canResolveRequest || iRequestedThis) && (
+                      <button type="button" onClick={handleWithdrawRequest} disabled={requestSaving}
+                        className="text-[12px] font-semibold px-3.5 py-2 rounded-lg flex-shrink-0"
+                        style={{ background: "rgba(248,113,113,0.1)", color: "#f87171", border: "1px solid rgba(248,113,113,0.25)" }}>
+                        {requestSaving ? "..." : canResolveRequest ? "Reddet" : "Geri Çek"}
+                      </button>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <>
+                  <label className="block text-[11px] font-semibold uppercase tracking-wide mb-1.5" style={{ color: "#c084fc" }}>
+                    ✋ Elinde iş kalmadı
+                  </label>
+                  <p className="text-[11.5px] text-[#8a8a9a] mb-2">
+                    Bu kart {card?.assignee?.name} kişisine atanmış. Onun yükünü hafifletmek için üstüne atanmayı isteyebilirsin — admin onaylarsa kart sana geçer.
+                  </p>
+                  <button type="button" onClick={handleRequestAssignment} disabled={requestSaving}
+                    className="text-[12px] font-semibold px-3.5 py-2 rounded-lg"
+                    style={{ background: "rgba(192,132,252,0.15)", color: "#c084fc", border: "1px solid rgba(192,132,252,0.3)" }}>
+                    {requestSaving ? "..." : "Bana Ata Talebi Gönder"}
+                  </button>
+                </>
+              )}
+              {requestError && <p className="text-[11px] mt-1.5" style={{ color: "#f87171" }}>{requestError}</p>}
             </div>
           )}
 

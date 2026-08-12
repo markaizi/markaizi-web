@@ -27,6 +27,7 @@ export async function getWorkflowBoardData(session: SessionPayload) {
             creator: { select: { id: true, name: true } },
             client: { select: { slug: true, name: true } },
             contentItem: { select: { id: true, scheduledDate: true } },
+            requestedBy: { select: { id: true, name: true } },
           },
         },
       },
@@ -72,16 +73,28 @@ export async function getWorkflowBoardData(session: SessionPayload) {
     seeAllCards = me?.workflowSeeAllCards ?? true;
   }
 
+  // "Yapılacak" sütunu, kimin elinde iş kaldığının referans sütunu — admin
+  // yeniden adlandırırsa en soldaki (sortOrder en düşük) sütuna düşülür.
+  const todoColumn = columns.find((c) => c.title === "Yapılacak") ?? columns[0];
+  const isIdle =
+    !isAdmin && !!todoColumn && !todoColumn.cards.some((card) => card.assigneeId === session.uid);
+
   // dueDate Prisma'dan tam DateTime olarak gelir; istemci tarafı (fmtDate,
   // <input type="date">) "YYYY-MM-DD" bekliyor — burada tek noktadan normalize edilir.
   // hiddenFromEmployees=true olan sütunlar çalışanlara panoda hiç gösterilmez.
-  // seeAllCards=false olan çalışan yalnızca kendine atanmış + sahipsiz kartları görür.
+  // seeAllCards=false olan çalışan yalnızca kendine atanmış + sahipsiz kartları görür —
+  // ANCAK "Yapılacak" sütununda hiç kartı kalmadıysa (isIdle) o sütunda istisnai
+  // olarak herkesin kartını görür, çünkü kimin yükünü hafifletebileceğini görmesi gerekir.
   const normalizedColumns = columns
     .filter((col) => isAdmin || !col.hiddenFromEmployees)
     .map((col) => ({
       ...col,
       cards: col.cards
-        .filter((card) => seeAllCards || !card.assigneeId || card.assigneeId === session.uid)
+        .filter((card) => {
+          if (seeAllCards) return true;
+          if (!card.assigneeId || card.assigneeId === session.uid) return true;
+          return isIdle && col.id === todoColumn?.id;
+        })
         .map((card) => ({
           ...card,
           dueDate: card.dueDate ? card.dueDate.toISOString().slice(0, 10) : null,
@@ -92,5 +105,6 @@ export async function getWorkflowBoardData(session: SessionPayload) {
     columns: normalizedColumns, employees, clients,
     currentUserId: session.uid,
     isAdmin, canCreateCards, canDragCards, canWriteRevisionNote, canDeleteAnyCard, canManageColumns,
+    isIdle,
   };
 }

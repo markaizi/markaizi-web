@@ -19,18 +19,27 @@ export interface UnpricedWorkLog {
   count: number;
 }
 
+export interface AssignmentRequest {
+  id: string;
+  cardTitle: string;
+  requestedByName: string;
+  assigneeName: string;
+}
+
 export default function AdminPanel({
   clients,
   adminName,
   employeeCount,
   unpricedWorkLogs = [],
   unreadSubmissionCount = 0,
+  assignmentRequests = [],
 }: {
   clients: AdminClientSummary[];
   adminName: string;
   employeeCount: number;
   unpricedWorkLogs?: UnpricedWorkLog[];
   unreadSubmissionCount?: number;
+  assignmentRequests?: AssignmentRequest[];
 }) {
   const router = useRouter();
   const [section, setSection] = useState<Section>("dashboard");
@@ -85,6 +94,7 @@ export default function AdminPanel({
             totalOverdue={totalOverdue}
             unpricedWorkLogs={unpricedWorkLogs}
             unreadSubmissionCount={unreadSubmissionCount}
+            assignmentRequests={assignmentRequests}
             onGoFirmalar={() => setSection("firmalar")}
             router={router}
           />
@@ -99,7 +109,7 @@ export default function AdminPanel({
 
 // ── Dashboard ─────────────────────────────────────────────────────────────────
 
-function Dashboard({ clients, adminName, employeeCount, totalUnread, totalOverdue, unpricedWorkLogs, unreadSubmissionCount, onGoFirmalar, router }: {
+function Dashboard({ clients, adminName, employeeCount, totalUnread, totalOverdue, unpricedWorkLogs, unreadSubmissionCount, assignmentRequests, onGoFirmalar, router }: {
   clients: AdminClientSummary[];
   adminName: string;
   employeeCount: number;
@@ -107,6 +117,7 @@ function Dashboard({ clients, adminName, employeeCount, totalUnread, totalOverdu
   totalOverdue: number;
   unpricedWorkLogs: UnpricedWorkLog[];
   unreadSubmissionCount: number;
+  assignmentRequests: AssignmentRequest[];
   onGoFirmalar: () => void;
   router: ReturnType<typeof useRouter>;
 }) {
@@ -141,8 +152,8 @@ function Dashboard({ clients, adminName, employeeCount, totalUnread, totalOverdu
         ))}
       </div>
 
-      {/* Uyarı: gecikmiş fatura, bekleyen istek veya fiyatlandırılmamış iş kaydı */}
-      {(totalOverdue > 0 || totalUnread > 0 || totalUnpriced > 0) && (
+      {/* Uyarı: gecikmiş fatura, bekleyen istek, fiyatlandırılmamış iş kaydı veya kart atama talebi */}
+      {(totalOverdue > 0 || totalUnread > 0 || totalUnpriced > 0 || assignmentRequests.length > 0) && (
         <div className="mb-6 space-y-2">
           {totalOverdue > 0 && (
             <div className="px-4 py-3 rounded-xl flex items-center gap-3"
@@ -192,6 +203,24 @@ function Dashboard({ clients, adminName, employeeCount, totalUnread, totalOverdu
                       {e.name}
                     </button>
                     {e.count > 1 ? ` ${e.count} yeni iş kaydı girdi` : " yeni bir iş kaydı girdi"}
+                    {i < arr.length - 1 ? " · " : ""}
+                  </span>
+                ))}
+              </p>
+            </div>
+          )}
+          {assignmentRequests.length > 0 && (
+            <div className="px-4 py-3 rounded-xl flex items-center gap-3"
+              style={{ background: "rgba(192,132,252,0.07)", border: "1px solid rgba(192,132,252,0.2)" }}>
+              <span className="text-[15px] flex-shrink-0">✋</span>
+              <p className="text-[13px]" style={{ color: "#c084fc" }}>
+                {assignmentRequests.map((r, i, arr) => (
+                  <span key={r.id}>
+                    <button onClick={() => router.push("/musteri/admin/is-akisi")}
+                      className="underline underline-offset-2 font-medium hover:opacity-80 transition-opacity">
+                      {r.requestedByName}
+                    </button>
+                    {` "${r.cardTitle}" kartını ${r.assigneeName} kişisinden istiyor`}
                     {i < arr.length - 1 ? " · " : ""}
                   </span>
                 ))}

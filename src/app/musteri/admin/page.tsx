@@ -21,7 +21,7 @@ export default async function AdminPage() {
 
   const today = new Date();
 
-  const [rows, unreadNotes, employeeCount, unpricedLogsRaw, unreadSubmissionCount] = await Promise.all([
+  const [rows, unreadNotes, employeeCount, unpricedLogsRaw, unreadSubmissionCount, assignmentRequestsRaw] = await Promise.all([
     prisma.client.findMany({
       where: { active: true },
       orderBy: { name: "asc" },
@@ -43,6 +43,16 @@ export default async function AdminPage() {
       select: { userId: true, user: { select: { name: true } } },
     }),
     prisma.submission.count({ where: { read: false } }),
+    prisma.workflowCard.findMany({
+      where: { requestedById: { not: null }, archivedAt: null },
+      select: {
+        id: true,
+        title: true,
+        requestedBy: { select: { name: true } },
+        assignee: { select: { name: true } },
+      },
+      orderBy: { requestedAt: "asc" },
+    }),
   ]);
 
   const unreadMap = new Map(unreadNotes.map((u) => [u.clientId, u._count.id]));
@@ -54,6 +64,13 @@ export default async function AdminPage() {
     else unpricedMap.set(log.userId, { name: log.user.name, count: 1 });
   }
   const unpricedWorkLogs = Array.from(unpricedMap.entries()).map(([id, v]) => ({ id, name: v.name, count: v.count }));
+
+  const assignmentRequests = assignmentRequestsRaw.map((c) => ({
+    id: c.id,
+    cardTitle: c.title,
+    requestedByName: c.requestedBy?.name ?? "—",
+    assigneeName: c.assignee?.name ?? "—",
+  }));
 
   const clients: AdminClientSummary[] = rows.map((c) => {
     // Aşama vade tarihinden hesaplanır. Rozetlerde yalnızca aksiyon gereken
@@ -70,5 +87,5 @@ export default async function AdminPage() {
     };
   });
 
-  return <AdminPanel clients={clients} adminName={session.name} employeeCount={employeeCount} unpricedWorkLogs={unpricedWorkLogs} unreadSubmissionCount={unreadSubmissionCount} />;
+  return <AdminPanel clients={clients} adminName={session.name} employeeCount={employeeCount} unpricedWorkLogs={unpricedWorkLogs} unreadSubmissionCount={unreadSubmissionCount} assignmentRequests={assignmentRequests} />;
 }

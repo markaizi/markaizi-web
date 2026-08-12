@@ -122,8 +122,9 @@ model User {
   workLogs          WorkLog[]
   payrollPayments   PayrollPayment[]
 
-  workflowCardsAssigned WorkflowCard[] @relation("WorkflowAssignee")
-  workflowCardsCreated  WorkflowCard[] @relation("WorkflowCreator")
+  workflowCardsAssigned          WorkflowCard[] @relation("WorkflowAssignee")
+  workflowCardsCreated           WorkflowCard[] @relation("WorkflowCreator")
+  workflowAssignmentRequests     WorkflowCard[] @relation("WorkflowAssignmentRequest")
   passwordResetTokens   PasswordResetToken[]
 
   createdAt DateTime @default(now())
@@ -331,11 +332,18 @@ model WorkflowCard {
   assigneeId String?
   creatorId  String
 
-  column   WorkflowColumn @relation(fields: [columnId], references: [id], onDelete: Cascade)
-  client   Client?        @relation(fields: [clientId], references: [id], onDelete: SetNull)
-  assignee User?          @relation("WorkflowAssignee", fields: [assigneeId], references: [id], onDelete: SetNull)
-  creator  User           @relation("WorkflowCreator", fields: [creatorId], references: [id])
-  workLog  WorkLog?
+  // Elinde "Yapılacak" sütununda hiç kartı kalmayan çalışan, başkasına atanmış
+  // kartları da görüp "bana ata" talebi gönderebilir — admin onaylayınca
+  // assigneeId buna güncellenir ve alan temizlenir (bkz. assignment-request route'u).
+  requestedById String?
+  requestedAt   DateTime?
+
+  column      WorkflowColumn @relation(fields: [columnId], references: [id], onDelete: Cascade)
+  client      Client?        @relation(fields: [clientId], references: [id], onDelete: SetNull)
+  assignee    User?          @relation("WorkflowAssignee", fields: [assigneeId], references: [id], onDelete: SetNull)
+  creator     User           @relation("WorkflowCreator", fields: [creatorId], references: [id])
+  requestedBy User?          @relation("WorkflowAssignmentRequest", fields: [requestedById], references: [id], onDelete: SetNull)
+  workLog     WorkLog?
   contentItem ContentItem?
 
   createdAt DateTime @default(now())
