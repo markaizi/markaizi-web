@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import StaffNotificationComposer from "@/components/StaffNotificationComposer";
 
 export interface AdminClientSummary {
   slug: string;
@@ -33,6 +34,7 @@ export default function AdminPanel({
   unpricedWorkLogs = [],
   unreadSubmissionCount = 0,
   assignmentRequests = [],
+  unreadStaffFeedbackCount = 0,
 }: {
   clients: AdminClientSummary[];
   adminName: string;
@@ -40,9 +42,11 @@ export default function AdminPanel({
   unpricedWorkLogs?: UnpricedWorkLog[];
   unreadSubmissionCount?: number;
   assignmentRequests?: AssignmentRequest[];
+  unreadStaffFeedbackCount?: number;
 }) {
   const router = useRouter();
   const [section, setSection] = useState<Section>("dashboard");
+  const [showComposer, setShowComposer] = useState(false);
 
   async function handleLogout() {
     try { await fetch("/api/musteri/auth/logout", { method: "POST" }); } catch { /* yine de yönlendir */ }
@@ -95,7 +99,9 @@ export default function AdminPanel({
             unpricedWorkLogs={unpricedWorkLogs}
             unreadSubmissionCount={unreadSubmissionCount}
             assignmentRequests={assignmentRequests}
+            unreadStaffFeedbackCount={unreadStaffFeedbackCount}
             onGoFirmalar={() => setSection("firmalar")}
+            onOpenComposer={() => setShowComposer(true)}
             router={router}
           />
         )}
@@ -103,13 +109,15 @@ export default function AdminPanel({
           <FirmalarView clients={clients} onBack={() => setSection("dashboard")} router={router} />
         )}
       </main>
+
+      {showComposer && <StaffNotificationComposer onClose={() => setShowComposer(false)} />}
     </div>
   );
 }
 
 // ── Dashboard ─────────────────────────────────────────────────────────────────
 
-function Dashboard({ clients, adminName, employeeCount, totalUnread, totalOverdue, unpricedWorkLogs, unreadSubmissionCount, assignmentRequests, onGoFirmalar, router }: {
+function Dashboard({ clients, adminName, employeeCount, totalUnread, totalOverdue, unpricedWorkLogs, unreadSubmissionCount, assignmentRequests, unreadStaffFeedbackCount, onGoFirmalar, onOpenComposer, router }: {
   clients: AdminClientSummary[];
   adminName: string;
   employeeCount: number;
@@ -118,7 +126,9 @@ function Dashboard({ clients, adminName, employeeCount, totalUnread, totalOverdu
   unpricedWorkLogs: UnpricedWorkLog[];
   unreadSubmissionCount: number;
   assignmentRequests: AssignmentRequest[];
+  unreadStaffFeedbackCount: number;
   onGoFirmalar: () => void;
+  onOpenComposer: () => void;
   router: ReturnType<typeof useRouter>;
 }) {
   const totalUnpriced = unpricedWorkLogs.reduce((s, e) => s + e.count, 0);
@@ -453,6 +463,57 @@ function Dashboard({ clients, adminName, employeeCount, totalUnread, totalOverdu
             <div className="absolute right-5 top-5 w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold"
               style={{ background: "#f87171", color: "#fff" }}>
               {unreadSubmissionCount}
+            </div>
+          )}
+        </button>
+
+        {/* Bildirim Gönder */}
+        <button onClick={onOpenComposer}
+          className="group rounded-2xl p-6 text-left transition-all duration-200 relative overflow-hidden"
+          style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+          onMouseEnter={e => {
+            (e.currentTarget as HTMLElement).style.borderColor = "rgba(192,132,252,0.4)";
+            (e.currentTarget as HTMLElement).style.background = "rgba(192,132,252,0.05)";
+          }}
+          onMouseLeave={e => {
+            (e.currentTarget as HTMLElement).style.borderColor = "var(--border)";
+            (e.currentTarget as HTMLElement).style.background = "var(--surface)";
+          }}>
+          <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4"
+            style={{ background: "rgba(192,132,252,0.12)", border: "1px solid rgba(192,132,252,0.2)" }}>
+            <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="#c084fc" strokeWidth="2">
+              <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M13.73 21a2 2 0 0 1-3.46 0" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </div>
+          <p className="text-[17px] font-bold text-white mb-1">Bildirim Gönder</p>
+          <p className="text-[13px] text-[#8a8a9a]">Çalışanlara bireysel veya toplu</p>
+        </button>
+
+        {/* Çalışan Mesajları */}
+        <button onClick={() => router.push("/musteri/admin/calisan-mesajlari")}
+          className="group rounded-2xl p-6 text-left transition-all duration-200 relative overflow-hidden"
+          style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+          onMouseEnter={e => {
+            (e.currentTarget as HTMLElement).style.borderColor = "rgba(251,146,60,0.4)";
+            (e.currentTarget as HTMLElement).style.background = "rgba(251,146,60,0.05)";
+          }}
+          onMouseLeave={e => {
+            (e.currentTarget as HTMLElement).style.borderColor = "var(--border)";
+            (e.currentTarget as HTMLElement).style.background = "var(--surface)";
+          }}>
+          <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4"
+            style={{ background: "rgba(251,146,60,0.1)", border: "1px solid rgba(251,146,60,0.2)" }}>
+            <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="#fb923c" strokeWidth="2">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+          <p className="text-[17px] font-bold text-white mb-1">Çalışan Mesajları</p>
+          <p className="text-[13px] text-[#8a8a9a]">{unreadStaffFeedbackCount > 0 ? `${unreadStaffFeedbackCount} okunmamış mesaj` : "İstek & şikayetler"}</p>
+          {unreadStaffFeedbackCount > 0 && (
+            <div className="absolute right-5 top-5 w-6 h-6 rounded-full flex items-center justify-center text-[11px] font-bold"
+              style={{ background: "#f87171", color: "#fff" }}>
+              {unreadStaffFeedbackCount}
             </div>
           )}
         </button>

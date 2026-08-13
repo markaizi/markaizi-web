@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-export interface WorkLogEntry { id: string; date: string; description: string; amount: string | null; }
+export interface WorkLogEntry { id: string; date: string; description: string; amount: string | null; adminNote?: string | null; }
 export interface ArchivedPeriodSummary {
   key: string; label: string; count: number; total: number;
   advancesInPeriod: number; remaining: number; paid: boolean;
@@ -56,6 +56,8 @@ function WorkLogEditableRow({
   log,
   draftValue,
   onDraftChange,
+  noteValue,
+  onNoteChange,
   onSave,
   onDelete,
   saving,
@@ -64,30 +66,52 @@ function WorkLogEditableRow({
   log: WorkLogEntry;
   draftValue: string;
   onDraftChange: (v: string) => void;
+  noteValue: string;
+  onNoteChange: (v: string) => void;
   onSave: () => void;
   onDelete: () => void;
   saving: boolean;
   deleting: boolean;
 }) {
+  const [showNote, setShowNote] = useState(!!noteValue);
   return (
-    <div className="px-6 py-4 flex items-center gap-3 flex-wrap">
-      <div className="min-w-0 flex-1">
-        <p className="text-[11px] text-[#555] mb-1">{fmtLogDate(log.date)}</p>
-        <p className="text-[13px] text-white">{log.description}</p>
+    <div className="px-6 py-4">
+      <div className="flex items-center gap-3 flex-wrap">
+        <div className="min-w-0 flex-1">
+          <p className="text-[11px] text-[#555] mb-1">{fmtLogDate(log.date)}</p>
+          <p className="text-[13px] text-white">{log.description}</p>
+        </div>
+        <input
+          value={draftValue}
+          onChange={(e) => onDraftChange(e.target.value)}
+          placeholder="Örn: 250 ₺"
+          className="w-28 px-2.5 py-1.5 rounded-lg text-[13px] text-white placeholder-[#555] outline-none focus:ring-1 focus:ring-purple-500/50 flex-shrink-0"
+          style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
+        />
+        <button
+          onClick={() => setShowNote((v) => !v)}
+          title="Çalışana görünecek bir not ekle (örn. neden normalden yüksek)"
+          className="text-[11px] font-semibold flex-shrink-0 transition-colors"
+          style={{ color: noteValue ? "#fbbf24" : "#555" }}
+        >
+          📝{noteValue ? " Not var" : " Not ekle"}
+        </button>
+        <button onClick={onSave} disabled={saving} className="text-[11px] font-semibold text-[#c084fc] hover:text-white transition-colors flex-shrink-0">
+          {saving ? "..." : "Kaydet"}
+        </button>
+        <button onClick={onDelete} disabled={deleting} className="text-[11px] text-[#555] hover:text-red-400 transition-colors flex-shrink-0">
+          {deleting ? "..." : "Sil"}
+        </button>
       </div>
-      <input
-        value={draftValue}
-        onChange={(e) => onDraftChange(e.target.value)}
-        placeholder="Örn: 250 ₺"
-        className="w-28 px-2.5 py-1.5 rounded-lg text-[13px] text-white placeholder-[#555] outline-none focus:ring-1 focus:ring-purple-500/50 flex-shrink-0"
-        style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
-      />
-      <button onClick={onSave} disabled={saving} className="text-[11px] font-semibold text-[#c084fc] hover:text-white transition-colors flex-shrink-0">
-        {saving ? "..." : "Kaydet"}
-      </button>
-      <button onClick={onDelete} disabled={deleting} className="text-[11px] text-[#555] hover:text-red-400 transition-colors flex-shrink-0">
-        {deleting ? "..." : "Sil"}
-      </button>
+      {showNote && (
+        <input
+          value={noteValue}
+          onChange={(e) => onNoteChange(e.target.value)}
+          placeholder="Örn: Müşteri çok beğendi, normalden yüksek yazdım"
+          className="w-full mt-2.5 px-2.5 py-1.5 rounded-lg text-[12.5px] text-white placeholder-[#555] outline-none focus:ring-1 focus:ring-amber-500/50"
+          style={{ background: "var(--bg)", border: "1px solid rgba(251,191,36,0.25)" }}
+        />
+      )}
     </div>
   );
 }
@@ -270,25 +294,31 @@ export default function AdminEmployeeDetail({
   const [amountDrafts, setAmountDrafts] = useState<Record<string, string>>(
     () => Object.fromEntries(employee.currentLogs.map((l) => [l.id, l.amount ?? ""]))
   );
+  const [noteDrafts, setNoteDrafts] = useState<Record<string, string>>(
+    () => Object.fromEntries(employee.currentLogs.map((l) => [l.id, l.adminNote ?? ""]))
+  );
   const [savingLogId, setSavingLogId] = useState<string | null>(null);
   const [deletingLogId, setDeletingLogId] = useState<string | null>(null);
   const [bulkSavingCurrent, setBulkSavingCurrent] = useState(false);
 
   async function handleBulkSaveCurrent() {
-    const toSave = currentLogs.filter((l) => (amountDrafts[l.id] ?? "").trim() !== (l.amount ?? ""));
+    const toSave = currentLogs.filter((l) =>
+      (amountDrafts[l.id] ?? "").trim() !== (l.amount ?? "") || (noteDrafts[l.id] ?? "").trim() !== (l.adminNote ?? "")
+    );
     if (toSave.length === 0) return;
     setBulkSavingCurrent(true);
     const results = await Promise.all(toSave.map(async (l) => {
       const amount = amountDrafts[l.id]?.trim() || null;
+      const adminNote = noteDrafts[l.id]?.trim() || null;
       const res = await fetch(`/api/musteri/admin/worklogs/${l.id}`, {
-        method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ amount }),
+        method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ amount, adminNote }),
       });
       const json = await res.json();
-      return { id: l.id, ok: !!json.ok, amount: json.log?.amount as string | null | undefined };
+      return { id: l.id, ok: !!json.ok, amount: json.log?.amount as string | null | undefined, adminNote: json.log?.adminNote as string | null | undefined };
     }));
     setCurrentLogs((prev) => prev.map((l) => {
       const r = results.find((x) => x.id === l.id);
-      return r?.ok ? { ...l, amount: r.amount ?? null } : l;
+      return r?.ok ? { ...l, amount: r.amount ?? null, adminNote: r.adminNote ?? null } : l;
     }));
     setBulkSavingCurrent(false);
   }
@@ -296,13 +326,14 @@ export default function AdminEmployeeDetail({
   async function handleSaveAmount(logId: string) {
     setSavingLogId(logId);
     const amount = amountDrafts[logId]?.trim() || null;
+    const adminNote = noteDrafts[logId]?.trim() || null;
     const res = await fetch(`/api/musteri/admin/worklogs/${logId}`, {
-      method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ amount }),
+      method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ amount, adminNote }),
     });
     const json = await res.json();
     setSavingLogId(null);
     if (json.ok) {
-      setCurrentLogs((prev) => prev.map((l) => (l.id === logId ? { ...l, amount: json.log.amount } : l)));
+      setCurrentLogs((prev) => prev.map((l) => (l.id === logId ? { ...l, amount: json.log.amount, adminNote: json.log.adminNote } : l)));
     }
   }
 
@@ -322,28 +353,32 @@ export default function AdminEmployeeDetail({
   const [loadingKey, setLoadingKey] = useState<string | null>(null);
   const [archivedEntries, setArchivedEntries] = useState<Record<string, WorkLogEntry[]>>({});
   const [archivedAmountDrafts, setArchivedAmountDrafts] = useState<Record<string, string>>({});
+  const [archivedNoteDrafts, setArchivedNoteDrafts] = useState<Record<string, string>>({});
   const [archivedSavingId, setArchivedSavingId] = useState<string | null>(null);
   const [archivedDeletingId, setArchivedDeletingId] = useState<string | null>(null);
   const [bulkSavingArchived, setBulkSavingArchived] = useState<string | null>(null);
 
   async function handleBulkSaveArchived(periodKey: string) {
     const entries = archivedEntries[periodKey] ?? [];
-    const toSave = entries.filter((l) => (archivedAmountDrafts[l.id] ?? "").trim() !== (l.amount ?? ""));
+    const toSave = entries.filter((l) =>
+      (archivedAmountDrafts[l.id] ?? "").trim() !== (l.amount ?? "") || (archivedNoteDrafts[l.id] ?? "").trim() !== (l.adminNote ?? "")
+    );
     if (toSave.length === 0) return;
     setBulkSavingArchived(periodKey);
     const results = await Promise.all(toSave.map(async (l) => {
       const amount = archivedAmountDrafts[l.id]?.trim() || null;
+      const adminNote = archivedNoteDrafts[l.id]?.trim() || null;
       const res = await fetch(`/api/musteri/admin/worklogs/${l.id}`, {
-        method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ amount }),
+        method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ amount, adminNote }),
       });
       const json = await res.json();
-      return { id: l.id, ok: !!json.ok, amount: json.log?.amount as string | null | undefined, before: l.amount };
+      return { id: l.id, ok: !!json.ok, amount: json.log?.amount as string | null | undefined, adminNote: json.log?.adminNote as string | null | undefined, before: l.amount };
     }));
     setArchivedEntries((prev) => ({
       ...prev,
       [periodKey]: (prev[periodKey] ?? []).map((l) => {
         const r = results.find((x) => x.id === l.id);
-        return r?.ok ? { ...l, amount: r.amount ?? null } : l;
+        return r?.ok ? { ...l, amount: r.amount ?? null, adminNote: r.adminNote ?? null } : l;
       }),
     }));
     const delta = results.reduce((s, r) => (r.ok ? s + (parseAmount(r.amount ?? null) - parseAmount(r.before)) : s), 0);
@@ -360,9 +395,11 @@ export default function AdminEmployeeDetail({
   useEffect(() => {
     setCurrentLogs(employee.currentLogs);
     setAmountDrafts(Object.fromEntries(employee.currentLogs.map((l) => [l.id, l.amount ?? ""])));
+    setNoteDrafts(Object.fromEntries(employee.currentLogs.map((l) => [l.id, l.adminNote ?? ""])));
     setSummaries(employee.archivedSummary);
     setArchivedEntries({});
     setArchivedAmountDrafts({});
+    setArchivedNoteDrafts({});
     setExpandedKey(null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [employee.currentPeriod.key]);
@@ -381,6 +418,10 @@ export default function AdminEmployeeDetail({
         ...prev,
         ...Object.fromEntries(json.logs.map((l: WorkLogEntry) => [l.id, l.amount ?? ""])),
       }));
+      setArchivedNoteDrafts((prev) => ({
+        ...prev,
+        ...Object.fromEntries(json.logs.map((l: WorkLogEntry) => [l.id, l.adminNote ?? ""])),
+      }));
     }
   }
 
@@ -388,15 +429,16 @@ export default function AdminEmployeeDetail({
     setArchivedSavingId(logId);
     const before = (archivedEntries[periodKey] ?? []).find((l) => l.id === logId);
     const amount = archivedAmountDrafts[logId]?.trim() || null;
+    const adminNote = archivedNoteDrafts[logId]?.trim() || null;
     const res = await fetch(`/api/musteri/admin/worklogs/${logId}`, {
-      method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ amount }),
+      method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ amount, adminNote }),
     });
     const json = await res.json();
     setArchivedSavingId(null);
     if (json.ok) {
       setArchivedEntries((prev) => ({
         ...prev,
-        [periodKey]: (prev[periodKey] ?? []).map((l) => (l.id === logId ? { ...l, amount: json.log.amount } : l)),
+        [periodKey]: (prev[periodKey] ?? []).map((l) => (l.id === logId ? { ...l, amount: json.log.amount, adminNote: json.log.adminNote } : l)),
       }));
       const delta = parseAmount(json.log.amount) - parseAmount(before?.amount ?? null);
       if (delta !== 0) {
@@ -732,6 +774,8 @@ export default function AdminEmployeeDetail({
                 log={l}
                 draftValue={amountDrafts[l.id] ?? ""}
                 onDraftChange={(v) => setAmountDrafts((d) => ({ ...d, [l.id]: v }))}
+                noteValue={noteDrafts[l.id] ?? ""}
+                onNoteChange={(v) => setNoteDrafts((d) => ({ ...d, [l.id]: v }))}
                 onSave={() => handleSaveAmount(l.id)}
                 onDelete={() => handleDeleteLog(l.id)}
                 saving={savingLogId === l.id}
@@ -826,6 +870,8 @@ export default function AdminEmployeeDetail({
                           log={l}
                           draftValue={archivedAmountDrafts[l.id] ?? ""}
                           onDraftChange={(v) => setArchivedAmountDrafts((d) => ({ ...d, [l.id]: v }))}
+                          noteValue={archivedNoteDrafts[l.id] ?? ""}
+                          onNoteChange={(v) => setArchivedNoteDrafts((d) => ({ ...d, [l.id]: v }))}
                           onSave={() => handleSaveArchivedAmount(summary.key, l.id)}
                           onDelete={() => handleDeleteArchivedLog(summary.key, l.id)}
                           saving={archivedSavingId === l.id}

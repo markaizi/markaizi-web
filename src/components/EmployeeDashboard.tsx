@@ -1,6 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { useRouter } from "next/navigation";
+import StaffFeedbackModal from "@/components/StaffFeedbackModal";
 
 export interface AssignedClient {
   slug: string;
@@ -9,16 +11,28 @@ export interface AssignedClient {
   unreadNoteCount: number;
 }
 
+export interface EmployeeStats {
+  bitirilen: number;
+  bekleyen: number;
+  acil: number;
+  currentEarnings: number;
+  totalEarnings: number;
+  periodLabel: string;
+}
+
 export default function EmployeeDashboard({
   clients,
   employeeName,
   workflowAccess = true,
+  stats,
 }: {
   clients: AssignedClient[];
   employeeName: string;
   workflowAccess?: boolean;
+  stats?: EmployeeStats;
 }) {
   const router = useRouter();
+  const [showFeedback, setShowFeedback] = useState(false);
 
   async function handleLogout() {
     try { await fetch("/api/musteri/auth/logout", { method: "POST" }); } catch { /* ignore */ }
@@ -82,8 +96,38 @@ export default function EmployeeDashboard({
             >
               👤 Profil
             </button>
+            <button
+              onClick={() => setShowFeedback(true)}
+              className="btn btn-outline text-sm px-4 py-2.5"
+            >
+              💬 İstek/Şikayet
+            </button>
           </div>
         </div>
+
+        {showFeedback && <StaffFeedbackModal onClose={() => setShowFeedback(false)} />}
+
+        {stats && (
+          <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 sm:gap-3 mb-8">
+            {[
+              { label: "Bitirdiğim İş", value: stats.bitirilen, color: "#34d399", bg: "rgba(52,211,153,0.1)", border: "rgba(52,211,153,0.2)" },
+              { label: "Bekleyen İş", value: stats.bekleyen, color: "#60a5fa", bg: "rgba(96,165,250,0.1)", border: "rgba(96,165,250,0.2)" },
+              { label: "Acil İş", value: stats.acil, color: "#f87171", bg: "rgba(248,113,113,0.1)", border: "rgba(248,113,113,0.2)" },
+              { label: `Bu Dönem (${stats.periodLabel})`, value: stats.currentEarnings > 0 ? `${stats.currentEarnings.toLocaleString("tr-TR")} ₺` : "—", color: "#2dd4bf", bg: "rgba(45,212,191,0.1)", border: "rgba(45,212,191,0.2)" },
+              { label: "Toplam Kazancım", value: stats.totalEarnings > 0 ? `${stats.totalEarnings.toLocaleString("tr-TR")} ₺` : "—", color: "#fbbf24", bg: "rgba(251,191,36,0.1)", border: "rgba(251,191,36,0.2)" },
+            ].map((stat) => (
+              <button
+                key={stat.label}
+                onClick={() => router.push(stat.label.includes("Kazan") || stat.label.includes("Dönem") ? "/musteri/calisan/is-kayitlarim" : "/musteri/calisan/is-akisi")}
+                className="rounded-2xl p-3 sm:p-4 text-left transition-transform active:scale-[0.98]"
+                style={{ background: stat.bg, border: `1px solid ${stat.border}` }}
+              >
+                <p className="text-[16px] sm:text-[22px] font-black leading-tight truncate" style={{ color: stat.color }}>{stat.value}</p>
+                <p className="text-[10px] sm:text-[11.5px] text-[#8a8a9a] mt-0.5 leading-snug">{stat.label}</p>
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Bekleyen istek özeti */}
         {clients.some((c) => c.unreadNoteCount > 0) && (

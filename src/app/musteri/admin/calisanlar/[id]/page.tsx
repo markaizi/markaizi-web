@@ -86,6 +86,7 @@ export default async function AdminEmployeeDetailPage({
       date: l.date.toISOString(),
       description: l.description,
       amount: l.amount,
+      adminNote: l.adminNote,
     })),
     archivedSummary: archived.map((a) => {
       const total = a.items.reduce((s, i) => s + parseAmount(i.amount), 0);

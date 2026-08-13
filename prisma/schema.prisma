@@ -75,6 +75,11 @@ enum PaymentKind {
   DONEM_ODEMESI
 }
 
+enum StaffNotificationType {
+  WORKLOG_PRICED  // admin ücret girdi — otomatik
+  ADMIN_MESSAGE   // admin'in yazdığı bireysel/toplu bildirim
+}
+
 // ── Modeller ─────────────────────────────────────────────
 model User {
   id           String  @id @default(cuid())
@@ -126,6 +131,8 @@ model User {
   workflowCardsCreated           WorkflowCard[] @relation("WorkflowCreator")
   workflowAssignmentRequests     WorkflowCard[] @relation("WorkflowAssignmentRequest")
   passwordResetTokens   PasswordResetToken[]
+  staffNotifications    StaffNotification[]
+  staffFeedback         StaffFeedback[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -377,6 +384,11 @@ model WorkLog {
   description String
   amount      String? // admin doldurur, örn "250 ₺"
 
+  // Admin ücret girerken ekleyebileceği, çalışana bildirim olarak giden not
+  // (örn. "müşteri çok beğendi, normalden yüksek yazdım"). description'dan farklı —
+  // description çalışanın kendi "ne yaptım" metni, adminNote admin'in yorumu.
+  adminNote String?
+
   // İş Akışı'ndaki bir karttan otomatik oluşturulduysa bağlantısı (opsiyonel).
   // Kart silinirse bu alan null'a düşer, iş kaydı SİLİNMEZ (bkz. onDelete: SetNull) —
   // pano temizliği ile ücret/ödeme kaydı birbirinden bağımsız kalır.
@@ -448,4 +460,41 @@ model Submission {
   emailSent Boolean        @default(false)
   read      Boolean        @default(false)
   createdAt DateTime       @default(now())
+}
+
+// ── Çalışan paneli bildirimleri — hem sistem tarafından otomatik (ücret girildi)
+// hem admin tarafından elle (bireysel/toplu mesaj) üretilir. WORKLOG_PRICED tipi,
+// kısa süre içinde art arda gelen fiyatlandırmaları tek kayıtta biriktirir (count) —
+// bkz. src/lib/staffNotify.ts.
+model StaffNotification {
+  id          String                @id @default(cuid())
+  recipientId String
+  type        StaffNotificationType
+  title       String
+  body        String
+  count       Int                   @default(1)
+
+  // true ise: alıcı giriş yaptığında bir kerelik popup olarak gösterilir
+  // (önemli/toplu duyurular için) — gösterildikten sonra poppedAt set edilir.
+  popup    Boolean   @default(false)
+  poppedAt DateTime?
+  readAt   DateTime?
+
+  recipient User @relation(fields: [recipientId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ── Çalışandan admin'e istek/şikayet — panelden yazılır, e-posta ile de admin'e
+// düşer (bkz. musteri/message route'undaki nodemailer deseni), panelde de listelenir.
+model StaffFeedback {
+  id      String        @id @default(cuid())
+  userId  String
+  message String
+  status  RequestStatus @default(BEKLIYOR)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
 }

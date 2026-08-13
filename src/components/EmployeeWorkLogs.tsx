@@ -151,6 +151,7 @@ export default function EmployeeWorkLogs({
   const [archivedDeletingId, setArchivedDeletingId] = useState<string | null>(null);
 
   const currentTotal = currentLogs.reduce((s, l) => s + parseAmount(l.amount), 0);
+  const totalEarnings = currentTotal + summaries.reduce((s, sm) => s + sm.total, 0);
 
   async function handleLogout() {
     try { await fetch("/api/musteri/auth/logout", { method: "POST" }); } catch { /* ignore */ }
@@ -293,11 +294,16 @@ export default function EmployeeWorkLogs({
         {/* Mobilde form önce gelsin (asıl amaç kayıt eklemek), masaüstünde özet önce */}
         <div className="flex flex-col">
         {/* Özet */}
-        <div className="order-2 sm:order-1 grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+        <div className="order-2 sm:order-1 grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
           <div className="rounded-2xl p-5" style={{ background: "rgba(52,211,153,0.08)", border: "1px solid rgba(52,211,153,0.2)" }}>
             <p className="text-[11px] font-bold uppercase tracking-wide" style={{ color: "#34d399" }}>Bu Dönem Kazancı</p>
             <p className="text-[28px] font-black text-white mt-1">{currentTotal > 0 ? `${currentTotal.toLocaleString("tr-TR")} ₺` : "—"}</p>
             <p className="text-[11px] text-[#8a8a9a] mt-1">{currentPeriod.label}</p>
+          </div>
+          <div className="rounded-2xl p-5" style={{ background: "rgba(251,191,36,0.08)", border: "1px solid rgba(251,191,36,0.2)" }}>
+            <p className="text-[11px] font-bold uppercase tracking-wide" style={{ color: "#fbbf24" }}>Toplam Kazancım</p>
+            <p className="text-[28px] font-black text-white mt-1">{totalEarnings > 0 ? `${totalEarnings.toLocaleString("tr-TR")} ₺` : "—"}</p>
+            <p className="text-[11px] text-[#8a8a9a] mt-1">Tüm zamanlar</p>
           </div>
           <div className="rounded-2xl p-5" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
             <p className="text-[11px] font-bold uppercase tracking-wide text-[#8a8a9a]">Ödeme Günü</p>

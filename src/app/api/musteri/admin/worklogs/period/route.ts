@@ -34,6 +34,7 @@ export async function GET(req: NextRequest) {
       date: l.date.toISOString(),
       description: l.description,
       amount: l.amount,
+      adminNote: l.adminNote,
     })),
   });
 }
