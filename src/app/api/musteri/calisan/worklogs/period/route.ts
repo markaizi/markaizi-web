@@ -24,13 +24,31 @@ export async function GET(req: NextRequest) {
     orderBy: { date: "desc" },
   });
 
+  // Bu dönemde hiç iş kaydı yoksa (örn. iş kayıtları sistemi kurulmadan önceki
+  // dönem), o dönemde verilmiş avans var mı diye bak — varsa dönemin tek
+  // kazancı odur, kayıt listesinde onu göster.
+  let items = logs.map((l) => ({
+    id: l.id,
+    date: l.date.toISOString(),
+    description: l.description,
+    amount: l.amount as string | null,
+  }));
+
+  if (items.length === 0) {
+    const avansPayments = await prisma.payrollPayment.findMany({
+      where: { userId: session.uid, kind: "AVANS", date: { gte: period.start, lte: period.end } },
+      orderBy: { date: "desc" },
+    });
+    items = avansPayments.map((p) => ({
+      id: p.id,
+      date: p.date.toISOString(),
+      description: p.description || "Avans ödemesi",
+      amount: p.amount.includes("₺") ? p.amount : `${p.amount} ₺`,
+    }));
+  }
+
   return NextResponse.json({
     period: { key: period.key, label: period.label },
-    logs: logs.map((l) => ({
-      id: l.id,
-      date: l.date.toISOString(),
-      description: l.description,
-      amount: l.amount,
-    })),
+    logs: items,
   });
 }

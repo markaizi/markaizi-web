@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { getCurrentPeriod } from "@/lib/workLogPeriods";
+import { getCurrentPeriod, getPeriodForDate } from "@/lib/workLogPeriods";
 import EmployeeDashboard, { type AssignedClient, type EmployeeStats } from "@/components/EmployeeDashboard";
 
 export const dynamic = "force-dynamic";
@@ -25,7 +25,7 @@ export default async function CalisanPage() {
   // Admin ise admin paneline yönlendir
   if (session.role === "ADMIN") redirect("/musteri/admin");
 
-  const [me, assignments, unreadNotes, myCards, myWorkLogs] = await Promise.all([
+  const [me, assignments, unreadNotes, myCards, myWorkLogs, myAvans] = await Promise.all([
     prisma.user.findUnique({ where: { id: session.uid }, select: { workflowAccess: true, paymentDay: true } }),
     prisma.assignment.findMany({
       where: { userId: session.uid },
@@ -57,6 +57,10 @@ export default async function CalisanPage() {
       where: { userId: session.uid },
       select: { date: true, amount: true },
     }),
+    prisma.payrollPayment.findMany({
+      where: { userId: session.uid, kind: "AVANS" },
+      select: { date: true, amount: true },
+    }),
   ]);
 
   const unreadMap = new Map(unreadNotes.map((u) => [u.clientId, u._count.id]));
@@ -79,13 +83,31 @@ export default async function CalisanPage() {
     }
   }
 
-  const currentPeriod = getCurrentPeriod(me?.paymentDay ?? null);
-  let currentEarnings = 0, totalEarnings = 0;
+  // Kazanç dönem başına hesaplanır: iş kaydı olan bir dönemde onun toplamı esas
+  // alınır; iş kayıtları sistemi kurulmadan önceki dönemlerde (hiç iş kaydı yok)
+  // verilen avans o dönemin tek kazancı sayılır — böylece "geçen ay" gibi eski
+  // dönemler de toplam kazanca dahil olur.
+  const paymentDay = me?.paymentDay ?? null;
+  const currentPeriod = getCurrentPeriod(paymentDay);
+
+  const worklogByPeriod = new Map<string, number>();
   for (const l of myWorkLogs) {
-    const amt = parseAmount(l.amount);
-    totalEarnings += amt;
-    if (l.date >= currentPeriod.start && l.date <= currentPeriod.end) currentEarnings += amt;
+    const key = getPeriodForDate(l.date, paymentDay).key;
+    worklogByPeriod.set(key, (worklogByPeriod.get(key) ?? 0) + parseAmount(l.amount));
   }
+  const avansByPeriod = new Map<string, number>();
+  for (const p of myAvans) {
+    const key = getPeriodForDate(p.date, paymentDay).key;
+    avansByPeriod.set(key, (avansByPeriod.get(key) ?? 0) + parseAmount(p.amount));
+  }
+
+  let totalEarnings = 0;
+  for (const key of new Set([...worklogByPeriod.keys(), ...avansByPeriod.keys()])) {
+    const wl = worklogByPeriod.get(key) ?? 0;
+    totalEarnings += wl > 0 ? wl : (avansByPeriod.get(key) ?? 0);
+  }
+  const currentWorklog = worklogByPeriod.get(currentPeriod.key) ?? 0;
+  const currentEarnings = currentWorklog > 0 ? currentWorklog : (avansByPeriod.get(currentPeriod.key) ?? 0);
 
   const stats: EmployeeStats = { bitirilen, bekleyen, acil, currentEarnings, totalEarnings, periodLabel: currentPeriod.label };
 
