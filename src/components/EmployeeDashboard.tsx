@@ -39,17 +39,106 @@ export default function EmployeeDashboard({
     window.location.href = "/musteri/giris";
   }
 
+  const unreadTotal = clients.reduce((s, c) => s + c.unreadNoteCount, 0);
+
+  const navItems = [
+    workflowAccess && {
+      key: "is-akisi",
+      label: "İş Akışı",
+      sub: "Kanban görev panosu",
+      color: "#fb923c",
+      onClick: () => router.push("/musteri/calisan/is-akisi"),
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="#fb923c" strokeWidth="2">
+          <rect x="3" y="3" width="5" height="18" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
+          <rect x="10" y="3" width="5" height="11" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
+          <rect x="17" y="3" width="4" height="7" rx="1" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      ),
+    },
+    {
+      key: "firmalarim",
+      label: "Firmalarım",
+      sub: clients.length > 0 ? `${clients.length} atanmış firma` : "Henüz atanmadı",
+      color: "#c084fc",
+      badge: unreadTotal > 0 ? unreadTotal : null,
+      onClick: () => router.push("/musteri/calisan/firmalarim"),
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="#c084fc" strokeWidth="2">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" strokeLinecap="round" strokeLinejoin="round"/>
+          <circle cx="9" cy="7" r="4" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      ),
+    },
+    {
+      key: "takvim",
+      label: "Takvim",
+      sub: "İçerik takvimi",
+      color: "#60a5fa",
+      onClick: () => router.push("/musteri/calisan/takvim"),
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="#60a5fa" strokeWidth="2">
+          <rect x="3" y="4" width="18" height="18" rx="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M16 2v4M8 2v4M3 10h18" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      ),
+    },
+    {
+      key: "is-kayitlarim",
+      label: "İş Kayıtlarım",
+      sub: "Kazanç & geçmiş",
+      color: "#2dd4bf",
+      onClick: () => router.push("/musteri/calisan/is-kayitlarim"),
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="#2dd4bf" strokeWidth="2">
+          <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      ),
+    },
+    {
+      key: "istek-sikayet",
+      label: "İstek/Şikayet",
+      sub: "Admin'e doğrudan yaz",
+      color: "#f87171",
+      onClick: () => setShowFeedback(true),
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="#f87171" strokeWidth="2">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      ),
+    },
+    {
+      key: "profil",
+      label: "Profilim",
+      sub: "Şifre & hesap ayarları",
+      color: "#fbbf24",
+      wide: true,
+      onClick: () => router.push("/musteri/calisan/profil"),
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="#fbbf24" strokeWidth="2">
+          <circle cx="12" cy="12" r="3" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      ),
+    },
+  ].filter(Boolean) as {
+    key: string; label: string; sub: string; color: string; onClick: () => void;
+    icon: React.ReactNode; badge?: number | null; wide?: boolean;
+  }[];
+
   return (
     <div className="min-h-screen" style={{ background: "var(--bg)" }}>
       <header
-        className="sticky top-0 z-50 px-6 py-4 flex items-center justify-between"
+        className="sticky top-0 z-50 px-4 sm:px-6 py-3.5 sm:py-4 flex items-center justify-between"
         style={{ background: "rgba(5,5,5,0.9)", WebkitBackdropFilter: "blur(20px)", backdropFilter: "blur(20px)", borderBottom: "1px solid var(--border)" }}
       >
-        <div className="flex items-center gap-3">
-          <a href="/" className="font-black text-[18px] gradient-text">markaizi</a>
-          <span className="text-[#555]">/</span>
-          <span className="text-[14px] font-semibold text-white">Çalışan Paneli</span>
-          <span className="hidden sm:inline text-[11px] font-bold px-2.5 py-1 rounded-full"
+        <div className="flex items-center gap-2 sm:gap-3">
+          <a href="/" className="font-black text-[16px] sm:text-[18px] gradient-text">markaizi</a>
+          <span className="text-[#555] hidden sm:inline">/</span>
+          <span className="hidden sm:inline text-[14px] font-semibold text-white">Çalışan Paneli</span>
+          <span className="text-[11px] font-bold px-2.5 py-1 rounded-full"
             style={{ background: "rgba(96,165,250,0.12)", color: "#60a5fa", border: "1px solid rgba(96,165,250,0.2)" }}>
             Çalışan
           </span>
@@ -63,74 +152,63 @@ export default function EmployeeDashboard({
         </button>
       </header>
 
-      <main className="max-w-[960px] mx-auto px-6 py-10">
-        <div className="mb-10 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <h2 className="font-black text-[24px] text-white mb-1">Atanmış Firmalar</h2>
-            <p className="text-[14px] text-[#8a8a9a]">Merhaba {employeeName} · {clients.length} firma</p>
-          </div>
-          <div className="flex gap-3 self-start sm:self-auto">
-            {workflowAccess && (
-              <button
-                onClick={() => router.push("/musteri/calisan/is-akisi")}
-                className="btn btn-outline text-sm px-4 py-2.5"
-              >
-                🗂️ İş Akışı
-              </button>
-            )}
-            <button
-              onClick={() => router.push("/musteri/calisan/takvim")}
-              className="btn btn-outline text-sm px-4 py-2.5"
-            >
-              📅 Takvim
-            </button>
-            <button
-              onClick={() => router.push("/musteri/calisan/is-kayitlarim")}
-              className="btn btn-outline text-sm px-4 py-2.5"
-            >
-              💰 İş Kayıtlarım
-            </button>
-            <button
-              onClick={() => router.push("/musteri/calisan/profil")}
-              className="btn btn-outline text-sm px-4 py-2.5"
-            >
-              👤 Profil
-            </button>
-            <button
-              onClick={() => setShowFeedback(true)}
-              className="btn btn-outline text-sm px-4 py-2.5"
-            >
-              💬 İstek/Şikayet
-            </button>
-          </div>
+      <main className="max-w-[720px] mx-auto px-4 sm:px-6 py-6 sm:py-10">
+        <div className="mb-6">
+          <h1 className="font-black text-[22px] sm:text-[26px] text-white mb-1">Merhaba, {employeeName}</h1>
+          <p className="text-[13px] sm:text-[14px] text-[#8a8a9a]">Çalışan paneline hoş geldin.</p>
         </div>
 
-        {showFeedback && <StaffFeedbackModal onClose={() => setShowFeedback(false)} />}
-
         {stats && (
-          <div className="grid grid-cols-3 sm:grid-cols-5 gap-2 sm:gap-3 mb-8">
-            {[
-              { label: "Bitirdiğim İş", value: stats.bitirilen, color: "#34d399", bg: "rgba(52,211,153,0.1)", border: "rgba(52,211,153,0.2)" },
-              { label: "Bekleyen İş", value: stats.bekleyen, color: "#60a5fa", bg: "rgba(96,165,250,0.1)", border: "rgba(96,165,250,0.2)" },
-              { label: "Acil İş", value: stats.acil, color: "#f87171", bg: "rgba(248,113,113,0.1)", border: "rgba(248,113,113,0.2)" },
-              { label: `Bu Dönem (${stats.periodLabel})`, value: stats.currentEarnings > 0 ? `${stats.currentEarnings.toLocaleString("tr-TR")} ₺` : "—", color: "#2dd4bf", bg: "rgba(45,212,191,0.1)", border: "rgba(45,212,191,0.2)" },
-              { label: "Toplam Kazancım", value: stats.totalEarnings > 0 ? `${stats.totalEarnings.toLocaleString("tr-TR")} ₺` : "—", color: "#fbbf24", bg: "rgba(251,191,36,0.1)", border: "rgba(251,191,36,0.2)" },
-            ].map((stat) => (
+          <>
+            {/* Kazanç — hero, en göz önündeki kısım */}
+            <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-3">
               <button
-                key={stat.label}
-                onClick={() => router.push(stat.label.includes("Kazan") || stat.label.includes("Dönem") ? "/musteri/calisan/is-kayitlarim" : "/musteri/calisan/is-akisi")}
-                className="rounded-2xl p-3 sm:p-4 text-left transition-transform active:scale-[0.98]"
-                style={{ background: stat.bg, border: `1px solid ${stat.border}` }}
+                onClick={() => router.push("/musteri/calisan/is-kayitlarim")}
+                className="rounded-2xl p-4 sm:p-6 text-left transition-transform active:scale-[0.98]"
+                style={{ background: "rgba(45,212,191,0.08)", border: "1px solid rgba(45,212,191,0.25)" }}
               >
-                <p className="text-[16px] sm:text-[22px] font-black leading-tight truncate" style={{ color: stat.color }}>{stat.value}</p>
-                <p className="text-[10px] sm:text-[11.5px] text-[#8a8a9a] mt-0.5 leading-snug">{stat.label}</p>
+                <p className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wide" style={{ color: "#2dd4bf" }}>Bu Dönem</p>
+                <p className="text-[26px] sm:text-[36px] font-black text-white leading-tight mt-1 truncate">
+                  {stats.currentEarnings > 0 ? `${stats.currentEarnings.toLocaleString("tr-TR")} ₺` : "—"}
+                </p>
+                <p className="text-[10px] sm:text-[11px] text-[#8a8a9a] mt-1.5 leading-snug">{stats.periodLabel}</p>
               </button>
-            ))}
-          </div>
+              <button
+                onClick={() => router.push("/musteri/calisan/is-kayitlarim")}
+                className="rounded-2xl p-4 sm:p-6 text-left transition-transform active:scale-[0.98]"
+                style={{ background: "linear-gradient(135deg, rgba(251,191,36,0.14), rgba(251,146,60,0.08))", border: "1px solid rgba(251,191,36,0.3)" }}
+              >
+                <p className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wide" style={{ color: "#fbbf24" }}>Toplam Kazancım</p>
+                <p className="text-[26px] sm:text-[36px] font-black text-white leading-tight mt-1 truncate">
+                  {stats.totalEarnings > 0 ? `${stats.totalEarnings.toLocaleString("tr-TR")} ₺` : "—"}
+                </p>
+                <p className="text-[10px] sm:text-[11px] text-[#8a8a9a] mt-1.5 leading-snug">Tüm zamanlar</p>
+              </button>
+            </div>
+
+            {/* İş durumu — küçük, ikincil */}
+            <div className="grid grid-cols-3 gap-2 sm:gap-3 mb-8">
+              {[
+                { label: "Bitirdiğim İş", value: stats.bitirilen, color: "#34d399" },
+                { label: "Bekleyen İş", value: stats.bekleyen, color: "#60a5fa" },
+                { label: "Acil İş", value: stats.acil, color: "#f87171" },
+              ].map((s) => (
+                <button
+                  key={s.label}
+                  onClick={() => router.push("/musteri/calisan/is-akisi")}
+                  className="rounded-xl px-2 py-2.5 sm:px-3 sm:py-3 text-center transition-transform active:scale-[0.98]"
+                  style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+                >
+                  <p className="text-[16px] sm:text-[19px] font-black leading-none" style={{ color: s.color }}>{s.value}</p>
+                  <p className="text-[9.5px] sm:text-[10.5px] text-[#8a8a9a] mt-1 leading-snug">{s.label}</p>
+                </button>
+              ))}
+            </div>
+          </>
         )}
 
         {/* Bekleyen istek özeti */}
-        {clients.some((c) => c.unreadNoteCount > 0) && (
+        {unreadTotal > 0 && (
           <div className="mb-6 px-4 py-3 rounded-xl flex items-start gap-3"
             style={{ background: "rgba(251,146,60,0.07)", border: "1px solid rgba(251,146,60,0.2)" }}>
             <span className="text-[16px] flex-shrink-0">🔔</span>
@@ -151,68 +229,40 @@ export default function EmployeeDashboard({
           </div>
         )}
 
-        {clients.length === 0 && (
-          <div className="text-center py-16">
-            <p className="text-[#8a8a9a] text-[15px]">Henüz sana atanmış firma yok.</p>
-            <p className="text-[13px] text-[#555] mt-2">Admin seni bir firmaya atadığında burada görünecek.</p>
-          </div>
-        )}
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {clients.map((client) => (
-            <div
-              key={client.slug}
-              className="rounded-2xl p-6 flex flex-col gap-4 cursor-pointer group transition-all duration-200"
+        {/* Menü — kaydırma gerektirmeyen sabit ızgara */}
+        <div className="grid grid-cols-2 gap-3 sm:gap-4">
+          {navItems.map((item) => (
+            <button
+              key={item.key}
+              onClick={item.onClick}
+              className={`group rounded-2xl p-4 sm:p-5 text-left transition-all duration-200 relative overflow-hidden ${item.wide ? "col-span-2" : ""}`}
               style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
-              onClick={() => router.push(`/musteri/calisan/${client.slug}`)}
               onMouseEnter={(e) => {
-                (e.currentTarget as HTMLDivElement).style.borderColor = "rgba(96,165,250,0.35)";
-                (e.currentTarget as HTMLDivElement).style.background = "var(--surface-2)";
+                (e.currentTarget as HTMLElement).style.borderColor = `${item.color}66`;
+                (e.currentTarget as HTMLElement).style.background = `${item.color}0d`;
               }}
               onMouseLeave={(e) => {
-                (e.currentTarget as HTMLDivElement).style.borderColor = "var(--border)";
-                (e.currentTarget as HTMLDivElement).style.background = "var(--surface)";
+                (e.currentTarget as HTMLElement).style.borderColor = "var(--border)";
+                (e.currentTarget as HTMLElement).style.background = "var(--surface)";
               }}
             >
-              <div className="flex items-center gap-3">
-                <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0 text-[18px] font-black"
-                  style={{ background: "var(--grad-soft)", border: "1px solid rgba(168,85,247,0.25)", color: "#c084fc" }}>
-                  {client.name.charAt(0).toUpperCase()}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex items-center gap-2">
-                    <p className="text-white font-bold text-[15px] truncate">{client.name}</p>
-                    {client.unreadNoteCount > 0 && (
-                      <span
-                        className="flex-shrink-0 text-[10px] font-bold px-1.5 py-0.5 rounded-full"
-                        style={{ background: "rgba(251,146,60,0.15)", color: "#fb923c", border: "1px solid rgba(251,146,60,0.3)" }}
-                        title={`${client.unreadNoteCount} bekleyen istek`}
-                      >
-                        {client.unreadNoteCount}
-                      </span>
-                    )}
-                  </div>
-                </div>
+              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center mb-3"
+                style={{ background: `${item.color}1f`, border: `1px solid ${item.color}33` }}>
+                {item.icon}
               </div>
-
-              <div className="flex flex-wrap gap-2 text-[11px]">
-                {client.pendingCount > 0 && (
-                  <span className="px-2 py-1 rounded-full" style={{ background: "rgba(251,191,36,0.1)", color: "#fbbf24" }}>
-                    {client.pendingCount} bekleyen içerik
-                  </span>
-                )}
-              </div>
-
-              <button
-                onClick={(e) => { e.stopPropagation(); router.push(`/musteri/calisan/${client.slug}`); }}
-                className="btn btn-outline text-sm py-2.5 w-full mt-auto transition-colors"
-                style={{ borderColor: "rgba(96,165,250,0.3)", color: "#60a5fa" }}
-              >
-                Çalışmaya Başla →
-              </button>
-            </div>
+              <p className="text-[13.5px] sm:text-[15px] font-bold text-white mb-0.5">{item.label}</p>
+              <p className="text-[11px] sm:text-[12px] text-[#8a8a9a] leading-snug">{item.sub}</p>
+              {!!item.badge && (
+                <div className="absolute right-4 top-4 w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold"
+                  style={{ background: "#f87171", color: "#fff" }}>
+                  {item.badge}
+                </div>
+              )}
+            </button>
           ))}
         </div>
+
+        {showFeedback && <StaffFeedbackModal onClose={() => setShowFeedback(false)} />}
       </main>
     </div>
   );
