@@ -74,7 +74,10 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
   if (err) return err;
   const { id } = await params;
 
-  const card = await prisma.workflowCard.findUnique({ where: { id }, select: { requestedById: true } });
+  const card = await prisma.workflowCard.findUnique({
+    where: { id },
+    select: { requestedById: true },
+  });
   if (!card) return NextResponse.json({ error: "Kart bulunamadı." }, { status: 404 });
   if (!card.requestedById) return NextResponse.json({ ok: true });
 
@@ -86,16 +89,20 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
     where: { id },
     data: { requestedById: null, requestedAt: null },
   });
+
   return NextResponse.json({ ok: true });
 }
 
-// Admin talebi onaylar — atanan kişi talep edene döner.
+// Talebi onaylar — yalnızca admin. Atanan kişi talep edene döner.
 export async function PATCH(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { err } = await requireAdmin();
   if (err) return err;
   const { id } = await params;
 
-  const card = await prisma.workflowCard.findUnique({ where: { id }, select: { requestedById: true } });
+  const card = await prisma.workflowCard.findUnique({
+    where: { id },
+    select: { requestedById: true },
+  });
   if (!card) return NextResponse.json({ error: "Kart bulunamadı." }, { status: 404 });
   if (!card.requestedById) return NextResponse.json({ error: "Bekleyen bir talep yok." }, { status: 400 });
 

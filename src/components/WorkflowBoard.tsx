@@ -98,6 +98,11 @@ export default function WorkflowBoard({ initialData }: { initialData?: BoardInit
   const [colError, setColError] = useState("");
   const [showArchive, setShowArchive] = useState(false);
   const [showEmployeeStats, setShowEmployeeStats] = useState(false);
+  // Pano filtreleri — çalışana/firmaya göre bakabilmek ve en eski tarihli
+  // hâlâ bitmemiş kartları görebilmek için. Sadece görünümü etkiler, veriyi değiştirmez.
+  const [filterAssignee, setFilterAssignee] = useState<string>("all"); // "all" | "unassigned" | userId
+  const [filterClient, setFilterClient] = useState<string>("all"); // "all" | client slug
+  const [sortMode, setSortMode] = useState<"default" | "dueAsc" | "dueDesc">("default");
   // Kart, İçerik Takvimi'ne ekleme işaretli bir sütuna sürüklenince açılan
   // hızlı tarih sorma penceresi — bkz. handleMoveCard.
   const [contentPrompt, setContentPrompt] = useState<{
@@ -168,6 +173,39 @@ export default function WorkflowBoard({ initialData }: { initialData?: BoardInit
       .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, "tr"));
     return { rows, unassigned, total: rows.reduce((s, r) => s + r.count, 0) + unassigned };
   }, [statsColumn, employees]);
+
+  const filtersActive = filterAssignee !== "all" || filterClient !== "all" || sortMode !== "default";
+
+  // Filtre/sıralama uygulanmış sütunlar — yalnızca görünümü etkiler, sürükleme
+  // ve diğer işlemler hâlâ orijinal `columns` state'i üzerinden çalışır.
+  const displayColumns = useMemo(() => {
+    return columns.map((col) => {
+      let cards = col.cards;
+      if (filterAssignee !== "all") {
+        cards = cards.filter((c) => (filterAssignee === "unassigned" ? !c.assignee : c.assignee?.id === filterAssignee));
+      }
+      if (filterClient !== "all") {
+        cards = cards.filter((c) => c.client?.slug === filterClient);
+      }
+      if (sortMode !== "default") {
+        cards = [...cards].sort((a, b) => {
+          if (!a.dueDate && !b.dueDate) return 0;
+          if (!a.dueDate) return 1; // tarihsiz kartlar en sona
+          if (!b.dueDate) return -1;
+          const diff = new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
+          return sortMode === "dueAsc" ? diff : -diff;
+        });
+      }
+      return { ...col, cards };
+    });
+  }, [columns, filterAssignee, filterClient, sortMode]);
+
+  // Filtre uygulandığında "kaç iş kalmış" toplamı — Tamamlandı sütunu hariç
+  // (arşiv/tamamlanmış işler "kalan iş" sayılmaz).
+  const filteredRemainingTotal = useMemo(
+    () => displayColumns.filter((c) => c.title !== "Tamamlandı").reduce((s, c) => s + c.cards.length, 0),
+    [displayColumns]
+  );
 
   async function handleMoveCard(cardId: string, targetColumnId: string) {
     const card = columns.flatMap((c) => c.cards).find((c) => c.id === cardId);
@@ -559,12 +597,67 @@ export default function WorkflowBoard({ initialData }: { initialData?: BoardInit
         </div>
       )}
 
+      {/* Filtre çubuğu — çalışana/firmaya göre bak, tarihe göre sırala */}
+      <div className="flex flex-wrap items-center gap-2 mb-3">
+        <select
+          value={filterAssignee}
+          onChange={(e) => setFilterAssignee(e.target.value)}
+          className="text-[12px] font-semibold px-2.5 py-1.5 rounded-lg text-white outline-none"
+          style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+        >
+          <option value="all">Tüm Çalışanlar</option>
+          <option value="unassigned">Atanmamış</option>
+          {employees.map((e) => (
+            <option key={e.id} value={e.id}>{e.name}</option>
+          ))}
+        </select>
+
+        <select
+          value={filterClient}
+          onChange={(e) => setFilterClient(e.target.value)}
+          className="text-[12px] font-semibold px-2.5 py-1.5 rounded-lg text-white outline-none"
+          style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+        >
+          <option value="all">Tüm Firmalar</option>
+          {clients.map((c) => (
+            <option key={c.slug} value={c.slug}>{c.name}</option>
+          ))}
+        </select>
+
+        <select
+          value={sortMode}
+          onChange={(e) => setSortMode(e.target.value as typeof sortMode)}
+          className="text-[12px] font-semibold px-2.5 py-1.5 rounded-lg text-white outline-none"
+          style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+        >
+          <option value="default">Sıralama: Varsayılan</option>
+          <option value="dueAsc">Tarih: Önce en eski</option>
+          <option value="dueDesc">Tarih: Önce en yeni</option>
+        </select>
+
+        {filtersActive && (
+          <button
+            onClick={() => { setFilterAssignee("all"); setFilterClient("all"); setSortMode("default"); }}
+            className="text-[12px] font-semibold text-[#8a8a9a] hover:text-[#f87171] transition-colors px-2.5 py-1.5 rounded-lg"
+            style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+          >
+            Filtreleri Temizle
+          </button>
+        )}
+
+        {filtersActive && (
+          <span className="text-[12px] text-[#8a8a9a] ml-auto">
+            <span className="font-bold" style={{ color: "#c084fc" }}>{filteredRemainingTotal}</span> kart kalmış (Tamamlandı hariç)
+          </span>
+        )}
+      </div>
+
       <div
         ref={boardRef}
         className="flex gap-3 sm:gap-4 overflow-x-auto pb-4 snap-x snap-mandatory sm:snap-none"
         style={{ scrollbarWidth: "thin" }}
       >
-        {columns.map((col, colIdx) => {
+        {displayColumns.map((col, colIdx) => {
           const isDragTarget = dragOverCol === col.id && dragCardId !== null;
           const locked = !isAdmin && col.adminOnly;
           return (
