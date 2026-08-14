@@ -29,3 +29,30 @@ export async function requireAdmin() {
   }
   return { session, err: null };
 }
+
+// ADMIN veya admin'in "çalışanlara ücret girebilir" yetkisi verdiği aktif EMPLOYEE.
+// Yönetici Yetkileri'nin bir parçası — bkz. User.adminCanPriceWorklogs.
+export async function requireAdminOrWorklogPricer() {
+  const session = await getSession();
+  if (!session) {
+    return { session: null, err: NextResponse.json({ error: "Yetkisiz." }, { status: 401 }) };
+  }
+  const user = await prisma.user.findUnique({
+    where: { id: session.uid },
+    select: { active: true, role: true, adminCanPriceWorklogs: true },
+  });
+  if (!user?.active) {
+    return { session: null, err: NextResponse.json({ error: "Hesabınız devre dışı." }, { status: 403 }) };
+  }
+  if (user.role !== "ADMIN" && !user.adminCanPriceWorklogs) {
+    return { session: null, err: NextResponse.json({ error: "Yetkisiz." }, { status: 403 }) };
+  }
+  const rl = rateLimit(`panel:${session.uid}`, 120, 60_000);
+  if (!rl.ok) {
+    return {
+      session: null,
+      err: NextResponse.json({ error: "Çok fazla istek. Lütfen biraz sonra tekrar deneyin." }, { status: 429, headers: { "Retry-After": String(rl.retryAfter) } }),
+    };
+  }
+  return { session, err: null };
+}

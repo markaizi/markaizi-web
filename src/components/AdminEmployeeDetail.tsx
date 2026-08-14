@@ -25,6 +25,9 @@ export interface EmployeeDetailData {
   workflowCanDeleteAnyCard: boolean;
   workflowCanManageColumns: boolean;
   workflowSeeAllCards: boolean;
+  adminCanCompleteCards: boolean;
+  adminCanPriceWorklogs: boolean;
+  adminCanViewEconomy: boolean;
   paymentDay: number | null;
   currentPeriod: { key: string; label: string };
   currentLogs: WorkLogEntry[];
@@ -160,6 +163,14 @@ const WORKFLOW_TOGGLES = [
   { key: "workflowSeeAllCards" as const, label: "Tüm Kartları Görme", desc: "Kapalıysa panoda yalnızca kendine atanmış kartları ve kimseye atanmamış kartları görür." },
 ];
 
+// Yönetici Yetkileri — normalde sadece admin'e özel işlemler, admin açıkça
+// izin verdiğinde tek tek açılır. workflowAccess'ten bağımsızdır.
+const ADMIN_TOGGLES = [
+  { key: "adminCanCompleteCards" as const, label: "Tamamlandı'ya Kart Taşıma", desc: "İş Akışı'nda \"Tamamlandı\" sütununa kart taşıyabilir. Kart bir kez oraya taşındıktan sonra yine sadece admin dokunabilir." },
+  { key: "adminCanPriceWorklogs" as const, label: "Çalışanlara Ücret Girme", desc: "Tüm çalışanların bu dönem iş kayıtlarını görüp karşılarına ücret yazabilir (Ücret Girişi sayfası)." },
+  { key: "adminCanViewEconomy" as const, label: "Ekonomiyi Görme", desc: "Ekonomi sayfasını salt okunur görebilir — gelir/gider ekleyemez, kayıt silemez." },
+];
+
 export default function AdminEmployeeDetail({
   employee,
   allClients,
@@ -204,6 +215,9 @@ export default function AdminEmployeeDetail({
     workflowCanDeleteAnyCard: employee.workflowCanDeleteAnyCard,
     workflowCanManageColumns: employee.workflowCanManageColumns,
     workflowSeeAllCards: employee.workflowSeeAllCards,
+    adminCanCompleteCards: employee.adminCanCompleteCards,
+    adminCanPriceWorklogs: employee.adminCanPriceWorklogs,
+    adminCanViewEconomy: employee.adminCanViewEconomy,
   });
   const [wfLoading, setWfLoading] = useState<string | null>(null);
 
@@ -618,6 +632,40 @@ export default function AdminEmployeeDetail({
                     disabled={wfLoading === t.key}
                     className="flex-shrink-0 relative w-11 h-6 rounded-full transition-colors"
                     style={{ background: active ? "rgba(168,85,247,0.6)" : "var(--surface-2, #141420)", border: "1px solid var(--border)" }}
+                    aria-label={t.label}
+                  >
+                    <span
+                      className="absolute top-[2px] w-5 h-5 rounded-full bg-white transition-transform"
+                      style={{ transform: active ? "translateX(21px)" : "translateX(2px)" }}
+                    />
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Yönetici Yetkileri */}
+        <div className="rounded-2xl p-6 space-y-4" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+          <div>
+            <p className="font-semibold text-white text-[14px]">Yönetici Yetkileri</p>
+            <p className="text-[12px] text-[#8a8a9a] mt-0.5">Normalde sadece admin'e özel işlemler — istediğini tek tek aç, hepsi varsayılan kapalı.</p>
+          </div>
+          <div className="space-y-3">
+            {ADMIN_TOGGLES.map((t) => {
+              const active = wf[t.key];
+              return (
+                <div key={t.key} className="flex items-center justify-between gap-4 py-2">
+                  <div className="min-w-0">
+                    <p className="text-[13px] font-semibold text-white">{t.label}</p>
+                    <p className="text-[11px] text-[#8a8a9a] mt-0.5">{t.desc}</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleWfToggle(t.key, !active)}
+                    disabled={wfLoading === t.key}
+                    className="flex-shrink-0 relative w-11 h-6 rounded-full transition-colors"
+                    style={{ background: active ? "rgba(251,191,36,0.6)" : "var(--surface-2, #141420)", border: "1px solid var(--border)" }}
                     aria-label={t.label}
                   >
                     <span

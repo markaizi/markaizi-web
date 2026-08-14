@@ -30,7 +30,12 @@ const HISTORY_MONTHS = 12;
 export default async function EkonomiPage() {
   const session = await getSession();
   if (!session) redirect("/musteri/giris?next=/musteri/admin/ekonomi");
-  if (session.role !== "ADMIN") redirect("/musteri/admin");
+  const isAdmin = session.role === "ADMIN";
+  if (!isAdmin) {
+    if (session.role !== "EMPLOYEE") redirect("/musteri/giris");
+    const me = await prisma.user.findUnique({ where: { id: session.uid }, select: { adminCanViewEconomy: true } });
+    if (!me?.adminCanViewEconomy) redirect("/musteri/calisan");
+  }
 
   const now = new Date();
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0);
@@ -133,5 +138,5 @@ export default async function EkonomiPage() {
     feed,
   };
 
-  return <EkonomiView data={data} />;
+  return <EkonomiView data={data} readOnly={!isAdmin} backHref={isAdmin ? "/musteri/admin" : "/musteri/calisan"} />;
 }

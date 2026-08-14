@@ -58,7 +58,7 @@ function fmtDate(iso: string): string {
   return new Date(iso).toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" });
 }
 
-export default function EkonomiView({ data }: { data: EkonomiData }) {
+export default function EkonomiView({ data, readOnly = false, backHref = "/musteri/admin" }: { data: EkonomiData; readOnly?: boolean; backHref?: string }) {
   const router = useRouter();
   const [feed, setFeed] = useState(data.feed);
   const [type, setType] = useState<"GELIR" | "GIDER">("GIDER");
@@ -114,9 +114,9 @@ export default function EkonomiView({ data }: { data: EkonomiData }) {
       <header className="sticky top-0 z-50 px-4 sm:px-6 py-3.5 sm:py-4 flex items-center justify-between gap-3"
         style={{ background: "rgba(5,5,5,0.9)", WebkitBackdropFilter: "blur(20px)", backdropFilter: "blur(20px)", borderBottom: "1px solid var(--border)" }}>
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-          <a href="/musteri/admin" className="font-black text-[16px] sm:text-[18px] gradient-text flex-shrink-0">markaizi</a>
+          <a href={backHref} className="font-black text-[16px] sm:text-[18px] gradient-text flex-shrink-0">markaizi</a>
           <span className="hidden sm:inline text-[#555]">/</span>
-          <a href="/musteri/admin" className="hidden sm:inline text-[14px] text-[#8a8a9a] hover:text-white transition-colors">Admin</a>
+          <a href={backHref} className="hidden sm:inline text-[14px] text-[#8a8a9a] hover:text-white transition-colors">{readOnly ? "Çalışan Paneli" : "Admin"}</a>
           <span className="hidden sm:inline text-[#555]">/</span>
           <span className="text-[13px] sm:text-[14px] font-semibold text-white truncate">Ekonomi</span>
         </div>
@@ -183,7 +183,8 @@ export default function EkonomiView({ data }: { data: EkonomiData }) {
           </div>
         </div>
 
-        {/* Elle gelir/gider ekleme */}
+        {/* Elle gelir/gider ekleme — salt okunur erişimde gizli */}
+        {!readOnly && (
         <div className="rounded-2xl p-5 mb-8" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
           <p className="text-[13px] font-semibold text-white mb-3">Gelir / Gider Ekle</p>
           <form onSubmit={handleAdd} className="space-y-3">
@@ -257,6 +258,7 @@ export default function EkonomiView({ data }: { data: EkonomiData }) {
             </button>
           </form>
         </div>
+        )}
 
         {/* Bu ayın hareketleri */}
         <div className="mb-8">
@@ -289,7 +291,7 @@ export default function EkonomiView({ data }: { data: EkonomiData }) {
                   <span className="text-[14px] font-bold" style={{ color: f.type === "GELIR" ? "#34d399" : "#f87171" }}>
                     {f.type === "GELIR" ? "+" : "−"}{fmtTL(f.amount)}
                   </span>
-                  {f.deletable && (
+                  {!readOnly && f.deletable && (
                     <button
                       onClick={() => handleDelete(f.id)}
                       disabled={deletingId === f.id}

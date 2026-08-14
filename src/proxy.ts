@@ -28,8 +28,12 @@ export async function proxy(req: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Admin alanı yalnızca ADMIN
-  if (pathname.startsWith("/musteri/admin") && session.role !== "ADMIN") {
+  // Admin alanı yalnızca ADMIN — tek istisna: /musteri/admin/ekonomi, admin'in
+  // "Ekonomiyi Görme" yetkisi verdiği çalışana da açık. İnce kontrol (yetki gerçekten
+  // var mı) burada değil, sayfanın kendisinde DB'den taze okunarak yapılır — proxy
+  // burada sadece kaba kapıyı EMPLOYEE için de aralık bırakıyor.
+  const economyException = pathname === "/musteri/admin/ekonomi" && session.role === "EMPLOYEE";
+  if (pathname.startsWith("/musteri/admin") && session.role !== "ADMIN" && !economyException) {
     const url = req.nextUrl.clone();
     url.pathname = session.slug ? `/musteri/${session.slug}` : "/musteri/giris";
     return NextResponse.redirect(url);

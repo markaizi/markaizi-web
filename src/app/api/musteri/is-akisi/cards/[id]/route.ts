@@ -62,13 +62,22 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
   const isAdmin = session!.role === "ADMIN";
 
+  // "Tamamlandı'ya taşıma" yetkisi verilmiş çalışan için gerekli — hem alan
+  // bazlı kontrolde hem de aşağıdaki hedef sütun kilidinde kullanılıyor.
+  const me = isAdmin ? null : await prisma.user.findUnique({
+    where: { id: session!.uid },
+    select: { workflowCanCreateCards: true, workflowCanDragCards: true, workflowCanWriteRevisionNote: true, adminCanCompleteCards: true },
+  });
+
   // Arşivleme yalnızca admin'e açık.
   if (archived !== undefined && !isAdmin) {
     return NextResponse.json({ error: "Kartları yalnızca admin arşivleyebilir." }, { status: 403 });
   }
 
   // Kart şu an admin-only bir sütundaysa, admin dışında kimse ona dokunamaz
-  // (taşıyamaz, düzenleyemez, silemez) — sütun "kilitli" sayılır.
+  // (taşıyamaz, düzenleyemez, silemez) — sütun "kilitli" sayılır. "Tamamlandı'ya
+  // taşıma" yetkisi bunu aşmaz — kart oraya bir kez taşındıktan sonra herkes için
+  // (yetkili çalışan dahil) kilitli kalır, sadece admin dokunabilir.
   if (before.column.adminOnly && !isAdmin) {
     return NextResponse.json({ error: "Bu sütundaki kartlara yalnızca admin dokunabilir." }, { status: 403 });
   }
@@ -78,10 +87,6 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   // yetkisi ister, sütun değişikliği (taşıma) sürükleme yetkisi ister, revize
   // notu ise kendi ayrı yetkisini ister. Açıklama, pano erişimi olan herkese açık.
   if (!isAdmin) {
-    const me = await prisma.user.findUnique({
-      where: { id: session!.uid },
-      select: { workflowCanCreateCards: true, workflowCanDragCards: true, workflowCanWriteRevisionNote: true },
-    });
     const wantsMove = rest.columnId !== undefined || rest.sortOrder !== undefined;
     const wantsCoreEdit =
       rest.title !== undefined || rest.priority !== undefined || dueDate !== undefined ||
@@ -99,13 +104,14 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     }
   }
 
-  let toCol: { adminOnly: boolean; triggersWorkLog: boolean } | null = null;
+  let toCol: { adminOnly: boolean; triggersWorkLog: boolean; title: string } | null = null;
   if (rest.columnId && rest.columnId !== before.columnId) {
     toCol = await prisma.workflowColumn.findUnique({
       where: { id: rest.columnId },
-      select: { adminOnly: true, triggersWorkLog: true },
+      select: { adminOnly: true, triggersWorkLog: true, title: true },
     });
-    if (toCol?.adminOnly && !isAdmin) {
+    const canMoveHere = isAdmin || (!!me?.adminCanCompleteCards && toCol?.title === "Tamamlandı");
+    if (toCol?.adminOnly && !canMoveHere) {
       return NextResponse.json({ error: "Bu sütuna yalnızca admin kart taşıyabilir." }, { status: 403 });
     }
   }

@@ -25,11 +25,15 @@ export default function EmployeeDashboard({
   employeeName,
   workflowAccess = true,
   stats,
+  canPriceWorklogs = false,
+  canViewEconomy = false,
 }: {
   clients: AssignedClient[];
   employeeName: string;
   workflowAccess?: boolean;
   stats?: EmployeeStats;
+  canPriceWorklogs?: boolean;
+  canViewEconomy?: boolean;
 }) {
   const router = useRouter();
   const [showFeedback, setShowFeedback] = useState(false);
@@ -94,6 +98,32 @@ export default function EmployeeDashboard({
       icon: (
         <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="#2dd4bf" strokeWidth="2">
           <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      ),
+    },
+    canPriceWorklogs && {
+      key: "ucret-girisi",
+      label: "Ücret Girişi",
+      sub: "Çalışanlara ücret gir",
+      color: "#22d3ee",
+      onClick: () => router.push("/musteri/calisan/ucret-girisi"),
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="#22d3ee" strokeWidth="2">
+          <rect x="2" y="5" width="20" height="14" rx="2" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M2 10h20" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      ),
+    },
+    canViewEconomy && {
+      key: "ekonomi",
+      label: "Ekonomi",
+      sub: "Gelir, gider, kasa",
+      color: "#34d399",
+      onClick: () => router.push("/musteri/admin/ekonomi"),
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="#34d399" strokeWidth="2">
+          <path d="M3 3v18h18" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M7 15l4-4 3 3 5-6" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       ),
     },

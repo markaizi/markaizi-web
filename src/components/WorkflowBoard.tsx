@@ -74,6 +74,7 @@ interface BoardInitialData {
   canDeleteAnyCard: boolean;
   canManageColumns: boolean;
   isIdle: boolean;
+  canCompleteCards: boolean;
 }
 
 export default function WorkflowBoard({ initialData }: { initialData?: BoardInitialData }) {
@@ -88,6 +89,7 @@ export default function WorkflowBoard({ initialData }: { initialData?: BoardInit
   const [canDeleteAnyCard, setCanDeleteAnyCard] = useState(initialData?.canDeleteAnyCard ?? false);
   const [canManageColumns, setCanManageColumns] = useState(initialData?.canManageColumns ?? false);
   const [isIdle, setIsIdle] = useState(initialData?.isIdle ?? false);
+  const [canCompleteCards, setCanCompleteCards] = useState(initialData?.canCompleteCards ?? false);
   const [loading, setLoading] = useState(!initialData);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [modal, setModal] = useState<{ mode: "create" | "edit"; columnId?: string; card?: CardData } | null>(null);
@@ -145,6 +147,7 @@ export default function WorkflowBoard({ initialData }: { initialData?: BoardInit
     setCanDeleteAnyCard(data.canDeleteAnyCard);
     setCanManageColumns(data.canManageColumns);
     setIsIdle(data.isIdle);
+    setCanCompleteCards(data.canCompleteCards);
     setLoading(false);
   }, []);
 
@@ -211,7 +214,9 @@ export default function WorkflowBoard({ initialData }: { initialData?: BoardInit
     const card = columns.flatMap((c) => c.cards).find((c) => c.id === cardId);
     if (!card || card.columnId === targetColumnId) return;
     const targetCol = columns.find((c) => c.id === targetColumnId);
-    if (!isAdmin && targetCol?.adminOnly) return; // sadece admin bu sütuna kart taşıyabilir
+    // sadece admin (veya "Tamamlandı'ya taşıma" yetkisi verilmiş çalışan, sadece o hedefe) bu sütuna kart taşıyabilir
+    const canMoveHere = isAdmin || (canCompleteCards && targetCol?.title === "Tamamlandı");
+    if (!canMoveHere && targetCol?.adminOnly) return;
     const prevColumnId = card.columnId;
 
     // İyimser güncelleme

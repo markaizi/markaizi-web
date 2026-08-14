@@ -118,6 +118,13 @@ model User {
   // atanmış kartları + hiç kimseye atanmamış kartları görür (sahipsiz kart herkese açık).
   workflowSeeAllCards Boolean @default(true)
 
+  // Yönetici Yetkileri — admin'in çalışana tek tek verebildiği, varsayılan kapalı
+  // ek yetkiler. İş Akışı yetkilerinden bağımsız: bunlar normalde sadece admin'e
+  // özel işlemleri, admin açıkça izin verdiğinde tek tek açar.
+  adminCanCompleteCards Boolean @default(false) // "Tamamlandı" sütununa kart taşıyabilir (sütun kilidi bu hareket için aşılır)
+  adminCanPriceWorklogs Boolean @default(false) // tüm çalışanların iş kayıtlarına ücret girebilir
+  adminCanViewEconomy   Boolean @default(false) // Ekonomi sayfasını salt okunur görebilir
+
   assignments     Assignment[]
   authoredUpdates Update[]      @relation("UpdateAuthor")
   authoredContent ContentItem[] @relation("ContentAssignee")
