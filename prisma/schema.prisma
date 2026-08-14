@@ -80,6 +80,12 @@ enum StaffNotificationType {
   ADMIN_MESSAGE   // admin'in yazdığı bireysel/toplu bildirim
 }
 
+enum CompleteCardsScope {
+  NONE // taşıyamaz (varsayılan)
+  OWN  // yalnızca kendine atanmış kartları "Tamamlandı"ya taşıyabilir
+  ALL  // herkesin kartını "Tamamlandı"ya taşıyabilir
+}
+
 // ── Modeller ─────────────────────────────────────────────
 model User {
   id           String  @id @default(cuid())
@@ -121,8 +127,8 @@ model User {
   // Yönetici Yetkileri — admin'in çalışana tek tek verebildiği, varsayılan kapalı
   // ek yetkiler. İş Akışı yetkilerinden bağımsız: bunlar normalde sadece admin'e
   // özel işlemleri, admin açıkça izin verdiğinde tek tek açar.
-  adminCanCompleteCards Boolean @default(false) // "Tamamlandı" sütununa kart taşıyabilir (sütun kilidi bu hareket için aşılır)
-  adminCanPriceWorklogs Boolean @default(false) // tüm çalışanların iş kayıtlarına ücret girebilir
+  adminCompleteCardsScope CompleteCardsScope @default(NONE) // "Tamamlandı" sütununa kart taşıyabilir (sütun kilidi bu hareket için aşılır) — kapsam: hiç/kendi/herkes
+  adminCanPriceWorklogs   Boolean            @default(false) // tüm çalışanların iş kayıtlarına ücret girebilir
   adminCanViewEconomy   Boolean @default(false) // Ekonomi sayfasını salt okunur görebilir
 
   assignments     Assignment[]

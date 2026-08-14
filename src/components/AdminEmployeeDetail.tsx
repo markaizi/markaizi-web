@@ -25,7 +25,7 @@ export interface EmployeeDetailData {
   workflowCanDeleteAnyCard: boolean;
   workflowCanManageColumns: boolean;
   workflowSeeAllCards: boolean;
-  adminCanCompleteCards: boolean;
+  adminCompleteCardsScope: "NONE" | "OWN" | "ALL";
   adminCanPriceWorklogs: boolean;
   adminCanViewEconomy: boolean;
   paymentDay: number | null;
@@ -166,9 +166,14 @@ const WORKFLOW_TOGGLES = [
 // Yönetici Yetkileri — normalde sadece admin'e özel işlemler, admin açıkça
 // izin verdiğinde tek tek açılır. workflowAccess'ten bağımsızdır.
 const ADMIN_TOGGLES = [
-  { key: "adminCanCompleteCards" as const, label: "Tamamlandı'ya Kart Taşıma", desc: "İş Akışı'nda \"Tamamlandı\" sütununa kart taşıyabilir. Kart bir kez oraya taşındıktan sonra yine sadece admin dokunabilir." },
   { key: "adminCanPriceWorklogs" as const, label: "Çalışanlara Ücret Girme", desc: "Tüm çalışanların bu dönem iş kayıtlarını görüp karşılarına ücret yazabilir (Ücret Girişi sayfası)." },
   { key: "adminCanViewEconomy" as const, label: "Ekonomiyi Görme", desc: "Ekonomi sayfasını salt okunur görebilir — gelir/gider ekleyemez, kayıt silemez." },
+];
+
+const COMPLETE_SCOPE_OPTIONS: { value: "NONE" | "OWN" | "ALL"; label: string }[] = [
+  { value: "NONE", label: "Kapalı" },
+  { value: "OWN", label: "Sadece Kendi Kartları" },
+  { value: "ALL", label: "Tüm Çalışanların Kartları" },
 ];
 
 export default function AdminEmployeeDetail({
@@ -215,11 +220,24 @@ export default function AdminEmployeeDetail({
     workflowCanDeleteAnyCard: employee.workflowCanDeleteAnyCard,
     workflowCanManageColumns: employee.workflowCanManageColumns,
     workflowSeeAllCards: employee.workflowSeeAllCards,
-    adminCanCompleteCards: employee.adminCanCompleteCards,
     adminCanPriceWorklogs: employee.adminCanPriceWorklogs,
     adminCanViewEconomy: employee.adminCanViewEconomy,
   });
   const [wfLoading, setWfLoading] = useState<string | null>(null);
+
+  // "Tamamlandı'ya Kart Taşıma" 3 durumlu (Kapalı/Kendi/Herkes) — diğer
+  // yetkiler gibi basit açık/kapalı değil, ayrı state ile yönetiliyor.
+  const [completeScope, setCompleteScope] = useState(employee.adminCompleteCardsScope);
+  const [completeScopeSaving, setCompleteScopeSaving] = useState(false);
+
+  async function handleCompleteScopeChange(val: "NONE" | "OWN" | "ALL") {
+    setCompleteScopeSaving(true);
+    setCompleteScope(val);
+    await fetch(`/api/musteri/admin/employees/${employee.id}`, {
+      method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ adminCompleteCardsScope: val }),
+    });
+    setCompleteScopeSaving(false);
+  }
 
   async function handleWfToggle(key: keyof typeof wf, val: boolean) {
     setWfLoading(key);
@@ -652,6 +670,33 @@ export default function AdminEmployeeDetail({
             <p className="text-[12px] text-[#8a8a9a] mt-0.5">Normalde sadece admin'e özel işlemler — istediğini tek tek aç, hepsi varsayılan kapalı.</p>
           </div>
           <div className="space-y-3">
+            {/* Tamamlandı'ya Kart Taşıma — 3 durumlu: Kapalı / Sadece Kendi / Herkes */}
+            <div className="py-2">
+              <p className="text-[13px] font-semibold text-white">Tamamlandı'ya Kart Taşıma</p>
+              <p className="text-[11px] text-[#8a8a9a] mt-0.5 mb-2.5">
+                İş Akışı'nda "Tamamlandı" sütununa kart taşıyabilir. Kart bir kez oraya taşındıktan sonra yine sadece admin dokunabilir.
+              </p>
+              <div className="flex gap-1.5 flex-wrap">
+                {COMPLETE_SCOPE_OPTIONS.map((opt) => {
+                  const active = completeScope === opt.value;
+                  return (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => handleCompleteScopeChange(opt.value)}
+                      disabled={completeScopeSaving}
+                      className="text-[12px] font-semibold px-3 py-1.5 rounded-lg transition-colors"
+                      style={active
+                        ? { background: "rgba(251,191,36,0.15)", color: "#fbbf24", border: "1px solid rgba(251,191,36,0.4)" }
+                        : { background: "var(--surface-2, #141420)", color: "#8a8a9a", border: "1px solid var(--border)" }}
+                    >
+                      {opt.label}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
             {ADMIN_TOGGLES.map((t) => {
               const active = wf[t.key];
               return (

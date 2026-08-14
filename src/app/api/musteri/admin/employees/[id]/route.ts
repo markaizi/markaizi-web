@@ -20,7 +20,7 @@ const patchSchema = z.object({
   workflowCanManageColumns: z.boolean().optional(),
   workflowSeeAllCards: z.boolean().optional(),
   // Yönetici Yetkileri — normalde admin'e özel, tek tek açılabilen ek yetkiler
-  adminCanCompleteCards: z.boolean().optional(),
+  adminCompleteCardsScope: z.enum(["NONE", "OWN", "ALL"]).optional(),
   adminCanPriceWorklogs: z.boolean().optional(),
   adminCanViewEconomy: z.boolean().optional(),
   // İş kayıtları

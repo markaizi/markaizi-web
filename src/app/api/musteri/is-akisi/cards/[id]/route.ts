@@ -54,6 +54,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     where: { id },
     select: {
       columnId: true,
+      assigneeId: true,
       workLog: { select: { id: true, amount: true } },
       column: { select: { adminOnly: true, triggersWorkLog: true } },
     },
@@ -66,7 +67,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   // bazlı kontrolde hem de aşağıdaki hedef sütun kilidinde kullanılıyor.
   const me = isAdmin ? null : await prisma.user.findUnique({
     where: { id: session!.uid },
-    select: { workflowCanCreateCards: true, workflowCanDragCards: true, workflowCanWriteRevisionNote: true, adminCanCompleteCards: true },
+    select: { workflowCanCreateCards: true, workflowCanDragCards: true, workflowCanWriteRevisionNote: true, adminCompleteCardsScope: true },
   });
 
   // Arşivleme yalnızca admin'e açık.
@@ -110,7 +111,10 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       where: { id: rest.columnId },
       select: { adminOnly: true, triggersWorkLog: true, title: true },
     });
-    const canMoveHere = isAdmin || (!!me?.adminCanCompleteCards && toCol?.title === "Tamamlandı");
+    const scope = me?.adminCompleteCardsScope ?? "NONE";
+    const canMoveHere =
+      isAdmin ||
+      (toCol?.title === "Tamamlandı" && (scope === "ALL" || (scope === "OWN" && before.assigneeId === session!.uid)));
     if (toCol?.adminOnly && !canMoveHere) {
       return NextResponse.json({ error: "Bu sütuna yalnızca admin kart taşıyabilir." }, { status: 403 });
     }
@@ -148,22 +152,28 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   // ── İş Akışı → İş Kaydı otomasyonu ──────────────────────────────────────
   // Kartın taşındığı ana zarar vermemek için otomasyon en sona, ayrı bir
   // try/catch içinde — burada bir hata olsa da kart taşıma işlemi başarılı sayılır.
+  // Oluşan/var olan iş kaydı, istemcinin "hemen ücret gir" penceresini açıp
+  // açmayacağına karar verebilmesi için yanıtta dönülür.
+  let workLog: { id: string; amount: string | null } | null = before.workLog;
   try {
     if (rest.columnId && rest.columnId !== before.columnId) {
       if (toCol?.triggersWorkLog && card.assigneeId && !before.workLog) {
-        await prisma.workLog.create({
+        workLog = await prisma.workLog.create({
           data: { userId: card.assigneeId, date: new Date(), description: buildWorkLogDescription(card), workflowCardId: card.id },
+          select: { id: true, amount: true },
         });
       } else if (!toCol?.triggersWorkLog && before.column.triggersWorkLog && before.workLog && before.workLog.amount === null) {
         // Tetikleyici sütundan, henüz fiyatlandırılmamış hâldeyken çıkarıldı — otomatik oluşan kaydı geri al.
         await prisma.workLog.delete({ where: { id: before.workLog.id } });
+        workLog = null;
       }
     } else if (rest.assigneeId && card.assigneeId && !before.workLog) {
       // Sütun değişmedi ama atanan kişi eklendi — kart zaten tetikleyici bir sütundaysa iş kaydı oluştur.
       const currentCol = await prisma.workflowColumn.findUnique({ where: { id: card.columnId }, select: { triggersWorkLog: true } });
       if (currentCol?.triggersWorkLog) {
-        await prisma.workLog.create({
+        workLog = await prisma.workLog.create({
           data: { userId: card.assigneeId, date: new Date(), description: buildWorkLogDescription(card), workflowCardId: card.id },
+          select: { id: true, amount: true },
         });
       }
     }
@@ -174,6 +184,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   return NextResponse.json({
     ok: true,
     card: { ...card, dueDate: card.dueDate ? card.dueDate.toISOString().slice(0, 10) : null },
+    workLog,
   });
 }
 

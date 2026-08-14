@@ -79,7 +79,7 @@ export default async function AdminEmployeeDetailPage({
     workflowCanDeleteAnyCard: employee.workflowCanDeleteAnyCard,
     workflowCanManageColumns: employee.workflowCanManageColumns,
     workflowSeeAllCards: employee.workflowSeeAllCards,
-    adminCanCompleteCards: employee.adminCanCompleteCards,
+    adminCompleteCardsScope: employee.adminCompleteCardsScope,
     adminCanPriceWorklogs: employee.adminCanPriceWorklogs,
     adminCanViewEconomy: employee.adminCanViewEconomy,
     paymentDay,

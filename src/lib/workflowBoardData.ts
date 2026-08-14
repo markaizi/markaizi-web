@@ -28,6 +28,7 @@ export async function getWorkflowBoardData(session: SessionPayload) {
             client: { select: { slug: true, name: true } },
             contentItem: { select: { id: true, scheduledDate: true } },
             requestedBy: { select: { id: true, name: true } },
+            workLog: { select: { id: true, amount: true } },
           },
         },
       },
@@ -53,7 +54,7 @@ export async function getWorkflowBoardData(session: SessionPayload) {
   let canDeleteAnyCard = isAdmin;
   let canManageColumns = isAdmin;
   let seeAllCards = true;
-  let canCompleteCards = isAdmin;
+  let completeCardsScope: "NONE" | "OWN" | "ALL" = isAdmin ? "ALL" : "NONE";
   if (!isAdmin) {
     const me = await prisma.user.findUnique({
       where: { id: session.uid },
@@ -64,7 +65,7 @@ export async function getWorkflowBoardData(session: SessionPayload) {
         workflowCanDeleteAnyCard: true,
         workflowCanManageColumns: true,
         workflowSeeAllCards: true,
-        adminCanCompleteCards: true,
+        adminCompleteCardsScope: true,
       },
     });
     canCreateCards = !!me?.workflowCanCreateCards;
@@ -73,7 +74,7 @@ export async function getWorkflowBoardData(session: SessionPayload) {
     canDeleteAnyCard = !!me?.workflowCanDeleteAnyCard;
     canManageColumns = !!me?.workflowCanManageColumns;
     seeAllCards = me?.workflowSeeAllCards ?? true;
-    canCompleteCards = !!me?.adminCanCompleteCards;
+    completeCardsScope = me?.adminCompleteCardsScope ?? "NONE";
   }
 
   // "Yapılacak" sütunu, kimin elinde iş kaldığının referans sütunu — admin
@@ -115,6 +116,6 @@ export async function getWorkflowBoardData(session: SessionPayload) {
     columns: normalizedColumns, employees, clients,
     currentUserId: session.uid,
     isAdmin, canCreateCards, canDragCards, canWriteRevisionNote, canDeleteAnyCard, canManageColumns,
-    isIdle, canCompleteCards,
+    isIdle, completeCardsScope,
   };
 }
