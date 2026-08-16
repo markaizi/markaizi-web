@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/sections/Hero";
+import FreeAnalysisBar from "@/components/sections/FreeAnalysisBar";
 import Services from "@/components/sections/Services";
 import About from "@/components/sections/About";
 import Portfolio from "@/components/sections/Portfolio";
@@ -93,6 +94,7 @@ export default function Home() {
       <Navbar />
       <main>
         <Hero />
+        <FreeAnalysisBar />
 
 <Services />
         <About />
