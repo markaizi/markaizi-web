@@ -174,6 +174,28 @@ export default function Hero() {
             </div>
           ))}
         </div>
+
+        {/* ── Tablet: Platform İkonları (dekoratif) ── */}
+        {/* Sağ görsel bloğu yalnızca lg:'de göründüğü için tablette hero çok yalın kalıyordu — 640-1023px arası bu şeritle dolduruluyor. */}
+        <div className="hidden sm:flex lg:hidden flex-wrap items-center justify-center gap-3">
+          {PLATFORM_ICONS.map((icon) => (
+            <div
+              key={icon.label}
+              className="flex items-center gap-2 px-3.5 py-2.5 rounded-xl"
+              style={{
+                background: "rgba(12,12,22,0.88)",
+                border: "1px solid rgba(168,85,247,0.28)",
+                WebkitBackdropFilter: "blur(12px)", backdropFilter: "blur(12px)",
+                boxShadow: "0 4px 20px rgba(0,0,0,0.35), 0 0 10px rgba(168,85,247,0.08)",
+                animation: "floatIcon 4s ease-in-out infinite",
+                animationDelay: icon.delay,
+              }}
+            >
+              {icon.svg}
+              <span className="text-[12px] font-semibold text-white/70 whitespace-nowrap">{icon.label}</span>
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Scroll Göstergesi */}
