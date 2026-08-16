@@ -462,6 +462,7 @@ enum SubmissionType {
   CONTACT
   CV
   WEB_TEKLIF
+  ANALIZ
 }
 
 // Halka açık form gönderimlerinin veritabanı yedeği — e-posta gönderimi

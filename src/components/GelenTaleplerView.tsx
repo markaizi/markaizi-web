@@ -4,7 +4,7 @@ import { useState } from "react";
 
 export interface SubmissionItem {
   id: string;
-  type: "CONTACT" | "CV" | "WEB_TEKLIF";
+  type: "CONTACT" | "CV" | "WEB_TEKLIF" | "ANALIZ";
   data: Record<string, unknown>;
   emailSent: boolean;
   read: boolean;
@@ -15,6 +15,7 @@ const TYPE_LABEL: Record<SubmissionItem["type"], { label: string; color: string;
   CONTACT: { label: "İletişim Formu", color: "#60a5fa", bg: "rgba(96,165,250,0.1)" },
   CV: { label: "İş Başvurusu", color: "#34d399", bg: "rgba(52,211,153,0.1)" },
   WEB_TEKLIF: { label: "Web Teklifi", color: "#c084fc", bg: "rgba(168,85,247,0.1)" },
+  ANALIZ: { label: "Ücretsiz Analiz Talebi", color: "#fbbf24", bg: "rgba(251,191,36,0.1)" },
 };
 
 function fmtDateTime(iso: string) {
