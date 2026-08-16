@@ -14,7 +14,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/blog`,                                   lastModified: SITE_UPDATED, changeFrequency: "weekly",  priority: 0.8 },
     { url: `${BASE}/mobilya-reklam-ajansi`,                  lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.9 },
     { url: `${BASE}/saglik-klinik-reklam-ajansi`,             lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.9 },
-    { url: `${BASE}/alternatif-tip-urun-reklami`,             lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.9 },
+    { url: `${BASE}/dogal-urun-takviye-reklam-ajansi`,        lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.9 },
     { url: `${BASE}/ucretsiz-analiz`,                         lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.9 },
     { url: `${BASE}/sss`,                                    lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE}/cv`,                                     lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.5 },

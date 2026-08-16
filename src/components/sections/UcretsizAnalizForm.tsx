@@ -4,7 +4,7 @@ import { useState, FormEvent } from "react";
 const SECTORS = [
   "Mobilya",
   "Sağlık / Klinik / Estetik",
-  "Alternatif Tıp / Doğal Ürün",
+  "Doğal Ürün / Takviye",
   "Gıda / Restoran",
   "Emlak",
   "Otomotiv",
