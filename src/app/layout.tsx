@@ -27,11 +27,18 @@ const inter = Inter({
   display: "swap",
 });
 
+// Yalnızca 700 yükleniyor: h1/h2 bu fontu kullanıyor ve hepsi font-black (900)
+// ile yazılmış. Space Grotesk'in 900 ağırlığı yok, en kalını 700 — tarayıcı
+// zaten 700'e düşürüyor (sentetik kalınlaştırma yapmıyor, 700/800/900 ölçümde
+// birebir aynı genişlikte). 500 ve 600 sitede hiç kullanılmıyordu; ikisi de
+// indiriliyor ama hiçbir yere uygulanmıyordu.
+// Not: başlıkların gerçekten daha kalın olması istenirse 800+ ağırlığı olan bir
+// display fontuna geçmek gerekir (Sora, Outfit, Manrope); Space Grotesk'te bu yok.
 const spaceGrotesk = Space_Grotesk({
   variable: "--font-display",
   subsets: ["latin"],
   display: "swap",
-  weight: ["500", "600", "700"],
+  weight: ["700"],
 });
 
 export const metadata: Metadata = {

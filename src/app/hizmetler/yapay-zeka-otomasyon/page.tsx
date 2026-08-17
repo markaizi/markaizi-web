@@ -35,12 +35,12 @@ export default function YapayZekaOtomasyonPage() {
         "Otomasyon tarafında ise reklam kampanyalarınızı akıllı kural setleriyle otomatik optimize ediyor, raporlama süreçlerini otomatikleştiriyor ve müşteri iletişimini ölçeklenebilir hale getiriyoruz. Fiyatlandırma proje kapsamına göre belirlenir — size özel teklif için bize ulaşın.",
       ]}
       features={[
-        { icon: "🎨", title: "AI Görsel Üretimi", desc: "Yapay zeka ile marka kimliğinize uygun, yüksek kaliteli ürün görselleri ve reklam kreatifleri üretiyoruz." },
-        { icon: "🎬", title: "AI Reklam Filmi & Video", desc: "Metinden videoya, görüntüden animasyona — AI destekli prodüksiyon araçlarıyla hızlı video içerikleri oluşturuyoruz." },
-        { icon: "✍️", title: "Akıllı Metin Yazarlığı", desc: "Her platform ve hedef kitle için optimize edilmiş reklam metinleri, ürün açıklamaları ve sosyal medya içerikleri." },
-        { icon: "⚡", title: "Kampanya Otomasyonu", desc: "Akıllı kural setleriyle reklam bütçenizi otomatik optimize ediyor, performansı 7/24 izliyoruz." },
-        { icon: "📊", title: "Otomatik Raporlama", desc: "Tüm kampanyalarınızın verilerini tek panelde toplayıp otomatik raporlar üretiyoruz." },
-        { icon: "🤝", title: "Müşteri İletişimi Otomasyonu", desc: "Chatbot, otomatik mesaj akışları ve CRM entegrasyonlarıyla müşteri deneyimini ölçeklendiriyoruz." },
+        { icon: "palette", title: "AI Görsel Üretimi", desc: "Yapay zeka ile marka kimliğinize uygun, yüksek kaliteli ürün görselleri ve reklam kreatifleri üretiyoruz." },
+        { icon: "film", title: "AI Reklam Filmi & Video", desc: "Metinden videoya, görüntüden animasyona — AI destekli prodüksiyon araçlarıyla hızlı video içerikleri oluşturuyoruz." },
+        { icon: "pen", title: "Akıllı Metin Yazarlığı", desc: "Her platform ve hedef kitle için optimize edilmiş reklam metinleri, ürün açıklamaları ve sosyal medya içerikleri." },
+        { icon: "bolt", title: "Kampanya Otomasyonu", desc: "Akıllı kural setleriyle reklam bütçenizi otomatik optimize ediyor, performansı 7/24 izliyoruz." },
+        { icon: "chart", title: "Otomatik Raporlama", desc: "Tüm kampanyalarınızın verilerini tek panelde toplayıp otomatik raporlar üretiyoruz." },
+        { icon: "handshake", title: "Müşteri İletişimi Otomasyonu", desc: "Chatbot, otomatik mesaj akışları ve CRM entegrasyonlarıyla müşteri deneyimini ölçeklendiriyoruz." },
       ]}
       faq={[
         {

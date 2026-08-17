@@ -29,12 +29,12 @@ export default function MetaReklamlariPage() {
         "Yeniden hedefleme (retargeting) kampanyaları ile sitenizi ziyaret eden ya da ürünlerinizi inceleyen kullanıcılara hatırlatma reklamları gösteriyoruz. Benzer kitle (lookalike) stratejisiyle ise mevcut müşterilerinize benzer yeni kullanıcılara ulaşıyoruz.",
       ]}
       features={[
-        { icon: "🎯", title: "Hassas Hedefleme", desc: "Yaş, konum, ilgi alanı ve davranış verisiyle tam hedef kitleye ulaşın." },
-        { icon: "🔁", title: "Retargeting", desc: "Siteyi ziyaret eden ama satın almayan kullanıcıları geri kazanın." },
-        { icon: "👥", title: "Lookalike Kitle", desc: "Mevcut müşterilerinize benzer yeni kullanıcıları keşfedin." },
-        { icon: "🧪", title: "A/B Test", desc: "Farklı görsel ve metin kombinasyonları test ederek en iyi sonucu bulun." },
-        { icon: "💰", title: "Bütçe Optimizasyonu", desc: "En düşük maliyetle en fazla dönüşümü sağlayacak bütçe dağılımı." },
-        { icon: "📊", title: "Haftalık Raporlama", desc: "Tıklama, dönüşüm, ROAS ve maliyet verilerini şeffaf raporlarla görün." },
+        { icon: "target", title: "Hassas Hedefleme", desc: "Yaş, konum, ilgi alanı ve davranış verisiyle tam hedef kitleye ulaşın." },
+        { icon: "refresh", title: "Retargeting", desc: "Siteyi ziyaret eden ama satın almayan kullanıcıları geri kazanın." },
+        { icon: "users", title: "Lookalike Kitle", desc: "Mevcut müşterilerinize benzer yeni kullanıcıları keşfedin." },
+        { icon: "flask", title: "A/B Test", desc: "Farklı görsel ve metin kombinasyonları test ederek en iyi sonucu bulun." },
+        { icon: "wallet", title: "Bütçe Optimizasyonu", desc: "En düşük maliyetle en fazla dönüşümü sağlayacak bütçe dağılımı." },
+        { icon: "chart", title: "Haftalık Raporlama", desc: "Tıklama, dönüşüm, ROAS ve maliyet verilerini şeffaf raporlarla görün." },
       ]}
       faq={[
         {

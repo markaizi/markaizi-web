@@ -31,12 +31,12 @@ export default function GoogleReklamlariPage() {
         "Google Ads'de doğru anahtar kelime seçimi ve negatif anahtar kelime yönetimi, bütçenizin israf edilmemesini sağlar. Her ay detaylı optimizasyon yaparak tıklama başı maliyeti (CPC) düşürürken dönüşüm oranını artırıyoruz.",
       ]}
       features={[
-        { icon: "🔎", title: "Search (Arama) Reklamları", desc: "Google'da ürününüzü arayan kullanıcıların karşısına anında çıkın." },
-        { icon: "🖼️", title: "Display (Banner) Reklamları", desc: "Milyonlarca web sitesinde görsel reklamlarla marka bilinirliği oluşturun." },
-        { icon: "▶️", title: "YouTube Reklamları", desc: "Video reklamlarla kitleyi bilgilendirin, ikna edin ve dönüştürün." },
-        { icon: "🛒", title: "Google Shopping", desc: "Ürünlerinizi arama sonuçlarında görsel ve fiyatlı olarak öne çıkarın." },
-        { icon: "🗝️", title: "Anahtar Kelime Yönetimi", desc: "Doğru kelimelere teklif verin, yanlış aramalarda para kaybetmeyin." },
-        { icon: "📊", title: "Dönüşüm Takibi", desc: "Formdan telefona, satıştan ziyarete kadar her dönüşümü ölçün." },
+        { icon: "search", title: "Search (Arama) Reklamları", desc: "Google'da ürününüzü arayan kullanıcıların karşısına anında çıkın." },
+        { icon: "image", title: "Display (Banner) Reklamları", desc: "Milyonlarca web sitesinde görsel reklamlarla marka bilinirliği oluşturun." },
+        { icon: "play", title: "YouTube Reklamları", desc: "Video reklamlarla kitleyi bilgilendirin, ikna edin ve dönüştürün." },
+        { icon: "cart", title: "Google Shopping", desc: "Ürünlerinizi arama sonuçlarında görsel ve fiyatlı olarak öne çıkarın." },
+        { icon: "key", title: "Anahtar Kelime Yönetimi", desc: "Doğru kelimelere teklif verin, yanlış aramalarda para kaybetmeyin." },
+        { icon: "chart", title: "Dönüşüm Takibi", desc: "Formdan telefona, satıştan ziyarete kadar her dönüşümü ölçün." },
       ]}
       faq={[
         {

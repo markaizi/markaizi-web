@@ -29,12 +29,12 @@ export default function TikTokReklamlariPage() {
         "Sadece reklam kurmakla kalmıyoruz; TikTok'a özel kreatifleri de hazırlıyoruz. Platformun dilini konuşan, kullanıcıların kaydırma yapmasını durduran dikkat çekici video reklamlar üretiyoruz.",
       ]}
       features={[
-        { icon: "📱", title: "In-Feed Reklam", desc: "Kullanıcıların 'For You' akışında doğal görünen, yüksek tıklama oranlı reklamlar." },
-        { icon: "🏆", title: "TopView Reklam", desc: "TikTok'u açan kullanıcının karşısına çıkan, maksimum görünürlük sağlayan format." },
-        { icon: "🎬", title: "TikTok'a Özel Kreatif", desc: "Platformun dilini konuşan, durdurucu kısa video reklamlar." },
-        { icon: "🎯", title: "Hedef Kitle Optimizasyonu", desc: "İlgi alanı, davranış ve demografiye göre hassas hedefleme." },
-        { icon: "🔥", title: "Trend Takibi", desc: "Güncel TikTok trendlerini reklamlarınıza entegre ederek viral potansiyel yaratıyoruz." },
-        { icon: "📈", title: "Performans Takibi", desc: "Görüntülenme, tıklama ve dönüşüm verilerini düzenli raporluyoruz." },
+        { icon: "mobile", title: "In-Feed Reklam", desc: "Kullanıcıların 'For You' akışında doğal görünen, yüksek tıklama oranlı reklamlar." },
+        { icon: "trophy", title: "TopView Reklam", desc: "TikTok'u açan kullanıcının karşısına çıkan, maksimum görünürlük sağlayan format." },
+        { icon: "film", title: "TikTok'a Özel Kreatif", desc: "Platformun dilini konuşan, durdurucu kısa video reklamlar." },
+        { icon: "target", title: "Hedef Kitle Optimizasyonu", desc: "İlgi alanı, davranış ve demografiye göre hassas hedefleme." },
+        { icon: "flame", title: "Trend Takibi", desc: "Güncel TikTok trendlerini reklamlarınıza entegre ederek viral potansiyel yaratıyoruz." },
+        { icon: "growth", title: "Performans Takibi", desc: "Görüntülenme, tıklama ve dönüşüm verilerini düzenli raporluyoruz." },
       ]}
       faq={[
         {

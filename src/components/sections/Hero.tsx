@@ -35,21 +35,25 @@ const PLATFORM_ICONS = [
     ),
   },
   {
+    // Google Ads markası: iki açılı çubuk + sol altta daire. Önceden burada
+    // içinde artı olan bir büyüteç vardı — standart "yakınlaştır" simgesi.
     label: "Google Ads",
     delay: "2.1s",
     style: { bottom: "13%", right: "16%" },
     svg: (
       <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" style={{ stroke: "#c084fc" }}>
-        <circle cx="11" cy="11" r="8" strokeWidth="1.5"/>
-        <path d="M21 21l-4.35-4.35" strokeWidth="1.5" strokeLinecap="round"/>
-        <path d="M8 11h6M11 8v6" strokeWidth="1.5" strokeLinecap="round"/>
+        <path d="M10.6 3.4L18 16.2" strokeWidth="2.6" strokeLinecap="round"/>
+        <path d="M13.4 3.4L6.9 14.6" strokeWidth="2.6" strokeLinecap="round"/>
+        <circle cx="6.4" cy="18.2" r="2.4" strokeWidth="1.6"/>
       </svg>
     ),
   },
   {
+    // Meta Ads kaldırılınca boşalan sol-orta yuvaya taşındı; ikonlar
+    // görselin iki yanına dengeli dağılsın diye (solda 3, sağda 2).
     label: "YouTube",
     delay: "2.8s",
-    style: { top: "42%", right: "15%" },
+    style: { top: "42%", left: "18%" },
     svg: (
       <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" style={{ stroke: "#c084fc" }}>
         <path d="M22.54 6.42a2.78 2.78 0 00-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 00-1.95 1.96A29 29 0 001 12a29 29 0 00.46 5.58A2.78 2.78 0 003.41 19.6C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 001.95-1.95A29 29 0 0023 12a29 29 0 00-.46-5.58z" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -57,16 +61,9 @@ const PLATFORM_ICONS = [
       </svg>
     ),
   },
-  {
-    label: "Meta Ads",
-    delay: "3.5s",
-    style: { top: "42%", left: "18%" },
-    svg: (
-      <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" style={{ stroke: "#c084fc" }}>
-        <path d="M4 4l4.5 8L4 20h2.5l3-6 3 6H15l-4.5-8L15 4h-2.5l-3 6-3-6H4z" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
-      </svg>
-    ),
-  },
+  // Not: burada altıncı olarak "Meta Ads" etiketli bir öge vardı ve ikonu bir
+  // X (Twitter) harfiydi. Meta zaten Instagram + Facebook'un reklam sistemi
+  // olduğu için ikisiyle birlikte listelenmesi mükerrerdi; öge kaldırıldı.
 ];
 
 export default function Hero() {
@@ -105,7 +102,9 @@ export default function Hero() {
             <span style={{ display:"block" }}>Zirveye Taşıyoruz</span>
           </h1>
 
-          <p className="hero-sub text-[#8a8a9a] mx-auto lg:mx-0 max-w-[520px] mb-16 leading-relaxed"
+          {/* mb-16 (64px) CTA'ları metinden koparıyordu; mb-9/mb-10 ile
+              paragraf ve butonlar tek bir blok gibi okunuyor. */}
+          <p className="hero-sub text-[#8a8a9a] mx-auto lg:mx-0 max-w-[520px] mb-9 sm:mb-10 leading-relaxed"
             style={{ fontSize:"clamp(16px,1.4vw,17px)" }}
           >
             Siteler&apos;in mobilya mağazalarından kliniklere, Ankara&apos;nın yerel işletmelerinden e-ticarete — sosyal medya yönetimi, Google reklamları, içerik üretimi ve web tasarımda her adımda yanınızdayız.

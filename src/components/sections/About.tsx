@@ -69,7 +69,9 @@ export default function About() {
           <div className="reveal">
             <span className="section-tag">Hakkımızda</span>
             <h2 className="font-black leading-tight mb-5 mt-3 text-white" style={{ fontSize:"clamp(28px,3.5vw,40px)" }}>
-              Dijital Başarı İçin <span style={{ color: "#c084fc" }}>Doğru Adres</span>
+              {/* Bölüm başlıklarındaki vurgu her yerde gradient-text — burada
+                  ve Portföy'de düz mor kullanılıyordu. */}
+              Dijital Başarı İçin <span className="gradient-text">Doğru Adres</span>
             </h2>
             <p className="text-[#8a8a9a] text-base leading-[1.8] mb-4">
               Ankara merkezli markaizi olarak, reklamcılık dünyasına Siteler&apos;de matbaa, baskı, insert ve katalog tasarımıyla girdik. Mobilya sektörünün kalbinde geçen 10 yılı aşkın bu birikimi arkamıza alarak artık tamamen dijital pazarlamaya odaklandık; çünkü markaların müşterilerine en hızlı ve ölçülebilir şekilde ulaştığı yer burası.

@@ -112,7 +112,9 @@ export default function Contact() {
           {/* Form */}
           <form
             onSubmit={handleSubmit}
-            className="reveal rounded-2xl p-10"
+            /* p-6 sm:p-10: mobilde 40px iç boşluk 375px ekranda içerik
+               alanını 247px'e düşürüyordu. */
+            className="reveal rounded-2xl p-6 sm:p-10"
             style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">

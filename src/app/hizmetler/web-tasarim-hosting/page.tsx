@@ -29,12 +29,12 @@ export default function WebTasarimPage() {
           "Tasarımla birlikte domain kaydı, güvenli hosting kurulumu ve SSL sertifikası işlemlerini de üstleniyoruz. Tek adımda projeniz yayına giriyor.",
         ]}
         features={[
-          { icon: "📱", title: "Mobil Uyumlu Tasarım", desc: "Her cihaz ve ekran boyutunda kusursuz görünen, responsive tasarım." },
-          { icon: "⚡", title: "Hızlı Yükleme", desc: "Optimize kod yapısı ve performanslı hosting ile düşük yükleme süresi." },
-          { icon: "🔒", title: "SSL & Güvenlik", desc: "HTTPS güvenli bağlantı ve temel güvenlik önlemleri dahil." },
-          { icon: "🌐", title: "Domain & Hosting", desc: "Alan adı kaydı ve yüksek performanslı hosting çözümleri." },
-          { icon: "🔍", title: "SEO Altyapısı", desc: "Arama motorlarında üst sıralara çıkmak için teknik SEO temelleri." },
-          { icon: "✏️", title: "Kolay Yönetim Paneli", desc: "Teknik bilgi olmadan içerik güncelleyebileceğiniz kullanıcı dostu panel." },
+          { icon: "mobile", title: "Mobil Uyumlu Tasarım", desc: "Her cihaz ve ekran boyutunda kusursuz görünen, responsive tasarım." },
+          { icon: "bolt", title: "Hızlı Yükleme", desc: "Optimize kod yapısı ve performanslı hosting ile düşük yükleme süresi." },
+          { icon: "lock", title: "SSL & Güvenlik", desc: "HTTPS güvenli bağlantı ve temel güvenlik önlemleri dahil." },
+          { icon: "globe", title: "Domain & Hosting", desc: "Alan adı kaydı ve yüksek performanslı hosting çözümleri." },
+          { icon: "search", title: "SEO Altyapısı", desc: "Arama motorlarında üst sıralara çıkmak için teknik SEO temelleri." },
+          { icon: "panel", title: "Kolay Yönetim Paneli", desc: "Teknik bilgi olmadan içerik güncelleyebileceğiniz kullanıcı dostu panel." },
         ]}
         faq={[
           {

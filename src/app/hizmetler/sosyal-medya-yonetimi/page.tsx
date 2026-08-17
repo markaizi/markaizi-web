@@ -34,14 +34,14 @@ export default function SosyalMedyaPage() {
         "Her ay detaylı raporlama ile hangi içeriklerin ne kadar etkileşim aldığını, takipçi büyüme eğrisini ve reklamların performansını şeffaf biçimde aktarıyoruz.",
       ]}
       features={[
-        { icon: "📅", title: "Aylık İçerik Takvimi", desc: "Her ay başında onaylı içerik takvimi ile ne zaman, ne paylaşılacağını biliyorsunuz." },
-        { icon: "🎨", title: "Özgün Görsel & Video Üretimi", desc: "Marka kimliğinize uygun profesyonel görseller, Reels ve TikTok videoları hazırlıyoruz." },
-        { icon: "🎥", title: "Yerinde Çekim Hizmeti", desc: "Ekibimiz mağazanıza veya ofisine gelerek ürün ve mekan videolarını profesyonelce çeker." },
-        { icon: "🤖", title: "Yapay Zeka Destekli İçerik", desc: "AI araçlarıyla hızlı görsel üretimi, metin yazarlığı ve içerik optimizasyonu sağlıyoruz." },
-        { icon: "💬", title: "Topluluk Yönetimi", desc: "Yorum ve mesajlara hızlı, samimi yanıtlarla takipçi bağlılığı oluşturuyoruz." },
-        { icon: "📊", title: "Şeffaf Raporlama", desc: "Etkileşim, erişim ve büyüme verilerini haftalık veya aylık raporlarla aktarıyoruz." },
-        { icon: "🔍", title: "Hashtag & SEO", desc: "Platformun arama algoritmalarına uygun hashtag ve açıklama stratejisi." },
-        { icon: "📈", title: "Büyüme Stratejisi", desc: "Organik büyümeyi hızlandırmak için sürekli güncellenen içerik ve yayın stratejisi." },
+        { icon: "calendar", title: "Aylık İçerik Takvimi", desc: "Her ay başında onaylı içerik takvimi ile ne zaman, ne paylaşılacağını biliyorsunuz." },
+        { icon: "palette", title: "Özgün Görsel & Video Üretimi", desc: "Marka kimliğinize uygun profesyonel görseller, Reels ve TikTok videoları hazırlıyoruz." },
+        { icon: "camera", title: "Yerinde Çekim Hizmeti", desc: "Ekibimiz mağazanıza veya ofisine gelerek ürün ve mekan videolarını profesyonelce çeker." },
+        { icon: "sparkle", title: "Yapay Zeka Destekli İçerik", desc: "AI araçlarıyla hızlı görsel üretimi, metin yazarlığı ve içerik optimizasyonu sağlıyoruz." },
+        { icon: "chat", title: "Topluluk Yönetimi", desc: "Yorum ve mesajlara hızlı, samimi yanıtlarla takipçi bağlılığı oluşturuyoruz." },
+        { icon: "chart", title: "Şeffaf Raporlama", desc: "Etkileşim, erişim ve büyüme verilerini haftalık veya aylık raporlarla aktarıyoruz." },
+        { icon: "search", title: "Hashtag & SEO", desc: "Platformun arama algoritmalarına uygun hashtag ve açıklama stratejisi." },
+        { icon: "growth", title: "Büyüme Stratejisi", desc: "Organik büyümeyi hızlandırmak için sürekli güncellenen içerik ve yayın stratejisi." },
       ]}
       faq={[
         {

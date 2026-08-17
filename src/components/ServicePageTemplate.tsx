@@ -6,12 +6,14 @@ import ServiceFAQ, { FAQItem } from "@/components/ServiceFAQ";
 import Breadcrumb from "@/components/Breadcrumb";
 import JsonLd from "@/components/JsonLd";
 import { SITE_URL, ORG_NAME, breadcrumbJsonLd } from "@/lib/seo";
+import { FeatureIcon, type FeatureIconName } from "@/components/icons/FeatureIcons";
 
 export interface ServicePageProps {
   title: string;
   subtitle: string;
   description: string[];
-  features: { icon: string; title: string; desc: string }[];
+  // icon artık emoji değil, FeatureIcons setindeki bir ikon adı.
+  features: { icon: FeatureIconName; title: string; desc: string }[];
   faq?: FAQItem[]; // hizmete özel sıkça sorulan sorular
   icon: React.ReactNode;
   badge: string;
@@ -154,7 +156,12 @@ export default function ServicePageTemplate({
                   className="rounded-xl p-5"
                   style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
                 >
-                  <div className="text-2xl mb-3">{f.icon}</div>
+                  <div
+                    className="w-10 h-10 flex items-center justify-center rounded-lg mb-3 text-[#c084fc]"
+                    style={{ background: "var(--grad-soft)", border: "1px solid rgba(168,85,247,0.25)" }}
+                  >
+                    <FeatureIcon name={f.icon} />
+                  </div>
                   <h3 className="font-bold text-[15px] mb-2">{f.title}</h3>
                   <p className="text-[13px] text-[#8a8a9a] leading-relaxed">{f.desc}</p>
                 </div>
