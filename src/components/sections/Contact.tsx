@@ -12,16 +12,8 @@ const SOCIAL = [
     href: "https://tiktok.com/@markaizicom",
     svg: <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" style={{ stroke: "#8a8a9a" }}><path d="M9 12a4 4 0 104 4V4a5 5 0 005 5" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>,
   },
-  {
-    label: "Facebook",
-    href: "#",
-    svg: <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" style={{ stroke: "#8a8a9a" }}><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>,
-  },
-  {
-    label: "LinkedIn",
-    href: "#",
-    svg: <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" style={{ stroke: "#8a8a9a" }}><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/><rect x="2" y="9" width="4" height="12" stroke="#8a8a9a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/><circle cx="4" cy="4" r="2" stroke="#8a8a9a" strokeWidth="1.5"/></svg>,
-  },
+  // Facebook ve LinkedIn ikonları href="#" ile duruyordu — tıklayınca boş sekme
+  // açıyorlardı. Gerçek profil adresleri hazır olduğunda buraya eklenebilir.
 ];
 
 const HOURS = [
@@ -51,12 +43,16 @@ const CONTACT_ITEMS = [
   },
 ];
 
+const GENERIC_ERROR = "Bir hata oluştu, lütfen tekrar deneyin veya doğrudan e-posta gönderin.";
+
 export default function Contact() {
   const [status, setStatus] = useState<"idle" | "sending" | "done" | "error">("idle");
+  const [errorMsg, setErrorMsg] = useState(GENERIC_ERROR);
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setStatus("sending");
+    setErrorMsg(GENERIC_ERROR);
 
     const form = e.currentTarget;
     const data = {
@@ -79,12 +75,17 @@ export default function Contact() {
         form.reset();
         setTimeout(() => setStatus("idle"), 5000);
       } else {
+        // API "Geçersiz e-posta adresi." gibi net mesajlar döndürüyor —
+        // genel metin yerine onu göster ki kullanıcı neyi düzelteceğini bilsin.
+        const payload = await res.json().catch(() => null);
+        setErrorMsg(typeof payload?.error === "string" ? payload.error : GENERIC_ERROR);
         setStatus("error");
-        setTimeout(() => setStatus("idle"), 4000);
+        setTimeout(() => setStatus("idle"), 6000);
       }
     } catch {
+      setErrorMsg("Bağlantı kurulamadı. İnternet bağlantınızı kontrol edip tekrar deneyin.");
       setStatus("error");
-      setTimeout(() => setStatus("idle"), 4000);
+      setTimeout(() => setStatus("idle"), 6000);
     }
   };
 
@@ -113,7 +114,6 @@ export default function Contact() {
             onSubmit={handleSubmit}
             className="reveal rounded-2xl p-10"
             style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
-            noValidate
           >
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
               <Field label="Ad Soyad" id="name" type="text" placeholder="Ahmet Yılmaz" required />
@@ -151,13 +151,13 @@ export default function Contact() {
                 rows={4}
                 placeholder="Projenizden bahsedin..."
                 required
-                className="w-full px-4 py-3.5 rounded-xl text-[15px] text-white placeholder:text-white/20 resize-y min-h-[120px]"
+                className="w-full px-4 py-3.5 rounded-xl text-[15px] text-white placeholder:text-white/40 resize-y min-h-[120px]"
                 style={{ background: "var(--bg)", border: "1.5px solid var(--border)" }}
               />
             </div>
             {status === "error" && (
-              <p className="text-red-400 text-[13px] text-center mb-4">
-                Bir hata oluştu, lütfen tekrar deneyin veya doğrudan e-posta gönderin.
+              <p role="alert" className="text-red-400 text-[13px] text-center mb-4">
+                {errorMsg}
               </p>
             )}
             <button
@@ -260,7 +260,7 @@ function Field({ label, id, type, placeholder, required }: {
         type={type}
         placeholder={placeholder}
         required={required}
-        className="w-full px-4 py-3.5 rounded-xl text-[15px] text-white placeholder:text-white/20"
+        className="w-full px-4 py-3.5 rounded-xl text-[15px] text-white placeholder:text-white/40"
         style={{ background: "var(--bg)", border: "1.5px solid var(--border)" }}
       />
     </div>

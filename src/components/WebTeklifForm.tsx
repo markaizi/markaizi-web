@@ -329,7 +329,7 @@ export default function WebTeklifForm() {
                 name="notes"
                 rows={4}
                 placeholder="Örn: Mevcut sitemizin logosunu kullanmak istiyoruz. Rakip firmaların sitelerine benzer bir yapı tercih ediyoruz..."
-                className="w-full px-4 py-3.5 rounded-xl text-[14px] text-white placeholder:text-white/20 resize-y min-h-[100px] mt-1"
+                className="w-full px-4 py-3.5 rounded-xl text-[14px] text-white placeholder:text-white/40 resize-y min-h-[100px] mt-1"
                 style={{ background: "var(--bg)", border: "1.5px solid var(--border)" }}
               />
             </div>
@@ -438,7 +438,7 @@ function Field({
         type={type}
         placeholder={placeholder}
         required={required}
-        className="w-full px-4 py-3 rounded-xl text-[14px] text-white placeholder:text-white/20 mt-1"
+        className="w-full px-4 py-3 rounded-xl text-[14px] text-white placeholder:text-white/40 mt-1"
         style={{ background: "var(--bg)", border: "1.5px solid var(--border)" }}
       />
     </div>

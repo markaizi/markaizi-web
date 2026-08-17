@@ -89,8 +89,10 @@ export default function Navbar() {
             </span>
           </Link>
 
-          {/* Desktop Links */}
-          <ul className="hidden md:flex items-center gap-1">
+          {/* Desktop Links — lg: (1024px). 768–1023px arası hamburger kullanılır:
+              md:'de (768px) logo + 4 link + Müşteri Girişi + İletişim butonu 782px yer
+              kaplıyor ve İletişim butonu ekranın dışında kalıyordu. */}
+          <ul className="hidden lg:flex items-center gap-1">
             {NAV_LINKS.map((l) => (
               <li key={l.href}>
                 <a
@@ -146,7 +148,7 @@ export default function Navbar() {
           </ul>
 
           {/* Mobil: Müşteri Girişi ikonu + Hamburger */}
-          <div className="md:hidden flex items-center gap-3">
+          <div className="lg:hidden flex items-center gap-3">
             {session ? (
               <a
                 href={session.redirect}

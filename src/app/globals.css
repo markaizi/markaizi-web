@@ -207,6 +207,29 @@ a:focus-visible, button:focus-visible, summary:focus-visible, [tabindex]:focus-v
   }
 }
 
+/* ── Hareket Azaltma Tercihi ───────────────
+   İşletim sisteminde "Hareketi Azalt" açıksa tüm süregelen animasyonlar
+   (orb'lar, yüzen ikonlar, dönen halkalar, WhatsApp nabzı, sayaçlar) ve
+   geçişler durur. Bulanık gradyanların sürekli animasyonu aynı zamanda
+   orta seviye telefonlarda gerçek bir GPU/pil maliyeti yaratıyordu. */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  /* Scroll-reveal öğeleri JS gelmeden de görünür olsun — animasyon
+     kapalıyken opacity:0'da takılı kalmamalılar. */
+  .reveal { opacity: 1; transform: none; }
+
+  /* Dekoratif, bilgi taşımayan öğeler tamamen gizlenir. */
+  .scroll-dot, .wa-pulse, .hv-ring { display: none; }
+}
+
 /* ── Testimonial Slider ────────────────── */
 .testimonial-track { display: flex; transition: transform 0.5s cubic-bezier(0.4,0,0.2,1); }
 .testimonial-card  { min-width: 100%; }

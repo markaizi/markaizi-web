@@ -134,7 +134,7 @@ export default function UcretsizAnalizForm() {
               name="note"
               rows={3}
               placeholder="Örn: Şu an reklam vermiyorum, hiç başlamadım..."
-              className="w-full px-4 py-3.5 rounded-xl text-white placeholder:text-white/20 resize-y"
+              className="w-full px-4 py-3.5 rounded-xl text-white placeholder:text-white/40 resize-y"
               style={{ background: "var(--bg)", border: "1.5px solid var(--border)", fontSize: "16px", minHeight: "90px" }}
             />
           </div>
@@ -182,7 +182,7 @@ function Field({ label, id, type, placeholder, required, inputMode }: {
         inputMode={inputMode}
         placeholder={placeholder}
         required={required}
-        className="w-full px-4 py-3.5 rounded-xl text-white placeholder:text-white/20"
+        className="w-full px-4 py-3.5 rounded-xl text-white placeholder:text-white/40"
         style={{ background: "var(--bg)", border: "1.5px solid var(--border)", fontSize: "16px", minHeight: "52px" }}
       />
     </div>

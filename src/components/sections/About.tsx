@@ -12,6 +12,14 @@ function useCounter(ref: React.RefObject<HTMLElement | null>, target: number) {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+
+    // Hareket azaltma açıksa sayacı hiç oynatma — nihai değeri doğrudan yaz.
+    // CSS animasyonlarını durduran media query bu rAF döngüsünü etkilemiyor.
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      el.textContent = String(target);
+      return;
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (!entry.isIntersecting) return;

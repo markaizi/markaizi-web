@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import CookieBanner from "@/components/CookieBanner";
@@ -64,6 +64,15 @@ export const metadata: Metadata = {
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large" },
   },
+};
+
+// themeColor: iOS Safari / Android Chrome adres çubuğunu site zeminiyle aynı
+// renge boyar — koyu sayfanın üstündeki açık gri şerit kalkar.
+// colorScheme: native <select> açılır listesi, tarih seçici ve kaydırma
+// çubuklarının koyu temada çizilmesini sağlar.
+export const viewport: Viewport = {
+  themeColor: "#050505",
+  colorScheme: "dark",
 };
 
 export default function RootLayout({

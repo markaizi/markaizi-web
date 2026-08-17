@@ -89,10 +89,12 @@ export default function Portfolio() {
                 el.style.boxShadow = "none";
               }}
             >
-              <span className="block text-base font-black text-white/25 tracking-tight transition-colors duration-300 group-hover:text-white/90">
+              {/* Dokunmatik ekranda hover yok — varsayılan opaklık okunabilir olmak
+                  zorunda. white/25 kart zemininde ~2.2:1 kontrast veriyordu. */}
+              <span className="block text-base font-black text-white/60 tracking-tight transition-colors duration-300 group-hover:text-white">
                 {l.name}
               </span>
-              <span className="text-[10px] font-medium uppercase tracking-widest text-white/20 group-hover:text-white/50 transition-colors duration-300">
+              <span className="text-[10px] font-medium uppercase tracking-widest text-white/50 group-hover:text-white/75 transition-colors duration-300">
                 {l.sub}
               </span>
             </div>

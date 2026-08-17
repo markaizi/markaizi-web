@@ -143,6 +143,12 @@ export default function Hero() {
               width={800}
               height={533}
               priority
+              /* Görsel yalnızca lg:'de görünüyor (üst kapsayıcı hidden lg:flex).
+                 sizes olmadan Next 1920px'lik varyantı preload ediyordu: mobilde
+                 hiç gösterilmeyen 64KB'lık, üstelik priority yüzünden render'ı
+                 geciktiren bir indirme. "1px" ile mobil tarayıcı srcset'in en
+                 küçük adayını (32w ≈ 0.5KB) seçer, masaüstü doğru boyutu alır. */
+              sizes="(min-width: 1024px) 660px, 1px"
               style={{
                 width: "100%",
                 maxWidth: 800,
