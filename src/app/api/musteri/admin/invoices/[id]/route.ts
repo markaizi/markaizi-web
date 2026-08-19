@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { requireInvoiceManageById } from "@/lib/staffGuard";
+import { nextDueDate, BILLING_PERIOD_INVOICE_LABEL, type BillingPeriod } from "@/lib/billingPeriod";
 
 export const runtime = "nodejs";
 
@@ -50,25 +51,28 @@ export async function PATCH(
   // vadesi ileride olduğu için panelde kendiliğinden "Günü Gelmedi" görünür.
   const { client } = before;
   if (rest.status === "ODENDI" && before.status !== "ODENDI" && client.billingPeriod && client.billingAmount) {
+    const period = client.billingPeriod as BillingPeriod;
     const base = updated.dueDate ?? before.dueDate ?? new Date();
-    const next = new Date(base);
-    if (client.billingPeriod === "HAFTALIK") next.setUTCDate(next.getUTCDate() + 7);
-    else next.setUTCMonth(next.getUTCMonth() + 1);
+    // MANUEL periyotta (veya gün aralığı girilmemiş OZEL_GUN'de) null döner —
+    // bu firmalarda faturalar elle açılır.
+    const next = nextDueDate(base, period, client.billingIntervalDays);
 
     // Aynı vade için zaten bir fatura varsa yenisini açma. Bu olmadan, bir fatura
     // "Ödendi" ↔ "Ödenmedi" arasında her gidip geldiğinde sonraki dönem için bir
     // fatura daha üretiliyordu; sonuç, aynı firmanın peş peşe günlerde birden çok
     // ödemesi varmış gibi görünmesiydi.
-    const alreadyExists = await prisma.invoice.findFirst({
-      where: { clientId: client.id, dueDate: next },
-      select: { id: true },
-    });
+    const alreadyExists = next
+      ? await prisma.invoice.findFirst({
+          where: { clientId: client.id, dueDate: next },
+          select: { id: true },
+        })
+      : null;
 
-    if (!alreadyExists) {
+    if (next && !alreadyExists) {
       await prisma.invoice.create({
         data: {
           clientId: client.id,
-          period: client.billingPeriod === "HAFTALIK" ? "Haftalık Ödeme" : "Aylık Ödeme",
+          period: BILLING_PERIOD_INVOICE_LABEL[period],
           amount: client.billingAmount,
           dueDate: next,
           status: "BEKLIYOR",

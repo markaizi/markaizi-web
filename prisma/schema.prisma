@@ -32,8 +32,12 @@ enum InvoiceStatus {
 }
 
 enum BillingPeriod {
-  HAFTALIK
-  AYLIK
+  HAFTALIK     // her hafta — 7 gün
+  IKI_HAFTALIK // iki haftada bir — 14 gün
+  AYLIK        // her ay, vade tarihinin gününde
+  IKI_AYLIK    // iki ayda bir
+  OZEL_GUN     // her N günde bir — Client.billingIntervalDays belirler
+  MANUEL       // otomatik fatura oluşturulmaz, elle girilir
 }
 
 enum ContentStatus {
@@ -181,6 +185,9 @@ model Client {
   // faturası otomatik oluşturulur (GUNU_GELMEDI durumuyla).
   billingAmount String?
   billingPeriod BillingPeriod?
+
+  // Yalnızca billingPeriod = OZEL_GUN iken kullanılır: kaç günde bir tahsil edilecek.
+  billingIntervalDays Int?
 
   // Günlük reklam harcaması — müşteri kendi panelinde görür, admin/çalışan girer
   dailyMetaSpend   String?

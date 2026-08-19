@@ -3,6 +3,9 @@
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { INVOICE_STAGE_COLOR, INVOICE_STAGE_LABEL, type InvoiceStage } from "@/lib/invoiceStage";
+import {
+  BILLING_PERIODS, BILLING_PERIOD_LABEL, needsIntervalDays, type BillingPeriod,
+} from "@/lib/billingPeriod";
 import Notes from "@/components/Notes";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -16,7 +19,8 @@ export interface ClientDetailData {
   contactEmail: string;
   contactPhone: string;
   billingAmount: string;
-  billingPeriod: "HAFTALIK" | "AYLIK" | "";
+  billingPeriod: BillingPeriod | "";
+  billingIntervalDays: number | null;
   dailyMetaSpend: string;
   dailyGoogleSpend: string;
   active: boolean;
@@ -312,7 +316,9 @@ function GenelTab({ data, router }: { data: ClientDetailData; router: ReturnType
   const [form, setForm] = useState({
     name: data.name, invoiceNote: data.invoiceNote,
     contactPerson: data.contactPerson, contactEmail: data.contactEmail, contactPhone: data.contactPhone,
-    billingAmount: data.billingAmount, billingPeriod: data.billingPeriod || "AYLIK",
+    billingAmount: data.billingAmount,
+    billingPeriod: (data.billingPeriod || "AYLIK") as BillingPeriod,
+    billingIntervalDays: data.billingIntervalDays ? String(data.billingIntervalDays) : "",
     dailyMetaSpend: data.dailyMetaSpend, dailyGoogleSpend: data.dailyGoogleSpend,
   });
   const [loading, setLoading] = useState(false);
@@ -332,7 +338,14 @@ function GenelTab({ data, router }: { data: ClientDetailData; router: ReturnType
     const res = await fetch(`/api/musteri/admin/clients/${data.slug}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
+      body: JSON.stringify({
+        ...form,
+        // Formda metin olarak tutuluyor; API sayı bekliyor ve yalnızca
+        // "özel gün aralığı" periyodunda anlamlı.
+        billingIntervalDays: needsIntervalDays(form.billingPeriod)
+          ? Number(form.billingIntervalDays) || null
+          : null,
+      }),
     });
     const json = await res.json();
     setLoading(false);
@@ -401,12 +414,44 @@ function GenelTab({ data, router }: { data: ClientDetailData; router: ReturnType
               placeholder="Örn: 20.000 ₺" />
           </Field>
           <Field label="Ödeme Periyodu">
-            <Select value={form.billingPeriod} onChange={(e) => setForm((f) => ({ ...f, billingPeriod: e.target.value as "HAFTALIK" | "AYLIK" }))}>
-              <option value="AYLIK">Aylık</option>
-              <option value="HAFTALIK">Haftalık</option>
+            <Select
+              value={form.billingPeriod}
+              onChange={(e) => setForm((f) => ({ ...f, billingPeriod: e.target.value as BillingPeriod }))}
+            >
+              {BILLING_PERIODS.map((p) => (
+                <option key={p} value={p} style={{ background: "#0f0f14" }}>
+                  {BILLING_PERIOD_LABEL[p]}
+                </option>
+              ))}
             </Select>
           </Field>
         </div>
+
+        {needsIntervalDays(form.billingPeriod) && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <Field label="Kaç günde bir?">
+              <Input
+                type="number"
+                min={1}
+                max={365}
+                value={form.billingIntervalDays}
+                onChange={(e) => setForm((f) => ({ ...f, billingIntervalDays: e.target.value }))}
+                placeholder="Örn: 45"
+              />
+            </Field>
+            <div className="flex items-end pb-2">
+              <p className="text-[11px] text-[#8a8a9a] leading-relaxed">
+                Vade tarihinden itibaren bu kadar gün sonrası için sonraki fatura açılır.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {form.billingPeriod === "MANUEL" && (
+          <p className="text-[11px] text-[#8a8a9a] leading-relaxed -mt-1">
+            Bu firmada faturalar otomatik oluşmaz — &quot;Faturalar&quot; sekmesinden elle eklersiniz.
+          </p>
+        )}
 
         <div className="pt-1 pb-1">
           <p className="text-[13px] font-semibold text-white">Günlük Reklam Harcaması</p>

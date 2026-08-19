@@ -78,6 +78,7 @@ export default async function AdminClientPage({
     contactPhone: client.contactPhone ?? "",
     billingAmount: client.billingAmount ?? "",
     billingPeriod: client.billingPeriod ?? "",
+    billingIntervalDays: client.billingIntervalDays ?? null,
     dailyMetaSpend: client.dailyMetaSpend ?? "",
     dailyGoogleSpend: client.dailyGoogleSpend ?? "",
     active: client.active,

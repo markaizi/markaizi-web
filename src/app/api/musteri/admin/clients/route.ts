@@ -3,6 +3,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/adminGuard";
 import { getSession } from "@/lib/auth";
+import { BILLING_PERIODS, BILLING_PERIOD_INVOICE_LABEL, needsIntervalDays, type BillingPeriod } from "@/lib/billingPeriod";
 import bcrypt from "bcryptjs";
 
 export const runtime = "nodejs";
@@ -41,7 +42,8 @@ const schema = z.object({
   contactPhone:  z.string().max(40).optional(),
   // Opsiyonel: doldurulursa firma ile birlikte ilk fatura kaydı da oluşturulur
   billingAmount:   z.string().max(60).optional(),
-  billingPeriod:   z.enum(["HAFTALIK", "AYLIK"]).optional(),
+  billingPeriod:   z.enum(BILLING_PERIODS).optional(),
+  billingIntervalDays: z.number().int().min(1).max(365).nullable().optional(),
   paymentDueDate:  z.string().optional(), // "YYYY-MM-DD"
   // Opsiyonel: aynı anda müşteri hesabı oluştur
   username: z.string().min(2).max(60).regex(/^[a-z0-9_-]+$/).optional(),
@@ -62,7 +64,7 @@ export async function POST(req: NextRequest) {
   const {
     name, slug, invoiceNote,
     contactPerson, contactEmail, contactPhone,
-    billingAmount, billingPeriod, paymentDueDate,
+    billingAmount, billingPeriod, billingIntervalDays, paymentDueDate,
     username, email, password,
   } = parsed.data;
 
@@ -86,6 +88,14 @@ export async function POST(req: NextRequest) {
   }
 
   const hasBilling = !!(billingAmount && billingAmount.trim());
+  const period: BillingPeriod = billingPeriod ?? "AYLIK";
+
+  if (hasBilling && needsIntervalDays(period) && !billingIntervalDays) {
+    return NextResponse.json(
+      { error: "Özel gün aralığı seçtiniz — kaç günde bir tahsil edileceğini girin." },
+      { status: 400 }
+    );
+  }
 
   const client = await prisma.client.create({
     data: {
@@ -95,7 +105,8 @@ export async function POST(req: NextRequest) {
       contactEmail: contactEmail || null,
       contactPhone: contactPhone || null,
       billingAmount: hasBilling ? billingAmount : null,
-      billingPeriod: hasBilling ? (billingPeriod ?? "AYLIK") : null,
+      billingPeriod: hasBilling ? period : null,
+      billingIntervalDays: hasBilling && needsIntervalDays(period) ? billingIntervalDays! : null,
     },
   });
 
@@ -104,7 +115,7 @@ export async function POST(req: NextRequest) {
     await prisma.invoice.create({
       data: {
         clientId: client.id,
-        period: billingPeriod === "HAFTALIK" ? "Haftalık Ödeme" : "Aylık Ödeme",
+        period: BILLING_PERIOD_INVOICE_LABEL[period],
         amount: billingAmount!,
         dueDate: paymentDueDate ? new Date(paymentDueDate) : null,
         status: "BEKLIYOR",

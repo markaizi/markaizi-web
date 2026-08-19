@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/adminGuard";
+import { BILLING_PERIODS, needsIntervalDays } from "@/lib/billingPeriod";
 
 export const runtime = "nodejs";
 
@@ -12,7 +13,8 @@ const schema = z.object({
   contactEmail: z.string().email("Geçerli bir e-posta girin.").max(160).nullable().optional().or(z.literal("")),
   contactPhone: z.string().max(40).nullable().optional(),
   billingAmount: z.string().max(60).nullable().optional(),
-  billingPeriod: z.enum(["HAFTALIK", "AYLIK"]).nullable().optional(),
+  billingPeriod: z.enum(BILLING_PERIODS).nullable().optional(),
+  billingIntervalDays: z.number().int().min(1).max(365).nullable().optional(),
   dailyMetaSpend: z.string().max(60).nullable().optional(),
   dailyGoogleSpend: z.string().max(60).nullable().optional(),
   active: z.boolean().optional(),
@@ -36,10 +38,26 @@ export async function PATCH(
   if (!client) return NextResponse.json({ error: "Firma bulunamadı." }, { status: 404 });
 
   const data = { ...parsed.data };
-  // Ücret boşsa periyodu da anlamsız — birlikte temizle
+  // Ücret boşsa periyot ve gün aralığı da anlamsız — birlikte temizle
   if (data.billingAmount !== undefined && !data.billingAmount) {
     data.billingAmount = null;
     data.billingPeriod = null;
+    data.billingIntervalDays = null;
+  }
+
+  // Gün aralığı yalnızca "özel gün" periyodunda anlamlı: başka bir periyoda
+  // geçildiğinde eski değerin kalıp sonraki vadeyi bozmaması için temizlenir.
+  const effectivePeriod = data.billingPeriod !== undefined ? data.billingPeriod : client.billingPeriod;
+  if (effectivePeriod && !needsIntervalDays(effectivePeriod)) {
+    data.billingIntervalDays = null;
+  } else if (effectivePeriod && needsIntervalDays(effectivePeriod)) {
+    const interval = data.billingIntervalDays !== undefined ? data.billingIntervalDays : client.billingIntervalDays;
+    if (!interval) {
+      return NextResponse.json(
+        { error: "Özel gün aralığı seçtiniz — kaç günde bir tahsil edileceğini girin." },
+        { status: 400 }
+      );
+    }
   }
 
   await prisma.client.update({ where: { slug }, data });

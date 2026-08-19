@@ -2,13 +2,17 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import {
+  BILLING_PERIODS, BILLING_PERIOD_LABEL, needsIntervalDays, type BillingPeriod,
+} from "@/lib/billingPeriod";
 
 export default function YeniFirmaPage() {
   const router = useRouter();
   const [form, setForm] = useState({
     name: "", slug: "",
     contactPerson: "", contactEmail: "", contactPhone: "",
-    billingAmount: "", billingPeriod: "AYLIK", paymentDueDate: "",
+    billingAmount: "", billingPeriod: "AYLIK" as BillingPeriod,
+    billingIntervalDays: "", paymentDueDate: "",
     username: "", email: "", password: "",
   });
   const [withUser, setWithUser] = useState(false);
@@ -39,7 +43,7 @@ export default function YeniFirmaPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true); setErr("");
-    const body: Record<string, string> = {
+    const body: Record<string, string | number | null> = {
       name: form.name, slug: form.slug,
     };
     if (form.contactPerson.trim()) body.contactPerson = form.contactPerson;
@@ -48,6 +52,9 @@ export default function YeniFirmaPage() {
     if (form.billingAmount.trim()) {
       body.billingAmount = form.billingAmount;
       body.billingPeriod = form.billingPeriod;
+      if (needsIntervalDays(form.billingPeriod)) {
+        body.billingIntervalDays = Number(form.billingIntervalDays) || null;
+      }
       if (form.paymentDueDate) body.paymentDueDate = form.paymentDueDate;
     }
     if (withUser && form.username && form.password) {
@@ -169,10 +176,13 @@ export default function YeniFirmaPage() {
               <div>
                 <label className={labelCls}>Ödeme Periyodu</label>
                 <select value={form.billingPeriod}
-                  onChange={(e) => setForm((f) => ({ ...f, billingPeriod: e.target.value }))}
+                  onChange={(e) => setForm((f) => ({ ...f, billingPeriod: e.target.value as BillingPeriod }))}
                   className={inputCls} style={{ ...inputStyle, cursor: "pointer" }}>
-                  <option value="AYLIK" style={{ background: "#0f0f14" }}>Aylık</option>
-                  <option value="HAFTALIK" style={{ background: "#0f0f14" }}>Haftalık</option>
+                  {BILLING_PERIODS.map((p) => (
+                    <option key={p} value={p} style={{ background: "#0f0f14" }}>
+                      {BILLING_PERIOD_LABEL[p]}
+                    </option>
+                  ))}
                 </select>
               </div>
               <div>
@@ -182,6 +192,15 @@ export default function YeniFirmaPage() {
                   className={inputCls} style={inputStyle} />
               </div>
             </div>
+
+            {needsIntervalDays(form.billingPeriod) && (
+              <div className="mt-4">
+                <label className={labelCls}>Kaç günde bir?</label>
+                <input type="number" min={1} max={365} value={form.billingIntervalDays}
+                  onChange={(e) => setForm((f) => ({ ...f, billingIntervalDays: e.target.value }))}
+                  placeholder="Örn: 45" className={inputCls} style={inputStyle} />
+              </div>
+            )}
           </div>
 
           {/* Müşteri girişi */}
