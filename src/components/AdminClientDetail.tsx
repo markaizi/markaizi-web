@@ -7,6 +7,7 @@ import {
   BILLING_PERIODS, BILLING_PERIOD_LABEL, needsIntervalDays, type BillingPeriod,
 } from "@/lib/billingPeriod";
 import Notes from "@/components/Notes";
+import ClientNotificationComposer from "@/components/ClientNotificationComposer";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -21,6 +22,7 @@ export interface ClientDetailData {
   billingAmount: string;
   billingPeriod: BillingPeriod | "";
   billingIntervalDays: number | null;
+  overdueGraceDays: number | null;
   dailyMetaSpend: string;
   dailyGoogleSpend: string;
   active: boolean;
@@ -58,8 +60,11 @@ export interface ClientDetailData {
     spend: string;
     impressions: string;
     clicks: string;
+    messages: string;
     summary: string;
     publishedAt: string;
+    hasPdf: boolean;
+    pdfFilename: string;
   }[];
 }
 
@@ -208,6 +213,7 @@ function EditBtn({ onClick }: { onClick: () => void }) {
 export default function AdminClientDetail({ data, unreadNoteCount = 0 }: { data: ClientDetailData; unreadNoteCount?: number }) {
   const router = useRouter();
   const [tab, setTab] = useState<"genel" | "icerikler" | "guncellemeler" | "faturalar" | "raporlar" | "notlar" | "kullanici">("genel");
+  const [showNotifComposer, setShowNotifComposer] = useState(false);
 
   async function handleLogout() {
     try { await fetch("/api/musteri/auth/logout", { method: "POST" }); } catch { /* ignore */ }
@@ -256,11 +262,26 @@ export default function AdminClientDetail({ data, unreadNoteCount = 0 }: { data:
           >
             {data.name.charAt(0).toUpperCase()}
           </div>
-          <div>
+          <div className="min-w-0 flex-1">
             <h1 className="font-black text-[22px] text-white">{data.name}</h1>
             <p className="text-[13px] text-[#8a8a9a]">/{data.slug}</p>
           </div>
+          <button
+            onClick={() => setShowNotifComposer(true)}
+            className="text-[12.5px] font-semibold px-3.5 py-2 rounded-lg transition-colors flex-shrink-0 flex items-center gap-1.5"
+            style={{ background: "rgba(168,85,247,0.1)", border: "1px solid rgba(168,85,247,0.25)", color: "#c084fc" }}
+          >
+            🔔 Bildirim Yaz
+          </button>
         </div>
+
+        {showNotifComposer && (
+          <ClientNotificationComposer
+            clientSlug={data.slug}
+            clientName={data.name}
+            onClose={() => setShowNotifComposer(false)}
+          />
+        )}
 
         {/* Sekmeler — yatay kaydırmalı, mobilde kırılmıyor */}
         <div className="flex gap-1 mb-7 overflow-x-auto pb-1 -mx-6 px-6 sm:mx-0 sm:px-0 sm:flex-wrap" style={{ scrollbarWidth: "none" }}>
@@ -319,6 +340,7 @@ function GenelTab({ data, router }: { data: ClientDetailData; router: ReturnType
     billingAmount: data.billingAmount,
     billingPeriod: (data.billingPeriod || "AYLIK") as BillingPeriod,
     billingIntervalDays: data.billingIntervalDays ? String(data.billingIntervalDays) : "",
+    overdueGraceDays: data.overdueGraceDays ? String(data.overdueGraceDays) : "",
     dailyMetaSpend: data.dailyMetaSpend, dailyGoogleSpend: data.dailyGoogleSpend,
   });
   const [loading, setLoading] = useState(false);
@@ -345,6 +367,7 @@ function GenelTab({ data, router }: { data: ClientDetailData; router: ReturnType
         billingIntervalDays: needsIntervalDays(form.billingPeriod)
           ? Number(form.billingIntervalDays) || null
           : null,
+        overdueGraceDays: Number(form.overdueGraceDays) || null,
       }),
     });
     const json = await res.json();
@@ -452,6 +475,24 @@ function GenelTab({ data, router }: { data: ClientDetailData; router: ReturnType
             Bu firmada faturalar otomatik oluşmaz — &quot;Faturalar&quot; sekmesinden elle eklersiniz.
           </p>
         )}
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <Field label="Gecikme Eşiği (gün, opsiyonel)">
+            <Input
+              type="number"
+              min={1}
+              max={90}
+              value={form.overdueGraceDays}
+              onChange={(e) => setForm((f) => ({ ...f, overdueGraceDays: e.target.value }))}
+              placeholder="Varsayılan: 7"
+            />
+          </Field>
+          <div className="flex items-end pb-2">
+            <p className="text-[11px] text-[#8a8a9a] leading-relaxed">
+              Vade tarihinden bu kadar gün sonra fatura &quot;Gecikmede&quot; sayılır. Boş bırakılırsa genel varsayılan (7 gün) kullanılır.
+            </p>
+          </div>
+        </div>
 
         <div className="pt-1 pb-1">
           <p className="text-[13px] font-semibold text-white">Günlük Reklam Harcaması</p>
@@ -804,7 +845,7 @@ function fmtReportDate(iso: string) {
 }
 
 function RaporlarTab({ slug, reports, router }: { slug: string; reports: AdReport[]; router: ReturnType<typeof useRouter> }) {
-  const emptyForm = { platform: "META" as AdReport["platform"], month: "", spend: "", impressions: "", clicks: "", summary: "" };
+  const emptyForm = { platform: "META" as AdReport["platform"], month: "", spend: "", impressions: "", clicks: "", messages: "", summary: "" };
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState(emptyForm);
   const [loading, setLoading] = useState(false);
@@ -814,11 +855,31 @@ function RaporlarTab({ slug, reports, router }: { slug: string; reports: AdRepor
   const [editForm, setEditForm] = useState(emptyForm);
   const [editLoading, setEditLoading] = useState(false);
   const [editErr, setEditErr] = useState("");
+  const [uploadingPdfFor, setUploadingPdfFor] = useState<string | null>(null);
+  const [pdfErr, setPdfErr] = useState<Record<string, string>>({});
 
   function startEdit(r: AdReport) {
     setEditingId(r.id);
-    setEditForm({ platform: r.platform, month: r.month, spend: r.spend, impressions: r.impressions, clicks: r.clicks, summary: r.summary });
+    setEditForm({ platform: r.platform, month: r.month, spend: r.spend, impressions: r.impressions, clicks: r.clicks, messages: r.messages, summary: r.summary });
     setEditErr("");
+  }
+
+  async function handlePdfUpload(reportId: string, file: File) {
+    setUploadingPdfFor(reportId);
+    setPdfErr((p) => ({ ...p, [reportId]: "" }));
+    const fd = new FormData();
+    fd.append("file", file);
+    const res = await fetch(`/api/musteri/admin/reports/${reportId}/pdf`, { method: "POST", body: fd });
+    const json = await res.json().catch(() => ({}));
+    setUploadingPdfFor(null);
+    if (!res.ok) { setPdfErr((p) => ({ ...p, [reportId]: json.error ?? "Yüklenemedi." })); return; }
+    router.refresh();
+  }
+
+  async function handlePdfRemove(reportId: string) {
+    if (!confirm("PDF'i kaldır?")) return;
+    await fetch(`/api/musteri/admin/reports/${reportId}/pdf`, { method: "DELETE" });
+    router.refresh();
   }
 
   async function handleSave(e: React.FormEvent) {
@@ -877,7 +938,7 @@ function RaporlarTab({ slug, reports, router }: { slug: string; reports: AdRepor
               <Input required value={editForm.month} onChange={(e) => setEditForm((x) => ({ ...x, month: e.target.value }))} placeholder="Temmuz 2026" />
             </Field>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <Field label="Harcama">
               <Input value={editForm.spend} onChange={(e) => setEditForm((x) => ({ ...x, spend: e.target.value }))} placeholder="5.000 ₺" />
             </Field>
@@ -887,9 +948,12 @@ function RaporlarTab({ slug, reports, router }: { slug: string; reports: AdRepor
             <Field label="Tıklama">
               <Input value={editForm.clicks} onChange={(e) => setEditForm((x) => ({ ...x, clicks: e.target.value }))} placeholder="850" />
             </Field>
+            <Field label="Mesajlaşma">
+              <Input value={editForm.messages} onChange={(e) => setEditForm((x) => ({ ...x, messages: e.target.value }))} placeholder="84" />
+            </Field>
           </div>
-          <Field label="Özet (opsiyonel)">
-            <Textarea value={editForm.summary} onChange={(e) => setEditForm((x) => ({ ...x, summary: e.target.value }))} placeholder="Neye ne kadar harcandığına dair kısa özet..." />
+          <Field label="Süreç Notu (opsiyonel)">
+            <Textarea value={editForm.summary} onChange={(e) => setEditForm((x) => ({ ...x, summary: e.target.value }))} placeholder="Bu ay yapılan paylaşımlar, süreç nasıl gitti..." />
           </Field>
           <ErrMsg msg={editErr} />
           <div className="flex gap-2">
@@ -912,10 +976,50 @@ function RaporlarTab({ slug, reports, router }: { slug: string; reports: AdRepor
                   r.spend && `Harcama: ${r.spend}`,
                   r.impressions && `Görüntülenme: ${r.impressions}`,
                   r.clicks && `Tıklama: ${r.clicks}`,
+                  r.messages && `Mesajlaşma: ${r.messages}`,
                 ].filter(Boolean).join(" · ") || "Detay girilmemiş"}
               </p>
               {r.summary && <p className="text-[12px] text-[#8a8a9a] mt-1 whitespace-pre-wrap leading-relaxed">{r.summary}</p>}
               <p className="text-[11px] text-[#555] mt-1.5">Yayınlanma: {fmtReportDate(r.publishedAt)}</p>
+
+              <div className="flex items-center gap-2 mt-2.5 flex-wrap">
+                {r.hasPdf ? (
+                  <>
+                    <a
+                      href={`/api/musteri/reports/${r.id}/pdf`}
+                      className="text-[11px] font-semibold px-2.5 py-1.5 rounded-lg transition-colors"
+                      style={{ background: "rgba(52,211,153,0.1)", color: "#34d399", border: "1px solid rgba(52,211,153,0.25)" }}
+                    >
+                      📄 {r.pdfFilename || "PDF"} — indir
+                    </a>
+                    <button
+                      onClick={() => handlePdfRemove(r.id)}
+                      className="text-[11px] font-semibold px-2 py-1.5"
+                      style={{ color: "#f87171" }}
+                    >
+                      Kaldır
+                    </button>
+                  </>
+                ) : (
+                  <label className="text-[11px] font-semibold px-2.5 py-1.5 rounded-lg cursor-pointer transition-colors"
+                    style={{ background: "var(--bg)", color: "#8a8a9a", border: "1px solid var(--border)" }}
+                  >
+                    {uploadingPdfFor === r.id ? "Yükleniyor..." : "📎 PDF Ekle"}
+                    <input
+                      type="file"
+                      accept="application/pdf"
+                      className="hidden"
+                      disabled={uploadingPdfFor === r.id}
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) handlePdfUpload(r.id, file);
+                        e.target.value = "";
+                      }}
+                    />
+                  </label>
+                )}
+              </div>
+              {pdfErr[r.id] && <p className="text-[11px] mt-1" style={{ color: "#f87171" }}>{pdfErr[r.id]}</p>}
             </div>
             <div className="flex items-center gap-2 flex-shrink-0">
               <EditBtn onClick={() => startEdit(r)} />
@@ -946,7 +1050,7 @@ function RaporlarTab({ slug, reports, router }: { slug: string; reports: AdRepor
               <Input required value={form.month} onChange={(e) => setForm((x) => ({ ...x, month: e.target.value }))} placeholder="Temmuz 2026" />
             </Field>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <Field label="Harcama">
               <Input value={form.spend} onChange={(e) => setForm((x) => ({ ...x, spend: e.target.value }))} placeholder="5.000 ₺" />
             </Field>
@@ -956,10 +1060,14 @@ function RaporlarTab({ slug, reports, router }: { slug: string; reports: AdRepor
             <Field label="Tıklama">
               <Input value={form.clicks} onChange={(e) => setForm((x) => ({ ...x, clicks: e.target.value }))} placeholder="850" />
             </Field>
+            <Field label="Mesajlaşma">
+              <Input value={form.messages} onChange={(e) => setForm((x) => ({ ...x, messages: e.target.value }))} placeholder="84" />
+            </Field>
           </div>
-          <Field label="Özet (opsiyonel)">
-            <Textarea value={form.summary} onChange={(e) => setForm((x) => ({ ...x, summary: e.target.value }))} placeholder="Neye ne kadar harcandığına dair kısa özet..." />
+          <Field label="Süreç Notu (opsiyonel)">
+            <Textarea value={form.summary} onChange={(e) => setForm((x) => ({ ...x, summary: e.target.value }))} placeholder="Bu ay yapılan paylaşımlar, süreç nasıl gitti..." />
           </Field>
+          <p className="text-[11px] text-[#8a8a9a] -mt-1">PDF raporu, kaydettikten sonra bu kartın üzerinden ekleyebilirsiniz.</p>
           <ErrMsg msg={err} />
           <div className="flex gap-2">
             <SaveBtn loading={loading} label="Yayınla" />

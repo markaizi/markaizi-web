@@ -15,6 +15,7 @@ const schema = z.object({
   billingAmount: z.string().max(60).nullable().optional(),
   billingPeriod: z.enum(BILLING_PERIODS).nullable().optional(),
   billingIntervalDays: z.number().int().min(1).max(365).nullable().optional(),
+  overdueGraceDays: z.number().int().min(1).max(90).nullable().optional(),
   dailyMetaSpend: z.string().max(60).nullable().optional(),
   dailyGoogleSpend: z.string().max(60).nullable().optional(),
   active: z.boolean().optional(),

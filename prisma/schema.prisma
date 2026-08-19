@@ -189,18 +189,23 @@ model Client {
   // Yalnızca billingPeriod = OZEL_GUN iken kullanılır: kaç günde bir tahsil edilecek.
   billingIntervalDays Int?
 
+  // Vade gününden kaç gün sonra fatura "Gecikmede" sayılsın — boşsa genel varsayılan
+  // (OVERDUE_GRACE_DAYS, 7 gün) kullanılır. Firma özelinde daha sıkı/gevşek tutmak için.
+  overdueGraceDays Int?
+
   // Günlük reklam harcaması — müşteri kendi panelinde görür, admin/çalışan girer
   dailyMetaSpend   String?
   dailyGoogleSpend String?
 
-  updates       Update[]
-  contentItems  ContentItem[]
-  invoices      Invoice[]
-  notes         Note[]
-  assignments   Assignment[]
-  users         User[]         @relation("ClientUsers")
-  workflowCards WorkflowCard[]
-  adReports     AdReport[]
+  updates             Update[]
+  contentItems        ContentItem[]
+  invoices            Invoice[]
+  notes               Note[]
+  assignments         Assignment[]
+  users               User[]               @relation("ClientUsers")
+  workflowCards       WorkflowCard[]
+  adReports           AdReport[]
+  clientNotifications ClientNotification[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -386,13 +391,35 @@ model AdReport {
   spend       String?
   impressions String?
   clicks      String?
+  messages    String? // mesajlaşma/sohbet sayısı
   summary     String?
   authorId    String?
+
+  // Meta/Google'dan indirilen PDF raporu — küçük hacimli, ayrı depolama servisi
+  // gerektirmesin diye doğrudan veritabanında tutulur.
+  pdfData     Bytes?
+  pdfFilename String?
+  pdfMimeType String?
 
   client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
   author User?  @relation("AdReportAuthor", fields: [authorId], references: [id], onDelete: SetNull)
 
   publishedAt DateTime @default(now())
+}
+
+// Admin'in tek bir firmaya özel yazdığı bildirim — örn. "faturanız ödenmediği
+// için reklamlarınız duraklatıldı" gibi. StaffNotification'ın müşteri karşılığı;
+// burada tür/popup ayrımı yok, sade bir gelen kutusu.
+model ClientNotification {
+  id       String  @id @default(cuid())
+  clientId String
+  title    String
+  body     String
+  readAt   DateTime?
+
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
 }
 
 // ── İş Kayıtları — çalışan (freelancer) yaptığı işi günlük olarak girer,

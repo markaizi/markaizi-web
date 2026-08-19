@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { getInvoiceStage } from "@/lib/invoiceStage";
+import { getInvoiceStage, OVERDUE_GRACE_DAYS } from "@/lib/invoiceStage";
 import AdminClientDetail, { type ClientDetailData } from "@/components/AdminClientDetail";
 
 export const dynamic = "force-dynamic";
@@ -42,7 +42,15 @@ export default async function AdminClientPage({
         invoices: { orderBy: { id: "desc" } },
         contentItems: { orderBy: { scheduledDate: "desc" } },
         users: { where: { role: "CLIENT" }, select: { id: true, username: true, name: true, email: true } },
-        adReports: { orderBy: { publishedAt: "desc" } },
+        // pdfData bilerek seçilmiyor — büyük binary alanı sayfa prop'larına taşımamak için;
+        // varlığı yalnızca pdfFilename'in dolu olup olmadığından anlaşılır.
+        adReports: {
+          orderBy: { publishedAt: "desc" },
+          select: {
+            id: true, platform: true, month: true, spend: true, impressions: true,
+            clicks: true, messages: true, summary: true, publishedAt: true, pdfFilename: true,
+          },
+        },
       },
     }),
     prisma.note.count({
@@ -79,6 +87,7 @@ export default async function AdminClientPage({
     billingAmount: client.billingAmount ?? "",
     billingPeriod: client.billingPeriod ?? "",
     billingIntervalDays: client.billingIntervalDays ?? null,
+    overdueGraceDays: client.overdueGraceDays ?? null,
     dailyMetaSpend: client.dailyMetaSpend ?? "",
     dailyGoogleSpend: client.dailyGoogleSpend ?? "",
     active: client.active,
@@ -94,7 +103,7 @@ export default async function AdminClientPage({
       amount: i.amount,
       // Ödendi/ödenmedi saklanan durum; görünen aşama vade tarihinden hesaplanır.
       paid: i.status === "ODENDI",
-      stage: getInvoiceStage(i),
+      stage: getInvoiceStage(i, new Date(), client.overdueGraceDays ?? OVERDUE_GRACE_DAYS),
       dueDate: i.dueDate?.toISOString().split("T")[0] ?? null,
     })),
     contentItems: client.contentItems.map((ci) => ({
@@ -115,8 +124,11 @@ export default async function AdminClientPage({
       spend: r.spend ?? "",
       impressions: r.impressions ?? "",
       clicks: r.clicks ?? "",
+      messages: r.messages ?? "",
       summary: r.summary ?? "",
       publishedAt: r.publishedAt.toISOString(),
+      hasPdf: !!r.pdfFilename,
+      pdfFilename: r.pdfFilename ?? "",
     })),
   };
 

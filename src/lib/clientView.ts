@@ -4,7 +4,7 @@
  * Böylece mevcut portal UI'ı değişmeden DB'den beslenir.
  */
 import { prisma } from "@/lib/db";
-import { getInvoiceStage, INVOICE_STAGE_LABEL } from "@/lib/invoiceStage";
+import { getInvoiceStage, INVOICE_STAGE_LABEL, OVERDUE_GRACE_DAYS } from "@/lib/invoiceStage";
 import type { ClientData, InvoiceStatus, RequestStatus } from "@/lib/clients";
 import {
   UpdateKind,
@@ -39,7 +39,13 @@ export async function getClientView(slug: string): Promise<ClientView | null> {
       contentItems: { orderBy: { scheduledDate: "asc" } },
       invoices: { orderBy: { id: "asc" } },
       notes: { orderBy: { createdAt: "desc" } },
-      adReports: { orderBy: { publishedAt: "desc" } },
+      adReports: {
+        orderBy: { publishedAt: "desc" },
+        select: {
+          id: true, platform: true, month: true, spend: true, impressions: true,
+          clicks: true, messages: true, summary: true, publishedAt: true, pdfFilename: true,
+        },
+      },
     },
   });
   if (!client) return null;
@@ -66,8 +72,9 @@ export async function getClientView(slug: string): Promise<ClientView | null> {
     invoices: client.invoices.map((inv) => ({
       period: inv.period,
       amount: inv.amount,
-      status: INVOICE_STAGE_LABEL[getInvoiceStage(inv)] as InvoiceStatus,
+      status: INVOICE_STAGE_LABEL[getInvoiceStage(inv, new Date(), client.overdueGraceDays ?? OVERDUE_GRACE_DAYS)] as InvoiceStatus,
       dueDate: inv.dueDate ? trDate(inv.dueDate) : undefined,
+      paid: inv.status === "ODENDI",
     })),
     invoiceNote: client.invoiceNote ?? undefined,
     requests: client.notes.map((n) => ({
@@ -83,8 +90,11 @@ export async function getClientView(slug: string): Promise<ClientView | null> {
       spend: r.spend ?? undefined,
       impressions: r.impressions ?? undefined,
       clicks: r.clicks ?? undefined,
+      messages: r.messages ?? undefined,
       summary: r.summary ?? undefined,
       publishedAt: r.publishedAt.toISOString(),
+      hasPdf: !!r.pdfFilename,
+      pdfFilename: r.pdfFilename ?? undefined,
     })),
   };
 

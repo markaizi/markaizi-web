@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import type { ClientData } from "@/lib/clients";
 import Calendar from "@/components/Calendar";
 import Notes from "@/components/Notes";
+import ClientNotificationBell from "@/components/ClientNotificationBell";
 
 type Tab = "website" | "updates" | "calendar" | "invoice" | "raporlar" | "notlar";
 
@@ -52,13 +53,16 @@ export default function ClientPortal({
   }
 
   return (
-    <Dashboard
-      client={client}
-      onLogout={handleLogout}
-      isAdminView={isAdminView}
-      isClientViewer={isClientViewer}
-      isAdmin={isAdmin}
-    />
+    <>
+      <Dashboard
+        client={client}
+        onLogout={handleLogout}
+        isAdminView={isAdminView}
+        isClientViewer={isClientViewer}
+        isAdmin={isAdmin}
+      />
+      {isClientViewer && <ClientNotificationBell />}
+    </>
   );
 }
 
@@ -227,7 +231,11 @@ function QuickSummary({ client, onNavigate }: { client: ClientData; onNavigate: 
     { label: "Günlük Google Harcaması", emoji: "🔍", color: "#34d399", value: client.dailyGoogleSpend },
   ].filter((s) => s.value);
 
-  const hasNotifications = unseenUpdate || !!unseenReport || (unreadCount !== null && unreadCount > 0);
+  const overdueInvoices = (client.invoices ?? []).filter((i) => i.status === "Gecikmede");
+  const dueInvoices = (client.invoices ?? []).filter((i) => i.status === "Bekliyor");
+
+  const hasNotifications = unseenUpdate || !!unseenReport || (unreadCount !== null && unreadCount > 0)
+    || overdueInvoices.length > 0 || dueInvoices.length > 0;
   const hasSpends = dailySpends.length > 0;
 
   if (!hasNotifications && !hasSpends) return null;
@@ -238,6 +246,31 @@ function QuickSummary({ client, onNavigate }: { client: ClientData; onNavigate: 
       {hasNotifications && (() => {
         type NotifItem = { key: string; onClick: () => void; icon: string; iconBg: string; border: string; bg: string; labelColor: string; label: string; sub: string };
         const items: NotifItem[] = [
+          overdueInvoices.length > 0
+            ? {
+                key: "overdue",
+                onClick: () => onNavigate("invoice"),
+                icon: "⚠️",
+                iconBg: "rgba(248,113,113,0.15)",
+                border: "rgba(248,113,113,0.5)",
+                bg: "rgba(248,113,113,0.08)",
+                labelColor: "#f87171",
+                label: overdueInvoices.length === 1 ? "1 faturanız gecikmede" : `${overdueInvoices.length} faturanız gecikmede`,
+                sub: "Ödemeniz için lütfen fatura bölümünü kontrol edin.",
+              }
+            : dueInvoices.length > 0
+            ? {
+                key: "due",
+                onClick: () => onNavigate("invoice"),
+                icon: "💳",
+                iconBg: "rgba(251,191,36,0.15)",
+                border: "rgba(251,191,36,0.45)",
+                bg: "rgba(251,191,36,0.08)",
+                labelColor: "#fbbf24",
+                label: dueInvoices.length === 1 ? "1 bekleyen faturanız var" : `${dueInvoices.length} bekleyen faturanız var`,
+                sub: "Ödeme tarihi geldi, fatura bölümünden görüntüleyebilirsiniz.",
+              }
+            : null,
           unseenUpdate && latestUpdate
             ? {
                 key: "update",
@@ -415,19 +448,17 @@ const invoiceBadge = (s: string) =>
   : s === "Gecikmede" ? "⚠ Gecikmede"
   : "⏳ Bekliyor";
 
-function InvoiceTab({ client }: { client: ClientData }) {
-  if (!client.invoices?.length) {
-    return <Empty text="Henüz fatura bilgisi girilmedi." />;
-  }
-  return (
-    <Section title="Fatura Bilgisi" subtitle="Ödeme geçmişiniz ve bekleyen faturalarınız">
-      {client.invoiceNote && (
-        <SectionNote text={client.invoiceNote} />
-      )}
+function parseAmountNum(raw: string): number {
+  const digits = raw.replace(/[^\d]/g, "");
+  return digits ? parseInt(digits, 10) : 0;
+}
 
+function InvoiceList({ invoices }: { invoices: NonNullable<ClientData["invoices"]> }) {
+  return (
+    <>
       {/* Mobil: kart düzeni */}
-      <div className="md:hidden space-y-3 mt-4">
-        {client.invoices.map((inv, i) => (
+      <div className="md:hidden space-y-3">
+        {invoices.map((inv, i) => (
           <div key={i} className="rounded-xl p-4" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
             <div className="flex items-start justify-between gap-3 mb-2">
               <div>
@@ -446,7 +477,7 @@ function InvoiceTab({ client }: { client: ClientData }) {
       </div>
 
       {/* Masaüstü: tablo düzeni */}
-      <div className="hidden md:block rounded-2xl overflow-hidden mt-4" style={{ border: "1px solid var(--border)" }}>
+      <div className="hidden md:block rounded-2xl overflow-hidden" style={{ border: "1px solid var(--border)" }}>
         <div
           className="grid grid-cols-4 px-5 py-3 text-[11px] font-bold uppercase tracking-wider text-[#8a8a9a]"
           style={{ background: "var(--surface-2)" }}
@@ -456,7 +487,7 @@ function InvoiceTab({ client }: { client: ClientData }) {
           <span className="text-center">Tutar</span>
           <span className="text-right">Durum</span>
         </div>
-        {client.invoices.map((inv, i) => (
+        {invoices.map((inv, i) => (
           <div
             key={i}
             className="grid grid-cols-4 px-5 py-4 items-center"
@@ -476,6 +507,57 @@ function InvoiceTab({ client }: { client: ClientData }) {
           </div>
         ))}
       </div>
+    </>
+  );
+}
+
+function InvoiceTab({ client }: { client: ClientData }) {
+  if (!client.invoices?.length) {
+    return <Empty text="Henüz fatura bilgisi girilmedi." />;
+  }
+
+  const paid = client.invoices.filter((i) => i.paid);
+  const pending = client.invoices.filter((i) => !i.paid);
+  const totalPaid = paid.reduce((sum, i) => sum + parseAmountNum(i.amount), 0);
+  const overdueCount = pending.filter((i) => i.status === "Gecikmede").length;
+
+  return (
+    <Section title="Fatura Bilgisi" subtitle="Ödeme geçmişiniz ve bekleyen faturalarınız">
+      {client.invoiceNote && (
+        <SectionNote text={client.invoiceNote} />
+      )}
+
+      {/* Özet şeridi */}
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mt-4 mb-6">
+        <div className="rounded-xl p-4" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+          <p className="text-[10px] text-[#8a8a9a] uppercase tracking-wide mb-1">Toplam Ödenen</p>
+          <p className="text-[20px] font-black gradient-text leading-none">{totalPaid.toLocaleString("tr-TR")} ₺</p>
+        </div>
+        <div className="rounded-xl p-4" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+          <p className="text-[10px] text-[#8a8a9a] uppercase tracking-wide mb-1">Bekleyen Fatura</p>
+          <p className="text-[20px] font-black text-white leading-none">{pending.length}</p>
+        </div>
+        {overdueCount > 0 && (
+          <div className="rounded-xl p-4 col-span-2 sm:col-span-1" style={{ background: "rgba(248,113,113,0.08)", border: "1px solid rgba(248,113,113,0.3)" }}>
+            <p className="text-[10px] uppercase tracking-wide mb-1" style={{ color: "#f87171" }}>Gecikmede</p>
+            <p className="text-[20px] font-black leading-none" style={{ color: "#f87171" }}>{overdueCount}</p>
+          </div>
+        )}
+      </div>
+
+      {pending.length > 0 && (
+        <div className="mb-6">
+          <p className="text-[13px] font-bold text-white mb-3">Bekleyen / Yaklaşan Faturalar</p>
+          <InvoiceList invoices={pending} />
+        </div>
+      )}
+
+      {paid.length > 0 && (
+        <div>
+          <p className="text-[13px] font-bold text-white mb-3">Geçmiş Ödemeler</p>
+          <InvoiceList invoices={paid} />
+        </div>
+      )}
     </Section>
   );
 }
@@ -534,7 +616,7 @@ function PlatformReportCard({
           <span className="text-[12px] text-[#8a8a9a] ml-auto">{latest.month}</span>
         </div>
 
-        <div className="grid grid-cols-3 gap-3 mb-3">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-3">
           <div>
             <p className="text-[10px] text-[#8a8a9a] uppercase tracking-wide mb-1">Harcama</p>
             <p className="text-[15px] font-black text-white">{latest.spend || "—"}</p>
@@ -547,12 +629,27 @@ function PlatformReportCard({
             <p className="text-[10px] text-[#8a8a9a] uppercase tracking-wide mb-1">Tıklama</p>
             <p className="text-[15px] font-black text-white">{latest.clicks || "—"}</p>
           </div>
+          <div>
+            <p className="text-[10px] text-[#8a8a9a] uppercase tracking-wide mb-1">Mesajlaşma</p>
+            <p className="text-[15px] font-black text-white">{latest.messages || "—"}</p>
+          </div>
         </div>
 
         {latest.summary && (
           <p className="text-[13px] text-[#c8c8d0] whitespace-pre-wrap leading-relaxed mb-2">{latest.summary}</p>
         )}
-        <p className="text-[11px] text-[#555]">Yayınlanma: {fmtReportDate(latest.publishedAt)}</p>
+        <div className="flex items-center justify-between gap-3 flex-wrap">
+          <p className="text-[11px] text-[#555]">Yayınlanma: {fmtReportDate(latest.publishedAt)}</p>
+          {latest.hasPdf && (
+            <a
+              href={`/api/musteri/reports/${latest.id}/pdf`}
+              className="text-[11px] font-semibold px-2.5 py-1.5 rounded-lg transition-colors"
+              style={{ background: "rgba(52,211,153,0.1)", color: "#34d399", border: "1px solid rgba(52,211,153,0.25)" }}
+            >
+              📄 PDF Raporu İndir
+            </a>
+          )}
+        </div>
 
         {history.length > 0 && (
           <button
@@ -578,9 +675,19 @@ function PlatformReportCard({
                   r.spend && `Harcama: ${r.spend}`,
                   r.impressions && `Görüntülenme: ${r.impressions}`,
                   r.clicks && `Tıklama: ${r.clicks}`,
+                  r.messages && `Mesajlaşma: ${r.messages}`,
                 ].filter(Boolean).join(" · ") || "Detay girilmemiş"}
               </p>
               {r.summary && <p className="text-[12px] text-[#8a8a9a] mt-1 whitespace-pre-wrap leading-relaxed">{r.summary}</p>}
+              {r.hasPdf && (
+                <a
+                  href={`/api/musteri/reports/${r.id}/pdf`}
+                  className="inline-block mt-2 text-[11px] font-semibold px-2.5 py-1.5 rounded-lg transition-colors"
+                  style={{ background: "rgba(52,211,153,0.1)", color: "#34d399", border: "1px solid rgba(52,211,153,0.25)" }}
+                >
+                  📄 PDF Raporu İndir
+                </a>
+              )}
             </div>
           ))}
         </div>

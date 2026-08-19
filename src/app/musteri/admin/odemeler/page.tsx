@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import OdemelerView, { type PendingInvoice } from "@/components/OdemelerView";
-import { getInvoiceStage, daysUntilDue, type InvoiceStage } from "@/lib/invoiceStage";
+import { getInvoiceStage, daysUntilDue, OVERDUE_GRACE_DAYS, type InvoiceStage } from "@/lib/invoiceStage";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
@@ -28,7 +28,7 @@ export default async function OdemelerPage() {
   // vade tarihinden hesaplanır — veritabanında saklanmaz.
   const rows = await prisma.invoice.findMany({
     where: { status: { not: "ODENDI" } },
-    include: { client: { select: { slug: true, name: true } } },
+    include: { client: { select: { slug: true, name: true, overdueGraceDays: true } } },
   });
 
   const now = new Date();
@@ -38,7 +38,7 @@ export default async function OdemelerPage() {
       period: i.period,
       amount: i.amount,
       dueDate: i.dueDate ? i.dueDate.toISOString().split("T")[0] : null,
-      stage: getInvoiceStage(i, now),
+      stage: getInvoiceStage(i, now, i.client.overdueGraceDays ?? OVERDUE_GRACE_DAYS),
       daysUntilDue: i.dueDate ? daysUntilDue(i.dueDate, now) : null,
       client: i.client,
     }))

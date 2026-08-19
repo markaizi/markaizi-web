@@ -62,7 +62,8 @@ const DAY_MS = 24 * 60 * 60 * 1000;
  */
 export function getInvoiceStage(
   invoice: { status: string; dueDate: Date | null },
-  now: Date = new Date()
+  now: Date = new Date(),
+  graceDays: number = OVERDUE_GRACE_DAYS
 ): InvoiceStage {
   if (invoice.status === "ODENDI") return "ODENDI";
   if (!invoice.dueDate) return "BEKLIYOR";
@@ -73,7 +74,7 @@ export function getInvoiceStage(
   if (today < due) return "GUNU_GELMEDI";
 
   const daysPastDue = Math.floor((today - due) / DAY_MS);
-  return daysPastDue >= OVERDUE_GRACE_DAYS ? "GECIKMEDI" : "BEKLIYOR";
+  return daysPastDue >= graceDays ? "GECIKMEDI" : "BEKLIYOR";
 }
 
 /** Vade gününe kalan (negatifse geçen) gün sayısı. */

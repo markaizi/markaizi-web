@@ -12,6 +12,7 @@ const patchSchema = z.object({
   spend: z.string().max(60).nullable().optional(),
   impressions: z.string().max(60).nullable().optional(),
   clicks: z.string().max(60).nullable().optional(),
+  messages: z.string().max(60).nullable().optional(),
   summary: z.string().max(2000).nullable().optional(),
 });
 

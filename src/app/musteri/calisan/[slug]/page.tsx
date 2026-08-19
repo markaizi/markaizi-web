@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { getInvoiceStage } from "@/lib/invoiceStage";
+import { getInvoiceStage, OVERDUE_GRACE_DAYS } from "@/lib/invoiceStage";
 import EmployeeClientDetail, { type EmployeeClientData } from "@/components/EmployeeClientDetail";
 
 export const dynamic = "force-dynamic";
@@ -48,7 +48,13 @@ export default async function CalisanClientPage({
       // Fatura görüntüleme yetkisi yoksa veri sayfaya hiç gönderilmez (sadece UI'da
       // gizlemek yetmez — sayfa kaynağından okunabilir olurdu).
       invoices: assignment.canViewInvoices ? { orderBy: { id: "desc" } } : false,
-      adReports: { orderBy: { publishedAt: "desc" } },
+      adReports: {
+        orderBy: { publishedAt: "desc" },
+        select: {
+          id: true, platform: true, month: true, spend: true, impressions: true,
+          clicks: true, messages: true, summary: true, publishedAt: true, pdfFilename: true,
+        },
+      },
     },
   });
 
@@ -85,7 +91,7 @@ export default async function CalisanClientPage({
       amount: i.amount,
       // Ödendi/ödenmedi saklanan durum; görünen aşama vade tarihinden hesaplanır.
       paid: i.status === "ODENDI",
-      stage: getInvoiceStage(i),
+      stage: getInvoiceStage(i, new Date(), client.overdueGraceDays ?? OVERDUE_GRACE_DAYS),
       dueDate: i.dueDate?.toISOString().split("T")[0] ?? null,
     })),
     adReports: client.adReports.map((r) => ({
@@ -95,8 +101,11 @@ export default async function CalisanClientPage({
       spend: r.spend ?? "",
       impressions: r.impressions ?? "",
       clicks: r.clicks ?? "",
+      messages: r.messages ?? "",
       summary: r.summary ?? "",
       publishedAt: r.publishedAt.toISOString(),
+      hasPdf: !!r.pdfFilename,
+      pdfFilename: r.pdfFilename ?? "",
     })),
   };
 

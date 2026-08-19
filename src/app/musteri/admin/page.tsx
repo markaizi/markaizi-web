@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import AdminPanel, { type AdminClientSummary } from "@/components/AdminPanel";
-import { getInvoiceStage } from "@/lib/invoiceStage";
+import { getInvoiceStage, OVERDUE_GRACE_DAYS } from "@/lib/invoiceStage";
 
 export const dynamic = "force-dynamic";
 
@@ -76,7 +76,8 @@ export default async function AdminPage() {
   const clients: AdminClientSummary[] = rows.map((c) => {
     // Aşama vade tarihinden hesaplanır. Rozetlerde yalnızca aksiyon gereken
     // faturalar sayılır — vadesi gelmemiş olanlar sayıya girmez.
-    const stages = c.invoices.map((i) => getInvoiceStage(i, today));
+    const graceDays = c.overdueGraceDays ?? OVERDUE_GRACE_DAYS;
+    const stages = c.invoices.map((i) => getInvoiceStage(i, today, graceDays));
     const pendingInvoices = stages.filter((s) => s === "BEKLIYOR" || s === "GECIKMEDI");
     const overdueInvoices = stages.filter((s) => s === "GECIKMEDI");
     return {

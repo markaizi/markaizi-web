@@ -19,6 +19,7 @@ export interface Invoice {
   amount: string;      // "20.000 ₺"
   status: InvoiceStatus;
   dueDate?: string;    // Sadece "Bekliyor" olanlar için: "20 Haziran 2025"
+  paid?: boolean;      // Ham durum — toplam ödenen hesabı için (status metni gecikme/vade gösterir)
 }
 
 /** Müşteri isteği */
@@ -37,8 +38,11 @@ export interface AdReportItem {
   spend?: string;        // "12.500 ₺"
   impressions?: string;  // "45.000"
   clicks?: string;       // "1.200"
+  messages?: string;     // "84"
   summary?: string;
   publishedAt: string;
+  hasPdf?: boolean;
+  pdfFilename?: string;
 }
 
 export interface ClientData {

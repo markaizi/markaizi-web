@@ -38,8 +38,11 @@ export interface EmployeeClientData {
     spend: string;
     impressions: string;
     clicks: string;
+    messages: string;
     summary: string;
     publishedAt: string;
+    hasPdf: boolean;
+    pdfFilename: string;
   }[];
 }
 
@@ -478,12 +481,14 @@ function fmtReportDate(iso: string) {
 function EmpRaporlarTab({ slug, reports, router }: {
   slug: string; reports: AdReport[]; router: ReturnType<typeof useRouter>;
 }) {
-  const emptyForm = { platform: "META" as AdReport["platform"], month: "", spend: "", impressions: "", clicks: "", summary: "" };
+  const emptyForm = { platform: "META" as AdReport["platform"], month: "", spend: "", impressions: "", clicks: "", messages: "", summary: "" };
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState(emptyForm);
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
   const [deleting, setDeleting] = useState<string | null>(null);
+  const [uploadingPdfFor, setUploadingPdfFor] = useState<string | null>(null);
+  const [pdfErr, setPdfErr] = useState<Record<string, string>>({});
 
   async function handleAdd(e: React.FormEvent) {
     e.preventDefault(); setLoading(true); setErr("");
@@ -500,6 +505,24 @@ function EmpRaporlarTab({ slug, reports, router }: {
     setDeleting(id);
     await fetch(`/api/musteri/admin/reports/${id}`, { method: "DELETE" });
     setDeleting(null);
+    router.refresh();
+  }
+
+  async function handlePdfUpload(reportId: string, file: File) {
+    setUploadingPdfFor(reportId);
+    setPdfErr((p) => ({ ...p, [reportId]: "" }));
+    const fd = new FormData();
+    fd.append("file", file);
+    const res = await fetch(`/api/musteri/admin/reports/${reportId}/pdf`, { method: "POST", body: fd });
+    const json = await res.json().catch(() => ({}));
+    setUploadingPdfFor(null);
+    if (!res.ok) { setPdfErr((p) => ({ ...p, [reportId]: json.error ?? "Yüklenemedi." })); return; }
+    router.refresh();
+  }
+
+  async function handlePdfRemove(reportId: string) {
+    if (!confirm("PDF'i kaldır?")) return;
+    await fetch(`/api/musteri/admin/reports/${reportId}/pdf`, { method: "DELETE" });
     router.refresh();
   }
 
@@ -520,10 +543,46 @@ function EmpRaporlarTab({ slug, reports, router }: {
                   r.spend && `Harcama: ${r.spend}`,
                   r.impressions && `Görüntülenme: ${r.impressions}`,
                   r.clicks && `Tıklama: ${r.clicks}`,
+                  r.messages && `Mesajlaşma: ${r.messages}`,
                 ].filter(Boolean).join(" · ") || "Detay girilmemiş"}
               </p>
               {r.summary && <p className="text-[12px] text-[#8a8a9a] mt-1 whitespace-pre-wrap leading-relaxed">{r.summary}</p>}
               <p className="text-[11px] text-[#555] mt-1.5">Yayınlanma: {fmtReportDate(r.publishedAt)}</p>
+
+              <div className="flex items-center gap-2 mt-2.5 flex-wrap">
+                {r.hasPdf ? (
+                  <>
+                    <a
+                      href={`/api/musteri/reports/${r.id}/pdf`}
+                      className="text-[11px] font-semibold px-2.5 py-1.5 rounded-lg transition-colors"
+                      style={{ background: "rgba(52,211,153,0.1)", color: "#34d399", border: "1px solid rgba(52,211,153,0.25)" }}
+                    >
+                      📄 {r.pdfFilename || "PDF"} — indir
+                    </a>
+                    <button onClick={() => handlePdfRemove(r.id)} className="text-[11px] font-semibold px-2 py-1.5" style={{ color: "#f87171" }}>
+                      Kaldır
+                    </button>
+                  </>
+                ) : (
+                  <label className="text-[11px] font-semibold px-2.5 py-1.5 rounded-lg cursor-pointer transition-colors"
+                    style={{ background: "var(--bg)", color: "#8a8a9a", border: "1px solid var(--border)" }}
+                  >
+                    {uploadingPdfFor === r.id ? "Yükleniyor..." : "📎 PDF Ekle"}
+                    <input
+                      type="file"
+                      accept="application/pdf"
+                      className="hidden"
+                      disabled={uploadingPdfFor === r.id}
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) handlePdfUpload(r.id, file);
+                        e.target.value = "";
+                      }}
+                    />
+                  </label>
+                )}
+              </div>
+              {pdfErr[r.id] && <p className="text-[11px] mt-1" style={{ color: "#f87171" }}>{pdfErr[r.id]}</p>}
             </div>
             <button onClick={() => handleDelete(r.id)} disabled={deleting === r.id}
               className="text-[12px] text-red-400 hover:text-red-300 transition-colors px-2 py-1 rounded flex-shrink-0">
@@ -557,7 +616,7 @@ function EmpRaporlarTab({ slug, reports, router }: {
                 style={{ background: "var(--bg)", border: "1px solid var(--border)" }} />
             </div>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             <div>
               <label className="block text-[11px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1.5">Harcama</label>
               <input value={form.spend} onChange={(e) => setForm((f) => ({ ...f, spend: e.target.value }))} placeholder="5.000 ₺"
@@ -576,13 +635,20 @@ function EmpRaporlarTab({ slug, reports, router }: {
                 className="w-full px-3 py-2 rounded-lg text-[14px] text-white placeholder-[#555] outline-none"
                 style={{ background: "var(--bg)", border: "1px solid var(--border)" }} />
             </div>
+            <div>
+              <label className="block text-[11px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1.5">Mesajlaşma</label>
+              <input value={form.messages} onChange={(e) => setForm((f) => ({ ...f, messages: e.target.value }))} placeholder="84"
+                className="w-full px-3 py-2 rounded-lg text-[14px] text-white placeholder-[#555] outline-none"
+                style={{ background: "var(--bg)", border: "1px solid var(--border)" }} />
+            </div>
           </div>
           <div>
-            <label className="block text-[11px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1.5">Özet (opsiyonel)</label>
-            <textarea rows={3} value={form.summary} onChange={(e) => setForm((f) => ({ ...f, summary: e.target.value }))} placeholder="Neye ne kadar harcandığına dair kısa özet..."
+            <label className="block text-[11px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1.5">Süreç Notu (opsiyonel)</label>
+            <textarea rows={3} value={form.summary} onChange={(e) => setForm((f) => ({ ...f, summary: e.target.value }))} placeholder="Bu ay yapılan paylaşımlar, süreç nasıl gitti..."
               className="w-full px-3 py-2 rounded-lg text-[14px] text-white placeholder-[#555] outline-none resize-none"
               style={{ background: "var(--bg)", border: "1px solid var(--border)" }} />
           </div>
+          <p className="text-[11px] text-[#8a8a9a] -mt-1">PDF raporu, kaydettikten sonra bu kartın üzerinden ekleyebilirsiniz.</p>
           {err && <p className="text-[12px] text-red-400">{err}</p>}
           <div className="flex gap-2">
             <button type="submit" disabled={loading} className="btn btn-primary text-sm px-5 py-2">{loading ? "..." : "Yayınla"}</button>
