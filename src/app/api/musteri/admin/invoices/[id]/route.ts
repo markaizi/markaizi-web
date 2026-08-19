@@ -55,15 +55,26 @@ export async function PATCH(
     if (client.billingPeriod === "HAFTALIK") next.setUTCDate(next.getUTCDate() + 7);
     else next.setUTCMonth(next.getUTCMonth() + 1);
 
-    await prisma.invoice.create({
-      data: {
-        clientId: client.id,
-        period: client.billingPeriod === "HAFTALIK" ? "Haftalık Ödeme" : "Aylık Ödeme",
-        amount: client.billingAmount,
-        dueDate: next,
-        status: "BEKLIYOR",
-      },
+    // Aynı vade için zaten bir fatura varsa yenisini açma. Bu olmadan, bir fatura
+    // "Ödendi" ↔ "Ödenmedi" arasında her gidip geldiğinde sonraki dönem için bir
+    // fatura daha üretiliyordu; sonuç, aynı firmanın peş peşe günlerde birden çok
+    // ödemesi varmış gibi görünmesiydi.
+    const alreadyExists = await prisma.invoice.findFirst({
+      where: { clientId: client.id, dueDate: next },
+      select: { id: true },
     });
+
+    if (!alreadyExists) {
+      await prisma.invoice.create({
+        data: {
+          clientId: client.id,
+          period: client.billingPeriod === "HAFTALIK" ? "Haftalık Ödeme" : "Aylık Ödeme",
+          amount: client.billingAmount,
+          dueDate: next,
+          status: "BEKLIYOR",
+        },
+      });
+    }
   }
 
   return NextResponse.json({ ok: true });
