@@ -410,12 +410,28 @@ model AdReport {
 // Admin'in tek bir firmaya özel yazdığı bildirim — örn. "faturanız ödenmediği
 // için reklamlarınız duraklatıldı" gibi. StaffNotification'ın müşteri karşılığı;
 // burada tür/popup ayrımı yok, sade bir gelen kutusu.
+enum ClientNotificationSeverity {
+  YESIL   // iyi haber — popup havai fişek efektiyle gösterilir
+  SARI    // önemli, müşteri kısa bir yanıt yazabilir (admin'e iletilir)
+  KIRMIZI // acil — admin kaldırana kadar Raporlar ve İçerik Takvimi sekmeleri kilitlenir
+}
+
 model ClientNotification {
-  id       String  @id @default(cuid())
+  id       String                      @id @default(cuid())
   clientId String
+  severity ClientNotificationSeverity  @default(SARI)
   title    String
   body     String
   readAt   DateTime?
+
+  // Giriş sonrası bir kerelik popup olarak gösterilir, kapatılınca poppedAt set edilir
+  // (StaffNotification'daki popup mekanizmasının aynısı). KIRMIZI'nin kilit etkisi
+  // buna bağlı değildir — yalnızca kayıt silinene kadar sürer.
+  poppedAt DateTime?
+
+  // Yalnızca SARI'da kullanılır — müşterinin admin'e gönderdiği kısa yanıt.
+  reply     String?
+  repliedAt DateTime?
 
   client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
 

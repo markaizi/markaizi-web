@@ -7,6 +7,7 @@ export const runtime = "nodejs";
 
 const schema = z.object({
   clientSlug: z.string().min(1),
+  severity: z.enum(["YESIL", "SARI", "KIRMIZI"]),
   title: z.string().trim().min(1).max(120),
   body: z.string().trim().min(1).max(2000),
 });
@@ -26,7 +27,10 @@ export async function GET(req: NextRequest) {
     where: { clientId: client.id },
     orderBy: { createdAt: "desc" },
     take: 20,
-    select: { id: true, title: true, body: true, readAt: true, createdAt: true },
+    select: {
+      id: true, severity: true, title: true, body: true, readAt: true, createdAt: true,
+      reply: true, repliedAt: true,
+    },
   });
   return NextResponse.json({ items });
 }
@@ -37,11 +41,11 @@ export async function POST(req: NextRequest) {
 
   const parsed = schema.safeParse(await req.json().catch(() => ({})));
   if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
-  const { clientSlug, title, body } = parsed.data;
+  const { clientSlug, severity, title, body } = parsed.data;
 
   const client = await prisma.client.findUnique({ where: { slug: clientSlug }, select: { id: true } });
   if (!client) return NextResponse.json({ error: "Firma bulunamadı." }, { status: 404 });
 
-  await prisma.clientNotification.create({ data: { clientId: client.id, title, body } });
+  await prisma.clientNotification.create({ data: { clientId: client.id, severity, title, body } });
   return NextResponse.json({ ok: true });
 }

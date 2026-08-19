@@ -5,6 +5,8 @@ import type { ClientData } from "@/lib/clients";
 import Calendar from "@/components/Calendar";
 import Notes from "@/components/Notes";
 import ClientNotificationBell from "@/components/ClientNotificationBell";
+import ClientPopupNotification from "@/components/ClientPopupNotification";
+import { SEVERITY_META, type ClientNotificationSeverity } from "@/lib/clientNotifySeverity";
 
 type Tab = "website" | "updates" | "calendar" | "invoice" | "raporlar" | "notlar";
 
@@ -61,7 +63,12 @@ export default function ClientPortal({
         isClientViewer={isClientViewer}
         isAdmin={isAdmin}
       />
-      {isClientViewer && <ClientNotificationBell />}
+      {isClientViewer && (
+        <>
+          <ClientNotificationBell />
+          <ClientPopupNotification />
+        </>
+      )}
     </>
   );
 }
@@ -134,7 +141,7 @@ function Dashboard({
             </div>
           </div>
           {/* Inline özet */}
-          <QuickSummary client={client} onNavigate={setActiveTab} />
+          <QuickSummary client={client} onNavigate={setActiveTab} isClientViewer={isClientViewer} />
         </div>
 
         {/* Sekmeler — yatay pill bar */}
@@ -170,9 +177,17 @@ function Dashboard({
         <div>
           {activeTab === "website"  && <WebsiteTab  client={client} />}
           {activeTab === "updates"  && <UpdatesTab  client={client} />}
-          {activeTab === "calendar" && <CalendarTab clientSlug={client.slug} />}
+          {activeTab === "calendar" && (
+            isClientViewer && client.notificationLock
+              ? <NotificationLockNotice lock={client.notificationLock} />
+              : <CalendarTab clientSlug={client.slug} />
+          )}
           {activeTab === "invoice"  && <InvoiceTab  client={client} />}
-          {activeTab === "raporlar" && <ReportsTab  client={client} />}
+          {activeTab === "raporlar" && (
+            isClientViewer && client.notificationLock
+              ? <NotificationLockNotice lock={client.notificationLock} />
+              : <ReportsTab client={client} />
+          )}
           {activeTab === "notlar"   && (
             <Notes
               clientSlug={client.slug}
@@ -188,11 +203,27 @@ function Dashboard({
 }
 
 // ── Inline Özet (greeting altı) ───────────────────────────────────────────────
-function QuickSummary({ client, onNavigate }: { client: ClientData; onNavigate: (tab: Tab) => void }) {
+function QuickSummary({ client, onNavigate, isClientViewer }: { client: ClientData; onNavigate: (tab: Tab) => void; isClientViewer: boolean }) {
   const [unreadCount, setUnreadCount] = useState<number | null>(null);
   const [latestUpdate, setLatestUpdate] = useState<{ date: string; text: string } | null>(null);
   const [unseenUpdate, setUnseenUpdate] = useState(false);
   const [unseenReport, setUnseenReport] = useState<{ id: string; platform: string; month: string } | null>(null);
+  const [unseenClientNotif, setUnseenClientNotif] = useState<{ severity: ClientNotificationSeverity; title: string } | null>(null);
+
+  useEffect(() => {
+    if (!isClientViewer) return;
+    fetch("/api/musteri/client-notifications")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data: { items?: { id: string; severity: ClientNotificationSeverity; title: string; readAt: string | null }[] } | null) => {
+        const unread = (data?.items ?? []).filter((n) => !n.readAt);
+        if (unread.length === 0) return;
+        // En yüksek öncelikli olanı göster: kırmızı > sarı > yeşil
+        const order: ClientNotificationSeverity[] = ["KIRMIZI", "SARI", "YESIL"];
+        const top = unread.sort((a, b) => order.indexOf(a.severity) - order.indexOf(b.severity))[0];
+        setUnseenClientNotif({ severity: top.severity, title: top.title });
+      })
+      .catch(() => {});
+  }, [isClientViewer]);
 
   useEffect(() => {
     fetch("/api/musteri/notifications")
@@ -235,7 +266,7 @@ function QuickSummary({ client, onNavigate }: { client: ClientData; onNavigate: 
   const dueInvoices = (client.invoices ?? []).filter((i) => i.status === "Bekliyor");
 
   const hasNotifications = unseenUpdate || !!unseenReport || (unreadCount !== null && unreadCount > 0)
-    || overdueInvoices.length > 0 || dueInvoices.length > 0;
+    || overdueInvoices.length > 0 || dueInvoices.length > 0 || !!unseenClientNotif;
   const hasSpends = dailySpends.length > 0;
 
   if (!hasNotifications && !hasSpends) return null;
@@ -246,6 +277,22 @@ function QuickSummary({ client, onNavigate }: { client: ClientData; onNavigate: 
       {hasNotifications && (() => {
         type NotifItem = { key: string; onClick: () => void; icon: string; iconBg: string; border: string; bg: string; labelColor: string; label: string; sub: string };
         const items: NotifItem[] = [
+          unseenClientNotif
+            ? {
+                key: "client-notif",
+                onClick: () => {
+                  setUnseenClientNotif(null);
+                  document.getElementById("client-notif-bell-btn")?.click();
+                },
+                icon: SEVERITY_META[unseenClientNotif.severity].emoji,
+                iconBg: SEVERITY_META[unseenClientNotif.severity].bg,
+                border: SEVERITY_META[unseenClientNotif.severity].border,
+                bg: SEVERITY_META[unseenClientNotif.severity].bg,
+                labelColor: SEVERITY_META[unseenClientNotif.severity].color,
+                label: "Yeni bildirim: " + unseenClientNotif.title,
+                sub: "Ajansınızdan yeni bir bildiriminiz var — açmak için tıklayın.",
+              }
+            : null,
           overdueInvoices.length > 0
             ? {
                 key: "overdue",
@@ -717,6 +764,19 @@ function SectionNote({ text }: { text: string }) {
     >
       <span className="text-[14px] flex-shrink-0 mt-0.5">ℹ️</span>
       <p className="text-[12px] text-[#8a8a9a] leading-relaxed">{text}</p>
+    </div>
+  );
+}
+
+// Aktif bir KIRMIZI bildirim varken Raporlar/İçerik Takvimi yerine gösterilir —
+// ajans bildirimi kaldırana kadar bu sekmeler kilitli kalır.
+function NotificationLockNotice({ lock }: { lock: { title: string; body: string } }) {
+  return (
+    <div className="rounded-2xl p-8 text-center" style={{ background: "rgba(248,113,113,0.06)", border: "1px solid rgba(248,113,113,0.3)" }}>
+      <p className="text-3xl mb-3">🔒</p>
+      <p className="text-[15px] font-bold text-white mb-2">{lock.title}</p>
+      <p className="text-[13px] text-[#8a8a9a] leading-relaxed max-w-[420px] mx-auto whitespace-pre-wrap">{lock.body}</p>
+      <p className="text-[11px] text-[#555] mt-4">Bu bölüm, ajansınız bildirimi kaldırana kadar görüntülenemez.</p>
     </div>
   );
 }

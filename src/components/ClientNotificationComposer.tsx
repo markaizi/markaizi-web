@@ -1,19 +1,25 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { SEVERITY_META, type ClientNotificationSeverity } from "@/lib/clientNotifySeverity";
 
 interface SentItem {
   id: string;
+  severity: ClientNotificationSeverity;
   title: string;
   body: string;
   readAt: string | null;
   createdAt: string;
+  reply: string | null;
+  repliedAt: string | null;
 }
 
 function fmtDateTime(iso: string) {
   return new Date(iso).toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" })
     + " · " + new Date(iso).toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" });
 }
+
+const SEVERITIES: ClientNotificationSeverity[] = ["YESIL", "SARI", "KIRMIZI"];
 
 // Tek bir firmaya özel bildirim yazma penceresi — StaffNotificationComposer'ın
 // müşteri karşılığı, ama alıcı zaten bu firma olduğu için seçici yok.
@@ -26,6 +32,7 @@ export default function ClientNotificationComposer({
   clientName: string;
   onClose: () => void;
 }) {
+  const [severity, setSeverity] = useState<ClientNotificationSeverity>("SARI");
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
   const [sending, setSending] = useState(false);
@@ -58,7 +65,7 @@ export default function ClientNotificationComposer({
     const res = await fetch("/api/musteri/admin/client-notifications", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ clientSlug, title: title.trim(), body: body.trim() }),
+      body: JSON.stringify({ clientSlug, severity, title: title.trim(), body: body.trim() }),
     });
     const json = await res.json().catch(() => ({}));
     setSending(false);
@@ -70,10 +77,12 @@ export default function ClientNotificationComposer({
   }
 
   async function handleDelete(id: string) {
-    if (!confirm("Bu bildirimi geri al? Müşteri artık göremez.")) return;
+    if (!confirm("Bu bildirimi geri al? Müşteri artık göremez (kırmızıysa kilit de kalkar).")) return;
     setHistory((prev) => prev.filter((h) => h.id !== id));
     await fetch(`/api/musteri/admin/client-notifications/${id}`, { method: "DELETE" });
   }
+
+  const meta = SEVERITY_META[severity];
 
   return (
     <div
@@ -97,6 +106,30 @@ export default function ClientNotificationComposer({
         <p className="text-[13px] text-[#8a8a9a] mb-5">{clientName} firmasına gönderilecek</p>
 
         <div className="space-y-4">
+          <div>
+            <label className="block text-[11px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-2">Önem Derecesi</label>
+            <div className="flex gap-2">
+              {SEVERITIES.map((s) => {
+                const m = SEVERITY_META[s];
+                const active = severity === s;
+                return (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={() => setSeverity(s)}
+                    className="flex-1 text-[12px] font-semibold py-2 rounded-xl transition-all"
+                    style={active
+                      ? { background: m.bg, color: m.color, border: `1.5px solid ${m.border}` }
+                      : { background: "var(--bg)", color: "#8a8a9a", border: "1.5px solid var(--border)" }}
+                  >
+                    {m.emoji} {m.shortLabel}
+                  </button>
+                );
+              })}
+            </div>
+            <p className="text-[11px] text-[#8a8a9a] mt-2 leading-relaxed">{meta.desc}</p>
+          </div>
+
           <div>
             <label className="block text-[11px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1.5">Başlık</label>
             <input
@@ -139,26 +172,42 @@ export default function ClientNotificationComposer({
             <p className="text-[12px] text-[#8a8a9a]">Henüz bildirim gönderilmedi.</p>
           ) : (
             <div className="space-y-2">
-              {history.map((h) => (
-                <div key={h.id} className="rounded-xl p-3" style={{ background: "var(--bg)", border: "1px solid var(--border)" }}>
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="min-w-0">
-                      <p className="text-[12.5px] font-semibold text-white">{h.title}</p>
-                      <p className="text-[11.5px] text-[#8a8a9a] mt-0.5 whitespace-pre-wrap leading-snug">{h.body}</p>
-                      <p className="text-[10px] text-[#555] mt-1">
-                        {fmtDateTime(h.createdAt)} · {h.readAt ? "okundu" : "okunmadı"}
-                      </p>
+              {history.map((h) => {
+                const m = SEVERITY_META[h.severity];
+                return (
+                  <div key={h.id} className="rounded-xl p-3" style={{ background: "var(--bg)", border: `1px solid ${m.border}` }}>
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-1.5 mb-0.5">
+                          <span className="text-[10px] font-bold px-1.5 py-0.5 rounded" style={{ background: m.bg, color: m.color }}>
+                            {m.emoji} {m.shortLabel}
+                          </span>
+                          <p className="text-[12.5px] font-semibold text-white">{h.title}</p>
+                        </div>
+                        <p className="text-[11.5px] text-[#8a8a9a] mt-0.5 whitespace-pre-wrap leading-snug">{h.body}</p>
+                        <p className="text-[10px] text-[#555] mt-1">
+                          {fmtDateTime(h.createdAt)} · {h.readAt ? "okundu" : "okunmadı"}
+                          {h.severity === "KIRMIZI" && " · kilit aktif"}
+                        </p>
+                        {h.reply && (
+                          <div className="mt-2 rounded-lg px-2.5 py-2" style={{ background: "rgba(168,85,247,0.08)", border: "1px solid rgba(168,85,247,0.25)" }}>
+                            <p className="text-[10px] font-bold text-[#c084fc] uppercase tracking-wide mb-0.5">Müşteri yanıtı</p>
+                            <p className="text-[12px] text-white whitespace-pre-wrap leading-snug">{h.reply}</p>
+                            {h.repliedAt && <p className="text-[10px] text-[#555] mt-1">{fmtDateTime(h.repliedAt)}</p>}
+                          </div>
+                        )}
+                      </div>
+                      <button
+                        onClick={() => handleDelete(h.id)}
+                        className="text-[11px] font-semibold flex-shrink-0 hover:opacity-80 transition-opacity"
+                        style={{ color: "#f87171" }}
+                      >
+                        Geri al
+                      </button>
                     </div>
-                    <button
-                      onClick={() => handleDelete(h.id)}
-                      className="text-[11px] font-semibold flex-shrink-0 hover:opacity-80 transition-opacity"
-                      style={{ color: "#f87171" }}
-                    >
-                      Geri al
-                    </button>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>

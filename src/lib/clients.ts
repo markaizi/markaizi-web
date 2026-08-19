@@ -62,4 +62,8 @@ export interface ClientData {
 
   requests?: ClientRequest[];
   adReports?: AdReportItem[];
+
+  // Aktif bir KIRMIZI bildirim varsa dolu gelir — Raporlar ve İçerik Takvimi
+  // sekmeleri kilitlenir (bkz. getClientView).
+  notificationLock?: { title: string; body: string } | null;
 }

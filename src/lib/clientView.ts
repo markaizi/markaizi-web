@@ -50,6 +50,15 @@ export async function getClientView(slug: string): Promise<ClientView | null> {
   });
   if (!client) return null;
 
+  // Aktif (silinmemiş) bir KIRMIZI bildirim varsa Raporlar ve İçerik Takvimi
+  // sekmeleri kilitlenir — kilit yalnızca admin bildirimi silince kalkar,
+  // okundu/popup durumundan bağımsızdır.
+  const redLock = await prisma.clientNotification.findFirst({
+    where: { clientId: client.id, severity: "KIRMIZI" },
+    orderBy: { createdAt: "desc" },
+    select: { title: true, body: true },
+  });
+
   const agencyUpdates = client.updates
     .filter((u) => u.kind === UpdateKind.AJANS)
     .map((u) => ({ date: trDate(u.date), text: u.text }));
@@ -96,6 +105,7 @@ export async function getClientView(slug: string): Promise<ClientView | null> {
       hasPdf: !!r.pdfFilename,
       pdfFilename: r.pdfFilename ?? undefined,
     })),
+    notificationLock: redLock ? { title: redLock.title, body: redLock.body } : null,
   };
 
   return { id: client.id, data };
