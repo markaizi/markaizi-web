@@ -27,7 +27,6 @@ export async function getWorkflowBoardData(session: SessionPayload) {
             creator: { select: { id: true, name: true } },
             client: { select: { slug: true, name: true } },
             contentItem: { select: { id: true, scheduledDate: true } },
-            requestedBy: { select: { id: true, name: true } },
             workLog: { select: { id: true, amount: true } },
           },
         },
@@ -77,12 +76,6 @@ export async function getWorkflowBoardData(session: SessionPayload) {
     completeCardsScope = me?.adminCompleteCardsScope ?? "NONE";
   }
 
-  // "Yapılacak" sütunu, kimin elinde iş kaldığının referans sütunu — admin
-  // yeniden adlandırırsa en soldaki (sortOrder en düşük) sütuna düşülür.
-  const todoColumn = columns.find((c) => c.title === "Yapılacak") ?? columns[0];
-  const isIdle =
-    !isAdmin && !!todoColumn && !todoColumn.cards.some((card) => card.assigneeId === session.uid);
-
   // "Tamamlandı" sütunu herkese açık — kim neyi bitirmiş herkes görsün, moral/takım
   // görünürlüğü için. Admin yeniden adlandırırsa en sağdaki (sortOrder en yüksek)
   // sütuna düşülür. hiddenFromEmployees ile bu sütun tamamen gizlenmişse (aşağıdaki
@@ -92,9 +85,10 @@ export async function getWorkflowBoardData(session: SessionPayload) {
   // dueDate Prisma'dan tam DateTime olarak gelir; istemci tarafı (fmtDate,
   // <input type="date">) "YYYY-MM-DD" bekliyor — burada tek noktadan normalize edilir.
   // hiddenFromEmployees=true olan sütunlar çalışanlara panoda hiç gösterilmez.
-  // seeAllCards=false olan çalışan yalnızca kendine atanmış + sahipsiz kartları görür —
-  // ANCAK "Yapılacak" sütununda hiç kartı kalmadıysa (isIdle) o sütunda, "Tamamlandı"
-  // sütununda ise her zaman istisnai olarak herkesin kartını görür.
+  // seeAllCards=false olan çalışan yalnızca kendine atanmış + sahipsiz kartları görür
+  // (Tamamlandı istisnası hariç). Daha önce elinde iş kalmayan çalışan başkalarının
+  // Yapılacak kartlarını görüp talep edebiliyordu — bu istisna ve talep sistemi
+  // tamamen kaldırıldı, artık her durumda yalnızca kendi/sahipsiz kartlar görünür.
   const normalizedColumns = columns
     .filter((col) => isAdmin || !col.hiddenFromEmployees)
     .map((col) => ({
@@ -103,8 +97,7 @@ export async function getWorkflowBoardData(session: SessionPayload) {
         .filter((card) => {
           if (seeAllCards) return true;
           if (col.id === doneColumn?.id) return true;
-          if (!card.assigneeId || card.assigneeId === session.uid) return true;
-          return isIdle && col.id === todoColumn?.id;
+          return !card.assigneeId || card.assigneeId === session.uid;
         })
         .map((card) => ({
           ...card,
@@ -116,6 +109,6 @@ export async function getWorkflowBoardData(session: SessionPayload) {
     columns: normalizedColumns, employees, clients,
     currentUserId: session.uid,
     isAdmin, canCreateCards, canDragCards, canWriteRevisionNote, canDeleteAnyCard, canManageColumns,
-    isIdle, completeCardsScope,
+    completeCardsScope,
   };
 }
