@@ -225,7 +225,7 @@ export default function AdminClientDetail({ data, unreadNoteCount = 0 }: { data:
       {/* Header */}
       <header
         className="sticky top-0 z-50 px-6 py-4 flex items-center justify-between"
-        style={{ background: "rgba(5,5,5,0.9)", WebkitBackdropFilter: "blur(20px)", backdropFilter: "blur(20px)", borderBottom: "1px solid var(--border)" }}
+        style={{ background: "var(--header-bg)", WebkitBackdropFilter: "blur(20px)", backdropFilter: "blur(20px)", borderBottom: "1px solid var(--border)" }}
       >
         <div className="flex items-center gap-2 min-w-0">
           <a href="/musteri/admin"

@@ -51,7 +51,7 @@ export default function AdminPanel({
     <div className="min-h-screen" style={{ background: "var(--bg)" }}>
       {/* ── Header ── */}
       <header className="sticky top-0 z-50 px-6 py-4 flex items-center justify-between"
-        style={{ background: "rgba(5,5,5,0.9)", WebkitBackdropFilter: "blur(20px)", backdropFilter: "blur(20px)", borderBottom: "1px solid var(--border)" }}>
+        style={{ background: "var(--header-bg)", WebkitBackdropFilter: "blur(20px)", backdropFilter: "blur(20px)", borderBottom: "1px solid var(--border)" }}>
         <div className="flex items-center gap-3">
           <button onClick={() => setSection("dashboard")} className="font-black text-[18px] gradient-text">markaizi</button>
           <span className="text-[#555]">/</span>

@@ -20,7 +20,7 @@ export default function EmployeeFirmalarim({ clients }: { clients: AssignedClien
   return (
     <div className="min-h-screen" style={{ background: "var(--bg)" }}>
       <header className="sticky top-0 z-50 px-4 sm:px-6 py-3.5 sm:py-4 flex items-center justify-between gap-3"
-        style={{ background: "rgba(5,5,5,0.9)", WebkitBackdropFilter: "blur(20px)", backdropFilter: "blur(20px)", borderBottom: "1px solid var(--border)" }}>
+        style={{ background: "var(--header-bg)", WebkitBackdropFilter: "blur(20px)", backdropFilter: "blur(20px)", borderBottom: "1px solid var(--border)" }}>
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
           <a href="/musteri/calisan"
             className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[13px] font-medium transition-all flex-shrink-0"

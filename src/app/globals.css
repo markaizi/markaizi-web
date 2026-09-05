@@ -11,7 +11,76 @@
   --grad-soft: linear-gradient(135deg, rgba(124,58,237,0.15), rgba(236,72,153,0.15));
   --glow:      0 0 30px rgba(168,85,247,0.35);
   --glow-sm:   0 0 15px rgba(168,85,247,0.25);
+  /* Metin renkleri — yalnızca panel aydınlık temasının override kuralları
+     bunları okur; koyu (varsayılan) sitede zaten sabit #fff/#8a8a9a/#555
+     Tailwind sınıfları kullanıldığı için buradaki değerler onlarla aynı. */
+  --fg:        #fff;
+  --fg-muted:  #8a8a9a;
+  --fg-faint:  #555;
+  /* Panel sticky header'ları (backdrop-blur ile) — koyu temada zaten
+     kullanılan sabit değer, aydınlık temada beyaza dönüyor. */
+  --header-bg: rgba(5,5,5,0.9);
 }
+
+/* ── Panel Aydınlık Teması (Apple iOS tarzı) ──────────────
+   Yalnızca /musteri/** admin/çalışan/müşteri panelinde geçerli — kamuya açık
+   site (yukarıdaki :root) bundan tamamen bağımsız kalır. Kullanıcı Profilim
+   sayfasından "Aydınlık" seçtiğinde src/app/musteri/layout.tsx, tüm paneli
+   saran <div>'e data-panel-theme="light" ekler. Panel bileşenlerinin büyük
+   çoğunluğu zaten var(--bg)/var(--surface)/var(--border) gibi CSS
+   değişkenlerini satır içi style ile kullandığından bu blok onları hiçbir
+   dosya değişikliği yapmadan otomatik yeniden temalar. Tailwind'in derlediği
+   sabit renk sınıfları (text-white, text-[#8a8a9a], text-[#555], beyaz
+   opaklık hover/active arka planları) ise aşağıdaki hedefli !important
+   override'larıyla yeniden yönlendirilir. */
+[data-panel-theme="light"] {
+  --bg:        #f2f2f7;
+  --bg-alt:    #e8e9ef;
+  --surface:   #ffffff;
+  --surface-2: #f7f7fa;
+  --border:    rgba(0,0,0,0.08);
+  --grad:      linear-gradient(135deg, #007aff, #5856d6, #ff2d55);
+  --grad-soft: linear-gradient(135deg, rgba(0,122,255,0.10), rgba(255,45,85,0.10));
+  --glow:      0 8px 30px rgba(88,86,214,0.16);
+  --glow-sm:   0 4px 16px rgba(88,86,214,0.12);
+  --fg:        #1c1c1e;
+  --fg-muted:  #6e6e73;
+  --fg-faint:  #9a9aa0;
+  --header-bg: rgba(255,255,255,0.85);
+
+  /* Bu div body'nin çocuğu olduğundan yukarıdaki --bg yeniden tanımı body'nin
+     kendi arka planını etkilemez (CSS değişkenleri yalnızca soydan geçer,
+     çocuktan ebeveyne akmaz) — bu yüzden arka planı burada açıkça de boyuyoruz. */
+  background: var(--bg);
+  color: var(--fg);
+  min-height: 100vh;
+  color-scheme: light;
+}
+
+/* Metin renkleri — hover: önekli varyantlar dahil (ör. hover:text-white) */
+[data-panel-theme="light"] [class*="text-white"]      { color: var(--fg) !important; }
+[data-panel-theme="light"] [class*="text-[#8a8a9a]"]  { color: var(--fg-muted) !important; }
+[data-panel-theme="light"] [class*="text-[#555]"]     { color: var(--fg-faint) !important; }
+[data-panel-theme="light"] [class*="placeholder-[#555]"]::placeholder { color: var(--fg-faint) !important; opacity: 1; }
+
+/* Beyaz-opaklık arka plan yardımcıları — koyu temada "beyaza doğru açılma"
+   anlamına gelen bu sınıflar aydınlıkta tersine "koyuya doğru koyulaşmalı",
+   yoksa beyaz zemin üstünde görünmez olurlar. Tam sınıf eşleşmesi (~=)
+   kullanılıyor: hover:/active: önekli halleri "bg-white/[0.04]" alt-dizesini
+   içerdiğinden *= ile eşleşselerdi her zaman (hover/active dışında da)
+   uygulanırlardı — ~= yalnızca tam aynı sınıf adını arar. */
+[data-panel-theme="light"] [class~="bg-white/[0.04]"]          { background: rgba(0,0,0,0.04) !important; }
+[data-panel-theme="light"] [class~="active:bg-white/[0.04]"]:active   { background: rgba(0,0,0,0.05) !important; }
+[data-panel-theme="light"] [class~="hover:bg-white/[0.02]"]:hover    { background: rgba(0,0,0,0.03) !important; }
+[data-panel-theme="light"] [class~="hover:bg-white/[0.03]"]:hover    { background: rgba(0,0,0,0.04) !important; }
+[data-panel-theme="light"] [class~="hover:bg-white/[0.04]"]:hover    { background: rgba(0,0,0,0.05) !important; }
+[data-panel-theme="light"] [class~="hover:bg-white/[0.06]"]:hover    { background: rgba(0,0,0,0.06) !important; }
+[data-panel-theme="light"] [class~="hover:bg-white/[0.08]"]:hover    { background: rgba(0,0,0,0.08) !important; }
+
+/* Form odak halkası ve kaydırıcı, kart kenarları — koyu temadaki mor tonu
+   (#a855f7 ailesi) aydınlıkta da --grad ile uyumlu olduğundan değişmiyor,
+   yalnızca metin/placeholder renkleri panel içinde yukarıdaki kurallarla
+   yeniden yönlendirilmiş oluyor. */
 
 html { scroll-behavior: smooth; }
 

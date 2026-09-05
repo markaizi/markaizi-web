@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import ThemeToggle from "@/components/ThemeToggle";
 
 export default function AdminProfilPage() {
   const [nameForm, setNameForm] = useState({ name: "", email: "" });
@@ -44,7 +45,7 @@ export default function AdminProfilPage() {
   return (
     <div className="min-h-screen" style={{ background: "var(--bg)" }}>
       <header className="sticky top-0 z-50 px-6 py-4 flex items-center gap-2"
-        style={{ background: "rgba(5,5,5,0.9)", WebkitBackdropFilter: "blur(20px)", backdropFilter: "blur(20px)", borderBottom: "1px solid var(--border)" }}>
+        style={{ background: "var(--header-bg)", WebkitBackdropFilter: "blur(20px)", backdropFilter: "blur(20px)", borderBottom: "1px solid var(--border)" }}>
         <a href="/musteri/admin"
           className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[13px] font-medium transition-all"
           style={{ background: "rgba(168,85,247,0.1)", border: "1px solid rgba(168,85,247,0.2)", color: "#c084fc" }}
@@ -111,6 +112,8 @@ export default function AdminProfilPage() {
             {pwLoading ? "..." : "Şifreyi Güncelle"}
           </button>
         </form>
+
+        <ThemeToggle />
       </main>
     </div>
   );

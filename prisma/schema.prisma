@@ -18,6 +18,11 @@ enum Role {
   CLIENT
 }
 
+enum PanelTheme {
+  KOYU     // mevcut koyu/neon tema (varsayılan)
+  AYDINLIK // yeni açık/iOS tarzı tema
+}
+
 // Yalnızca ÖDENDİ / ÖDENMEDİ ayrımını tutar. Faturanın görünen aşaması
 // ("Günü Gelmedi" / "Bekliyor" / "Gecikmede") burada SAKLANMAZ — vade tarihinden
 // her okumada hesaplanır (bkz. src/lib/invoiceStage.ts). Saklandığı dönemde
@@ -99,6 +104,10 @@ model User {
   role         Role    @default(CLIENT)
   name         String
   active       Boolean @default(true)
+
+  // Panel görünümü tercihi — admin/çalışan/müşteri, kendi Profilim sayfasından
+  // değiştirir. Cihazdan bağımsız kalıcı olsun diye localStorage değil DB'de tutulur.
+  panelTheme PanelTheme @default(KOYU)
 
   // Sadece role=CLIENT için bağlı firma
   clientId String?
