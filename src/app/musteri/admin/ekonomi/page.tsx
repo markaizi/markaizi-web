@@ -4,26 +4,14 @@ import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import EkonomiView, { type EkonomiData } from "@/components/EkonomiView";
 import { getInvoiceStage } from "@/lib/invoiceStage";
+import { parseAmount, monthKey, monthLabel, getAllTimeSummary } from "@/lib/economy";
+import { generateDueRecurringExpenses } from "@/lib/economyRecurring";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
   title: "Ekonomi — Admin",
 };
-
-function parseAmount(raw: string | null | undefined): number {
-  if (!raw) return 0;
-  const digits = raw.replace(/[^\d]/g, "");
-  return digits ? parseInt(digits, 10) : 0;
-}
-
-function monthKey(d: Date): string {
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
-}
-
-function monthLabel(d: Date): string {
-  return d.toLocaleDateString("tr-TR", { month: "long", year: "numeric" });
-}
 
 const HISTORY_MONTHS = 12;
 
@@ -37,12 +25,18 @@ export default async function EkonomiPage() {
     if (!me?.adminCanViewEconomy) redirect("/musteri/calisan");
   }
 
+  // Düzenli giderlerin otomatik üretimi yalnızca admin görünümünde tetiklenir —
+  // salt okunur çalışan erişimi hiçbir yazma işlemine yol açmamalı.
+  if (isAdmin) {
+    await generateDueRecurringExpenses().catch((e) => console.error("[ekonomi] düzenli gider üretimi başarısız:", e));
+  }
+
   const now = new Date();
   const monthStart = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0);
   const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
   const historyStart = new Date(now.getFullYear(), now.getMonth() - (HISTORY_MONTHS - 1), 1, 0, 0, 0, 0);
 
-  const [paidInvoices, transactions, pendingInvoices] = await Promise.all([
+  const [paidInvoices, transactions, pendingInvoices, allTime, recurringExpenses, creditCards] = await Promise.all([
     prisma.invoice.findMany({
       where: { paidAt: { gte: historyStart } },
       select: { id: true, amount: true, paidAt: true, period: true, client: { select: { name: true, slug: true } } },
@@ -57,6 +51,9 @@ export default async function EkonomiPage() {
       where: { status: { not: "ODENDI" } },
       select: { amount: true, dueDate: true, status: true },
     }),
+    getAllTimeSummary(),
+    prisma.recurringExpense.findMany({ orderBy: { dayOfMonth: "asc" } }),
+    prisma.creditCard.findMany({ where: { active: true }, orderBy: { createdAt: "asc" } }),
   ]);
 
   // Aylık geçmiş — son HISTORY_MONTHS ay için gelir/gider toplamı
@@ -131,11 +128,30 @@ export default async function EkonomiPage() {
   const data: EkonomiData = {
     currentMonthLabel: monthLabel(now),
     currentMonth: { gelir: currentMonth.gelir, gider: currentMonth.gider, net: currentMonth.net },
+    allTime,
     bekleyenFaturaToplam,
     gecikmisFaturaToplam,
     faturaOzet,
     monthlyHistory,
     feed,
+    recurringExpenses: recurringExpenses.map((r) => ({
+      id: r.id,
+      title: r.title,
+      category: r.category,
+      amount: r.amount,
+      dayOfMonth: r.dayOfMonth,
+      active: r.active,
+    })),
+    creditCards: creditCards.map((c) => ({
+      id: c.id,
+      name: c.name,
+      bankName: c.bankName,
+      limitAmount: parseAmount(c.limitAmount),
+      currentDebt: parseAmount(c.currentDebt),
+      statementDay: c.statementDay,
+      dueDay: c.dueDay,
+      note: c.note,
+    })),
   };
 
   return <EkonomiView data={data} readOnly={!isAdmin} backHref={isAdmin ? "/musteri/admin" : "/musteri/calisan"} />;

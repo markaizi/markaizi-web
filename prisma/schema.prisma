@@ -476,9 +476,55 @@ model Transaction {
   authorId    String?
   category    String? // yalnızca GIDER için anlamlı; GELIR'de boş bırakılır
 
+  // Bir RecurringExpense'ten otomatik üretildiyse kaynağı işaretler — Ekonomi
+  // ekranında ayrıca gösterilir ve silinemez (kaynak düzenli gider kaldırılınca
+  // geçmiş kayıtlar durur, bu alan geriye dönük referans olarak kalır).
+  recurringExpenseId String?
+  recurringExpense   RecurringExpense? @relation(fields: [recurringExpenseId], references: [id], onDelete: SetNull)
+
   payrollPayment PayrollPayment?
 
   createdAt DateTime @default(now())
+}
+
+// ── Düzenli (otomatik tekrar eden) giderler — kira, sabit fatura gibi her ay
+// aynı gün düşen kalemler. Gerçek bir cron yok; Ekonomi sayfası her açıldığında
+// (yalnızca admin görünümünde) bugüne kadar üretilmesi gereken ama henüz
+// üretilmemiş ayların Transaction kaydı burada oluşturulur (bkz. ekonomi/page.tsx).
+// lastGeneratedPeriod ("2026-09" gibi) çift üretimi engeller.
+model RecurringExpense {
+  id                  String   @id @default(cuid())
+  title               String
+  category            String
+  amount              String
+  dayOfMonth          Int // 1-28 — ayın kaçında düşecek
+  active              Boolean  @default(true)
+  lastGeneratedPeriod String? // en son hangi ay için kayıt üretildi
+
+  transactions Transaction[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ── Kredi kartı borç/limit takibi — Ekonomi genel gelir/gider defterinden
+// bağımsız, salt durum özeti (limit, güncel borç, kesim/son ödeme günü).
+// Bilinçli olarak Transaction defterine bağlanmadı: bir harcama hem kart
+// borcuna hem gidere yazılırsa çift sayım riski doğar — admin ikisini ayrı
+// yönetir (kart harcaması/ödemesi istenirse ayrıca gider olarak da girilebilir).
+model CreditCard {
+  id           String   @id @default(cuid())
+  name         String
+  bankName     String?
+  limitAmount  String
+  currentDebt  String   @default("0")
+  statementDay Int? // kesim tarihi (ayın kaçı)
+  dueDay       Int? // son ödeme günü (ayın kaçı)
+  note         String?
+  active       Boolean  @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 // ── Personel ödemeleri — avans (döneme bağlı olmadan istenildiği an) ve dönem
