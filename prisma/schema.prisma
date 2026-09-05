@@ -507,26 +507,6 @@ model RecurringExpense {
   updatedAt DateTime @updatedAt
 }
 
-// ── Kredi kartı borç/limit takibi — Ekonomi genel gelir/gider defterinden
-// bağımsız, salt durum özeti (limit, güncel borç, kesim/son ödeme günü).
-// Bilinçli olarak Transaction defterine bağlanmadı: bir harcama hem kart
-// borcuna hem gidere yazılırsa çift sayım riski doğar — admin ikisini ayrı
-// yönetir (kart harcaması/ödemesi istenirse ayrıca gider olarak da girilebilir).
-model CreditCard {
-  id           String   @id @default(cuid())
-  name         String
-  bankName     String?
-  limitAmount  String
-  currentDebt  String   @default("0")
-  statementDay Int? // kesim tarihi (ayın kaçı)
-  dueDay       Int? // son ödeme günü (ayın kaçı)
-  note         String?
-  active       Boolean  @default(true)
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
 // ── Personel ödemeleri — avans (döneme bağlı olmadan istenildiği an) ve dönem
 // kapatma (bir iş kaydı döneminin toplamından o dönemdeki avanslar düşülüp kalanı
 // öder) ayrı kind'lerle tutulur. periodKey null ise avans demektir, sınırsız

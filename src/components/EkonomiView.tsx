@@ -22,17 +22,6 @@ export interface RecurringExpenseItem {
   active: boolean;
 }
 
-export interface CreditCardItem {
-  id: string;
-  name: string;
-  bankName: string | null;
-  limitAmount: number;
-  currentDebt: number;
-  statementDay: number | null;
-  dueDay: number | null;
-  note: string | null;
-}
-
 export interface EkonomiData {
   currentMonthLabel: string;
   currentMonth: { gelir: number; gider: number; net: number };
@@ -47,7 +36,6 @@ export interface EkonomiData {
   monthlyHistory: { key: string; label: string; gelir: number; gider: number; net: number }[];
   feed: EkonomiFeedItem[];
   recurringExpenses: RecurringExpenseItem[];
-  creditCards: CreditCardItem[];
 }
 
 const GIDER_KATEGORILERI = ["Kira/Ofis", "Personel/Maaş", "Reklam Bütçesi", "Yazılım/Abonelik", "Vergi/SGK", "Diğer"];
@@ -241,7 +229,6 @@ export default function EkonomiView({ data, readOnly = false, backHref = "/muste
           </div>
         </div>
 
-        {!readOnly && <CreditCardsSection initial={data.creditCards} />}
         {!readOnly && <RecurringExpensesSection initial={data.recurringExpenses} />}
 
         {/* Elle gelir/gider ekleme — salt okunur erişimde gizli */}
@@ -733,186 +720,6 @@ function RecurringExpensesSection({ initial }: { initial: RecurringExpenseItem[]
               className="w-full px-3 py-2.5 rounded-lg text-[13.5px] text-white outline-none"
               style={{ background: "var(--surface)", border: "1px solid var(--border)" }} />
           </div>
-          {error && <p className="text-[11px]" style={{ color: "#f87171" }}>{error}</p>}
-          <div className="flex gap-2">
-            <button type="submit" disabled={saving} className="btn btn-primary text-sm px-4 py-2 flex-1">{saving ? "..." : "Kaydet"}</button>
-            <button type="button" onClick={() => { setShowForm(false); setForm(emptyForm); }} className="btn btn-outline text-sm px-4 py-2">İptal</button>
-          </div>
-        </form>
-      )}
-    </div>
-  );
-}
-
-// ── Kredi Kartları ────────────────────────────────────────────────────────────
-function CreditCardsSection({ initial }: { initial: CreditCardItem[] }) {
-  const router = useRouter();
-  const [items, setItems] = useState(initial);
-  const [showForm, setShowForm] = useState(false);
-  const emptyForm = { name: "", bankName: "", limitAmount: "", currentDebt: "", statementDay: "", dueDay: "", note: "" };
-  const [form, setForm] = useState(emptyForm);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState("");
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [editDebt, setEditDebt] = useState("");
-
-  async function handleAdd(e: React.FormEvent) {
-    e.preventDefault();
-    if (!form.name.trim() || !form.limitAmount.trim()) return;
-    setSaving(true);
-    setError("");
-    const res = await fetch("/api/musteri/admin/credit-cards", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        name: form.name.trim(),
-        bankName: form.bankName.trim() || undefined,
-        limitAmount: form.limitAmount.trim(),
-        currentDebt: form.currentDebt.trim() || undefined,
-        statementDay: form.statementDay ? Number(form.statementDay) : undefined,
-        dueDay: form.dueDay ? Number(form.dueDay) : undefined,
-        note: form.note.trim() || undefined,
-      }),
-    });
-    const json = await res.json().catch(() => ({}));
-    setSaving(false);
-    if (!res.ok) { setError(json.error ?? "Kaydedilemedi."); return; }
-    setItems((prev) => [...prev, {
-      id: json.item.id, name: json.item.name, bankName: json.item.bankName,
-      limitAmount: parseInt(form.limitAmount.replace(/[^\d]/g, ""), 10) || 0,
-      currentDebt: parseInt((form.currentDebt || "0").replace(/[^\d]/g, ""), 10) || 0,
-      statementDay: json.item.statementDay, dueDay: json.item.dueDay, note: json.item.note,
-    }]);
-    setForm(emptyForm);
-    setShowForm(false);
-    router.refresh();
-  }
-
-  async function handleUpdateDebt(id: string) {
-    const num = parseInt(editDebt.replace(/[^\d]/g, ""), 10) || 0;
-    setItems((prev) => prev.map((c) => (c.id === id ? { ...c, currentDebt: num } : c)));
-    setEditingId(null);
-    await fetch(`/api/musteri/admin/credit-cards/${id}`, {
-      method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ currentDebt: String(num) }),
-    });
-    router.refresh();
-  }
-
-  async function handleDelete(id: string) {
-    if (!confirm("Bu kartı listeden kaldır?")) return;
-    setItems((prev) => prev.filter((c) => c.id !== id));
-    await fetch(`/api/musteri/admin/credit-cards/${id}`, { method: "DELETE" });
-    router.refresh();
-  }
-
-  return (
-    <div className="rounded-2xl p-5 mb-8" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
-      <div className="flex items-center justify-between mb-3">
-        <div>
-          <p className="text-[13px] font-semibold text-white">Kredi Kartları</p>
-          <p className="text-[11px] text-[#8a8a9a] mt-0.5">Limit, güncel borç, kesim ve son ödeme günü — genel gelir/gider defterinden ayrı durum özeti.</p>
-        </div>
-        {!showForm && (
-          <button onClick={() => setShowForm(true)} className="text-[11px] font-semibold px-3 py-1.5 rounded-full transition-colors flex-shrink-0"
-            style={{ background: "var(--bg)", border: "1px solid var(--border)", color: "#8a8a9a" }}>
-            + Ekle
-          </button>
-        )}
-      </div>
-
-      {items.length > 0 && (
-        <div className="space-y-2.5 mb-3">
-          {items.map((c) => {
-            const kullanilabilir = c.limitAmount - c.currentDebt;
-            const doluluk = c.limitAmount > 0 ? Math.min(100, Math.round((c.currentDebt / c.limitAmount) * 100)) : 0;
-            return (
-              <div key={c.id} className="rounded-xl p-4" style={{ background: "var(--bg)", border: "1px solid var(--border)" }}>
-                <div className="flex items-start justify-between gap-3 mb-2.5">
-                  <div className="min-w-0">
-                    <p className="text-[13.5px] font-semibold text-white truncate">{c.name}</p>
-                    {c.bankName && <p className="text-[11px] text-[#8a8a9a]">{c.bankName}</p>}
-                  </div>
-                  <button onClick={() => handleDelete(c.id)} className="text-[#555] hover:text-[#f87171] transition-colors flex-shrink-0">
-                    <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5" stroke="currentColor" strokeWidth="2.5"><path d="M18 6L6 18M6 6l12 12" strokeLinecap="round" /></svg>
-                  </button>
-                </div>
-
-                <div className="w-full h-1.5 rounded-full mb-2.5 overflow-hidden" style={{ background: "var(--surface-2, #1a1a22)" }}>
-                  <div className="h-full rounded-full" style={{ width: `${doluluk}%`, background: doluluk >= 90 ? "#f87171" : doluluk >= 60 ? "#fbbf24" : "#34d399" }} />
-                </div>
-
-                <div className="grid grid-cols-2 gap-3 mb-2.5">
-                  <div>
-                    <p className="text-[9.5px] text-[#8a8a9a] uppercase tracking-wide mb-0.5">Güncel Borç</p>
-                    {editingId === c.id ? (
-                      <div className="flex gap-1.5 mt-1">
-                        <input autoFocus value={editDebt} onChange={(e) => setEditDebt(e.target.value)}
-                          className="w-full px-2 py-1.5 rounded-lg text-[12px] text-white outline-none"
-                          style={{ background: "var(--surface)", border: "1px solid var(--border)" }} />
-                        <button onClick={() => handleUpdateDebt(c.id)} className="text-[11px] font-semibold px-2 rounded-lg flex-shrink-0" style={{ color: "#34d399" }}>✓</button>
-                      </div>
-                    ) : (
-                      <button onClick={() => { setEditingId(c.id); setEditDebt(String(c.currentDebt)); }} className="text-[15px] font-black" style={{ color: "#f87171" }}>
-                        {fmtTL(c.currentDebt)} <span className="text-[10px] text-[#8a8a9a] font-normal">düzenle</span>
-                      </button>
-                    )}
-                  </div>
-                  <div>
-                    <p className="text-[9.5px] text-[#8a8a9a] uppercase tracking-wide mb-0.5">Kullanılabilir</p>
-                    <p className="text-[15px] font-black" style={{ color: "#34d399" }}>{fmtTL(kullanilabilir)}</p>
-                  </div>
-                </div>
-
-                <p className="text-[11px] text-[#8a8a9a]">
-                  Limit: {fmtTL(c.limitAmount)}
-                  {c.statementDay && ` · Kesim: ayın ${c.statementDay}.`}
-                  {c.dueDay && ` · Son Ödeme: ayın ${c.dueDay}.`}
-                </p>
-                {c.note && <p className="text-[11px] text-[#8a8a9a] mt-1 whitespace-pre-wrap">{c.note}</p>}
-              </div>
-            );
-          })}
-        </div>
-      )}
-      {items.length === 0 && !showForm && <p className="text-[12.5px] text-[#555]">Henüz kart eklenmedi.</p>}
-
-      {showForm && (
-        <form onSubmit={handleAdd} className="rounded-xl p-3.5 space-y-2.5" style={{ background: "var(--bg)", border: "1px solid rgba(168,85,247,0.3)" }}>
-          <div className="grid grid-cols-2 gap-2.5">
-            <input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-              placeholder="Kart adı" className="w-full px-3 py-2.5 rounded-lg text-[13.5px] text-white placeholder-[#555] outline-none"
-              style={{ background: "var(--surface)", border: "1px solid var(--border)" }} />
-            <input value={form.bankName} onChange={(e) => setForm((f) => ({ ...f, bankName: e.target.value }))}
-              placeholder="Banka (opsiyonel)" className="w-full px-3 py-2.5 rounded-lg text-[13.5px] text-white placeholder-[#555] outline-none"
-              style={{ background: "var(--surface)", border: "1px solid var(--border)" }} />
-          </div>
-          <div className="grid grid-cols-2 gap-2.5">
-            <input value={form.limitAmount} onChange={(e) => setForm((f) => ({ ...f, limitAmount: e.target.value }))}
-              onBlur={(e) => setForm((f) => ({ ...f, limitAmount: fmtAmount(e.target.value) }))}
-              placeholder="Limit" className="w-full px-3 py-2.5 rounded-lg text-[13.5px] text-white placeholder-[#555] outline-none"
-              style={{ background: "var(--surface)", border: "1px solid var(--border)" }} />
-            <input value={form.currentDebt} onChange={(e) => setForm((f) => ({ ...f, currentDebt: e.target.value }))}
-              onBlur={(e) => setForm((f) => ({ ...f, currentDebt: fmtAmount(e.target.value) }))}
-              placeholder="Güncel borç (opsiyonel)" className="w-full px-3 py-2.5 rounded-lg text-[13.5px] text-white placeholder-[#555] outline-none"
-              style={{ background: "var(--surface)", border: "1px solid var(--border)" }} />
-          </div>
-          <div className="grid grid-cols-2 gap-2.5">
-            <div>
-              <label className="block text-[10px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1.5">Kesim Günü</label>
-              <input type="number" min={1} max={31} value={form.statementDay} onChange={(e) => setForm((f) => ({ ...f, statementDay: e.target.value }))}
-                placeholder="Örn: 15" className="w-full px-3 py-2.5 rounded-lg text-[13.5px] text-white placeholder-[#555] outline-none"
-                style={{ background: "var(--surface)", border: "1px solid var(--border)" }} />
-            </div>
-            <div>
-              <label className="block text-[10px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1.5">Son Ödeme Günü</label>
-              <input type="number" min={1} max={31} value={form.dueDay} onChange={(e) => setForm((f) => ({ ...f, dueDay: e.target.value }))}
-                placeholder="Örn: 22" className="w-full px-3 py-2.5 rounded-lg text-[13.5px] text-white placeholder-[#555] outline-none"
-                style={{ background: "var(--surface)", border: "1px solid var(--border)" }} />
-            </div>
-          </div>
-          <input value={form.note} onChange={(e) => setForm((f) => ({ ...f, note: e.target.value }))}
-            placeholder="Not (opsiyonel)" className="w-full px-3 py-2.5 rounded-lg text-[13.5px] text-white placeholder-[#555] outline-none"
-            style={{ background: "var(--surface)", border: "1px solid var(--border)" }} />
           {error && <p className="text-[11px]" style={{ color: "#f87171" }}>{error}</p>}
           <div className="flex gap-2">
             <button type="submit" disabled={saving} className="btn btn-primary text-sm px-4 py-2 flex-1">{saving ? "..." : "Kaydet"}</button>

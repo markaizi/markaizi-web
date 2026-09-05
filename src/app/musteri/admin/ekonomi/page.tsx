@@ -36,7 +36,7 @@ export default async function EkonomiPage() {
   const monthEnd = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999);
   const historyStart = new Date(now.getFullYear(), now.getMonth() - (HISTORY_MONTHS - 1), 1, 0, 0, 0, 0);
 
-  const [paidInvoices, transactions, pendingInvoices, allTime, recurringExpenses, creditCards] = await Promise.all([
+  const [paidInvoices, transactions, pendingInvoices, allTime, recurringExpenses] = await Promise.all([
     prisma.invoice.findMany({
       where: { paidAt: { gte: historyStart } },
       select: { id: true, amount: true, paidAt: true, period: true, client: { select: { name: true, slug: true } } },
@@ -53,7 +53,6 @@ export default async function EkonomiPage() {
     }),
     getAllTimeSummary(),
     prisma.recurringExpense.findMany({ orderBy: { dayOfMonth: "asc" } }),
-    prisma.creditCard.findMany({ where: { active: true }, orderBy: { createdAt: "asc" } }),
   ]);
 
   // Aylık geçmiş — son HISTORY_MONTHS ay için gelir/gider toplamı
@@ -141,16 +140,6 @@ export default async function EkonomiPage() {
       amount: r.amount,
       dayOfMonth: r.dayOfMonth,
       active: r.active,
-    })),
-    creditCards: creditCards.map((c) => ({
-      id: c.id,
-      name: c.name,
-      bankName: c.bankName,
-      limitAmount: parseAmount(c.limitAmount),
-      currentDebt: parseAmount(c.currentDebt),
-      statementDay: c.statementDay,
-      dueDay: c.dueDay,
-      note: c.note,
     })),
   };
 
