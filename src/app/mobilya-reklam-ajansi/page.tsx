@@ -305,6 +305,9 @@ export default function MobilyaReklamAjansiPage() {
               <Link href="/blog/sitelerde-musteri-cekmenin-yollari" className="text-[14px] font-semibold text-[#c084fc] px-5 py-2.5 rounded-full transition-all hover:bg-white/[0.06]" style={{ border: "1px solid rgba(168,85,247,0.3)" }}>
                 Siteler&apos;de Müşteri Çekmek →
               </Link>
+              <Link href="/blog/ankara-mobilya-magazasi-sosyal-medya-buyume-rehberi" className="text-[14px] font-semibold text-[#c084fc] px-5 py-2.5 rounded-full transition-all hover:bg-white/[0.06]" style={{ border: "1px solid rgba(168,85,247,0.3)" }}>
+                Ankara Genelinde Sosyal Medyada Büyümek →
+              </Link>
             </div>
           </div>
         </section>

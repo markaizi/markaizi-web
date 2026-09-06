@@ -484,6 +484,59 @@ export const BLOG_POSTS: BlogPost[] = [
     conclusion:
       "Yerel SEO, mobilya mağazaları için en düşük maliyetli ve en kalıcı müşteri kaynağıdır. markaizi olarak Google İşletme Profili kurulumu ve optimizasyonunu, mobilya firmalarına verdiğimiz dijital pazarlama hizmetinin standart parçası olarak sunuyoruz. Profilinizin ücretsiz denetimi için bizimle iletişime geçin.",
   },
+  {
+    slug: "ankara-mobilya-magazasi-sosyal-medya-buyume-rehberi",
+    category: "Mobilya Sektörü",
+    color: "#fb923c",
+    title: "Ankara'da Mobilya Mağazanızı Sosyal Medyada Büyütmenin Yolu: Kendi Başınıza mı, Ajansla mı?",
+    excerpt:
+      "Ankara genelinde (yalnızca Siteler değil) bir mobilya mağazası dijitalde ve sosyal medyada nasıl öne çıkar? Kendi imkanlarınızla yapabilecekleriniz ve profesyonel bir ajans desteğinin nerede fark yarattığı.",
+    date: "6 Eylül 2026",
+    dateISO: "2026-09-06",
+    readTime: "11 dk",
+    intro:
+      "Ankara'da mobilya sektörü Siteler'den ibaret değil. Dikmen'den Batıkent'e, Çankaya'dan Eryaman'a, Keçiören'den Sincan'a kadar şehrin her köşesinde küçük büyük yüzlerce mağaza aynı müşteriye ulaşmaya çalışıyor. Bu kadar kalabalık bir pazarda artık iyi bir vitrin ve caddeye bakan bir tabela yetmiyor; çünkü müşteri kararını çoğu zaman mağazaya hiç adım atmadan, elindeki telefonla veriyor. Instagram'da beğendiği bir koltuk takımını kaydediyor, Google'da fiyat karşılaştırıyor, birkaç mağazanın yorumlarına bakıyor ve ancak ondan sonra hangi showroom'a gideceğine karar veriyor. Bu yazıda tam olarak bu noktadan bahsedeceğiz: Ankara'daki bir mobilya mağazası sosyal medyada ve dijitalde nasıl öne çıkar, kendi imkanlarınızla neleri halledebilirsiniz, nerede tıkanırsınız ve profesyonel bir ajans desteği tam olarak neyi değiştirir.",
+    sections: [
+      {
+        h2: "Ankara'da Mobilya Müşterisi Artık Farklı Karar Veriyor",
+        body: "Birkaç yıl öncesine kadar mobilya alışverişi caddeyi gezip beğenmekle başlardı. Bugün tam tersi: müşteri önce telefonundan araştırıyor, beğendiği birkaç mağazayı not alıyor ve showroom'a genellikle satın almaya karar vermiş halde geliyor. Bu, Ankara'nın neresinde olursanız olun geçerli — Siteler'de üretim yapan bir atölye de olsanız, Çayyolu'nda tek şubeli bir mağaza da olsanız aynı müşteri davranışıyla karşı karşıyasınız. Fark şu: dijitalde görünen mağaza bu araştırma listesine giriyor, görünmeyen mağaza müşterinin haberi bile olmadan eleniyor. Yani mesele artık 'reklam vereyim mi vermeyeyim mi' değil, 'müşteri beni ararken karşısına çıkıyor muyum' meselesi.",
+      },
+      {
+        h2: "Kendi Başınıza Yapabilecekleriniz: Instagram'ı Vitrininiz Gibi Kurun",
+        body: "Bunun için bütçe gerekmiyor, sadece düzen gerekiyor. Profilinize giren biri saniyeler içinde ne sattığınızı, nerede olduğunuzu ve nasıl ulaşacağını anlamalı. Biyografiye net bir konum yazın (örneğin 'Ankara / Çankaya' ya da 'Siteler'), WhatsApp linkinizi ekleyin, öne çıkan hikayeleri ürün gruplarına göre düzenleyin: Koltuk Takımları, Yatak Odası, Genç Odası gibi. Haftada birkaç kez düzenli paylaşım yapan bir hesap, ayda bir paylaşan bir hesaba göre çok daha güvenilir görünür — çünkü aylardır sessiz duran bir Instagram hesabı, müşteride 'acaba kapandı mı' hissi uyandırır.",
+      },
+      {
+        h2: "Kendi Başınıza Yapabilecekleriniz: Telefonla Bile Olsa İyi Görsel",
+        body: "Mobilya görselle satılır, bunun için profesyonel ekipmana ihtiyacınız yok ama ışığa kesinlikle ihtiyacınız var. Showroom'unuzu gün ışığına yakın, aydınlık çekin; karanlık bir köşede telefonla çekilmiş bir koltuk fotoğrafı, aynı koltuğun gün ışığında çekilmiş halinden çok daha az ilgi görür. Ürünün tamamını gösteren geniş bir kare, kumaşı ve dikişi gösteren bir yakın çekim yeterli bir başlangıçtır. Mümkünse haftada bir iki kısa video (Reels) çekin — ürünü kutusundan çıkarırken, showroom'da gezerken ya da teslimat sırasında. Kusursuz olması gerekmiyor, samimi ve gerçek görünmesi yeterli.",
+      },
+      {
+        h2: "Kendi Başınıza Yapabilecekleriniz: Google İşletme Profili ve Yorumlar",
+        body: "\"Ankara'da mobilya mağazası\" ya da \"yakınımdaki mobilya mağazası\" diye arayan biri önce Google Haritalar'daki üç sonucu görür. Google İşletme Profilinizi (ücretsiz) kurup güncel telefon, çalışma saatleri, bol fotoğraf ve doğru kategori ile doldurmak, hiçbir maliyeti olmayan ama etkisi büyük bir adımdır. Her teslimattan sonra müşteriye WhatsApp'tan tek tıkla yorum bırakabileceği bir link gönderin; yorum sayısı ve puanı, harita sıralamanızı doğrudan etkiler. Bu konuyu çok daha detaylı işlediğimiz bir yazımız var, isterseniz göz atabilirsiniz: Mobilya Mağazaları İçin Google Haritalar ve Yerel SEO Rehberi.",
+      },
+      {
+        h2: "Kendi Başınıza Yapabilecekleriniz: WhatsApp'ı Gerçek Bir Satış Kanalına Çevirin",
+        body: "Ankara'da mobilya müşterisinin ilk teması genellikle 'Bu koltuğun fiyatı nedir?' mesajıdır. WhatsApp İşletme hesabı kullanın, katalog özelliğine ürünlerinizi yükleyin, sık sorulan sorulara hızlı yanıt şablonları hazırlayın. Gelen mesaja ilk dakikalarda dönmek kritik önemde: mobilya müşterisi genellikle aynı anda birkaç mağazayla yazışıyor ve ilk net, samimi yanıtı veren mağaza showroom ziyaretini kazanıyor.",
+      },
+      {
+        h2: "Peki Nerede Tıkanırsınız?",
+        body: "Buraya kadar anlattıklarımızın hepsi ücretsiz ve kendi başınıza yapılabilir — ve yapmanızı da öneririz, çünkü hiçbir ajans bu temeller olmadan sihir yaratamaz. Ama gerçekçi olalım: bir mağaza işletirken aynı zamanda düzenli içerik üretmek, reklam kampanyası kurgulamak, hangi ürünün hangi yaş grubuna, hangi bütçeyle gösterileceğine karar vermek, sonuçları haftalık takip edip bütçeyi doğru yere kaydırmak — bunların hepsine zaman ayırmak neredeyse imkansız. Çoğu mağaza sahibi ya 'Gönderiyi öne çıkar' butonuyla birkaç yüz lira harcayıp sonucu göremiyor ya da işin yoğunluğuna yenilip hesabı aylarca ihmal ediyor. İkisi de aynı yere çıkıyor: dijitalde görünmemek.",
+      },
+      {
+        h2: "Profesyonel Destekle Değişen Şey: Reklamı Doğru Kurgulamak",
+        body: "Bir ajansın kattığı en büyük fark, reklamı 'herkese gösterelim' mantığından çıkarıp doğru kitleye, doğru üründe, doğru bütçeyle göstermektir. Yatak odası arayan ile genç odası arayan farklı yaşta, farklı ilgi alanında insanlardır; aynı reklamı ikisine birden göstermek bütçenizi eritir. Profesyonel yönetimde kampanyalar ürün grubuna göre ayrılır, negatif anahtar kelimeler düzenli temizlenir, hangi kreatifin daha ucuza müşteri getirdiği test edilir ve kazanan sürekli büyütülür. Bu, tek seferlik bir kurulum değil; haftalık takip ve küçük düzeltmelerle zamanla olgunlaşan bir süreçtir.",
+      },
+      {
+        h2: "Profesyonel Destekle Değişen Şey: Zaman, Süreklilik ve Rapor",
+        body: "İkinci büyük fark zaman. Siz showroom'da müşteriyle ilgilenirken, teslimat planlarken, tedarikçiyle konuşurken; içerik takviminin doldurulması, reklamın günlük takip edilmesi, ay sonunda 'kaç kişiye ulaştık, kaç mesaj geldi, kaç kişi mağazaya geldi' sorusunun cevaplanması ayrı bir uzmanlık ve ayrı bir zaman ister. Profesyonel destekte bu süreklilik garanti altına alınır: hesabınız hiç sessiz kalmaz, kampanyalarınız hiç takipsiz durmaz ve her ay elinize net bir rapor geçer. 'Reklam veriyorum ama ne işe yaradığını bilmiyorum' dönemi, düzenli raporlamayla birlikte biter.",
+      },
+      {
+        h2: "Markaizi ile Çalışırsanız Ne Değişir?",
+        body: "Biz markaizi olarak Ankara'da, özellikle mobilyanın kalbi sayılan Siteler'de 10 yılı aşkın süredir bu sektörün içindeyiz; İstikbal ve Doğtaş bayilerinden yerel üreticilere kadar 200'ün üzerinde Ankara işletmesiyle çalıştık. Mobilya sosyal medya yönetimi, Instagram ve Google reklamları, showroom çekimi ve Google Haritalar/yerel SEO — hepsini tek elden, mobilya müşterisinin nasıl düşündüğünü bilen bir ekip olarak yürütüyoruz. Bu deneyimin somut karşılığı: yönettiğimiz mobilya kampanyalarında ortalama 3,2 kat ROAS ve reklam maliyetinde ortalama %38 düşüş. Sizin için önerimiz şu: yukarıdaki ücretsiz adımları bugün uygulamaya başlayın; mağazanız büyüdükçe ve reklam bütçeniz büyüdükçe, o noktada bir mobilya reklam ajansıyla çalışmanın getirisi kendini çok daha net gösterecektir. O noktaya geldiğinizde ya da şimdiden bir yol haritası görmek isterseniz, mağazanızı ücretsiz analiz etmemiz için bize yazmanız yeterli.",
+      },
+    ],
+    conclusion:
+      "Ankara'da mobilya sektöründe kazanan mağaza, en pahalı reklamı verdiği için değil, müşteri araştırdığı anda karşısına doğru şekilde çıktığı için kazanır. Instagram'ınızı düzenli tutmak, iyi ışıkla çekim yapmak, Google İşletme Profilinizi doldurmak ve WhatsApp'a hızlı dönmek bugün başlayabileceğiniz, ücretsiz adımlardır. Reklamı ölçekleme, hedef kitleyi doğru kurgulama ve zamandan tasarruf etme noktasına geldiğinizde markaizi olarak Ankara'daki mobilya mağazaları için buradayız. Mağazanızın ücretsiz dijital analizini yaptırmak isterseniz WhatsApp'tan yazmanız yeterli.",
+  },
 ];
 
 export function getPostBySlug(slug: string): BlogPost | undefined {
