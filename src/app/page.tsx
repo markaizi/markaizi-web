@@ -1,4 +1,5 @@
 import { SAME_AS } from "@/lib/seo";
+import { founderRef } from "@/lib/founder";
 import { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/sections/Hero";
@@ -61,6 +62,7 @@ const jsonLd = {
     { "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"], opens: "09:00", closes: "20:00" },
   ],
   sameAs: SAME_AS,
+  founder: founderRef,
   knowsAbout: [
     "Mobilya sektörü dijital pazarlama",
     "Mobilya mağazaları için Instagram ve Google reklamları",

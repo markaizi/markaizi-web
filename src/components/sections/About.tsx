@@ -79,6 +79,17 @@ export default function About() {
             <p className="text-[#8a8a9a] text-base leading-[1.8]">
               Bugün sosyal medya yönetiminden Google ve Meta reklamlarına, yapay zeka destekli içerik üretimine kadar her adımda yanınızdayız. Veri odaklı kararlar, şeffaf raporlama ve aktif yapay zeka araçlarıyla markanızı dijitalde zirveye taşıyoruz.
             </p>
+            <a
+              href="/samet-saglam"
+              className="mt-6 inline-flex items-center gap-3 rounded-2xl px-4 py-3 transition-all hover:bg-white/[0.04]"
+              style={{ border: "1px solid var(--border)" }}
+            >
+              <span className="w-10 h-10 rounded-xl flex items-center justify-center text-[14px] font-black text-white flex-shrink-0" style={{ background: "var(--grad)" }} aria-hidden="true">SS</span>
+              <span>
+                <span className="block text-[14px] font-bold text-white">Samet Sağlam</span>
+                <span className="block text-[12.5px] text-[#8a8a9a]">markaizi Kurucusu · Tanışın →</span>
+              </span>
+            </a>
           </div>
 
           {/* Sağ — İstatistik Kartları */}

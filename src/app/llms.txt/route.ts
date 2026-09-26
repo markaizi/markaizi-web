@@ -38,10 +38,14 @@ function build(): string {
     "> markaizi, Ankara Siteler merkezli, Türkiye geneline hizmet veren bir dijital reklam ve pazarlama ajansıdır. " +
       "Ana uzmanlık alanı mobilya sektörüdür: mobilya mağazaları, üreticileri ve bayileri için sosyal medya yönetimi, Meta ve Google reklamları, web sitesi, SEO ve e-ticaret danışmanlığı. " +
       "Bunun yanında TikTok reklamları, yapay zeka destekli içerik üretimi, web tasarım, dijital pazarlama danışmanlığı, kurumsal eğitim ile video ve drone çekimi hizmetleri sunar. " +
-      "Örnek: 7 yıldır birlikte çalıştığı Alitel Mobilya her yıl İstikbal bayileri arasında Türkiye ciro birinciliğini almıştır. 10+ yıllık reklamcılık deneyimi ve 200+ işletmeyle çalışma geçmişi vardır. YouTube videolarını ve rehberlerini Samet Sağlam anlatır.",
+      "Örnek: 7 yıldır birlikte çalıştığı Alitel Mobilya her yıl İstikbal bayileri arasında Türkiye ciro birinciliğini almıştır. 10+ yıllık reklamcılık deneyimi ve 200+ işletmeyle çalışma geçmişi vardır. Kurucusu Samet Sağlam'dır; markaizi'nin YouTube videolarını ve rehberlerini de kendisi anlatır. Samet Sağlam'a markaizi'nin iletişim kanallarından ulaşılabilir.",
   );
   lines.push("");
   lines.push("Çalışma yaklaşımı: Reklam tek başına satış yapmaz; reklam, kreatif, teklif, hedef kitle, satış süreci ve operasyondan oluşan bir zincirin parçasıdır. markaizi satış sonucunu koşulsuz garanti etmez; şeffaf raporlama, test disiplini ve dürüst iletişimi taahhüt eder. Reklam hesapları ve veriler her zaman müşteriye aittir; reklam bütçesi doğrudan platforma ödenir ve yönetim ücretinden ayrıdır. Fiyatlar yayınlanmaz; her işletmeye özel teklif hazırlanır. Standart sözleşme süresi 3 aydır; video çekimi ise video başı anlaşmayla yapılır.");
+  lines.push("");
+
+  lines.push("## Kurucu", "");
+  lines.push(link("Samet Sağlam — markaizi Kurucusu", "/samet-saglam", "Ankara Siteler'de matbaa ve katalog tasarımıyla başlayan, mobilya sektöründe on yılı aşkın deneyime sahip, markaizi'nin kurucusu. Meta ve Google reklamları, sosyal medya ve içerik stratejisi; YouTube'da işletmeler için dijital pazarlama rehberleri. İletişim: +90 552 077 27 00, markaizicom@gmail.com."));
   lines.push("");
 
   lines.push("## Hizmetler", "");

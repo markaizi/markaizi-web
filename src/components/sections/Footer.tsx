@@ -57,6 +57,7 @@ export default function Footer() {
               title="Şirket"
               links={[
                 { label: "Hakkımızda", href: "/#hakkimizda" },
+                { label: "Kurucumuz: Samet Sağlam", href: "/samet-saglam" },
                 { label: "Portföy",    href: "/#portfolio" },
                 { label: "İletişim",   href: "/#iletisim" },
                 { label: "Blog",       href: "/blog" },

@@ -5,6 +5,7 @@ import CookieBanner from "@/components/CookieBanner";
 import Analytics from "@/components/Analytics";
 import JsonLd from "@/components/JsonLd";
 import { SITE_URL, ORG_NAME, LOGO_URL, SAME_AS } from "@/lib/seo";
+import { founderRef } from "@/lib/founder";
 
 const websiteJsonLd = {
   "@context": "https://schema.org",
@@ -18,6 +19,7 @@ const websiteJsonLd = {
     url: SITE_URL,
     logo: LOGO_URL,
     sameAs: SAME_AS,
+    founder: founderRef,
   },
 };
 

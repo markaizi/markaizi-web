@@ -11,6 +11,7 @@ import YouTubeEmbed, { YouTubeLogo } from "@/components/YouTubeEmbed";
 import { breadcrumbJsonLd, SITE_URL, LOGO_URL } from "@/lib/seo";
 import { VIDEOS, YOUTUBE_CHANNEL_URL, getVideoBySlug, ytEmbed, ytThumb, ytWatch } from "@/lib/video-data";
 import { loadTranscript, countWords } from "@/lib/video-transcript";
+import { founderRef } from "@/lib/founder";
 
 export const dynamicParams = false;
 
@@ -39,7 +40,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   };
 }
 
-const AUTHOR = { "@type": "Person", name: "Samet Sağlam", worksFor: { "@type": "Organization", name: "markaizi", url: SITE_URL } };
+const AUTHOR = { ...founderRef, jobTitle: "markaizi Kurucusu", worksFor: { "@type": "Organization", name: "markaizi", url: SITE_URL } };
 
 export default async function VideoPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -123,7 +124,7 @@ export default async function VideoPage({ params }: { params: Promise<{ slug: st
             </h1>
             <p className="text-[#8a8a9a] text-[17px] leading-relaxed mb-5">{v.excerpt}</p>
             <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[13px] text-[#8a8a9a] mb-8">
-              <span>Samet Sağlam</span>
+              <Link href="/samet-saglam" className="hover:text-white transition-colors">Samet Sağlam</Link>
               <span>·</span>
               <span>{v.date}</span>
               <span>·</span>
