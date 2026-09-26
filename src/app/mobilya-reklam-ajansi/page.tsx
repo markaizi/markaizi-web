@@ -8,6 +8,7 @@ import Breadcrumb from "@/components/Breadcrumb";
 import JsonLd from "@/components/JsonLd";
 import { breadcrumbJsonLd } from "@/lib/seo";
 import { CITY_PAGES, SERVICE_PAGES } from "@/lib/mobilya-pages";
+import VideoCallout from "@/components/VideoCallout";
 
 export const metadata: Metadata = {
   title: "Mobilya Reklam Ajansı — Siteler / Ankara | markaizi",
@@ -228,6 +229,32 @@ export default function MobilyaReklamAjansiPage() {
                 </div>
               ))}
             </div>
+          </div>
+        </section>
+
+        {/* ── Reklam tek başına satış yapmaz ── */}
+        <section className="py-20" style={{ background: "var(--bg-alt)" }}>
+          <div className="max-w-[820px] mx-auto px-6">
+            <span className="section-tag">Gerçek Bir Senaryo</span>
+            <h2 className="font-black leading-tight mb-6 mt-2" style={{ fontSize: "clamp(24px,3.2vw,34px)" }}>
+              Reklam Müşteriyi Getirdi, <span className="gradient-text">Satış Neden Olmadı?</span>
+            </h2>
+            <p className="text-[#8a8a9a] text-[16px] leading-[1.9] mb-5">
+              Güzel bir koltuk takımı reklamı hazırladık. Ürün iyi, video dikkat çekiyor, fiyat rekabetçi, reklam da doğru
+              insanlara ulaşıyor. Müşteri videoyu beğenip Instagram&apos;dan yazıyor: &ldquo;Bu koltuk takımının fiyatı nedir?&rdquo;
+              Mağaza üç saat sonra cevap veriyor ve yalnızca &ldquo;85 bin TL&rdquo; yazıyor. Müşteri görüyor ve gidiyor.
+            </p>
+            <p className="text-[#8a8a9a] text-[16px] leading-[1.9] mb-5">
+              Burada reklam başarısız olmadı; görevini yaptı ve ilgilenen kişiyi getirdi. Müşteri satış sürecinde kaybedildi.
+              Tersini de düşünün: dünyanın en iyi satış danışmanı, ilk üç saniyede herkesin geçtiği sıkıcı bir reklamla
+              müşteri bekliyor. Bu sefer de önüne kimse gelmiyor.
+            </p>
+            <p className="text-[#c0c0d0] text-[16px] leading-[1.9] mb-8">
+              Bu yüzden mobilya mağazalarında yalnızca reklam paneline bakmıyoruz. Reklam, görsel, teklif, hedef kitle,
+              mesajlara dönüş hızı ve showroom&apos;daki satış konuşması aynı zincirin halkaları; zayıf olan halkayı bulup
+              oradan başlıyoruz.
+            </p>
+            <VideoCallout slug="isletmeler-icin-dijital-pazarlama-ve-reklam-rehberi" text="Bu örneği ve reklamın bir sistem olarak nasıl çalıştığını videoda anlattık." />
           </div>
         </section>
 

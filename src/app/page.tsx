@@ -4,6 +4,7 @@ import Navbar from "@/components/Navbar";
 import Hero from "@/components/sections/Hero";
 import FreeAnalysisBar from "@/components/sections/FreeAnalysisBar";
 import Services from "@/components/sections/Services";
+import Approach from "@/components/sections/Approach";
 import About from "@/components/sections/About";
 import Portfolio from "@/components/sections/Portfolio";
 import Contact from "@/components/sections/Contact";
@@ -98,6 +99,7 @@ export default function Home() {
         <FreeAnalysisBar />
 
 <Services />
+        <Approach />
         <About />
         <Portfolio />
         <Contact />

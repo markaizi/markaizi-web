@@ -17,11 +17,13 @@ export type BlogPost = {
   sections: BlogSection[];
   conclusion: string;
   faq?: { q: string; a: string }[]; // Varsa yazının sonunda gösterilir ve FAQPage şeması üretilir
+  videoSlug?: string; // Konuyla ilgili YouTube videosu varsa yazının sonunda kart olarak gösterilir
 };
 
 export const BLOG_POSTS: BlogPost[] = [
   {
     slug: "instagram-algoritmasi",
+    videoSlug: "isletmeler-icin-dijital-pazarlama-ve-reklam-rehberi",
     category: "Sosyal Medya",
     color: "#c084fc",
     title: "Instagram Algoritması 2026: Organik Büyüme İçin 10 Strateji",
@@ -124,6 +126,7 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     slug: "meta-ads-roas",
+    videoSlug: "isletmeler-icin-dijital-pazarlama-ve-reklam-rehberi",
     category: "Meta Reklamları",
     color: "#f472b6",
     title: "Meta Ads'de ROAS Artırmanın Kesin Yolları",
@@ -488,6 +491,7 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     slug: "ankara-mobilya-magazasi-sosyal-medya-buyume-rehberi",
+    videoSlug: "isletmeler-icin-dijital-pazarlama-ve-reklam-rehberi",
     category: "Mobilya Sektörü",
     color: "#fb923c",
     title: "Ankara'da Mobilya Mağazanızı Sosyal Medyada Büyütmenin Yolu: Kendi Başınıza mı, Ajansla mı?",
@@ -541,6 +545,7 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     slug: "ankara-mobilya-ajansi-nasil-secilir",
+    videoSlug: "isletmeler-icin-dijital-pazarlama-ve-reklam-rehberi",
     category: "Mobilya Sektörü",
     color: "#fb923c",
     title: "Ankara'da Mobilya Ajansı Nasıl Seçilir? Sosyal Medya ve Reklam İçin 10 Maddelik Kontrol Listesi",
@@ -615,6 +620,126 @@ export const BLOG_POSTS: BlogPost[] = [
       {
         q: "Ajansla çalışmaya başladıktan ne kadar sürede sonuç görürüm?",
         a: "Reklam algoritmasının öğrenme süreci nedeniyle ilk 1-2 haftada net sonuç beklenmemelidir. Genellikle 4-6 hafta içinde hangi ürün ve kitlenin daha ucuza müşteri getirdiği belirginleşir. Yerel SEO ve Google Haritalar tarafında etki 4-12 hafta sürebilir.",
+      },
+    ],
+  },
+  {
+    slug: "reklam-neden-satis-getirmiyor",
+    videoSlug: "isletmeler-icin-dijital-pazarlama-ve-reklam-rehberi",
+    category: "Reklam Stratejisi",
+    color: "#f87171",
+    title: "Reklamınız Neden Satış Getirmiyor? 4 Adımda Sorunun Yerini Bulun",
+    excerpt:
+      "Reklam çalışmıyor diye hemen kapatmayın, algoritmayı da suçlamayın. İzlenme, tıklama, dönüşüm ve satış adımlarına tek tek bakarak müşteriyi nerede kaybettiğinizi bulmanın pratik yolu.",
+    date: "26 Eylül 2026",
+    dateISO: "2026-09-26",
+    readTime: "9 dk",
+    intro:
+      "'Reklam veriyoruz ama satış yok' cümlesi, işletme sahiplerinden en sık duyduğumuz cümle. Ardından genellikle iki tepki geliyor: ya reklam kapatılıyor ya da 'algoritma bozuldu' deniyor. Oysa satış getirmeyen bir reklamın arkasında çoğu zaman tek ve bulunabilir bir kırılma noktası var. Müşteri reklamı görüp satın alana kadar dört kapıdan geçiyor; hangi kapıda takıldığını bulursanız neyi değiştirmeniz gerektiği de netleşiyor. Bu yazıda o dört kapıyı, her birinde hangi rakama bakmanız gerektiğini ve ne yapabileceğinizi anlatıyoruz.",
+    sections: [
+      {
+        h2: "Önce Zinciri Görün: Reklam Tek Başına Satış Yapmaz",
+        body: "Reklamın görevi doğru kişinin dikkatini çekip onu size getirmektir. Satışı ise reklamdan sonra gelen her şey belirler: teklifiniz, açılış sayfanız, mesajlara ne kadar hızlı döndüğünüz ve satış konuşmanız. Bir koltuk takımı reklamını beğenip 'fiyatı nedir?' diye yazan müşteriye üç saat sonra sadece rakam yazan bir mağaza, reklamın getirdiği müşteriyi kendi eliyle gönderir. Bu yüzden teşhise reklam panelinden değil, müşterinin izlediği yoldan başlamak gerekir.",
+      },
+      {
+        h2: "1. Kapı: Reklam İzleniyor mu?",
+        body: "İlk bakılacak şey insanların reklamınızda durup durmadığı. Video reklamlarda ilk üç saniyeyi izleyenlerin oranına ve videonun ne kadarının izlendiğine bakın. Kişilerin büyük kısmı ilk saniyelerde geçiyorsa sorun hedeflemede değil, kreatiftedir. En sık neden, videonun müşterinin derdiyle değil firmanın kendisiyle başlamasıdır: 'Yeni sezon ürünlerimiz mağazamızda' yerine 'Yeni evlenecekler, mobilya alırken bu hatayı yapmayın' gibi, izleyicinin 'bu benimle ilgili' diyeceği bir açılış deneyin. Açılış cümlesini, ilk kareyi ya da videoda konuşan kişiyi değiştirmek çoğu zaman izlenmeyi belirgin şekilde değiştirir.",
+      },
+      {
+        h2: "2. Kapı: İzleniyor Ama Kimse Harekete Geçmiyor mu?",
+        body: "Video izleniyor ama tıklama veya mesaj gelmiyorsa, insanlar ilgileniyor ama bir sonraki adımı atmak için yeterli sebep bulamıyor demektir. Burada bakılacak iki şey var: mesaj ve teklif. Reklam, izleyiciye ne yapması gerektiğini açıkça söylüyor mu? 'Fiyat ve ölçüler için WhatsApp'tan yazın' gibi net bir yönlendirme var mı? Teklif tarafında ise indirim tek seçenek değildir: uzun taksit, ücretsiz teslimat, ileri tarihli teslim, ürünü depoda bekletme, garanti veya ücretsiz keşif gibi avantajlar, fiyatı düşürmeden teklifi güçlendirebilir. Müşteri kafasında basit bir hesap yapar: ne veriyorum, karşılığında ne alıyorum?",
+      },
+      {
+        h2: "3. Kapı: Tıklanıyor Ama Dönüşüm Olmuyor mu?",
+        body: "İnsanlar reklama tıklıyor ama gittikleri yerde hiçbir şey yapmıyorsa sorun reklamdan sonraki durakta. Reklamda gösterilen ürün, açılan sayfada ilk bakışta görünüyor mu, yoksa ziyaretçi ana sayfada kaybolup mu gidiyor? Sayfa telefonda hızlı açılıyor mu? WhatsApp ya da arama butonu kolayca bulunuyor mu? Form gereğinden uzun mu? Reklamın vaat ettiği şey ile açılan sayfanın gösterdiği şey birbirini tutmuyorsa, en iyi reklam bile boşa harcanır. Bu kapıdaki sorunlar genellikle reklam bütçesine dokunmadan düzeltilebilir.",
+      },
+      {
+        h2: "4. Kapı: Mesaj Geliyor Ama Satış Olmuyor mu?",
+        body: "Bu noktada reklam görevini yapmış, müşteri size ulaşmıştır; sorun artık satış sürecindedir. Mesajlara ne kadar sürede dönülüyor? Fiyat tek cümleyle mi veriliyor, yoksa ürünün ölçüsü, kumaş seçenekleri, ödeme imkânları ve teslim süresiyle birlikte mi anlatılıyor? Müşterinin itirazlarına nasıl cevap veriliyor, konuşma mağaza ziyaretine ya da randevuya bağlanıyor mu? Bu kapıda reklam panelinde yapılacak bir ayar yoktur; mesaj şablonları, dönüş hızı ve satış konuşması üzerinde çalışmak gerekir.",
+      },
+      {
+        h2: "Ucuz Mesaj, Ucuz Müşteri Demek Değil",
+        body: "Teşhis yaparken en yanıltıcı rakam mesaj başına maliyettir. Bir reklam 10 TL'ye 100 mesaj getirsin ve hiç satış çıkmasın: 1.000 TL harcanmış, sonuç sıfır. Başka bir reklam 30 TL'ye 40 mesaj getirsin ve 8 satış çıksın: 1.200 TL harcanmış, satış başına maliyet 150 TL. Kâğıt üzerinde ilk reklam çok daha başarılı görünür, ama işletmeye para kazandıran ikincisidir. Bu yüzden mesaj sayısının yanında, gelen mesajların kaçının gerçek müşteriye ve satışa döndüğünü de takip edin. Bu bilgi reklam panelinde yoktur; satış tarafından gelmesi gerekir.",
+      },
+      {
+        h2: "Aynı Anda Her Şeyi Değiştirmeyin",
+        body: "Sorunun yerini bulduğunuzda her şeyi birden değiştirmek cazip gelir: yeni video, yeni teklif, yeni hedefleme, yeni bütçe. Sonuç iyileşse bile neyin işe yaradığını bilemezsiniz ve bir sonraki kampanyada aynı başarıyı tekrarlayamazsınız. Her seferinde tek bir şeyi değiştirin: önce açılış cümlesini, sonra teklifi, sonra sayfayı. Bir hipotez kurun, test edin, sonucu görün ve öğrendiğinizi bir sonraki teste taşıyın. Meta da birden fazla büyük değişikliğin aynı anda yapılmasının, performans değişiminin nereden geldiğini ayırmayı zorlaştırabileceğini belirtiyor.",
+      },
+      {
+        h2: "Özet: Hangi Durumda Nereye Bakmalı?",
+        body: "Reklam izlenmiyorsa kreatife bakın: açılış cümlesi, ilk kare, konuşan kişi. İzleniyor ama tıklanmıyorsa mesaja ve teklife bakın: net bir sonraki adım ve güçlü bir sebep var mı? Tıklanıyor ama dönüşüm yoksa açılış sayfasına ve satış yolculuğuna bakın: doğru ürün, hızlı sayfa, kolay iletişim. Mesaj geliyor ama satış yoksa satış sürecine bakın: dönüş hızı, fiyat sunumu, itiraz karşılama. Gerçek hesaplarda birden fazla sorun aynı anda olabilir; ama bu sıra, nereden başlayacağınızı her zaman söyler.",
+      },
+    ],
+    conclusion:
+      "Satış getirmeyen bir reklamı kapatmak kolaydır; nerede takıldığını bulmak ise asıl işi yapar. markaizi olarak reklam hesabınıza bakarken yalnızca panel rakamlarını değil, müşterinin izlediği yolun tamamını inceliyoruz. Reklamlarınızın nerede müşteri kaybettiğini birlikte bulmak isterseniz ücretsiz analiz için bize yazın.",
+    faq: [
+      {
+        q: "Reklam kaç gün sonra kapatılmalı?",
+        a: "Birkaç günlük sonuca bakıp kapatmak çoğu zaman erkendir; reklam sisteminin öğrenmesi zaman alır. Kapatmadan önce hangi kapıda sorun olduğunu bulun: izlenmiyorsa kreatifi, izlenip tıklanmıyorsa teklifi değiştirmek, reklamı tamamen kapatmaktan daha çok şey öğretir.",
+      },
+      {
+        q: "Mesaj başına maliyet düşükse reklam iyi mi çalışıyor?",
+        a: "Tek başına bir şey söylemez. Ucuz mesajlar nitelikli müşteri getirmiyorsa satış başına maliyet yüksek olabilir. Asıl bakılması gereken, gelen mesajların kaçının satışa döndüğü ve bir satışın reklam maliyetidir.",
+      },
+      {
+        q: "Reklam iyi çalışıyor ama satış yok, ne yapmalıyım?",
+        a: "Reklam müşteriyi getiriyorsa sorun büyük ihtimalle satış sürecindedir. Mesajlara dönüş süresini, fiyatın nasıl sunulduğunu ve müşterinin itirazlarına nasıl cevap verildiğini inceleyin; hazır mesaj şablonları ve hızlı dönüş çoğu zaman belirgin fark yaratır.",
+      },
+    ],
+  },
+  {
+    slug: "reklam-butcesi-nasil-belirlenir",
+    videoSlug: "isletmeler-icin-dijital-pazarlama-ve-reklam-rehberi",
+    category: "Reklam Stratejisi",
+    color: "#f87171",
+    title: "Reklam Bütçesi Nasıl Belirlenir? Test, Büyüme ve Ölçekleme Aşamaları",
+    excerpt:
+      "'Günlük kaç TL reklam verelim?' sorusunun herkese uyan cevabı yok. İşletmenizin hangi aşamada olduğuna göre reklam bütçesini belirlemenin, ne zaman artırıp ne zaman durmanın pratik rehberi.",
+    date: "26 Eylül 2026",
+    dateISO: "2026-09-26",
+    readTime: "8 dk",
+    intro:
+      "Reklam vermeye karar veren hemen her işletme sahibinin ilk sorusu aynı: 'Günlük kaç lira ayırmalıyım?' İnternette bu soruya net rakamlar veren çok içerik var, ama o rakamlar sizin ürününüzü, fiyatınızı, müşterinizi ve kapasitenizi bilmiyor. Bütçeyi belirlemenin daha sağlıklı yolu, önce işletmenizin hangi aşamada olduğunu anlamak. Çünkü neyin çalıştığını henüz bilmeyen bir işletme ile çalışan bir sistemi büyütmek isteyen işletmenin bütçe sorusu birbirinden tamamen farklı.",
+    sections: [
+      {
+        h2: "Neden 'Günlük Kaç TL?' Yanlış İlk Soru?",
+        body: "Aynı bütçe, iki farklı işletmede bambaşka sonuç verir. Doğru kreatifi, doğru teklifi ve hızlı bir satış süreci olan bir işletmede küçük bir bütçe bile müşteri getirir; bunlardan biri eksikse bütçeyi artırmak sorunu çözmez, sadece büyütür. Bu yüzden rakamdan önce şu soruyu sorun: Şu anda neyin çalıştığını biliyor muyum? Cevabınız 'hayır' ise test aşamasındasınız, 'evet ve kârlı' ise büyüme ya da ölçekleme aşamasındasınız.",
+      },
+      {
+        h2: "1. Aşama: Test — Bütçeyle Veri Satın Almak",
+        body: "Test aşamasında amaç bütçeyi büyütmek değil, çalışan sistemi bulmaktır: hangi video, hangi mesaj, hangi ürün ve hangi teklif insanları harekete geçiriyor? Bu dönemde harcadığınız bütçenin bir kısmıyla müşteri alırken bir kısmıyla da bilgi satın alırsınız. Test bütçesini belirlerken işinize yarayacak basit bir ölçü var: bir müşterinin size en fazla kaça mal olmasını kabul edebileceğinizi düşünün ve birkaç müşteri getirebilecek kadar bütçe ayırın. Bu bütçeyi çok sayıda kampanyaya bölmeyin; az sayıda ama birbirinden gerçekten farklı kreatifle başlayın ki hangisinin çalıştığı net görünsün. Birkaç günlük sonuca bakıp 'olmadı' demek ise çoğu zaman erkendir.",
+      },
+      {
+        h2: "2. Aşama: Büyüme — İşletme Hazır mı?",
+        body: "Artık düzenli müşteri ve satış getiren bir modeliniz var ve maliyetler işletmeniz açısından kabul edilebilir. Bütçeyi artırmanın zamanı gelmiş olabilir; ama önce reklam dışındaki soruları cevaplayın. Stok yeterli mi? Mesajlara ve telefonlara aynı hızla dönülebilecek mi? Teslimat ve üretim kapasitesi artan talebi karşılar mı? Reklamla talebi büyütüp gelen müşteriye yetişemezseniz, bu sefer olumsuz yorum ve kayıp müşteri gibi yeni bir sorun yaratırsınız. Bütçeyi de bir anda katlamak yerine kademeli artırın; büyük ve ani değişiklikler reklam sistemini yeniden öğrenme sürecine sokar.",
+      },
+      {
+        h2: "3. Aşama: Ölçekleme — Bütçeyi Artırmak Ölçeklemek Değildir",
+        body: "Ölçekleme, müşteri maliyetinizi ve kârlılığınızı bildiğiniz, satış sürecinizin ve operasyonunuzun hazır olduğu noktada başlar. Buradaki en önemli kural şu: zarar eden bir kampanyanın bütçesini artırmak ölçekleme değildir. Ayda 20 bin TL harcayıp zarar ediyorsanız, 100 bin TL harcadığınızda işletmeniz beş kat büyümeyebilir; sadece beş kat hızlı zarar edebilirsiniz. Gerçek ölçekleme, kârlı çalışan sistemi mümkün olduğunca bozmadan büyütmektir. Bu aşamada yeni kreatif üretimi de hızlanmalıdır; aynı videoyu daha çok kişiye daha sık göstermek zamanla etkisini kaybeder.",
+      },
+      {
+        h2: "Hangi Aşamada Olduğunuzu Nasıl Anlarsınız?",
+        body: "Hangi videonun ve teklifin çalıştığını bilmiyorsanız, müşteri başına maliyetinizi hesaplayamıyorsanız veya reklamdan gelen mesajların kaçının satışa döndüğünü takip etmiyorsanız test aşamasındasınız. Düzenli ve kabul edilebilir maliyetle müşteri geliyor ama işletmenin kapasitesi henüz sınanmadıysa büyüme aşamasındasınız. Müşteri maliyetinizi, kârlılığınızı ve operasyon sınırınızı biliyorsanız ölçeklemeye hazırsınız. Aşamayı atlamak en pahalı hatadır: test edilmemiş bir sisteme büyük bütçe vermek, cevabını bilmediğiniz bir soruya yüksek bahis koymak gibidir.",
+      },
+      {
+        h2: "Reklam Bütçesi ile İçerik Bütçesini Dengelemek",
+        body: "Bütçe konuşulurken çoğu zaman yalnızca reklama giden para düşünülür, ama reklamın yakıtı içeriktir. Sınırlı bir pazarlama bütçesini ayda 30 sıradan paylaşıma bölmek yerine, daha az sayıda ama gerçekten düşünülmüş içerik üretip kalan bütçeyi bu içerikleri doğru kişilere ulaştırmaya ayırmak çoğu işletmede daha verimlidir. Özellikle test aşamasında, farklı açılardan hazırlanmış birkaç güçlü video, tek bir videoya verilen büyük bütçeden daha çok şey öğretir.",
+      },
+    ],
+    conclusion:
+      "Doğru reklam bütçesi, bir rakamdan önce bir aşamadır. Test aşamasında veri, büyüme aşamasında kapasite, ölçekleme aşamasında kârlılık belirleyicidir. markaizi olarak bir işletmeyle çalışmaya başladığımızda ilk konuştuğumuz şey 'günlük kaç lira' değil, işletmenin şu anda nerede olduğu ve nereye gitmek istediğidir. Bütçenizi hangi aşamaya göre planlamanız gerektiğini birlikte görmek isterseniz bize yazın.",
+    faq: [
+      {
+        q: "Küçük bir işletme reklam vermeye kaç lirayla başlamalı?",
+        a: "Sabit bir rakam yerine şunu düşünün: bir müşteriyi en fazla kaça kazanmayı kabul edersiniz ve birkaç müşteri getirebilecek kadar test bütçesi ayırabilir misiniz? Bu bütçeyi az sayıda, birbirinden farklı kreatife ayırmak, hangisinin çalıştığını görmenin en hızlı yoludur.",
+      },
+      {
+        q: "Reklam bütçesini ne zaman artırmalıyım?",
+        a: "Çalışan ve kabul edilebilir maliyetle müşteri getiren bir model bulduğunuzda ve işletmeniz artan talebi karşılayabilecek durumdayken. Artışı bir anda değil, kademeli yapın.",
+      },
+      {
+        q: "Bütçeyi artırdım ama sonuç aynı oranda artmadı, neden?",
+        a: "Reklam sistemi büyük değişikliklerden sonra yeniden öğrenir, aynı kreatif daha sık gösterildikçe etkisini kaybeder ve yeni ulaşılan kişiler ilk kitle kadar ilgili olmayabilir. Bütçe artışını kademeli yapmak ve yeni kreatif üretimini sürdürmek bu düşüşü sınırlar. Kampanya zaten zarar ediyorsa, bütçe artışı zararı da büyütür.",
       },
     ],
   },

@@ -36,6 +36,15 @@ export default function MetaReklamlariPage() {
         { icon: "wallet", title: "Bütçe Optimizasyonu", desc: "En düşük maliyetle en fazla dönüşümü sağlayacak bütçe dağılımı." },
         { icon: "chart", title: "Haftalık Raporlama", desc: "Tıklama, dönüşüm, ROAS ve maliyet verilerini şeffaf raporlarla görün." },
       ]}
+      approach={{
+        "title": "Meta'nın Yapay Zekası Çağında Reklamı Yönetmek",
+        "paragraphs": [
+          "Birkaç yıl önce Meta reklamlarında işin büyük kısmı hedeflemeydi: hangi ilgi alanını seçelim, hangi yaş grubunu dışarıda bırakalım. Bugün Meta'nın yapay zeka ve otomasyon sistemleri, reklamın kime gösterileceğine büyük ölçüde kendisi karar veriyor; kimin izlediğini, tıkladığını, mesaj attığını ve satın aldığını izleyerek öğreniyor. Hatta gereğinden dar hedefleme, sistemin öğrenme alanını kısıtlayabiliyor.",
+          "Bu, reklam yöneticisinin işini ortadan kaldırmadı; yerini değiştirdi. Bizim işimiz artık algoritmanın eline doğru malzemeyi vermek: doğru kampanya hedefi, doğru ölçüm, doğru teklif ve özellikle doğru kreatif. 'Yeni evlenecekler, mobilya alırken buna dikkat edin' diye başlayan bir video, kime konuştuğunu daha ilk saniyede söyler ve hem izleyiciye hem sisteme güçlü bir sinyal verir. Kreatif artık hedeflemenin bir parçası; ama hedef kitleyi bilmek hâlâ her şeyin başı."
+        ],
+        "videoText": "Meta'nın yapay zekası, hedefleme ve kreatif ilişkisini videoda ayrıntılı anlattık.",
+        "videoSlug": "isletmeler-icin-dijital-pazarlama-ve-reklam-rehberi"
+      }}
       faq={[
         {
           q: "Meta (Facebook & Instagram) reklamları için minimum bütçe nedir?",
@@ -53,6 +62,8 @@ export default function MetaReklamlariPage() {
           q: "Reklam sonuçlarını nasıl takip ederim?",
           a: "Haftalık ve aylık raporları e-posta ile iletiyoruz. Erişim, tıklama, dönüşüm ve harcama gibi tüm metrikleri şeffaf şekilde paylaşıyoruz. İsterseniz reklam hesabınıza kendi giriş bilgilerinizle anlık erişim de sağlayabilirsiniz.",
         },
+        {"q": "Meta'nın yapay zekası reklamları artık kendisi mi yönetiyor?", "a": "Kısmen. Reklamın kime gösterileceği konusunda algoritmanın rolü çok arttı ve sistem kullanıcı davranışlarından öğreniyor. Ama doğru kampanya hedefi, ölçüm altyapısı, teklif ve kreatif olmadan algoritma doğru kişiyi bulamaz. Reklam yönetimi bugün daha çok bu malzemeyi hazırlamak, test etmek ve sonuçları yorumlamaktır."},
+        {"q": "Ucuz mesaj getiren reklam iyi reklam mıdır?", "a": "Her zaman değil. 10 TL'ye 100 mesaj getirip satış çıkarmayan bir reklam, 30 TL'ye 40 mesaj getirip 8 satış çıkaran reklamdan daha kötüdür. Bu yüzden mesaj maliyetinin yanında, gelen mesajların kaçının gerçek müşteriye ve satışa dönüştüğüne de bakıyoruz."},
       ]}
     />
   );

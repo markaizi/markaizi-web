@@ -42,6 +42,15 @@ export default function DanismanlikPage() {
         { icon: "chat", title: "Düzenli Yönlendirme", desc: "Periyodik görüntülü görüşmelerle sonuçlara birlikte bakar, planı güncelleriz. Aradaki sorular için mesaj hattı." },
         { icon: "chart", title: "Ölçüm ve Raporlama", desc: "Beğeni değil sonuç: gelen mesaj, arama ve satış etkisini takip edebileceğiniz basit bir ölçüm düzeni." },
       ]}
+      approach={{
+        "title": "Bütçe Üç Aşamada Büyür: Test, Büyüme, Ölçekleme",
+        "paragraphs": [
+          "Danışmanlıkta en sık sorulan soru 'günlük kaç lira reklam verelim?'. Bunun herkese uyan tek cevabı yok; önce hangi aşamada olduğunuzu anlamamız gerekiyor. Test aşamasında amaç bütçeyi büyütmek değil, çalışan sistemi bulmak: hangi video, hangi mesaj, hangi ürün ve hangi teklif işe yarıyor? Bu dönemde bütçenin bir kısmıyla müşteriyle birlikte veri de satın alırsınız.",
+          "Çalışan bir model bulunduğunda büyüme aşamasına geçilir; ama önce işletmenin hazır olup olmadığına bakarız: stok, personel, mesajlara dönüş hızı, teslimat. Ölçekleme ise ancak müşteri maliyeti ve kârlılık bilindiğinde başlar. Bütçeyi artırmak ölçeklemek değildir; zarar eden bir kampanyaya beş kat bütçe vermek, yalnızca beş kat hızlı zarar etmek demektir. Danışmanlıkta ekibinizle birlikte hangi aşamada olduğunuzu belirler, her aşamanın sorularını sırayla cevaplarız."
+        ],
+        "videoText": "Test, büyüme ve ölçekleme aşamalarını videoda örneklerle anlattık.",
+        "videoSlug": "isletmeler-icin-dijital-pazarlama-ve-reklam-rehberi"
+      }}
       faq={[
         {
           q: "Danışmanlık ile sosyal medya yönetimi arasındaki fark nedir?",
@@ -67,6 +76,7 @@ export default function DanismanlikPage() {
           q: "Danışmanlıktan sonra ekibim kendi başına devam edebilir mi?",
           a: "Hedefimiz de bu. Planları ve senaryoları nedenleriyle birlikte hazırladığımız için ekibiniz zamanla mantığı öğrenir. Daha yapılandırılmış bir öğrenme isterseniz kurumsal eğitim hizmetimizle birleştirebilirsiniz.",
         },
+        {"q": "Reklam bütçemi ne zaman artırmalıyım?", "a": "Çalışan ve kârlı bir model bulduğunuzda ve işletmeniz artan talebi karşılayabilecek durumdayken. Stok, personel, mesajlara dönüş hızı ve teslimat kapasitesi hazır değilse bütçe artışı yeni sorunlar yaratır. Zarar eden bir kampanyanın bütçesini artırmak ise sonucu düzeltmez, büyütür."},
       ]}
     />
   );

@@ -7,6 +7,7 @@ import Breadcrumb from "@/components/Breadcrumb";
 import JsonLd from "@/components/JsonLd";
 import { breadcrumbJsonLd } from "@/lib/seo";
 import { BLOG_POSTS, getPostBySlug } from "@/lib/blog-data";
+import VideoCallout from "@/components/VideoCallout";
 
 export function generateStaticParams() {
   return BLOG_POSTS.map((p) => ({ slug: p.slug }));
@@ -20,6 +21,7 @@ const CATEGORY_SERVICE: Record<string, { href: string; label: string }> = {
   "Meta Reklamları": { href: "/hizmetler/meta-reklamlari", label: "Meta Reklamları" },
   "Web Tasarım": { href: "/hizmetler/web-tasarim-hosting", label: "Web Tasarım & Hosting" },
   "İçerik Üretimi": { href: "/hizmetler/yapay-zeka-otomasyon", label: "Yapay Zeka & Otomasyon" },
+  "Reklam Stratejisi": { href: "/hizmetler/dijital-pazarlama-danismanligi", label: "Dijital Pazarlama Danışmanlığı" },
 };
 
 export async function generateMetadata({
@@ -211,6 +213,8 @@ export default async function BlogPostPage({
                   {post.conclusion}
                 </p>
               </div>
+
+              {post.videoSlug && <VideoCallout slug={post.videoSlug} className="mt-6" />}
 
               {/* Mobilya yazıları → sektör sayfası iç linki */}
               {post.category === "Mobilya Sektörü" && (

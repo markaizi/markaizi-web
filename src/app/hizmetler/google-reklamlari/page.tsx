@@ -38,6 +38,15 @@ export default function GoogleReklamlariPage() {
         { icon: "key", title: "Anahtar Kelime Yönetimi", desc: "Doğru kelimelere teklif verin, yanlış aramalarda para kaybetmeyin." },
         { icon: "chart", title: "Dönüşüm Takibi", desc: "Formdan telefona, satıştan ziyarete kadar her dönüşümü ölçün." },
       ]}
+      approach={{
+        "title": "Gösterim Değil, İşletmeye Katkı Ölçüyoruz",
+        "paragraphs": [
+          "Dijital reklamın en güzel yanı ölçülebilir olması; en büyük tuzağı da çok fazla verinin olması. 'Bu ay bir milyon gösterim aldınız' cümlesi tek başına hiçbir şey söylemez. Asıl sorular şunlar: kaç kişi aradı, kaç mesaj geldi, bir müşteri adayı kaça mal oldu, kaçı satışa döndü ve harcanan bütçe ne kadar gelir getirdi?",
+          "Bu soruların önemi işletmeye göre değişir. Bir e-ticaret sitesinde reklam harcamasının getirisi önemliyken, bir mağazada aramanın mağaza ziyaretine dönmesi, bir klinikte ise randevu sayısı daha anlamlıdır. Reklam panelinde kaç arama ve mesaj geldiğini görebiliriz; ama bunlardan kaçının satışa döndüğünü ancak siz paylaşırsanız biliriz. Bu veri birleştiğinde bütçeyi gerçekten para kazandıran kampanyaya kaydırmak mümkün olur."
+        ],
+        "videoText": "Hangi rakamlara bakılması gerektiğini ve satış verisinin önemini videoda anlattık.",
+        "videoSlug": "isletmeler-icin-dijital-pazarlama-ve-reklam-rehberi"
+      }}
       faq={[
         {
           q: "Google Ads reklam bütçem ne kadar olmalı?",
@@ -55,6 +64,8 @@ export default function GoogleReklamlariPage() {
           q: "Reklam hesabı kimin üzerine açılıyor?",
           a: "Google Ads hesabı her zaman size aittir. Biz hesabınıza yönetici erişimi alarak kampanyaları yönetiriz. Çalışma ilişkimiz sona erdiğinde hesap, tüm geçmiş verileriyle birlikte tamamen sizde kalır.",
         },
+        {"q": "Google reklamlarında hangi rakamlara bakmalıyım?", "a": "Gösterim ve tıklama tek başına yeterli değildir. Arama, mesaj ve form gibi dönüşümlere, bir müşteri adayının maliyetine, bunların kaçının satışa döndüğüne ve harcanan bütçenin getirdiği gelire bakılmalıdır. Hangisinin daha önemli olduğu işletmenin türüne göre değişir."},
+        {"q": "Satış verilerimi ajansla neden paylaşmalıyım?", "a": "Reklam paneli kaç kişinin aradığını veya yazdığını gösterir, ama kaçının satın aldığını göstermez. Hangi kampanyadan gelen müşterilerin daha çok satışa döndüğünü bildiğimizde bütçeyi o kampanyaya kaydırabiliriz. Hedef en çok mesajı değil, en değerli müşteriyi getirmektir."},
       ]}
     />
   );

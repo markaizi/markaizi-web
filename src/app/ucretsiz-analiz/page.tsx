@@ -4,6 +4,7 @@ import Footer from "@/components/sections/Footer";
 import WhatsApp from "@/components/WhatsApp";
 import UcretsizAnalizForm from "@/components/sections/UcretsizAnalizForm";
 import ServiceFAQ, { FAQItem } from "@/components/ServiceFAQ";
+import VideoCallout from "@/components/VideoCallout";
 import Breadcrumb from "@/components/Breadcrumb";
 import JsonLd from "@/components/JsonLd";
 import { breadcrumbJsonLd } from "@/lib/seo";
@@ -174,8 +175,43 @@ export default function UcretsizAnalizPage() {
           </div>
         </section>
 
-        {/* ── SSS ── */}
+        {/* ── İlk görüşmede ne konuşuyoruz ── */}
         <section className="py-16 sm:py-20" style={{ background: "var(--bg-alt)" }}>
+          <div className="max-w-[900px] mx-auto px-5 sm:px-6">
+            <div className="text-center max-w-[680px] mx-auto mb-10">
+              <span className="section-tag">İlk Görüşme</span>
+              <h2 className="font-black leading-tight mt-2 mb-4" style={{ fontSize: "clamp(24px,3.5vw,36px)" }}>
+                Önce Paket Değil, <span className="gradient-text">İşletmenizi Konuşuyoruz</span>
+              </h2>
+              <p className="text-[#8a8a9a] text-[16px] leading-relaxed">
+                Bazen asıl ihtiyaç daha fazla reklam değildir: içerik yetersizdir, reklam müşteri getiriyordur ama satış
+                süreci çalışmıyordur, ölçüm eksiktir ya da bütçe yanlış yere gidiyordur. Görüşmede bunu anlamaya çalışıyoruz.
+              </p>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
+              {[
+                "Şu anda neredesiniz, ne yapıyorsunuz?",
+                "Nerede zorlanıyorsunuz?",
+                "Daha önce ne denediniz, hangi sonucu aldınız?",
+                "Hedefiniz ne?",
+                "Bütçeniz ve kapasitenizle bu hedef gerçekçi mi?",
+                "Biz size gerçekten değer katabilir miyiz?",
+              ].map((q) => (
+                <div key={q} className="flex items-start gap-3 rounded-xl px-4 py-3.5" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+                  <span className="mt-[7px] w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: "var(--grad)" }} />
+                  <span className="text-[14.5px] text-[#c0c0d0]">{q}</span>
+                </div>
+              ))}
+            </div>
+            <p className="text-center text-[14px] text-[#8a8a9a] mb-8 max-w-[620px] mx-auto">
+              Her gelen işletmeyle çalışmak zorunda değiliz; hizmetimiz sizin için doğru çözüm değilse bunu da açıkça söylüyoruz.
+            </p>
+            <VideoCallout slug="isletmeler-icin-dijital-pazarlama-ve-reklam-rehberi" text="Bir ajansla çalışmadan önce neleri bilmeniz gerektiğini videoda anlattık." />
+          </div>
+        </section>
+
+        {/* ── SSS ── */}
+        <section className="py-16 sm:py-20" style={{ background: "var(--bg)" }}>
           <ServiceFAQ faqs={FAQ} />
         </section>
 

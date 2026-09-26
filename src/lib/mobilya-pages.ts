@@ -28,6 +28,7 @@ export type LandingContent = {
   ctaTitle: string;
   ctaText: string;
   linkLabel: string; // ana mobilya sayfası ve footer'da görünen kısa ad
+  video?: { slug: string; text: string }; // SSS'ten önce gösterilen YouTube video kartı
 };
 
 const CASE = { href: "/vaka-calismalari/alitel-mobilya", label: "Alitel Mobilya Vaka Çalışması" };
@@ -605,6 +606,20 @@ export const MOBILYA_SOSYAL: LandingContent = {
       ],
     },
     {
+      h2: "Aynı Koltuk Takımı, Altı Farklı Video",
+      paragraphs: [
+        "Bir ürün için tek video çekip aylarca döndürmek, mobilyada en sık gördüğümüz hatalardan biri. Oysa herkes aynı sebeple satın almıyor: biri fiyata, biri konfora, biri kumaşın dayanıklılığına bakıyor. Aynı koltuk takımını farklı açılardan anlatan kısa videolar, farklı müşterilerin ilgisini çeker.",
+      ],
+      bullets: [
+        "Fiyat ve ödeme seçeneklerini anlatan video",
+        "Konforu ve oturumu gösteren video",
+        "Kumaş ve dikiş detayına odaklanan video",
+        "'Çocuklu aileler koltuk seçerken buna dikkat etsin' gibi bir kitleye seslenen video",
+        "'Salona köşe takımı mı, klasik takım mı?' gibi bir soruya cevap veren video",
+        "Müşterinin ya da satış danışmanının anlattığı video",
+      ],
+    },
+    {
       h2: "Organik ve Reklam Birlikte",
       paragraphs: [
         "Instagram'ın organik erişimi zamanla daralıyor. En iyi performans gösteren içerikleri küçük bütçelerle reklama çevirmek, hesabınızı yalnızca takipçilerinize değil mobilya almayı düşünen yeni kitlelere de ulaştırır. Bu nedenle sosyal medya yönetimi ile reklam yönetimini birbirini besleyecek şekilde kurgularız: organikte çalışan içerik reklama gider, reklamda çalışan mesaj organik içeriğe yansır.",
@@ -653,6 +668,7 @@ export const MOBILYA_SOSYAL: LandingContent = {
   ctaText:
     "Instagram hesabınızı inceleyip neyin çalıştığını ve nerede fırsat kaçırdığınızı 24 saat içinde paylaşalım.",
   linkLabel: "Mobilya Sosyal Medya Yönetimi",
+  video: { slug: "isletmeler-icin-dijital-pazarlama-ve-reklam-rehberi", text: "Her gün paylaşım, takipçi sayısı ve kreatif konularını videoda anlattık." },
 };
 
 export const MOBILYA_ETICARET: LandingContent = {
@@ -781,6 +797,13 @@ export const MOBILYA_META: LandingContent = {
       ],
     },
     {
+      h2: "Aynı Yaş, Aynı Şehir, Bambaşka Müşteri",
+      paragraphs: [
+        "Ankara'da yaşayan, 35 yaşında iki erkek düşünün. Demografik olarak neredeyse aynılar; reklam panelinde aynı kutuya düşerler. Ama biri üç ay sonra evleniyor, yeni ev tutmuş ve salonundan yatak odasına bütün evi döşeyecek. Diğeri geçen yıl evini komple döşemiş. Bir mobilya mağazası için bu ikisi aynı müşteri değil.",
+        "Bu yüzden mobilya reklamında asıl soru 'kaç yaşında, nerede yaşıyor' değil, 'şu anda hangi ihtiyacın içinde'. Meta'nın yapay zekası bu kişiyi bulmakta giderek daha iyi, ama ona yol gösteren şey reklamın kendisi: 'Yeni evlenecekler, mobilya alırken bu hatayı yapmayın' diye başlayan bir video, kime konuştuğunu ilk saniyede söyler ve doğru kişiyi kendine çeker.",
+      ],
+    },
+    {
       h2: "Görsel: Reklamın Maliyetini Belirleyen Şey",
       paragraphs: [
         "Meta'nın reklam sistemi, kullanıcıların ilgisini çeken reklama daha ucuz gösterim verir. Loş ışıkta telefonla çekilmiş bir koltuk fotoğrafı ile aydınlık, yaşam alanı kurgusuyla çekilmiş bir görsel arasında mesaj başına maliyet ciddi fark edebilir. Bu yüzden kampanyada birden fazla görsel ve video türünü aynı anda başlatır, en verimliyi büyütür, zayıf olanı kapatırız.",
@@ -830,6 +853,7 @@ export const MOBILYA_META: LandingContent = {
   ctaText:
     "Mevcut reklamlarınızı ve hesabınızı inceleyip mesaj başına maliyetinizi nerede düşürebileceğinizi yazılı olarak paylaşalım.",
   linkLabel: "Mobilya Instagram & Facebook Reklamları",
+  video: { slug: "isletmeler-icin-dijital-pazarlama-ve-reklam-rehberi", text: "Hedef kitle, Meta'nın yapay zekası ve kreatif ilişkisini videoda anlattık." },
 };
 
 export const MOBILYA_WEB: LandingContent = {

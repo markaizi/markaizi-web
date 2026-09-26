@@ -8,6 +8,7 @@ import Breadcrumb from "@/components/Breadcrumb";
 import JsonLd from "@/components/JsonLd";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 import type { LandingContent } from "@/lib/mobilya-pages";
+import VideoCallout from "@/components/VideoCallout";
 
 export function mobilyaMetadata(c: LandingContent): Metadata {
   return {
@@ -137,6 +138,11 @@ export default function MobilyaLanding({ c }: { c: LandingContent }) {
         ))}
 
         <section className="py-16" style={{ background: c.sections.length % 2 === 0 ? "var(--bg-alt)" : "var(--bg)" }}>
+          {c.video && (
+            <div className="max-w-[760px] mx-auto px-6 mb-12">
+              <VideoCallout slug={c.video.slug} text={c.video.text} />
+            </div>
+          )}
           <ServiceFAQ faqs={c.faq} />
         </section>
 

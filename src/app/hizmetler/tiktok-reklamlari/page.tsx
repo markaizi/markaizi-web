@@ -47,7 +47,7 @@ export default function TikTokReklamlariPage() {
         },
         {
           q: "TikTok reklam bütçesi ne kadar olmalı?",
-          a: "TikTok Ads için günlük 150–250 ₺ uygun bir başlangıç noktasıdır. Spark Ads formatıyla organik olarak iyi performans gösteren içeriklerinizi reklama dönüştürerek genellikle en yüksek dönüşüm oranını yakalarız. Reklam bütçesi yönetim ücretine dahil değildir.",
+          a: "Herkese uyan tek bir rakam yok; önce hangi aşamada olduğunuza bakıyoruz. Test aşamasında amaç bütçeyi büyütmek değil, hangi videonun, mesajın ve teklifin çalıştığını bulmaktır. Çalışan bir model bulunduktan sonra bütçe, işletmenizin gelen talebi karşılayabileceği ölçüde kademeli olarak artırılır. Spark Ads ile organik olarak iyi performans gösteren içeriklerinizi reklama dönüştürmek genellikle verimli bir başlangıçtır. Reklam bütçesi doğrudan platforma ödenir ve yönetim ücretine dahil değildir.",
         },
         {
           q: "TikTok'ta sonuç almak ne kadar sürer?",

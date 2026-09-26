@@ -43,6 +43,15 @@ export default function SosyalMedyaPage() {
         { icon: "search", title: "Hashtag & SEO", desc: "Platformun arama algoritmalarına uygun hashtag ve açıklama stratejisi." },
         { icon: "growth", title: "Büyüme Stratejisi", desc: "Organik büyümeyi hızlandırmak için sürekli güncellenen içerik ve yayın stratejisi." },
       ]}
+      approach={{
+        "title": "Daha Çok Paylaşım Değil, Daha Doğru Paylaşım",
+        "paragraphs": [
+          "Bize en sık gelen taleplerden biri 'her gün paylaşım olsun'. Yeterli bütçe, ekip ve çekim kapasitesi varsa sık paylaşım değerli olabilir. Ama içerik üretmenin bir maliyeti var: fikir, senaryo, çekim, kurgu, kapak ve metin. Sınırlı bir bütçeyi 30 parçaya bölmek, çoğu zaman 'bugün ne atalım' diye düşünülmüş 30 sıradan içerik demek.",
+          "Birçok işletmede ayda 12 gerçekten düşünülmüş içerik ve bu içerikleri doğru insanlara ulaştıran küçük bir reklam desteği çok daha fazla iş yapıyor. Her gün paylaşım yapmanız bütün takipçilerinizin her paylaşımı gördüğü anlamına da gelmiyor; insanın içerikte durması, izlemesi, kaydetmesi gerekiyor. Bu yüzden içerik sayısını takvim değil; hedefiniz, bütçeniz ve üretim kapasiteniz belirlemeli. Başarıyı da takipçi sayısıyla değil, gelen mesaj, nitelikli müşteri ve satışla ölçüyoruz."
+        ],
+        "videoText": "Her gün paylaşım ve takipçi sayısı konusunu videoda örneklerle anlattık.",
+        "videoSlug": "isletmeler-icin-dijital-pazarlama-ve-reklam-rehberi"
+      }}
       faq={[
         {
           q: "Paylaşılacak içerikleri kim hazırlıyor?",
@@ -60,6 +69,8 @@ export default function SosyalMedyaPage() {
           q: "Ne zaman takipçi ve etkileşim artışı görürüm?",
           a: "Organik sosyal medya büyümesinde ilk anlamlı sonuçlar genellikle 2–3. ayda görülür. Tutarlılık burada en kritik faktördür; düzenli ve kaliteli içerik yayını, zamanla erişimi ve etkileşimi geometrik biçimde artırır.",
         },
+        {"q": "Sosyal medyada her gün paylaşım yapmak zorunda mıyım?", "a": "Hayır. Kaliteyi koruyabiliyorsanız sık paylaşım faydalı olabilir; ama sınırlı bütçede 30 sıradan içerik yerine daha az sayıda güçlü içerik üretip bunları reklamla doğru kişilere ulaştırmak genellikle daha verimlidir. Doğru sayı işletmeye göre değişir; bazı e-ticaret markalarında her gün paylaşmak mantıklıyken bazı işletmelerde haftada iki-üç güçlü içerik yeterlidir."},
+        {"q": "Takipçi sayısı ne kadar önemli?", "a": "Hedefiniz topluluk büyütmekse önemli, satışsa tek başına yanıltıcı. 5 bin doğru takipçisi olan bir işletme, 20 bin takipçili bir hesaptan çok daha fazla satış yapabilir. Raporlarımızda takipçiden çok doğru kişiye ulaşım, mesaj, nitelikli müşteri ve satışa katkıya bakıyoruz."},
       ]}
     />
   );

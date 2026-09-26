@@ -81,6 +81,8 @@ export const VIDEOS: VideoPost[] = [
       },
     ],
     related: [
+      { href: "/blog/reklam-neden-satis-getirmiyor", label: "Reklam Neden Satış Getirmiyor?" },
+      { href: "/blog/reklam-butcesi-nasil-belirlenir", label: "Reklam Bütçesi Nasıl Belirlenir?" },
       { href: "/blog/ankara-mobilya-ajansi-nasil-secilir", label: "Ajans Nasıl Seçilir? (Kontrol Listesi)" },
       { href: "/hizmetler/meta-reklamlari", label: "Meta Reklamları" },
       { href: "/hizmetler/sosyal-medya-yonetimi", label: "Sosyal Medya Yönetimi" },

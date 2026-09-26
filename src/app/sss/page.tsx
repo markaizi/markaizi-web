@@ -4,6 +4,7 @@ import WhatsApp from "@/components/WhatsApp";
 import Breadcrumb from "@/components/Breadcrumb";
 import JsonLd from "@/components/JsonLd";
 import { breadcrumbJsonLd } from "@/lib/seo";
+import VideoCallout from "@/components/VideoCallout";
 
 const FAQS = [
   {
@@ -58,6 +59,31 @@ const FAQS = [
       {
         q: "Reklam performansını nasıl takip edebilirim?",
         a: "Haftalık ve aylık raporları e-posta ile iletiyoruz. Dilediğiniz zaman reklam hesaplarınıza kendi giriş bilgilerinizle erişip anlık verileri görebilirsiniz. Ayrıca özel bir dashboard talep eden müşterilerimiz için Google Looker Studio raporu da hazırlıyoruz.",
+      },
+    ],
+  },
+  {
+    category: "Ajansla Çalışmak",
+    items: [
+      {
+        q: "Satış garantisi veriyor musunuz?",
+        a: "Hayır, ve koşulsuz satış garantisi veren bir ajansa temkinli yaklaşmanızı öneririz. Satışın tamamı reklam yöneticisinin kontrolünde değildir; ürün, fiyat, stok, mesajlara dönüş hızı ve satış ekibi de sonucu belirler. Garanti ettiğimiz şey çalışma standardımız: düzenli iletişim, şeffaf rapor, test disiplini ve bir sorun gördüğümüzde bunu açıkça söylemek.",
+      },
+      {
+        q: "Çalışmaya başladığımızda ilk 30-90 günde ne olur?",
+        a: "İlk dönem yalnızca bütçe artırma dönemi değildir. Önce işletmenizi, ürünlerinizi, mevcut içeriklerinizi, varsa geçmiş reklam verilerinizi ve satış sürecinizi inceleriz; ölçüm eksiklerini tamamlarız. Ardından farklı kreatif, mesaj ve teklifleri test eder, veri geldikçe neyin çalıştığını görür ve onu büyütürüz. Geçmiş verisi olan işletmeler bu aşamalardan daha hızlı geçer.",
+      },
+      {
+        q: "Reklam çalışmıyorsa sorunun nerede olduğunu nasıl buluyorsunuz?",
+        a: "Kabaca şu sırayla bakarız: reklam izlenmiyorsa kreatife, izlenip tıklanmıyorsa mesaja ve teklife, tıklanıp dönüşüm olmuyorsa açılış sayfasına ve satış yolculuğuna, mesaj gelip satış olmuyorsa satış sürecine ve mesajlara dönüş hızına. Her kötü sonucun suçunu algoritmaya atmıyoruz.",
+      },
+      {
+        q: "Satış sonuçlarımı sizinle paylaşmam gerekiyor mu?",
+        a: "Zorunlu değil ama sonucu çok iyileştirir. Reklam panelinde kaç mesaj geldiğini görürüz; kaçının mağazaya gelip satın aldığını ise ancak siz paylaşırsanız biliriz. Hangi reklamdan gelen müşterinin daha çok satışa döndüğünü bildiğimizde bütçeyi en değerli müşteriyi getiren kampanyaya kaydırabiliriz.",
+      },
+      {
+        q: "markaizi her işletme için doğru ajans mı?",
+        a: "Hayır. 'Bugün reklamı açalım, yarın satış patlasın' ya da 'ne olduğu önemli değil, her gün bir şey paylaşalım' beklentisi varsa yaklaşımımız size uygun olmayabilir. Veriye bakmaya, çalışmayan şeyi değiştirmeye ve reklamı işletmenin pazarlama sisteminin bir parçası olarak görmeye açıksanız birlikte çok daha sağlıklı çalışırız.",
       },
     ],
   },
@@ -176,6 +202,8 @@ export default function SSSPage() {
                 </div>
               </div>
             ))}
+
+            <VideoCallout slug="isletmeler-icin-dijital-pazarlama-ve-reklam-rehberi" text="Bu soruların çoğunu videoda daha ayrıntılı cevapladık." className="mb-8" />
 
             {/* CTA */}
             <div className="text-center p-10 rounded-2xl" style={{ background: "var(--surface)", border: "1px solid rgba(168,85,247,0.2)" }}>

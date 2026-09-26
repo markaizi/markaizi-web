@@ -39,6 +39,15 @@ export default function VideoCekimiPage() {
         { icon: "pen", title: "Senaryo ve Çekim Planı", desc: "Videonun amacına göre senaryo, sahne listesi ve çekim günü planı." },
         { icon: "handshake", title: "Video Başı Anlaşma", desc: "Aylık paket zorunluluğu yok; ihtiyacınız olan video sayısı kadar net fiyatlı anlaşma." },
       ]}
+      approach={{
+        "title": "Pahalı Kamera, İyi Reklam Demek Değil",
+        "paragraphs": [
+          "Profesyonel reklam videosu her zaman pahalı reklam videosu demek değil. İnsanlar Instagram'a reklam izlemeye girmiyor; Reels izlemeye, arkadaşlarına bakmaya, eğlenmeye giriyor. Bazen telefonla çekilmiş doğal, 15 saniyelik bir video, stüdyoda çekilmiş cilalı bir filmden daha iyi çalışabiliyor. Bu yüzden çekimden önce 'en pahalı nasıl çekeriz' değil, 'bu video nerede yayınlanacak ve kimin dikkatini çekmeli' sorusunu konuşuyoruz.",
+          "Aynı ürün için tek bir video çekip aylarca döndürmek de doğru değil, çünkü herkes aynı sebeple satın almıyor. Bir koltuk takımı için bir videoda fiyatı, birinde konforu, birinde kumaşı, birinde çocuklu ailelerin dikkat etmesi gerekenleri, birinde müşteri yorumunu anlatabiliriz. Tanıtım filmi sizi anlatır; farklı açılardan çekilmiş kısa videolar ise farklı müşterilere ulaşır. Video başı anlaşmada bu karışımı ihtiyacınıza göre birlikte planlıyoruz."
+        ],
+        "videoText": "Kreatifin neden bu kadar önemli olduğunu videoda anlattık.",
+        "videoSlug": "isletmeler-icin-dijital-pazarlama-ve-reklam-rehberi"
+      }}
       faq={[
         {
           q: "Video başı anlaşma ne demek?",
@@ -64,6 +73,7 @@ export default function VideoCekimiPage() {
           q: "Teslim edilen videolar kime ait?",
           a: "Teslim edilen videoları web sitenizde, sosyal medyanızda ve reklamlarınızda kullanabilirsiniz. Kullanım kapsamını (örneğin manken görüntülerinin kullanım süresi) çekim öncesi anlaşmada yazılı olarak netleştiriyoruz.",
         },
+        {"q": "Reklam için kaç farklı video gerekir?", "a": "Tek bir doğru sayı yok, ama tek video çoğu zaman yetmez. Aynı ürünü farklı açılardan (fiyat, konfor, malzeme, kullanım senaryosu, müşteri yorumu) anlatan birkaç kısa video test edip hangisinin daha iyi çalıştığını görmek, tek bir pahalı filme bütün bütçeyi yatırmaktan genellikle daha verimlidir."},
       ]}
     />
   );

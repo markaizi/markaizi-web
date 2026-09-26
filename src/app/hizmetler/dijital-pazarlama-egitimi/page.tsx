@@ -43,6 +43,15 @@ export default function EgitimPage() {
         { icon: "search", title: "Google Reklam Temelleri", desc: "Arama reklamı kurulumu, anahtar kelime seçimi, negatif kelimeler ve dönüşüm takibi." },
         { icon: "calendar", title: "İçerik Planı", desc: "Ekibin sürdürebileceği gerçekçi bir paylaşım takvimi ve görev dağılımı." },
       ]}
+      approach={{
+        "title": "Eğitimin Kalbi: İlk Üç Saniye",
+        "paragraphs": [
+          "Eğitimlerimizde en çok zaman ayırdığımız konu, bir videonun ilk cümlesi. Çünkü işletmeler reklamda genellikle kendi anlatmak istediklerini anlatıyor: '1998'den beri hizmetinizdeyiz', 'kaliteli hizmet sunuyoruz'. Ama müşteri sabah kalktığında bunu düşünmüyor; kendi problemini düşünüyor: bu evi nasıl döşeyeceğim, bütçem yetecek mi, ürün düğüne yetişir mi?",
+          "'Yeni sezon ürünlerimiz mağazamızda' ile 'Yeni evlenecekler, mobilya alırken bu hatayı yapmayın' arasındaki fark, izlenen video ile kaydırılıp geçilen video arasındaki farktır. Çalışanlarınıza müşterinin kafasındaki bu konuşmaya dahil olan açılış cümlelerini yazmayı, aynı ürün için farklı açılardan video fikri üretmeyi ve pahalı ekipman olmadan dikkat çeken çekim yapmayı uygulamalı olarak öğretiyoruz."
+        ],
+        "videoText": "Kanca, mesaj ve müşterinin kafasındaki konuşmaya dahil olmayı videoda anlattık.",
+        "videoSlug": "isletmeler-icin-dijital-pazarlama-ve-reklam-rehberi"
+      }}
       faq={[
         {
           q: "Eğitim hangi konuları kapsıyor?",
@@ -68,6 +77,7 @@ export default function EgitimPage() {
           q: "Eğitim ücreti nasıl belirleniyor?",
           a: "Katılımcı sayısına, oturum sayısına, yüz yüze ya da çevrim içi olmasına göre firmanıza özel teklif hazırlıyoruz. İhtiyacınızı netleştirdiğimiz ilk görüşme ücretsizdir.",
         },
+        {"q": "İyi bir reklam videosu nasıl başlamalı?", "a": "İzleyicinin ilk birkaç saniyede 'bu video benimle ilgili' demesini sağlayacak bir cümleyle. Firmanın kendini anlatması yerine müşterinin problemine ya da sorusuna değinen açılışlar çok daha fazla izlenir. Örneğin 'Yeni sezon ürünlerimiz geldi' yerine 'Yeni evlenecekler, mobilya alırken bu hatayı yapmayın' gibi."},
       ]}
     />
   );

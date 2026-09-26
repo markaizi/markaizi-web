@@ -7,6 +7,7 @@ import Breadcrumb from "@/components/Breadcrumb";
 import JsonLd from "@/components/JsonLd";
 import { SITE_URL, ORG_NAME, breadcrumbJsonLd } from "@/lib/seo";
 import { FeatureIcon, type FeatureIconName } from "@/components/icons/FeatureIcons";
+import VideoCallout from "@/components/VideoCallout";
 
 export interface ServicePageProps {
   title: string;
@@ -19,6 +20,8 @@ export interface ServicePageProps {
   badge: string;
   path: string; // ör. "/hizmetler/sosyal-medya-yonetimi"
   relatedPosts?: { slug: string; title: string }[]; // ilgili blog yazıları
+  // Hizmete özel çalışma yaklaşımı (YouTube rehber videosundan uyarlanmış kısa bölüm)
+  approach?: { title: string; paragraphs: string[]; videoSlug?: string; videoText?: string };
 }
 
 export default function ServicePageTemplate({
@@ -31,6 +34,7 @@ export default function ServicePageTemplate({
   badge,
   path,
   relatedPosts,
+  approach,
 }: ServicePageProps) {
   const faqJsonLd = faq && faq.length > 0
     ? {
@@ -170,9 +174,25 @@ export default function ServicePageTemplate({
           </div>
         </section>
 
+        {/* ── Yaklaşımımız ── */}
+        {approach && (
+          <section className="py-16" style={{ background: "var(--bg)" }}>
+            <div className="max-w-[760px] mx-auto px-6">
+              <span className="section-tag">Yaklaşımımız</span>
+              <h2 className="font-black leading-tight mt-2 mb-5" style={{ fontSize: "clamp(22px,3vw,32px)" }}>
+                {approach.title}
+              </h2>
+              {approach.paragraphs.map((p, i) => (
+                <p key={i} className="text-[#8a8a9a] text-[16px] leading-[1.9] mb-4">{p}</p>
+              ))}
+              {approach.videoSlug && <VideoCallout slug={approach.videoSlug} text={approach.videoText} className="mt-6" />}
+            </div>
+          </section>
+        )}
+
         {/* ── SSS ── */}
         {faq && faq.length > 0 && (
-          <section className="py-20" style={{ background: "var(--bg)" }}>
+          <section className="py-20" style={{ background: approach ? "var(--bg-alt)" : "var(--bg)" }}>
             <ServiceFAQ faqs={faq} />
           </section>
         )}
