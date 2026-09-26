@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, FormEvent } from "react";
-import { CV_SKILLS } from "@/lib/cv-skills";
+import { useState, useRef, FormEvent } from "react";
+import { CV_SKILLS, checkSkillConsistency } from "@/lib/cv-skills";
 
 const SOSYAL_MEDYA_OPTIONS = [
   "Aktif sosyal medya kullanıcısıyım",
@@ -88,9 +88,16 @@ export default function CvForm() {
   );
   const [sosyalMedya, setSosyalMedya] = useState<string[]>([]);
   const [medeni, setMedeni]         = useState("");
+  const [referanslar, setReferanslar] = useState("");
+  // Tutarsızlık varsa ilk "Gönder" tıklaması uyarıya kaydırır; aday ikinci kez
+  // tıklarsa (ya da puanları değiştirmezse) başvuru yine de gönderilir.
+  const [warnAck, setWarnAck]       = useState(false);
+  const warnRef = useRef<HTMLDivElement>(null);
+  const issues = checkSkillConsistency(skills, referanslar);
 
   function setSkill(skill: string, value: number) {
     setSkills((prev) => ({ ...prev, [skill]: value }));
+    setWarnAck(false);
   }
 
   function toggleSosyal(p: string) {
@@ -99,6 +106,11 @@ export default function CvForm() {
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
+    if (issues.length > 0 && !warnAck) {
+      setWarnAck(true);
+      warnRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
+    }
     setStatus("sending");
 
     const form = e.currentTarget;
@@ -113,7 +125,7 @@ export default function CvForm() {
       ucretBeklenti:  get("ucretBeklenti"),
       skills,
       sosyalMedya,
-      referanslar:    get("referanslar"),
+      referanslar,
       about:          get("about"),
     };
 
@@ -129,6 +141,8 @@ export default function CvForm() {
         setSkills(Object.fromEntries(CV_SKILLS.map((s) => [s, 1])));
         setSosyalMedya([]);
         setMedeni("");
+        setReferanslar("");
+        setWarnAck(false);
       } else {
         const d = await res.json();
         console.error(d.error);
@@ -228,6 +242,7 @@ export default function CvForm() {
             <label className={labelCls}>Bilgi ve Program Seviyeleriniz</label>
             <p className="text-[12px] text-[#666] mb-4">
               Her biri için kendinizi 1 (başlangıç) ile 10 (uzman) arasında değerlendirin.
+              Kimse her alanda uzman değildir; dürüst bir değerlendirme sizi en doğru pozisyonla eşleştirmemize yardımcı olur.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4">
               {CV_SKILLS.map((skill) => (
@@ -239,6 +254,16 @@ export default function CvForm() {
                 />
               ))}
             </div>
+            {issues.length > 0 && (
+              <div ref={warnRef} role="status" className="mt-5 rounded-xl p-4 space-y-2"
+                style={{ background: "rgba(251,191,36,0.08)", border: "1px solid rgba(251,191,36,0.3)" }}>
+                <p className="text-[13px] font-bold" style={{ color: "#fbbf24" }}>Puanlarınızı bir kez daha gözden geçirin</p>
+                {issues.map((i) => (
+                  <p key={i.code} className="text-[13px] text-[#c0c0d0] leading-relaxed">• {i.candidate}</p>
+                ))}
+                <p className="text-[12px] text-[#8a8a9a]">Değerlendirmenizden eminseniz başvurunuzu yine de gönderebilirsiniz.</p>
+              </div>
+            )}
           </div>
 
           {/* Referanslar */}
@@ -253,6 +278,8 @@ export default function CvForm() {
             <textarea
               name="referanslar"
               rows={3}
+              value={referanslar}
+              onChange={(e) => { setReferanslar(e.target.value); setWarnAck(false); }}
               placeholder="Örn: instagram.com/hesap-adi, youtube.com/watch?v=..."
               className={`${inputCls} resize-none`}
               style={inputStyle}
@@ -330,7 +357,7 @@ export default function CvForm() {
                 </svg>
                 Gönderiliyor...
               </span>
-            ) : "Başvurumu Gönder →"}
+            ) : issues.length > 0 && warnAck ? "Yine de Gönder →" : "Başvurumu Gönder →"}
           </button>
         </form>
       )}

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { CV_SKILLS, checkSkillConsistency } from "@/lib/cv-skills";
 
 export interface SubmissionItem {
   id: string;
@@ -26,6 +27,13 @@ function fmtDateTime(iso: string) {
 
 function prettifyKey(key: string): string {
   return key.replace(/([a-z])([A-Z])/g, "$1 $2").replace(/^./, (c) => c.toUpperCase());
+}
+
+// Eski başvurularda alan yok — puanlardan yeniden hesaplanır.
+function cvIssues(item: SubmissionItem): string[] {
+  if (item.type !== "CV") return [];
+  const skills = (item.data.skills ?? {}) as Record<string, number>;
+  return checkSkillConsistency(skills, String(item.data.referanslar ?? "")).map((i) => i.admin);
 }
 
 function summaryLine(item: SubmissionItem): string {
@@ -102,6 +110,8 @@ export default function GelenTaleplerView({ submissions: initial }: { submission
           {submissions.map((item) => {
             const t = TYPE_LABEL[item.type];
             const isOpen = openId === item.id;
+            const issues = cvIssues(item);
+            const skills = item.type === "CV" ? (item.data.skills as Record<string, number> | undefined) : undefined;
             return (
               <div key={item.id} className="rounded-xl overflow-hidden" style={{ background: "var(--surface)", border: `1px solid ${item.read ? "var(--border)" : "rgba(251,146,60,0.3)"}` }}>
                 <button onClick={() => toggleOpen(item)} className="w-full text-left p-4 flex items-start justify-between gap-3">
@@ -112,6 +122,11 @@ export default function GelenTaleplerView({ submissions: initial }: { submission
                       </span>
                       {!item.read && (
                         <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: "#fb923c" }} />
+                      )}
+                      {issues.length > 0 && (
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{ background: "rgba(251,191,36,0.12)", color: "#fbbf24" }}>
+                          ⚠ Tutarsız puanlama
+                        </span>
                       )}
                       {!item.emailSent && (
                         <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full" style={{ background: "rgba(248,113,113,0.1)", color: "#f87171" }}>
@@ -127,6 +142,12 @@ export default function GelenTaleplerView({ submissions: initial }: { submission
 
                 {isOpen && (
                   <div className="px-4 pb-4 pt-1" style={{ borderTop: "1px solid var(--border)" }}>
+                    {issues.length > 0 && (
+                      <div className="mt-3 rounded-lg p-3 space-y-1" style={{ background: "rgba(251,191,36,0.08)", border: "1px solid rgba(251,191,36,0.3)" }}>
+                        <p className="text-[11px] font-bold uppercase tracking-wide" style={{ color: "#fbbf24" }}>Tutarlılık Uyarısı</p>
+                        {issues.map((t) => <p key={t} className="text-[13px] text-white">• {t}</p>)}
+                      </div>
+                    )}
                     <div className="space-y-2 mt-3">
                       {Object.entries(item.data)
                         .filter(([, v]) => v !== null && v !== undefined && v !== "" && typeof v !== "object")
@@ -137,6 +158,25 @@ export default function GelenTaleplerView({ submissions: initial }: { submission
                           </div>
                         ))}
                     </div>
+                    {skills && (
+                      <div className="mt-4">
+                        <p className="text-[11px] font-bold uppercase tracking-wide text-[#8a8a9a] mb-2">Bilgi ve Program Seviyeleri</p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-1.5">
+                          {CV_SKILLS.map((sk) => {
+                            const v = Number(skills[sk]) || 1;
+                            return (
+                              <div key={sk} className="flex items-center gap-2 text-[12.5px]">
+                                <span className="text-[#8a8a9a] w-[150px] flex-shrink-0 truncate">{sk}</span>
+                                <span className="flex-1 h-1.5 rounded-full overflow-hidden" style={{ background: "var(--border)" }}>
+                                  <span className="block h-full rounded-full" style={{ width: `${v * 10}%`, background: v >= 9 ? "#ec4899" : "#a855f7" }} />
+                                </span>
+                                <span className="text-white w-9 text-right tabular-nums">{v}/10</span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
                     <button
                       onClick={() => handleDelete(item.id)}
                       disabled={busyId === item.id}

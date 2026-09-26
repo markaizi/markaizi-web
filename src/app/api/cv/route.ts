@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 import { escapeHtml, isValidEmail, cleanStr, cleanPhone, rateLimit, getClientIp } from "@/lib/security";
-import { CV_SKILLS } from "@/lib/cv-skills";
+import { CV_SKILLS, checkSkillConsistency } from "@/lib/cv-skills";
 import { prisma } from "@/lib/db";
 
 export async function POST(req: NextRequest) {
@@ -32,6 +32,9 @@ export async function POST(req: NextRequest) {
       skills[skill] = Number.isFinite(raw) ? Math.min(10, Math.max(1, Math.round(raw))) : 1;
     }
 
+    // İstemcinin gönderdiğine güvenmeden sunucuda yeniden hesaplanır.
+    const tutarlilikUyarilari = checkSkillConsistency(skills, referanslar).map((i) => i.admin);
+
     if (!name || !email || !phone || !ucretBeklenti) {
       return NextResponse.json({ error: "Zorunlu alanlar eksik." }, { status: 400 });
     }
@@ -41,7 +44,7 @@ export async function POST(req: NextRequest) {
 
     // Önce veritabanına yaz — e-posta gönderimi başarısız olsa bile başvuru kaybolmasın.
     const submission = await prisma.submission.create({
-      data: { type: "CV", data: { name, email, phone, age, medeni, ucretBeklenti, sosyalMedya, referanslar, about, skills } },
+      data: { type: "CV", data: { name, email, phone, age, medeni, ucretBeklenti, sosyalMedya, referanslar, about, skills, tutarlilikUyarilari } },
     });
 
     const transporter = nodemailer.createTransport({
@@ -70,7 +73,7 @@ export async function POST(req: NextRequest) {
       from: `"markaizi İK" <${process.env.GMAIL_USER}>`,
       to: process.env.GMAIL_USER,
       replyTo: email,
-      subject: `[İş Başvurusu] ${name}`.slice(0, 200),
+      subject: `[İş Başvurusu]${tutarlilikUyarilari.length ? " ⚠" : ""} ${name}`.slice(0, 200),
       html: `
         <div style="font-family:Inter,Arial,sans-serif;max-width:620px;margin:0 auto;background:#050505;color:#fff;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,0.1)">
           <div style="background:linear-gradient(135deg,#7c3aed,#a855f7,#ec4899);padding:24px 32px">
@@ -89,6 +92,11 @@ export async function POST(req: NextRequest) {
               ${row("Referanslar",     referanslar ? escapeHtml(referanslar).replace(/\n/g, "<br>") : "")}
               ${row("Hakkında",        escapeHtml(about).replace(/\n/g, "<br>"))}
             </table>
+            ${tutarlilikUyarilari.length ? `
+            <div style="margin:24px 0 0;padding:14px 16px;background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.35);border-radius:8px">
+              <p style="margin:0 0 6px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:#fbbf24">Tutarlılık Uyarısı</p>
+              ${tutarlilikUyarilari.map((t) => `<p style="margin:4px 0;font-size:13px;color:#fde68a">• ${escapeHtml(t)}</p>`).join("")}
+            </div>` : ""}
             <p style="margin:24px 0 8px;color:#8a8a9a;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px">Bilgi ve Program Seviyeleri</p>
             <table style="width:100%;border-collapse:collapse">
               ${skillsRows}
