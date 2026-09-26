@@ -10,11 +10,13 @@ export type BlogPost = {
   excerpt: string;
   date: string;
   dateISO: string; // YYYY-MM-DD — yapılandırılmış veri ve <meta> etiketleri için
+  dateModifiedISO?: string; // Yazı gerçekten güncellendiğinde set edilir; yoksa dateISO kullanılır
   readTime: string;
   color: string;
   intro: string;
   sections: BlogSection[];
   conclusion: string;
+  faq?: { q: string; a: string }[]; // Varsa yazının sonunda gösterilir ve FAQPage şeması üretilir
 };
 
 export const BLOG_POSTS: BlogPost[] = [
@@ -536,6 +538,85 @@ export const BLOG_POSTS: BlogPost[] = [
     ],
     conclusion:
       "Ankara'da mobilya sektöründe kazanan mağaza, en pahalı reklamı verdiği için değil, müşteri araştırdığı anda karşısına doğru şekilde çıktığı için kazanır. Instagram'ınızı düzenli tutmak, iyi ışıkla çekim yapmak, Google İşletme Profilinizi doldurmak ve WhatsApp'a hızlı dönmek bugün başlayabileceğiniz, ücretsiz adımlardır. Reklamı ölçekleme, hedef kitleyi doğru kurgulama ve zamandan tasarruf etme noktasına geldiğinizde markaizi olarak Ankara'daki mobilya mağazaları için buradayız. Mağazanızın ücretsiz dijital analizini yaptırmak isterseniz WhatsApp'tan yazmanız yeterli.",
+  },
+  {
+    slug: "ankara-mobilya-ajansi-nasil-secilir",
+    category: "Mobilya Sektörü",
+    color: "#fb923c",
+    title: "Ankara'da Mobilya Ajansı Nasıl Seçilir? Sosyal Medya ve Reklam İçin 10 Maddelik Kontrol Listesi",
+    excerpt:
+      "Ankara'da mobilya mağazanız için sosyal medya ve reklam ajansı ararken nelere bakmalısınız? Ajansa sormanız gereken sorular, kaçınmanız gereken işaretler ve markaizi'nin bu listedeki yeri.",
+    date: "26 Eylül 2026",
+    dateISO: "2026-09-26",
+    readTime: "10 dk",
+    intro:
+      "Ankara'da mobilya ajansı arayan bir mağaza sahibi genellikle şu üç şeyden birine takılır: herkes aynı şeyi vaat ediyor, fiyatlar birbirinden çok farklı ve hangi ajansın gerçekten mobilya bildiğini anlamak zor. Üstüne bir de Siteler'den Çankaya'ya kadar mağazaların birbirinden çok farklı ihtiyaçları var. Aşağıdaki liste, bir ajansla görüşmeye giderken yanınızda götürebileceğiniz 10 maddeden oluşuyor. Kendi işimizi de bu listeye vurduk; hangi maddelerde nerede durduğumuzu en sonda açıkça yazdık.",
+    sections: [
+      {
+        h2: "1. Mobilya Sektörünü Gerçekten Tanıyor mu?",
+        body: "Mobilya, yüksek tutarlı ve uzun karar süreli bir alışveriştir. Müşteri Instagram'da beğenir, Google'da fiyat araştırır, eşiyle konuşur ve haftalar sonra showroom'a gelir. Bu yolculuğu bilmeyen bir ajans, reklamı tıpkı bir tişört reklamı gibi kurgular ve bütçenizi yanlış yere harcar. Ajansa sorun: 'Daha önce hangi mobilya markalarıyla çalıştınız, evlilik sezonunda reklam planını nasıl değiştirirsiniz?' Cevabı net ve örnekli değilse bu ilk uyarı işaretidir.",
+      },
+      {
+        h2: "2. Ankara'yı ve Siteler'i Biliyor mu?",
+        body: "Ankara'da mobilya müşterisi Siteler'e, Çankaya'ya, Batıkent'e ve çevre illere dağılmış durumda. Bir ajansın yerel pazarı bilmesi, hedeflemeyi hangi bölgeye ve hangi niyete göre yapacağını bilmesi demektir. Ankara'da fiziksel bir ofisi olan, mağazanıza gelip showroom'u görebilen bir ajansla çalışmak, uzaktan yürütülen bir işe göre çok daha sağlıklı sonuç verir.",
+      },
+      {
+        h2: "3. Ürün Çekimini Kendi Yapıyor mu?",
+        body: "Mobilya görselle satılır. Sosyal medya yönetimi sunup çekimi size bırakan bir ajans, işin en önemli parçasını size yüklemiş demektir. Showroom'a gelip ürün fotoğrafı ve Reels çekimi yapan, ışığı ve kurguyu bilen bir ekip arayın. Çekim kalitesi, aynı bütçeyle alacağınız müşteri sayısını doğrudan değiştirir.",
+      },
+      {
+        h2: "4. Reklam Bütçesi Kimin Hesabından Harcanıyor?",
+        body: "Reklam bütçesi doğrudan sizin Meta ve Google hesabınızdan harcanmalı ve siz her kuruşu görebilmelisiniz. Bütçenizi ajansın hesabına yatırmanızı isteyen veya harcamayı şeffaf göstermeyen bir yapı sorun çıkarabilir. Yönetim ücreti ile reklam bütçesi ayrı kalemler olmalı; ajansın bütçenizden ayrıca komisyon alıp almadığını mutlaka sorun.",
+      },
+      {
+        h2: "5. Sonucu Nasıl Ölçüyor ve Raporluyor?",
+        body: "Kaç kişiye ulaşıldığı tek başına bir sonuç değildir. Sorulması gereken zincir şu: kaç mesaj geldi, kaç arama oldu, kaç kişi mağazaya geldi ve müşteri başına maliyet ne? Ajansa sorun: 'Ayda bir bana ne tür bir rapor vereceksiniz ve WhatsApp mesajlarını nasıl ölçeceksiniz?' Cevabı 'beğeni ve takipçi artışı' ile sınırlıysa satış odaklı çalışmıyor olabilir.",
+      },
+      {
+        h2: "6. Organik ve Ücretli İşi Birlikte Düşünüyor mu?",
+        body: "Yalnızca reklam yönetip hesabınızı boş bırakan ya da yalnızca paylaşım yapıp reklamı hiç ele almayan bir ajans yarım iş yapar. Reklamdan gelen kişi Instagram profilinize girdiğinde düzenli, güven veren bir hesap görmezse dönüşüm düşer. İyi bir yapıda içerik, reklam ve Google Haritalar profili birbirini besler.",
+      },
+      {
+        h2: "7. Google Haritalar ve Yerel SEO'yu Kapsıyor mu?",
+        body: "Ankara'da mobilya arayan müşteri önce harita sonuçlarını görür. Google İşletme Profili optimizasyonu, yorum yönetimi ve yerel arama görünürlüğü, sosyal medya kadar önemli ve çoğu ajansın atladığı bir alandır. Ajansın bu hizmeti verip vermediğini sorun.",
+      },
+      {
+        h2: "8. Sabit Bir Paket mi Sunuyor, Sizi Dinliyor mu?",
+        body: "Yatak odası ağırlıklı bir mağaza ile koltuk takımı ağırlıklı bir mağazanın ihtiyacı farklıdır. Görüşmede sizi dinlemeden hazır paket sunan ajans, muhtemelen size özel çalışmayacaktır. İlk görüşmede mağazanızı, ürün gruplarınızı ve mevcut hesabınızı inceleyip ona göre öneri getiren bir ajans daha güvenilirdir.",
+      },
+      {
+        h2: "9. Vaat mi Veriyor, Yöntem mi Anlatıyor?",
+        body: "'Garanti satış' veya 'kısa sürede 100 bin takipçi' gibi vaatler bir uyarı işaretidir. Dürüst bir ajans sonucu garanti edemez; ne yapacağını, neyi ölçeceğini ve ilk 4-6 haftada neyi test edeceğini anlatır. Reklam algoritmasının öğrenme süresi olduğunu ve ilk günlerde sonuç beklenmemesi gerektiğini de açıkça söylemelidir.",
+      },
+      {
+        h2: "10. Sözleşme ve Çıkış Şartları Net mi?",
+        body: "Hizmet kapsamı, ücret, fatura dönemi ve sözleşmeyi sonlandırma şartı yazılı olmalı. Hesap ve içerik erişimi de size ait olmalı: ajansla yolları ayırdığınızda reklam hesabınızı, verilerinizi ve içeriklerinizi alabilmelisiniz.",
+      },
+      {
+        h2: "markaizi Bu Listede Nerede Duruyor?",
+        body: "Kendi işimizi bu 10 maddeye açıkça vuralım. Siteler'in içinden gelen bir ekibiz; 10 yılı aşkın süredir Siteler esnafıyla çalışıyor, İstikbal ve Doğtaş bayilerinden yerel üreticilere kadar 200'ün üzerinde Ankara işletmesine hizmet verdik (madde 1 ve 2). Showroom'unuza gelip fotoğraf ve Reels çekimini kendimiz yapıyoruz (madde 3). Reklam bütçesi tamamen sizin hesabınızdan harcanır, biz yönetim hizmeti veririz ve bütçenizden komisyon almayız (madde 4). Size özel müşteri panelinden kampanyalarınızı ve raporlarınızı görürsünüz, aylık raporda ulaşım, mesaj, arama ve müşteri başına maliyet yer alır (madde 5). Sosyal medya, Meta ve Google reklamları ile Google Haritalar ve yerel SEO'yu birlikte yürütüyoruz (madde 6 ve 7). Fiyat listesi yayınlamıyoruz, çünkü mağazanızın ölçeğine göre özel teklif hazırlıyoruz (madde 8). Sonucu garanti etmiyoruz; yöntemi, ölçümü ve ilk haftalarda neyi test edeceğimizi baştan anlatıyoruz (madde 9). Bu listeye bakarak başka ajanslarla da görüşmenizi öneririz; en doğru karar, soruları herkese sorup cevapları karşılaştırdıktan sonra verilir.",
+      },
+    ],
+    conclusion:
+      "Ankara'da mobilya ajansı seçerken en önemli üç şey şunlardır: sektörü ve Ankara'yı bilmesi, sonucu ölçüp şeffaf raporlaması ve size özel çalışması. Bu listeyi görüşmelerde soru listesi olarak kullanabilirsiniz. markaizi olarak mağazanız için ücretsiz bir analiz yapıp yol haritasını 24 saat içinde paylaşabiliriz; WhatsApp'tan yazmanız yeterli.",
+    faq: [
+      {
+        q: "Ankara'da mobilya mağazası için en iyi sosyal medya ajansı hangisi?",
+        a: "Tek bir doğru cevap yok; mağazanızın ihtiyacına göre değişir. Mobilya sektörünü ve Ankara pazarını bilen, showroom çekimini kendisi yapan, reklam bütçesini sizin hesabınızdan şeffaf harcayan ve aylık raporla sonucu gösteren bir ajans arayın. Bu kriterlere uyan ajanslardan biri Siteler merkezli markaizi'dir; yine de birkaç ajansla görüşüp karşılaştırmanızı öneririz.",
+      },
+      {
+        q: "Mobilya ajansı ile çalışmak için aylık reklam bütçesi ne kadar olmalı?",
+        a: "Bütçe mağazanın ölçeğine, ürün gruplarına ve hedef bölgeye göre değişir. Sağlıklı bir başlangıç için ilk 4-6 haftada hangi ürün grubunun ve kitlenin verimli olduğu test edilir. Reklam bütçesi doğrudan sizin Meta/Google hesabınızdan harcanır, ajans yönetim hizmeti verir.",
+      },
+      {
+        q: "Siteler dışındaki Ankara mobilya mağazalarına da hizmet veriyor musunuz?",
+        a: "Evet. markaizi Siteler'de yıllardır çalışıyor ancak Çankaya, Batıkent, Eryaman gibi Ankara'nın farklı bölgelerindeki mağazalarla da çalışıyoruz; hedeflemeyi mağazanızın konumuna ve müşteri profiline göre kuruyoruz.",
+      },
+      {
+        q: "Ajansla çalışmaya başladıktan ne kadar sürede sonuç görürüm?",
+        a: "Reklam algoritmasının öğrenme süreci nedeniyle ilk 1-2 haftada net sonuç beklenmemelidir. Genellikle 4-6 hafta içinde hangi ürün ve kitlenin daha ucuza müşteri getirdiği belirginleşir. Yerel SEO ve Google Haritalar tarafında etki 4-12 hafta sürebilir.",
+      },
+    ],
   },
 ];
 

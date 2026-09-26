@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   description:
     "Siteler merkezli mobilya reklam ajansı. İstikbal, Doğtaş, Kelebek bayileri dahil 200+ mobilya mağazasına Instagram & Google reklamları, sosyal medya yönetimi ve showroom çekimi. Mobilya sektörünü tanıyan ajans.",
   keywords:
-    "mobilya reklam ajansı, siteler reklam ajansı, mobilya reklamı, mobilya sosyal medya yönetimi, mobilya instagram reklamı, ankara mobilya reklam, siteler mobilya tanıtım, mobilya mağazası reklam, mobilya google reklamları, mobilya dijital pazarlama",
+    "ankara mobilya ajansı, mobilya reklam ajansı, siteler reklam ajansı, mobilya reklamı, mobilya sosyal medya yönetimi, mobilya instagram reklamı, ankara mobilya reklam, siteler mobilya tanıtım, mobilya mağazası reklam, mobilya google reklamları, mobilya dijital pazarlama",
   alternates: { canonical: "https://markaizi.com.tr/mobilya-reklam-ajansi" },
   openGraph: {
     title: "Mobilya Reklam Ajansı — Siteler / Ankara | markaizi",
@@ -307,6 +307,9 @@ export default function MobilyaReklamAjansiPage() {
               </Link>
               <Link href="/blog/ankara-mobilya-magazasi-sosyal-medya-buyume-rehberi" className="text-[14px] font-semibold text-[#c084fc] px-5 py-2.5 rounded-full transition-all hover:bg-white/[0.06]" style={{ border: "1px solid rgba(168,85,247,0.3)" }}>
                 Ankara Genelinde Sosyal Medyada Büyümek →
+              </Link>
+              <Link href="/blog/ankara-mobilya-ajansi-nasil-secilir" className="text-[14px] font-semibold text-[#c084fc] px-5 py-2.5 rounded-full transition-all hover:bg-white/[0.06]" style={{ border: "1px solid rgba(168,85,247,0.3)" }}>
+                Mobilya Ajansı Nasıl Seçilir? →
               </Link>
             </div>
           </div>

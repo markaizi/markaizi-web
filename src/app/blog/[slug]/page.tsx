@@ -39,7 +39,7 @@ export async function generateMetadata({
       description: post.excerpt,
       type: "article",
       publishedTime: post.dateISO,
-      modifiedTime: post.dateISO,
+      modifiedTime: post.dateModifiedISO ?? post.dateISO,
       authors: ["markaizi"],
     },
   };
@@ -63,7 +63,7 @@ export default async function BlogPostPage({
     url: `https://markaizi.com.tr/blog/${post.slug}`,
     mainEntityOfPage: `https://markaizi.com.tr/blog/${post.slug}`,
     datePublished: post.dateISO,
-    dateModified: post.dateISO,
+    dateModified: post.dateModifiedISO ?? post.dateISO,
     image: "https://markaizi.com.tr/opengraph-image",
     author: {
       "@type": "Organization",
@@ -78,6 +78,18 @@ export default async function BlogPostPage({
     articleSection: post.category,
   };
 
+  const faqJsonLd = post.faq
+    ? {
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: post.faq.map((f) => ({
+          "@type": "Question",
+          name: f.q,
+          acceptedAnswer: { "@type": "Answer", text: f.a },
+        })),
+      }
+    : null;
+
   const breadcrumb = breadcrumbJsonLd([
     { name: "Ana Sayfa", path: "/" },
     { name: "Blog", path: "/blog" },
@@ -90,6 +102,7 @@ export default async function BlogPostPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleJsonLd) }}
       />
+      {faqJsonLd && <JsonLd data={faqJsonLd} />}
       <JsonLd data={breadcrumb} />
       <Navbar />
       <main>
@@ -172,6 +185,19 @@ export default async function BlogPostPage({
                   <p>{section.body}</p>
                 </div>
               ))}
+
+              {/* SSS */}
+              {post.faq && (
+                <div className="blog-section mt-10">
+                  <h2>Sık Sorulan Sorular</h2>
+                  {post.faq.map((f, i) => (
+                    <div key={i} className="mb-5">
+                      <h3 className="text-[16px] font-semibold text-white mb-1">{f.q}</h3>
+                      <p>{f.a}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
 
               {/* Sonuç */}
               <div
