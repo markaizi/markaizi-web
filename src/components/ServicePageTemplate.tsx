@@ -56,7 +56,7 @@ export default function ServicePageTemplate({
       name: `${ORG_NAME} Dijital Reklam Ajansı`,
       url: SITE_URL,
     },
-    areaServed: { "@type": "City", name: "Ankara" },
+    areaServed: [{ "@type": "City", name: "Ankara" }, { "@type": "Country", name: "Türkiye" }],
   };
 
   const breadcrumb = breadcrumbJsonLd([

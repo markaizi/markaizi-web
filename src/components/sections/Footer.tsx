@@ -37,6 +37,8 @@ export default function Footer() {
             <FooterCol
               title="Mobilya Sektörü"
               links={[
+                { label: "Mobilya Instagram & Facebook", href: "/mobilya-meta-reklamlari" },
+                { label: "Mobilya Web Sitesi",           href: "/mobilya-web-sitesi" },
                 { label: "Mobilya SEO",                  href: "/mobilya-seo" },
                 { label: "Mobilya Google Reklamları",    href: "/mobilya-google-reklamlari" },
                 { label: "Mobilya Sosyal Medya",         href: "/mobilya-sosyal-medya-yonetimi" },

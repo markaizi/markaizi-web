@@ -738,6 +738,192 @@ export const MOBILYA_ETICARET: LandingContent = {
   linkLabel: "Mobilya E-Ticaret",
 };
 
+export const MOBILYA_META: LandingContent = {
+  path: "/mobilya-meta-reklamlari",
+  kind: "hizmet",
+  metaTitle: "Mobilya Meta Reklamları — Instagram & Facebook Reklam Yönetimi | markaizi",
+  metaDescription:
+    "Mobilya mağazaları ve üreticileri için Instagram ve Facebook (Meta) reklam yönetimi: ürün grubu bazlı kampanya, WhatsApp'a mesaj reklamı, katalog ve yeniden hedefleme. Türkiye genelinde mobilya Meta Ads.",
+  keywords:
+    "mobilya meta reklamları, mobilya instagram reklamı, mobilya facebook reklamı, mobilya meta ads, mobilya reklam yönetimi, mobilya whatsapp reklamı, instagram mobilya reklamı nasıl verilir",
+  tag: "Mobilya Meta Ads",
+  h1Plain: "Mobilya",
+  h1Accent: "Instagram & Facebook Reklamları",
+  lead: [
+    "Mobilya müşterisinin büyük kısmı, ihtiyacını fark etmeden önce ürünü Instagram'da görür. Yeni evine taşınacak biri, evlilik hazırlığı yapan bir çift ya da salonunu yenilemeyi düşünen bir aile henüz Google'da arama yapmadan akışında bir koltuk takımına denk gelir ve kaydeder. Meta reklamları, mobilyada talebi yaratan kanaldır.",
+    "Bu sayfada Instagram ve Facebook reklamlarının mobilya için nasıl kurulduğunu, neden 'gönderiyi öne çıkar' butonunun yetmediğini ve sonucu nasıl ölçtüğümüzü anlatıyoruz.",
+  ],
+  sections: [
+    {
+      h2: "'Öne Çıkar' Butonu ile Reklam Yöneticisi Arasındaki Fark",
+      paragraphs: [
+        "Çoğu mobilya mağazası reklama Instagram'daki 'Gönderiyi öne çıkar' butonuyla başlıyor. Bu buton hızlıdır ama hedefleme, bütçe dağılımı, test ve ölçüm seçeneklerinin çok küçük bir kısmını sunar. Sonuç genellikle beğeni ve takipçi artışıdır; mesaj ve mağaza ziyareti değil.",
+        "Reklam Yöneticisi'nden kurulan kampanyada ise hedef baştan 'WhatsApp mesajı' ya da 'form başvurusu' olarak seçilir, farklı kitle ve görseller birbirine karşı test edilir ve bütçe otomatik olarak en çok mesaj getiren kombinasyona akar.",
+      ],
+    },
+    {
+      h2: "Mobilyada En Çok Çalışan Kampanya Türü: WhatsApp'a Mesaj",
+      paragraphs: [
+        "Türkiye'de mobilya müşterisi ilk teması genellikle 'fiyatı nedir' mesajıyla kurar. Bu yüzden mobilyada en verimli Meta kampanyası, reklamı gören kişiyi tek dokunuşla WhatsApp'ınıza yönlendiren mesaj kampanyasıdır. Formla karşılaştırıldığında hem daha sıcak hem daha hızlı bir görüşme başlatır.",
+        "Bu kampanyanın başarısı reklamın kendisi kadar mesajlara ne kadar hızlı dönüldüğüne de bağlıdır. Bu nedenle kampanyayı kurarken mağaza tarafında mesajlara kimin, hangi hızda ve hangi hazır yanıtlarla döneceğini de birlikte planlarız.",
+      ],
+    },
+    {
+      h2: "Hedefleme: İlgi Alanı Değil, Hayat Olayı",
+      paragraphs: [
+        "Mobilya almanın en güçlü tetikleyicisi bir hayat olayıdır: taşınma, evlilik, çocuğun büyümesi, yeni ev. Meta'nın sunduğu hedefleme seçenekleri zamanla daralsa da bu olaylara yakın sinyaller ve mevcut müşteri listelerinizden oluşturulan benzer kitleler hâlâ en verimli yoldur.",
+      ],
+      bullets: [
+        "Evlilik hazırlığındakiler için yatak odası ve komple set kampanyaları",
+        "Yeni taşınanlar için koltuk takımı ve yemek odası kampanyaları",
+        "Ebeveynler için genç odası ve çocuk odası kampanyaları",
+        "Mağaza müşteri listenizden oluşturulan benzer kitleler",
+      ],
+    },
+    {
+      h2: "Görsel: Reklamın Maliyetini Belirleyen Şey",
+      paragraphs: [
+        "Meta'nın reklam sistemi, kullanıcıların ilgisini çeken reklama daha ucuz gösterim verir. Loş ışıkta telefonla çekilmiş bir koltuk fotoğrafı ile aydınlık, yaşam alanı kurgusuyla çekilmiş bir görsel arasında mesaj başına maliyet ciddi fark edebilir. Bu yüzden kampanyada birden fazla görsel ve video türünü aynı anda başlatır, en verimliyi büyütür, zayıf olanı kapatırız.",
+        "Kısa Reels videoları, karusel ürün tanıtımları ve müşteri evi kurulum görüntüleri mobilyada en iyi sonuç veren formatlardır.",
+      ],
+    },
+    {
+      h2: "Yeniden Hedefleme: Karar Süresi Uzun Olan Müşteriyi Kaçırmamak",
+      paragraphs: [
+        "Mobilya bir günde alınmaz. Reklamınızı görüp profilinize giren, videonuzu izleyen ya da web sitenizde ürün inceleyen kişi haftalarca karar verebilir. Bu kişileri ayrı bir kampanyada, farklı bir mesajla yeniden hedefleriz: önce ürünün faydası, sonra müşteri yorumları ve teslimat örnekleri, en son da dönemsel kampanya.",
+      ],
+    },
+  ],
+  faq: [
+    {
+      q: "Mobilya için Instagram reklamına ne kadar bütçe ayırmalıyım?",
+      a: "Bütçe mağazanızın ölçeğine, bölgenize ve hedefinize göre değişir. İlk 4-6 hafta hangi ürün grubunun, kitlenin ve görselin daha ucuza mesaj getirdiği test edilir; sonra bütçe kazanan tarafa kaydırılır. Rakamı ücretsiz görüşmede işletmenize göre netleştiririz.",
+    },
+    {
+      q: "Facebook reklamı hâlâ işe yarıyor mu?",
+      a: "Evet, özellikle 35 yaş üstü ve aile alışverişi yapan kitlede. Meta reklamlarında Instagram ve Facebook aynı kampanyadan yönetilir; sistem bütçeyi hangi platformda daha iyi sonuç alıyorsa oraya yönlendirir.",
+    },
+    {
+      q: "Reklamdan gelen mesajları kim yanıtlıyor?",
+      a: "Fiyat, stok ve teslimat bilgisi mağazaya ait olduğu için mesajları genellikle mağaza ekibi yanıtlar. Biz hazır yanıt şablonlarını, mesai dışı otomatik yanıtı ve mesaj akışını kurarız; mesajlara hızlı dönüş dönüşümün en kritik parçasıdır.",
+    },
+    {
+      q: "Reklam ne kadar sürede sonuç verir?",
+      a: "Meta'nın öğrenme süreci için en az 5-7 gün gerekir; iki üç günde kapatılan reklam gerçek performansını göstermez. Genellikle 4-6 hafta içinde hangi kombinasyonun verimli olduğu netleşir.",
+    },
+    {
+      q: "Reklam hesabı kimde kalır?",
+      a: "Reklam hesabı ve sayfanız size aittir; harcama doğrudan sizin hesabınızdan yapılır. Bizimle yolları ayırdığınızda hesap, kitle ve verileriniz sizde kalır.",
+    },
+  ],
+  related: [
+    MAIN,
+    { href: "/hizmetler/meta-reklamlari", label: "Meta Reklamları (Genel)" },
+    { href: "/mobilya-sosyal-medya-yonetimi", label: "Mobilya Sosyal Medya Yönetimi" },
+    CASE,
+  ],
+  serviceName: "Mobilya Meta (Instagram & Facebook) Reklam Yönetimi",
+  areaServed: ["Türkiye"],
+  breadcrumbLabel: "Mobilya Meta Reklamları",
+  waText: "Merhaba, mobilya mağazam için Instagram ve Facebook reklamı hizmeti almak istiyorum.",
+  ctaTitle: "Instagram Reklamlarınız İçin Ücretsiz İnceleme",
+  ctaText:
+    "Mevcut reklamlarınızı ve hesabınızı inceleyip mesaj başına maliyetinizi nerede düşürebileceğinizi yazılı olarak paylaşalım.",
+  linkLabel: "Mobilya Instagram & Facebook Reklamları",
+};
+
+export const MOBILYA_WEB: LandingContent = {
+  path: "/mobilya-web-sitesi",
+  kind: "hizmet",
+  metaTitle: "Mobilya Web Sitesi — Mobilya Mağazası ve Üreticisi İçin Web Tasarım | markaizi",
+  metaDescription:
+    "Mobilya mağazaları ve üreticileri için ürün kataloglu, WhatsApp entegreli, mobilde hızlı açılan web sitesi tasarımı. Reklamdan gelen müşteriyi karşılayan, Google'da bulunabilen mobilya web siteleri.",
+  keywords:
+    "mobilya web sitesi, mobilya web tasarım, mobilya sitesi yaptırmak, mobilya katalog sitesi, mobilya mağazası web sitesi, mobilya firması web sitesi, mobilya üreticisi web sitesi",
+  tag: "Mobilya Web Sitesi",
+  h1Plain: "Mobilya",
+  h1Accent: "Web Sitesi Tasarımı",
+  lead: [
+    "Bir mobilya mağazasının web sitesi, bugün çoğu zaman müşterinin mağazaya gelmeden önce son durağıdır. Reklamı görüp tıklayan, Google'da mağaza adınızı arayan ya da bir arkadaşının tavsiyesiyle sizi araştıran kişi siteye girdiğinde ürünleri, adresi ve size nasıl ulaşacağını birkaç saniyede görmek ister.",
+    "Bu sayfada mobilya firmaları için web sitesinin neden sıradan bir kurumsal siteden farklı olması gerektiğini ve nasıl bir süreçle ilerlediğimizi anlatıyoruz.",
+  ],
+  sections: [
+    {
+      h2: "Mobilya Sitesinde Olması Gerekenler",
+      paragraphs: [
+        "Mobilya sitesi bir broşür değil, bir kataloğun ve showroom'un dijital hâlidir. Ziyaretçinin ürünleri kategori bazında gezebilmesi, her ürünün ölçü ve kumaş seçeneklerini görebilmesi ve tek dokunuşla size yazabilmesi gerekir.",
+      ],
+      bullets: [
+        "Kategori bazlı ürün kataloğu: koltuk takımı, yatak odası, yemek odası, genç odası",
+        "Her ürün için ölçü, kumaş ve renk seçenekleri",
+        "Her sayfada görünen WhatsApp ve arama butonu",
+        "Showroom adresi, harita ve çalışma saatleri",
+        "Müşteri evinden fotoğraflar ve yorumlar",
+      ],
+    },
+    {
+      h2: "Hız ve Mobil: Müşterinin Çoğu Telefondan Geliyor",
+      paragraphs: [
+        "Mobilya aramalarının ve reklam tıklamalarının büyük kısmı telefondan geliyor. Ürün fotoğrafları büyük olduğu için mobilya siteleri çoğu zaman yavaş açılır; yavaş açılan site hem reklam bütçesini boşa harcatır hem Google sıralamasını düşürür. Sitelerimizde görselleri otomatik olarak boyutlandıran ve modern formata çeviren bir altyapı kullanıyoruz; bu sitenin kendisi de aynı altyapıyla çalışıyor.",
+      ],
+    },
+    {
+      h2: "Reklamla Birlikte Çalışan Site",
+      paragraphs: [
+        "Reklamdan gelen ziyaretçi, reklamda gördüğü ürünün sayfasına inmelidir; ana sayfaya düşüp aramak zorunda kalmamalıdır. Bu yüzden sitenin ürün sayfalarını reklam kampanyalarının yapısına uygun kurar, WhatsApp tıklamalarını, aramaları ve form doldurmayı ölçülecek şekilde işaretleriz. Böylece hangi reklamın hangi ürüne ilgi getirdiğini görebilirsiniz.",
+      ],
+    },
+    {
+      h2: "Google'da Bulunabilirlik",
+      paragraphs: [
+        "Site yayına girdiği gün Google'da görünür olacak şekilde hazırlanır: her sayfanın başlığı ve açıklaması, ürün ve işletme bilgilerinin yapılandırılmış verisi, site haritası ve Google İşletme Profili ile tutarlı iletişim bilgileri. Sonrasında isterseniz mobilya SEO çalışmasıyla kategori sayfalarını satın alma niyetli aramalara göre geliştiririz.",
+      ],
+    },
+    {
+      h2: "Süreç Nasıl İlerliyor?",
+      paragraphs: [
+        "Önce ürün gruplarınızı, mevcut fotoğraflarınızı ve hedef müşterinizi konuşuyoruz. Ardından site yapısını ve tasarımı onayınıza sunuyor, ürünleri ve içerikleri yerleştiriyoruz. Ürün fotoğrafınız yetersizse showroom çekimini de planlıyoruz. Yayından sonra ürün eklemeyi ve güncellemeyi nasıl yapacağınızı gösteriyoruz; alan adı ve barındırma işlerini de üstleniyoruz.",
+      ],
+    },
+  ],
+  faq: [
+    {
+      q: "Mobilya sitemde online satış olmalı mı?",
+      a: "Şart değil. Özel ölçü üretim yapan ve yüksek tutarlı set satan mağazaların çoğu için katalog + WhatsApp yapısı daha iyi çalışır. Standart ürünleri online satmak istiyorsanız e-ticaret altyapısını da birlikte planlarız.",
+    },
+    {
+      q: "Ürünleri sonradan kendim ekleyebilir miyim?",
+      a: "Evet. Yayından sonra ürün ekleme ve güncelleme işlemlerini nasıl yapacağınızı gösteriyoruz; isterseniz güncellemeleri bizim yapmamızı da tercih edebilirsiniz.",
+    },
+    {
+      q: "Instagram hesabım varken web sitesine ihtiyacım var mı?",
+      a: "Instagram keşif ve ilham için güçlü, ama Google'da aranınca çıkmak, reklamdan gelen kişiyi doğru ürüne indirmek ve güven vermek için web sitesi gerekir. İkisi birbirinin yerine değil, birbirini tamamlayacak şekilde çalışır.",
+    },
+    {
+      q: "Alan adı ve hosting dahil mi?",
+      a: "Alan adı ve barındırma kurulumunu biz yapıyoruz. Kapsam ve yenileme koşullarını size özel teklifte yazılı olarak paylaşıyoruz.",
+    },
+    {
+      q: "Türkiye'nin farklı şehirlerindeki firmalara site yapıyor musunuz?",
+      a: "Evet. Web sitesi süreci tamamen uzaktan yürütülebiliyor; toplantıları görüntülü yapıyor, tasarım ve içerik onaylarını çevrim içi alıyoruz. Çekim gerekiyorsa ziyaret planlıyoruz.",
+    },
+  ],
+  related: [
+    MAIN,
+    { href: "/hizmetler/web-tasarim-hosting", label: "Web Tasarım & Hosting (Genel)" },
+    { href: "/mobilya-e-ticaret-danismanligi", label: "Mobilya E-Ticaret Danışmanlığı" },
+    { href: "/mobilya-seo", label: "Mobilya SEO" },
+  ],
+  serviceName: "Mobilya Web Sitesi Tasarımı",
+  areaServed: ["Türkiye"],
+  breadcrumbLabel: "Mobilya Web Sitesi",
+  waText: "Merhaba, mobilya firmam için web sitesi yaptırmak istiyorum.",
+  ctaTitle: "Mobilya Siteniz İçin Ücretsiz Görüşme",
+  ctaText:
+    "Ürün gruplarınızı ve hedeflerinizi konuşup size uygun site yapısını ve teklifi 24 saat içinde paylaşalım.",
+  linkLabel: "Mobilya Web Sitesi",
+};
+
 export const CITY_PAGES = [ISTANBUL, INEGOL, KAYSERI, IZMIR];
-export const SERVICE_PAGES = [MOBILYA_SEO, MOBILYA_GOOGLE, MOBILYA_SOSYAL, MOBILYA_ETICARET];
+export const SERVICE_PAGES = [MOBILYA_META, MOBILYA_GOOGLE, MOBILYA_SOSYAL, MOBILYA_WEB, MOBILYA_SEO, MOBILYA_ETICARET];
 export const ALL_MOBILYA_PAGES = [...CITY_PAGES, ...SERVICE_PAGES];

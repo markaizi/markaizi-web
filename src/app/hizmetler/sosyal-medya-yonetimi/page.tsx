@@ -2,8 +2,8 @@ import { Metadata } from "next";
 import ServicePageTemplate from "@/components/ServicePageTemplate";
 
 export const metadata: Metadata = {
-  title: "Sosyal Medya Yönetimi Ankara — markaizi | Instagram, Facebook, TikTok",
-  description: "Ankara'da sosyal medya yönetimi hizmeti. Mobilyacı, avizeci, aksesuarcı, klinik ve yerel işletmelere özel Instagram, Facebook ve TikTok yönetimi. İçerik üretimi ve büyüme stratejileri.",
+  title: "Sosyal Medya Yönetimi Ankara & Türkiye Geneli — markaizi | Instagram, Facebook, TikTok",
+  description: "Ankara'da sosyal medya yönetimi hizmeti. Mobilyacı, avizeci, aksesuarcı, klinik ve yerel işletmelere özel Instagram, Facebook ve TikTok yönetimi. İçerik üretimi ve büyüme stratejileri. Türkiye genelinde uzaktan hizmet.",
   keywords: "sosyal medya yönetimi ankara, instagram yönetimi ankara, facebook yönetimi ankara, tiktok yönetimi ankara, ankara mobilya sosyal medya, siteler sosyal medya ajansı, ankara işletme instagram, içerik üretimi ankara",
   alternates: { canonical: "https://markaizi.com.tr/hizmetler/sosyal-medya-yonetimi" },
 };

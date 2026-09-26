@@ -45,6 +45,7 @@ const jsonLd = {
   },
   hasMap: "https://maps.google.com/?q=Zübeyde+Hanım+Mahallesi+Elif+Sokak+No:7+Ankara",
   areaServed: [
+    { "@type": "Country", name: "Türkiye" },
     { "@type": "City", name: "Ankara" },
     { "@type": "Neighborhood", name: "Siteler" },
     { "@type": "Neighborhood", name: "Ostim" },

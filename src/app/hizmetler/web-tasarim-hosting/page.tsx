@@ -2,8 +2,8 @@ import { Metadata } from "next";
 import ServicePageTemplate from "@/components/ServicePageTemplate";
 
 export const metadata: Metadata = {
-  title: "Web Tasarım Ankara — Kurumsal Web Sitesi & Hosting | markaizi",
-  description: "Ankara'da web tasarım ve hosting hizmeti. Mobilyacı, doktor, klinik, aksesuar ve yerel işletmelere özel hızlı, mobil uyumlu web siteleri. Domain, hosting ve SEO dahil.",
+  title: "Web Tasarım Ankara & Türkiye Geneli — Kurumsal Web Sitesi & Hosting | markaizi",
+  description: "Ankara'da web tasarım ve hosting hizmeti. Mobilyacı, doktor, klinik, aksesuar ve yerel işletmelere özel hızlı, mobil uyumlu web siteleri. Domain, hosting ve SEO dahil. Türkiye genelinde uzaktan hizmet.",
   keywords: "web tasarım ankara, kurumsal web sitesi ankara, ankara doktor web sitesi, ankara klinik web tasarım, ankara mobilya web sitesi, siteler web tasarım, ankara işletme web sitesi, ucuz web tasarım ankara, hosting ankara",
   alternates: { canonical: "https://markaizi.com.tr/hizmetler/web-tasarim-hosting" },
 };

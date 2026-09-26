@@ -1,6 +1,6 @@
 # markaizi — Ankara Dijital Reklam Ajansı
 
-> markaizi, Ankara merkezli bir dijital reklam ve pazarlama ajansıdır. Sosyal medya yönetimi, Google ve Meta (Instagram/Facebook) reklamları, TikTok reklamları, yapay zeka destekli içerik üretimi ile web tasarım & hosting hizmetleri sunar. 10+ yıllık reklamcılık deneyimi, 200+ mutlu müşteri ve veri odaklı, şeffaf raporlamaya dayalı bir çalışma anlayışı vardır.
+> markaizi, Ankara Siteler merkezli, Türkiye geneline uzaktan hizmet veren bir dijital reklam ve pazarlama ajansıdır. Uzmanlık alanı mobilya sektörüdür: mobilya mağazaları, üreticileri ve bayileri için sosyal medya yönetimi, Meta ve Google reklamları, web sitesi, SEO ve e-ticaret danışmanlığı. Örnek: 7 yıldır çalıştığı Alitel Mobilya, her yıl İstikbal bayileri arasında Türkiye ciro birinciliğini almıştır. Sosyal medya yönetimi, Google ve Meta (Instagram/Facebook) reklamları, TikTok reklamları, yapay zeka destekli içerik üretimi ile web tasarım & hosting hizmetleri sunar. 10+ yıllık reklamcılık deneyimi, 200+ mutlu müşteri ve veri odaklı, şeffaf raporlamaya dayalı bir çalışma anlayışı vardır.
 
 ## Hizmetler
 
@@ -23,6 +23,8 @@ Not: Reklam bütçesi yönetim ücretine dahil değildir ve doğrudan ilgili rek
 
 ## Kaynaklar
 
+- [Mobilya Meta Reklamları](https://markaizi.com.tr/mobilya-meta-reklamlari): Mobilya mağazaları için Instagram ve Facebook reklam yönetimi; WhatsApp'a mesaj kampanyaları, hayat olayı hedeflemesi, yeniden hedefleme.
+- [Mobilya Web Sitesi](https://markaizi.com.tr/mobilya-web-sitesi): Mobilya firmaları için ürün kataloglu, WhatsApp entegreli, mobilde hızlı web sitesi tasarımı.
 - [Mobilya SEO Hizmeti](https://markaizi.com.tr/mobilya-seo): Mobilya web siteleri ve Google Haritalar için SEO, kategori/ürün sayfası yapısı, yerel arama görünürlüğü.
 - [Mobilya Google Reklamları](https://markaizi.com.tr/mobilya-google-reklamlari): Mobilya mağazaları ve üreticileri için arama, harita, alışveriş ve görüntülü Google reklam yönetimi.
 - [Mobilya Sosyal Medya Yönetimi](https://markaizi.com.tr/mobilya-sosyal-medya-yonetimi): Instagram, Facebook ve TikTok yönetimi, showroom çekimi, mesaj yönetimi ve aylık rapor.
@@ -31,7 +33,7 @@ Not: Reklam bütçesi yönetim ücretine dahil değildir ve doğrudan ilgili rek
 - [İnegöl Mobilya Reklam Ajansı](https://markaizi.com.tr/inegol-mobilya-reklam-ajansi): İnegöl/Bursa'daki mobilya üreticileri, toptancılar ve mağazalar için dijital pazarlama.
 - [Kayseri Mobilya Reklam Ajansı](https://markaizi.com.tr/kayseri-mobilya-reklam-ajansi): Kayseri'deki mobilya üreticileri ve mağazaları için Google ve Instagram reklamları.
 - [İzmir Mobilya Reklam Ajansı](https://markaizi.com.tr/izmir-mobilya-reklam-ajansi): İzmir ve Ege'deki mobilya mağazaları için sezona göre planlanan reklam ve sosyal medya yönetimi.
-- [Alitel Mobilya Vaka Çalışması](https://markaizi.com.tr/vaka-calismalari/alitel-mobilya): 7 yıllık iş birliği; her yıl Türkiye ciro birinciliği, 10 milyon TL üzeri yönetilen reklam bütçesi, Google reklamları.
+- [Alitel Mobilya Vaka Çalışması](https://markaizi.com.tr/vaka-calismalari/alitel-mobilya): 7 yıllık iş birliği; her yıl İstikbal bayileri arasında Türkiye ciro birinciliği (Türkiye'nin en büyük ve en hızlı büyüyen İstikbal bayilerinden), 10 milyon TL üzeri yönetilen reklam bütçesi, Google reklamları.
 - [Blog — Dijital Pazarlama Rehberleri](https://markaizi.com.tr/blog): Sosyal medya, reklam ve web tasarım üzerine güncel makaleler.
 - [Sıkça Sorulan Sorular](https://markaizi.com.tr/sss): Çalışma şekli, ödeme, sözleşme ve hizmetlerle ilgili cevaplar.
 

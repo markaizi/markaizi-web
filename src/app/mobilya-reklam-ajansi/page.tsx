@@ -293,10 +293,10 @@ export default function MobilyaReklamAjansiPage() {
             <div className="rounded-2xl p-8 md:p-10" style={{ background: "var(--surface)", border: "1px solid rgba(168,85,247,0.25)" }}>
               <span className="section-tag">Vaka Çalışması</span>
               <h2 className="font-black text-[26px] md:text-[30px] leading-tight mb-3 mt-2">
-                Alitel Mobilya: <span className="gradient-text">7 Yıl, Her Yıl Türkiye Ciro Birinciliği</span>
+                Alitel Mobilya: <span className="gradient-text">7 Yıl, İstikbal Bayileri Arasında Her Yıl Türkiye Birincisi</span>
               </h2>
               <p className="text-[#8a8a9a] text-[15px] leading-relaxed mb-6">
-                Yedi yıldır birlikte çalıştığımız Alitel Mobilya&apos;nın reklam yönetiminde 10 milyon TL&apos;nin üzerinde bütçe yönettik. Google reklamlarından sosyal medyaya, uzun soluklu bir mobilya ortaklığının nasıl yürüdüğünü okuyun.
+                Türkiye&apos;nin en büyük ve en hızlı büyüyen İstikbal bayilerinden Alitel Mobilya ile yedi yıldır çalışıyoruz; Alitel her yıl İstikbal bayileri arasında ciro birinciliğini aldı ve biz bu süreçte 10 milyon TL&apos;nin üzerinde reklam bütçesi yönettik. Google reklamlarından sosyal medyaya, uzun soluklu bir mobilya ortaklığının nasıl yürüdüğünü okuyun.
               </p>
               <Link href="/vaka-calismalari/alitel-mobilya" className="btn btn-primary">Vaka Çalışmasını Oku</Link>
             </div>

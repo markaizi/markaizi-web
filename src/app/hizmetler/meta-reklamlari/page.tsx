@@ -2,8 +2,8 @@ import { Metadata } from "next";
 import ServicePageTemplate from "@/components/ServicePageTemplate";
 
 export const metadata: Metadata = {
-  title: "Meta Reklamları Ankara — Instagram & Facebook Reklam | markaizi",
-  description: "Ankara'da Meta (Instagram & Facebook) reklam yönetimi. Mobilyacı, avizeci, aksesuarcı ve yerel işletmelere ROAS odaklı, hedef kitleye özel Meta Ads kampanyaları.",
+  title: "Meta Reklamları Ankara & Türkiye Geneli — Instagram & Facebook Reklam | markaizi",
+  description: "Ankara'da Meta (Instagram & Facebook) reklam yönetimi. Mobilyacı, avizeci, aksesuarcı ve yerel işletmelere ROAS odaklı, hedef kitleye özel Meta Ads kampanyaları. Türkiye genelinde uzaktan hizmet.",
   keywords: "meta reklam ankara, instagram reklamı ankara, facebook reklamı ankara, ankara mobilya meta reklam, siteler meta ads, ankara işletme facebook reklamı, instagram reklam yönetimi ankara",
   alternates: { canonical: "https://markaizi.com.tr/hizmetler/meta-reklamlari" },
 };

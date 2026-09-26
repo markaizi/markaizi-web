@@ -11,7 +11,7 @@ import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
 const PATH = "/vaka-calismalari/alitel-mobilya";
 const TITLE = "Alitel Mobilya Vaka Çalışması — 7 Yıllık Dijital Reklam Ortaklığı | markaizi";
 const DESC =
-  "Alitel Mobilya ile 7 yıllık çalışma: her yıl Türkiye ciro birinciliği, 10 milyon TL'nin üzerinde yönetilen reklam bütçesi, Google reklamları ve dijital kanal yönetimi. markaizi mobilya vaka çalışması.";
+  "Alitel Mobilya ile 7 yıllık çalışma: her yıl İstikbal bayileri arasında Türkiye ciro birinciliği, 10 milyon TL'nin üzerinde yönetilen reklam bütçesi, Google reklamları ve dijital kanal yönetimi. markaizi mobilya vaka çalışması.";
 
 export const metadata: Metadata = {
   title: TITLE,
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 
 const STATS = [
   { value: "7 Yıl", label: "Kesintisiz iş birliği" },
-  { value: "Her Yıl", label: "Türkiye ciro birinciliği" },
+  { value: "Her Yıl", label: "İstikbal bayileri arasında Türkiye ciro birinciliği" },
   { value: "10 Milyon ₺+", label: "Yönetilen toplam reklam bütçesi" },
   { value: "Google Reklamları", label: "Ana performans kanalı" },
 ];
@@ -36,7 +36,7 @@ const FAQ: FAQItem[] = [
   },
   {
     q: "Bu vaka çalışmasında hangi sonuçlar öne çıkıyor?",
-    a: "Alitel Mobilya'nın her yıl Türkiye ciro birinciliği elde etmesi ve iş birliği boyunca 10 milyon TL'nin üzerinde reklam bütçesinin yönetilmesi. Reklam, Alitel'in satış başarısının tek nedeni değildir; firmanın ürünü, hizmeti ve satış ekibi sonucun ana unsurlarıdır. Dijital reklam bu başarıya destek olan kanaldır.",
+    a: "Alitel Mobilya'nın her yıl İstikbal bayileri arasında Türkiye ciro birinciliği elde etmesi ve iş birliği boyunca 10 milyon TL'nin üzerinde reklam bütçesinin yönetilmesi. Reklam, Alitel'in satış başarısının tek nedeni değildir; firmanın ürünü, hizmeti ve satış ekibi sonucun ana unsurlarıdır. Dijital reklam bu başarıya destek olan kanaldır.",
   },
   {
     q: "Aynı sonuçlar benim mağazam için de garanti mi?",
@@ -79,7 +79,7 @@ const SECTIONS: { h2: string; paragraphs: string[]; bullets?: string[] }[] = [
   {
     h2: "Kısaca Ne Oldu?",
     paragraphs: [
-      "Alitel Mobilya ile 7 yıldır birlikte çalışıyoruz. Bu sürede Alitel Mobilya her yıl Türkiye ciro birinciliğine ulaştı ve iş birliği boyunca 10 milyon TL'nin üzerinde reklam bütçesi yönettik. Bu rakamların arkasında tek bir sihirli hamle yok; yıllara yayılan düzenli ölçüm, sezona göre planlama ve bütçenin sürekli verimli alanlara kaydırılması var.",
+      "Alitel Mobilya ile 7 yıldır birlikte çalışıyoruz. Bu sürede Alitel Mobilya her yıl İstikbal bayileri arasında Türkiye ciro birinciliğine ulaştı; bugün Türkiye'nin en büyük ve en hızlı büyüyen İstikbal bayilerinden biri olarak anılıyor ve iş birliği boyunca 10 milyon TL'nin üzerinde reklam bütçesi yönettik. Bu rakamların arkasında tek bir sihirli hamle yok; yıllara yayılan düzenli ölçüm, sezona göre planlama ve bütçenin sürekli verimli alanlara kaydırılması var.",
       "Bu sayfa, mobilya sektöründe uzun soluklu bir dijital reklam ortaklığının nasıl yürüdüğünü anlatıyor. Alitel'in başarısında firmanın kendi ürünü, hizmeti ve satış ekibi ana unsurlardır; biz bu başarıya dijital kanallardan destek olan taraf olduk.",
     ],
   },
@@ -144,7 +144,7 @@ export default function AlitelVakaPage() {
                 Alitel Mobilya: <span className="gradient-text">7 Yıllık Dijital Reklam Ortaklığı</span>
               </h1>
               <p className="text-[#8a8a9a] text-[18px] leading-relaxed">
-                Bir mobilya markasıyla yedi yıl boyunca aralıksız çalışmak neyi değiştirir? Gerçek bir iş birliğinin özeti.
+                Türkiye'nin en büyük ve en hızlı büyüyen İstikbal bayilerinden Alitel Mobilya ile yedi yıldır aralıksız çalışıyoruz. Gerçek bir iş birliğinin özeti.
               </p>
             </div>
           </div>
