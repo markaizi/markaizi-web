@@ -83,6 +83,43 @@ const SERVICES = [
       </svg>
     ),
   },
+  {
+    title: "Dijital Pazarlama Danışmanlığı",
+    desc: "İşi kendi ekibinizle yapmak istiyorsanız yolu biz gösteriyoruz. Paylaşım planı, video senaryoları ve reklam kurgusunu hazırlıyor, süreci uzaktan yönlendiriyoruz.",
+    tags: ["Strateji", "Senaryo", "Uzaktan"],
+    href: "/hizmetler/dijital-pazarlama-danismanligi",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6" style={{ stroke: "#c084fc" }} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M4 5h16v10H9l-5 4V5z"/>
+        <path d="M8 9h8M8 12h5"/>
+      </svg>
+    ),
+  },
+  {
+    title: "Kurumsal Eğitim",
+    desc: "Çalışanlarınıza telefonla video çekmeyi, senaryo yazmayı ve Meta/Google reklamı vermeyi uygulamalı öğretiyoruz; ekibiniz reklamlarını kendi yönetebiliyor.",
+    tags: ["Video Çekimi", "Senaryo", "Reklam"],
+    href: "/hizmetler/dijital-pazarlama-egitimi",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6" style={{ stroke: "#c084fc" }} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M2 8l10-4 10 4-10 4L2 8z"/>
+        <path d="M6 10v5c0 1.5 2.7 3 6 3s6-1.5 6-3v-5"/>
+        <path d="M22 8v6"/>
+      </svg>
+    ),
+  },
+  {
+    title: "Video Çekimi & Drone",
+    desc: "Tanıtım filmi, sosyal medya videosu ve Reels; mankenli ya da mankensiz, video başı anlaşmayla. Emlak ve projeler için drone ile havadan çekim.",
+    tags: ["Tanıtım Filmi", "Reels", "Drone"],
+    href: "/hizmetler/video-cekimi-drone",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6" style={{ stroke: "#c084fc" }} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <rect x="3" y="7" width="12" height="10" rx="2"/>
+        <path d="M15 11l6-3v8l-6-3"/>
+      </svg>
+    ),
+  },
 ];
 
 export default function Services() {

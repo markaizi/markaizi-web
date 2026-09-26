@@ -32,6 +32,9 @@ export default function Footer() {
                 { label: "TikTok Reklamları",      href: "/hizmetler/tiktok-reklamlari" },
                 { label: "Yapay Zeka & Otomasyon", href: "/hizmetler/yapay-zeka-otomasyon" },
                 { label: "Web Tasarım & Hosting",  href: "/hizmetler/web-tasarim-hosting" },
+                { label: "Dijital Pazarlama Danışmanlığı", href: "/hizmetler/dijital-pazarlama-danismanligi" },
+                { label: "Kurumsal Eğitim",        href: "/hizmetler/dijital-pazarlama-egitimi" },
+                { label: "Video Çekimi & Drone",   href: "/hizmetler/video-cekimi-drone" },
               ]}
             />
             <FooterCol

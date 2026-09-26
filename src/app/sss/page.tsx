@@ -62,6 +62,27 @@ const FAQS = [
     ],
   },
   {
+    category: "Danışmanlık, Eğitim & Video Çekimi",
+    items: [
+      {
+        q: "Sosyal medyamızı kendimiz yönetmek istiyoruz, markaizi bize nasıl yardımcı olabilir?",
+        a: "İki seçenek var. Dijital pazarlama danışmanlığında paylaşım planını, video senaryolarını ve reklam kurgusunu biz hazırlar, uygulamayı ekibinize bırakır ve süreci uzaktan yönlendiririz. Kurumsal eğitimde ise çalışanlarınıza video çekimi, senaryo ve reklam yönetimini uygulamalı olarak öğretiriz. İkisi birlikte de alınabilir.",
+      },
+      {
+        q: "Video çekimi için aylık paket almak zorunda mıyım?",
+        a: "Hayır. Video çekiminde video başı anlaşma yapıyoruz: tanıtım filmi, sosyal medya videosu ya da drone çekimi fark etmeksizin ihtiyacınız olan video sayısı ve kapsamı baştan netleştirilir. Eğitim ve danışmanlığın süresi ve kapsamı ise size özel teklifte belirlenir.",
+      },
+      {
+        q: "Emlak ilanları için drone çekimi yapıyor musunuz?",
+        a: "Evet. Arsa, konut, site ve proje tanıtımları için havadan video ve fotoğraf çekiyoruz. Uçuşlar SHGM kurallarına tabi olduğu için her çekim öncesi bölgenin uçuş durumunu kontrol edip planlama yapıyoruz.",
+      },
+      {
+        q: "Eğitim ve danışmanlık Ankara dışındaki firmalara da veriliyor mu?",
+        a: "Evet. Danışmanlık tamamen uzaktan yürür; eğitimleri ise çevrim içi, yüz yüze ya da ikisini birleştiren bir programla planlıyoruz.",
+      },
+    ],
+  },
+  {
     category: "Web Tasarım",
     items: [
       {

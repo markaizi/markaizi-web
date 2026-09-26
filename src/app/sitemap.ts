@@ -27,6 +27,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/hizmetler/tiktok-reklamlari`,            lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.8 },
     { url: `${BASE}/hizmetler/yapay-zeka-otomasyon`,         lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.8 },
     { url: `${BASE}/hizmetler/web-tasarim-hosting`,          lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.8 },
+    { url: `${BASE}/hizmetler/dijital-pazarlama-danismanligi`, lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.85 },
+    { url: `${BASE}/hizmetler/dijital-pazarlama-egitimi`,    lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.85 },
+    { url: `${BASE}/hizmetler/video-cekimi-drone`,           lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.85 },
     { url: `${BASE}/hizmetler/web-tasarim-hosting/teklif`,   lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.6 },
 
     // ── Yasal sayfalar ────────────────────────────────────────

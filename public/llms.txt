@@ -1,6 +1,6 @@
 # markaizi — Ankara Dijital Reklam Ajansı
 
-> markaizi, Ankara Siteler merkezli, Türkiye geneline uzaktan hizmet veren bir dijital reklam ve pazarlama ajansıdır. Uzmanlık alanı mobilya sektörüdür: mobilya mağazaları, üreticileri ve bayileri için sosyal medya yönetimi, Meta ve Google reklamları, web sitesi, SEO ve e-ticaret danışmanlığı. Örnek: 7 yıldır çalıştığı Alitel Mobilya, her yıl İstikbal bayileri arasında Türkiye ciro birinciliğini almıştır. Sosyal medya yönetimi, Google ve Meta (Instagram/Facebook) reklamları, TikTok reklamları, yapay zeka destekli içerik üretimi ile web tasarım & hosting hizmetleri sunar. 10+ yıllık reklamcılık deneyimi, 200+ mutlu müşteri ve veri odaklı, şeffaf raporlamaya dayalı bir çalışma anlayışı vardır.
+> markaizi, Ankara Siteler merkezli, Türkiye geneline uzaktan hizmet veren bir dijital reklam ve pazarlama ajansıdır. Uzmanlık alanı mobilya sektörüdür: mobilya mağazaları, üreticileri ve bayileri için sosyal medya yönetimi, Meta ve Google reklamları, web sitesi, SEO ve e-ticaret danışmanlığı. Örnek: 7 yıldır çalıştığı Alitel Mobilya, her yıl İstikbal bayileri arasında Türkiye ciro birinciliğini almıştır. Sosyal medya yönetimi, Google ve Meta (Instagram/Facebook) reklamları, TikTok reklamları, yapay zeka destekli içerik üretimi, web tasarım & hosting, dijital pazarlama danışmanlığı, kurumsal eğitim ile video ve drone çekimi hizmetleri sunar. 10+ yıllık reklamcılık deneyimi, 200+ mutlu müşteri ve veri odaklı, şeffaf raporlamaya dayalı bir çalışma anlayışı vardır.
 
 ## Hizmetler
 
@@ -10,6 +10,9 @@
 - [TikTok Reklamları](https://markaizi.com.tr/hizmetler/tiktok-reklamlari): TikTok Ads yönetimi, platforma özel video içerik üretimi ve Spark Ads.
 - [Yapay Zeka & Otomasyon](https://markaizi.com.tr/hizmetler/yapay-zeka-otomasyon): Chatbot, otomatik mesaj akışları, içerik otomasyonu ve CRM entegrasyonları.
 - [Web Tasarım & Hosting](https://markaizi.com.tr/hizmetler/web-tasarim-hosting): Mobil uyumlu, SEO dostu, hızlı kurumsal web siteleri; domain, hosting ve SSL dahil.
+- [Dijital Pazarlama Danışmanlığı](https://markaizi.com.tr/hizmetler/dijital-pazarlama-danismanligi): Kendi ekibiyle çalışan markalara uzaktan danışmanlık; paylaşım planı, çalışanların çekeceği video senaryoları, reklam stratejisi ve düzenli yönlendirme. Türkiye geneli.
+- [Kurumsal Dijital Pazarlama Eğitimi](https://markaizi.com.tr/hizmetler/dijital-pazarlama-egitimi): Firma çalışanlarına uygulamalı eğitim; telefonla video çekimi, senaryo yazımı, kurgu, içerik planı, Meta ve Google reklam yönetimi. Yüz yüze veya çevrim içi.
+- [Video Çekimi & Drone](https://markaizi.com.tr/hizmetler/video-cekimi-drone): Video başı anlaşmayla tanıtım filmi, sosyal medya videosu ve Reels; mankenli veya mankensiz çekim; emlak ve projeler için drone (hava) çekimi. Ankara merkezli.
 
 ## Sektör Sayfaları
 

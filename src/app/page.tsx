@@ -81,6 +81,9 @@ const jsonLd = {
       { "@type": "Offer", itemOffered: { "@type": "Service", name: "TikTok Reklamları" } },
       { "@type": "Offer", itemOffered: { "@type": "Service", name: "İçerik Üretimi" } },
       { "@type": "Offer", itemOffered: { "@type": "Service", name: "Web Tasarım & Hosting" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Dijital Pazarlama Danışmanlığı", url: "https://markaizi.com.tr/hizmetler/dijital-pazarlama-danismanligi" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Kurumsal Dijital Pazarlama Eğitimi", url: "https://markaizi.com.tr/hizmetler/dijital-pazarlama-egitimi" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Video Çekimi ve Drone Çekimi", url: "https://markaizi.com.tr/hizmetler/video-cekimi-drone" } },
     ],
   },
 };
