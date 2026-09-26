@@ -1,11 +1,12 @@
 import { MetadataRoute } from "next";
 import { BLOG_POSTS } from "@/lib/blog-data";
+import { ALL_MOBILYA_PAGES } from "@/lib/mobilya-pages";
 
 const BASE = "https://markaizi.com.tr";
 
 // Sitenin en son içerik revizyon tarihi. Her istekte "şimdi" döndürmek yerine
 // sabit bir tarih kullanılır — gerçek bir güncelleme olduğunda elle güncellenir.
-const SITE_UPDATED = new Date("2026-08-17");
+const SITE_UPDATED = new Date("2026-09-26");
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const static_pages: MetadataRoute.Sitemap = [
@@ -42,5 +43,15 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
   }));
 
-  return [...static_pages, ...blog_pages];
+  const mobilya_pages: MetadataRoute.Sitemap = [
+    ...ALL_MOBILYA_PAGES.map((p) => ({
+      url: `${BASE}${p.path}`,
+      lastModified: SITE_UPDATED,
+      changeFrequency: "monthly" as const,
+      priority: p.kind === "hizmet" ? 0.85 : 0.8,
+    })),
+    { url: `${BASE}/vaka-calismalari/alitel-mobilya`, lastModified: SITE_UPDATED, changeFrequency: "monthly" as const, priority: 0.85 },
+  ];
+
+  return [...static_pages, ...mobilya_pages, ...blog_pages];
 }

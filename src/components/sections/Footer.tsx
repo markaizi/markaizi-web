@@ -18,7 +18,7 @@ export default function Footer() {
           </div>
 
           {/* Links */}
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-10">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-10">
             <FooterCol
               title="Hizmetler"
               links={[
@@ -32,6 +32,20 @@ export default function Footer() {
                 { label: "TikTok Reklamları",      href: "/hizmetler/tiktok-reklamlari" },
                 { label: "Yapay Zeka & Otomasyon", href: "/hizmetler/yapay-zeka-otomasyon" },
                 { label: "Web Tasarım & Hosting",  href: "/hizmetler/web-tasarim-hosting" },
+              ]}
+            />
+            <FooterCol
+              title="Mobilya Sektörü"
+              links={[
+                { label: "Mobilya SEO",                  href: "/mobilya-seo" },
+                { label: "Mobilya Google Reklamları",    href: "/mobilya-google-reklamlari" },
+                { label: "Mobilya Sosyal Medya",         href: "/mobilya-sosyal-medya-yonetimi" },
+                { label: "Mobilya E-Ticaret",            href: "/mobilya-e-ticaret-danismanligi" },
+                { label: "İstanbul Mobilya Reklamı",     href: "/istanbul-mobilya-reklam-ajansi" },
+                { label: "İnegöl Mobilya Reklamı",       href: "/inegol-mobilya-reklam-ajansi" },
+                { label: "Kayseri Mobilya Reklamı",      href: "/kayseri-mobilya-reklam-ajansi" },
+                { label: "İzmir Mobilya Reklamı",        href: "/izmir-mobilya-reklam-ajansi" },
+                { label: "Alitel Vaka Çalışması",        href: "/vaka-calismalari/alitel-mobilya" },
               ]}
             />
             <FooterCol

@@ -7,6 +7,7 @@ import ServiceFAQ, { FAQItem } from "@/components/ServiceFAQ";
 import Breadcrumb from "@/components/Breadcrumb";
 import JsonLd from "@/components/JsonLd";
 import { breadcrumbJsonLd } from "@/lib/seo";
+import { CITY_PAGES, SERVICE_PAGES } from "@/lib/mobilya-pages";
 
 export const metadata: Metadata = {
   title: "Mobilya Reklam Ajansı — Siteler / Ankara | markaizi",
@@ -284,6 +285,44 @@ export default function MobilyaReklamAjansiPage() {
         {/* ── SSS ── */}
         <section className="py-20" style={{ background: "var(--bg-alt)" }}>
           <ServiceFAQ faqs={FAQ} />
+        </section>
+
+        {/* ── Vaka Çalışması ── */}
+        <section className="py-16" style={{ background: "var(--bg-alt)" }}>
+          <div className="max-w-[900px] mx-auto px-6">
+            <div className="rounded-2xl p-8 md:p-10" style={{ background: "var(--surface)", border: "1px solid rgba(168,85,247,0.25)" }}>
+              <span className="section-tag">Vaka Çalışması</span>
+              <h2 className="font-black text-[26px] md:text-[30px] leading-tight mb-3 mt-2">
+                Alitel Mobilya: <span className="gradient-text">7 Yıl, Her Yıl Türkiye Ciro Birinciliği</span>
+              </h2>
+              <p className="text-[#8a8a9a] text-[15px] leading-relaxed mb-6">
+                Yedi yıldır birlikte çalıştığımız Alitel Mobilya&apos;nın reklam yönetiminde 10 milyon TL&apos;nin üzerinde bütçe yönettik. Google reklamlarından sosyal medyaya, uzun soluklu bir mobilya ortaklığının nasıl yürüdüğünü okuyun.
+              </p>
+              <Link href="/vaka-calismalari/alitel-mobilya" className="btn btn-primary">Vaka Çalışmasını Oku</Link>
+            </div>
+          </div>
+        </section>
+
+        {/* ── Hizmet ve Şehir Sayfaları ── */}
+        <section className="py-16" style={{ background: "var(--bg)" }}>
+          <div className="max-w-[1000px] mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-10">
+            <div>
+              <h2 className="font-black text-[22px] mb-4">Mobilya <span className="gradient-text">Hizmetlerimiz</span></h2>
+              <div className="flex flex-col gap-2">
+                {SERVICE_PAGES.map((p) => (
+                  <Link key={p.path} href={p.path} className="text-[15px] text-[#c084fc] hover:text-white transition-colors">{p.linkLabel} →</Link>
+                ))}
+              </div>
+            </div>
+            <div>
+              <h2 className="font-black text-[22px] mb-4">Türkiye&apos;nin <span className="gradient-text">Mobilya Merkezlerinde</span></h2>
+              <div className="flex flex-col gap-2">
+                {CITY_PAGES.map((p) => (
+                  <Link key={p.path} href={p.path} className="text-[15px] text-[#c084fc] hover:text-white transition-colors">{p.linkLabel} Mobilya Reklam Ajansı →</Link>
+                ))}
+              </div>
+            </div>
+          </div>
         </section>
 
         {/* ── Blog Yönlendirme ── */}
