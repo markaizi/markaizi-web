@@ -1,6 +1,7 @@
 import { MetadataRoute } from "next";
 import { BLOG_POSTS } from "@/lib/blog-data";
 import { ALL_MOBILYA_PAGES } from "@/lib/mobilya-pages";
+import { VIDEOS, ytThumb, ytEmbed } from "@/lib/video-data";
 
 const BASE = "https://markaizi.com.tr";
 
@@ -56,5 +57,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/vaka-calismalari/alitel-mobilya`, lastModified: SITE_UPDATED, changeFrequency: "monthly" as const, priority: 0.85 },
   ];
 
-  return [...static_pages, ...mobilya_pages, ...blog_pages];
+  const video_pages: MetadataRoute.Sitemap = [
+    { url: `${BASE}/videolar`, lastModified: new Date(VIDEOS[0]?.dateISO ?? SITE_UPDATED), changeFrequency: "weekly" as const, priority: 0.8 },
+    ...VIDEOS.map((v) => ({
+      url: `${BASE}/videolar/${v.slug}`,
+      lastModified: new Date(v.dateISO),
+      changeFrequency: "monthly" as const,
+      priority: 0.8,
+      ...(v.youtubeId
+        ? { videos: [{ title: v.title, description: v.excerpt, thumbnail_loc: ytThumb(v.youtubeId), player_loc: ytEmbed(v.youtubeId) }] }
+        : {}),
+    })),
+  ];
+
+  return [...static_pages, ...mobilya_pages, ...video_pages, ...blog_pages];
 }

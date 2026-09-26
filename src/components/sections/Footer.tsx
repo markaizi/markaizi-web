@@ -6,7 +6,7 @@ export default function Footer() {
   return (
     <footer style={{ background: "var(--bg-alt)", borderTop: "1px solid var(--border)" }}>
       <div className="max-w-[1200px] mx-auto px-6 pt-[72px] pb-0">
-        <div className="grid grid-cols-1 md:grid-cols-[280px_1fr] gap-16 mb-16">
+        <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-12 lg:gap-16 mb-16">
           {/* Brand */}
           <div>
             <a href="/" className="inline-block mb-5">
@@ -18,7 +18,7 @@ export default function Footer() {
           </div>
 
           {/* Links */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-10">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10 lg:gap-10">
             <FooterCol
               title="Hizmetler"
               links={[
@@ -60,6 +60,7 @@ export default function Footer() {
                 { label: "Portföy",    href: "/#portfolio" },
                 { label: "İletişim",   href: "/#iletisim" },
                 { label: "Blog",       href: "/blog" },
+                { label: "YouTube Videoları", href: "/videolar" },
                 { label: "Kariyer",    href: "/cv" },
               ]}
             />
@@ -105,7 +106,7 @@ function FooterCol({ title, links }: { title: string; links: { label: string; hr
       <ul className="flex flex-col gap-3">
         {links.map((l) => (
           <li key={l.label}>
-            <a href={l.href} className="text-[14px] text-white/50 hover:text-white transition-colors">
+            <a href={l.href} className="text-[14px] text-white/50 hover:text-white transition-colors [overflow-wrap:anywhere]">
               {l.label}
             </a>
           </li>

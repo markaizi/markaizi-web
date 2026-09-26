@@ -1,3 +1,4 @@
+import { SAME_AS } from "@/lib/seo";
 import { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import Hero from "@/components/sections/Hero";
@@ -58,11 +59,7 @@ const jsonLd = {
   openingHoursSpecification: [
     { "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"], opens: "09:00", closes: "20:00" },
   ],
-  sameAs: [
-    "https://instagram.com/markaizicom",
-    "https://tiktok.com/@markaizicom",
-    "https://share.google/S5wQdPjBKZT7DQ9zu",
-  ],
+  sameAs: SAME_AS,
   knowsAbout: [
     "Mobilya sektörü dijital pazarlama",
     "Mobilya mağazaları için Instagram ve Google reklamları",

@@ -20,6 +20,7 @@ export default function Navbar() {
   const [session, setSession]         = useState<SessionInfo>(undefined as unknown as SessionInfo);
   const pathname  = usePathname();
   const isHome    = pathname === "/";
+  const onVideos  = pathname.startsWith("/videolar");
 
   useEffect(() => {
     fetch("/api/musteri/auth/me")
@@ -109,6 +110,22 @@ export default function Navbar() {
               </li>
             ))}
 
+            {/* YouTube — menü linklerinden ayrışsın diye kırmızı çerçeveli hap */}
+            <li>
+              <Link
+                href="/videolar"
+                aria-current={onVideos ? "page" : undefined}
+                className="flex items-center gap-1.5 px-3.5 py-2 text-sm font-semibold rounded-full transition-all ml-1 hover:bg-[rgba(255,0,51,0.16)]"
+                style={{ color: "#fff", background: onVideos ? "rgba(255,0,51,0.16)" : "rgba(255,0,51,0.08)", border: "1px solid rgba(255,0,51,0.45)" }}
+              >
+                <svg viewBox="0 0 28 20" className="w-[18px] h-[13px]" aria-hidden="true">
+                    <path d="M27.4 3.1A3.5 3.5 0 0024.9.6C22.7 0 14 0 14 0S5.3 0 3.1.6A3.5 3.5 0 00.6 3.1C0 5.3 0 10 0 10s0 4.7.6 6.9a3.5 3.5 0 002.5 2.5C5.3 20 14 20 14 20s8.7 0 10.9-.6a3.5 3.5 0 002.5-2.5C28 14.7 28 10 28 10s0-4.7-.6-6.9z" fill="#FF0033"/>
+                    <path d="M11.2 14.3L18.4 10l-7.2-4.3v8.6z" fill="#fff"/>
+                  </svg>
+                YouTube
+              </Link>
+            </li>
+
             {/* Müşteri Girişi / Panel */}
             <li>
               {session ? (
@@ -148,7 +165,18 @@ export default function Navbar() {
           </ul>
 
           {/* Mobil: Müşteri Girişi ikonu + Hamburger */}
-          <div className="lg:hidden flex items-center gap-3">
+          <div className="lg:hidden flex items-center gap-2 sm:gap-3">
+            <Link
+              href="/videolar"
+              aria-label="YouTube videolarımız"
+              className="flex items-center justify-center min-w-[44px] min-h-[44px] rounded-full transition-all"
+              style={{ background: "rgba(255,0,51,0.08)", border: "1px solid rgba(255,0,51,0.45)" }}
+            >
+              <svg viewBox="0 0 28 20" className="w-[22px] h-[16px]" aria-hidden="true">
+                    <path d="M27.4 3.1A3.5 3.5 0 0024.9.6C22.7 0 14 0 14 0S5.3 0 3.1.6A3.5 3.5 0 00.6 3.1C0 5.3 0 10 0 10s0 4.7.6 6.9a3.5 3.5 0 002.5 2.5C5.3 20 14 20 14 20s8.7 0 10.9-.6a3.5 3.5 0 002.5-2.5C28 14.7 28 10 28 10s0-4.7-.6-6.9z" fill="#FF0033"/>
+                    <path d="M11.2 14.3L18.4 10l-7.2-4.3v8.6z" fill="#fff"/>
+                  </svg>
+            </Link>
             {session ? (
               <a
                 href={session.redirect}
@@ -249,6 +277,21 @@ export default function Navbar() {
             );
           })}
         </ul>
+
+        <div className="flex justify-center pb-6">
+          <Link
+            href="/videolar"
+            onClick={close}
+            className="flex items-center gap-2.5 px-6 py-3 rounded-full text-[17px] font-bold text-white"
+            style={{ background: "rgba(255,0,51,0.1)", border: "1px solid rgba(255,0,51,0.45)" }}
+          >
+            <svg viewBox="0 0 28 20" className="w-[26px] h-[19px]" aria-hidden="true">
+                    <path d="M27.4 3.1A3.5 3.5 0 0024.9.6C22.7 0 14 0 14 0S5.3 0 3.1.6A3.5 3.5 0 00.6 3.1C0 5.3 0 10 0 10s0 4.7.6 6.9a3.5 3.5 0 002.5 2.5C5.3 20 14 20 14 20s8.7 0 10.9-.6a3.5 3.5 0 002.5-2.5C28 14.7 28 10 28 10s0-4.7-.6-6.9z" fill="#FF0033"/>
+                    <path d="M11.2 14.3L18.4 10l-7.2-4.3v8.6z" fill="#fff"/>
+                  </svg>
+            YouTube Videolarımız
+          </Link>
+        </div>
 
         {/* Alt blok: en yüksek niyetli aksiyonlar. Menüde telefon/WhatsApp
             yoktu — mobilde bunlar formdan daha çok dönüşüyor. */}

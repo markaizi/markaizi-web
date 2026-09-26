@@ -40,6 +40,11 @@ Not: Reklam bütçesi yönetim ücretine dahil değildir ve doğrudan ilgili rek
 - [Blog — Dijital Pazarlama Rehberleri](https://markaizi.com.tr/blog): Sosyal medya, reklam ve web tasarım üzerine güncel makaleler.
 - [Sıkça Sorulan Sorular](https://markaizi.com.tr/sss): Çalışma şekli, ödeme, sözleşme ve hizmetlerle ilgili cevaplar.
 
+### YouTube Videoları
+
+- [Tüm Videolar](https://markaizi.com.tr/videolar): markaizi YouTube kanalının videoları; her videonun tam metni ve özeti kendi sayfasında.
+- [İşletmeler İçin Dijital Pazarlama ve Reklam Rehberi](https://markaizi.com.tr/videolar/isletmeler-icin-dijital-pazarlama-ve-reklam-rehberi): Reklamın neden tek başına satış yapmadığı, hedef kitle ve Meta'nın yapay zekası, her gün paylaşımın gerekli olup olmadığı, takipçi sayısı, teklif, sorun teşhisi, test kültürü, reklam bütçesinin aşamaları, ajanstan ne beklenmeli ve ajans neyi garanti edebilir. Anlatan: Samet Sağlam.
+
 ### Blog Yazıları
 
 - [Instagram Algoritması 2026: Organik Büyüme İçin 10 Strateji](https://markaizi.com.tr/blog/instagram-algoritmasi)
