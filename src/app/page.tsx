@@ -57,6 +57,9 @@ const jsonLd = {
     { "@type": "Neighborhood", name: "Çankaya" },
     { "@type": "Neighborhood", name: "Yenimahalle" },
     { "@type": "Neighborhood", name: "Mamak" },
+    { "@type": "AdministrativeArea", name: "Gölbaşı, Ankara" },
+    { "@type": "AdministrativeArea", name: "Altındağ, Ankara" },
+    { "@type": "AdministrativeArea", name: "Beypazarı, Ankara" },
   ],
   openingHoursSpecification: [
     { "@type": "OpeningHoursSpecification", dayOfWeek: ["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"], opens: "09:00", closes: "20:00" },
@@ -67,6 +70,8 @@ const jsonLd = {
     "Mobilya sektörü dijital pazarlama",
     "Mobilya mağazaları için Instagram ve Google reklamları",
     "Siteler mobilya sektörü",
+    "Kafe ve restoranlar için sosyal medya ve reklam",
+    "Ankara kafe ve restoran dijital pazarlaması",
     "Sosyal medya yönetimi",
     "Google Ads ve Meta reklam yönetimi",
     "Yerel işletme pazarlaması",

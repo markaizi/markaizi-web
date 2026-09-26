@@ -1,5 +1,6 @@
 import { BLOG_POSTS } from "@/lib/blog-data";
 import { CITY_PAGES, SERVICE_PAGES } from "@/lib/mobilya-pages";
+import { ANKARA_ILCELER, KAFE_DISTRICT_PAGES, KAFE_HUB } from "@/lib/kafe-pages";
 import { VIDEOS, YOUTUBE_CHANNEL_URL } from "@/lib/video-data";
 
 // llms.txt (https://llmstxt.org) — yapay zeka asistanlarının siteyi hızlıca
@@ -62,6 +63,11 @@ function build(): string {
 
   lines.push("## Mobilya Sektörü: Bölge Sayfaları", "");
   for (const c of CITY_PAGES) lines.push(link(c.breadcrumbLabel, c.path, c.metaDescription));
+  lines.push("");
+
+  lines.push("## Ankara Kafe & Restoran", "");
+  lines.push(link(KAFE_HUB.name, KAFE_HUB.path, `Ankara'daki kafe, restoran, kahvaltı salonu ve pastaneler için sosyal medya yönetimi, Instagram reklamları, Google Haritalar ve yemek/mekân çekimi. Ankara'nın 25 ilçesinde hizmet: ${ANKARA_ILCELER.join(", ")}.`));
+  for (const c of KAFE_DISTRICT_PAGES) lines.push(link(c.breadcrumbLabel, c.path, c.metaDescription));
   lines.push("");
 
   lines.push("## Vaka Çalışmaları", "");

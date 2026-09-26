@@ -24,6 +24,7 @@ export default function Footer() {
               links={[
                 { label: "Ücretsiz Analiz",        href: "/ucretsiz-analiz" },
                 { label: "Mobilya Reklam Ajansı",  href: "/mobilya-reklam-ajansi" },
+                { label: "Ankara Kafe & Restoran Reklam Ajansı", href: "/ankara-kafe-restoran-reklam-ajansi" },
                 { label: "Sağlık & Klinik Reklam Ajansı", href: "/saglik-klinik-reklam-ajansi" },
                 { label: "Doğal Ürün & Takviye Reklamı",  href: "/dogal-urun-takviye-reklam-ajansi" },
                 { label: "Sosyal Medya Yönetimi", href: "/hizmetler/sosyal-medya-yonetimi" },

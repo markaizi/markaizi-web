@@ -29,6 +29,10 @@ export type LandingContent = {
   ctaText: string;
   linkLabel: string; // ana mobilya sayfası ve footer'da görünen kısa ad
   video?: { slug: string; text: string }; // SSS'ten önce gösterilen YouTube video kartı
+  // Mobilya dışındaki sektörlerde (ör. kafe & restoran) şablonun üst sayfası ve şeması
+  parent?: { name: string; path: string; ctaLabel: string };
+  serviceType?: string;
+  audienceType?: string;
 };
 
 const CASE = { href: "/vaka-calismalari/alitel-mobilya", label: "Alitel Mobilya Vaka Çalışması" };

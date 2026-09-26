@@ -12,7 +12,8 @@ import VideoCallout from "@/components/VideoCallout";
 
 export function mobilyaMetadata(c: LandingContent): Metadata {
   return {
-    title: c.metaTitle,
+    // metaTitle zaten "| markaizi" ile bitiyor; kök şablon ("%s — markaizi") ikinci kez eklemesin
+    title: { absolute: c.metaTitle },
     description: c.metaDescription,
     keywords: c.keywords,
     alternates: { canonical: `${SITE_URL}${c.path}` },
@@ -27,11 +28,12 @@ export function mobilyaMetadata(c: LandingContent): Metadata {
 }
 
 export default function MobilyaLanding({ c }: { c: LandingContent }) {
+  const parent = c.parent ?? { name: "Mobilya Reklam Ajansı", path: "/mobilya-reklam-ajansi", ctaLabel: "Tüm Mobilya Hizmetleri" };
   const serviceJsonLd = {
     "@context": "https://schema.org",
     "@type": "Service",
     name: c.serviceName,
-    serviceType: "Mobilya sektörü dijital pazarlama ve reklam yönetimi",
+    serviceType: c.serviceType ?? "Mobilya sektörü dijital pazarlama ve reklam yönetimi",
     url: `${SITE_URL}${c.path}`,
     provider: {
       "@type": "ProfessionalService",
@@ -46,7 +48,7 @@ export default function MobilyaLanding({ c }: { c: LandingContent }) {
       },
     },
     areaServed: c.areaServed.map((name) => ({ "@type": name === "Türkiye" ? "Country" : "City", name })),
-    audience: { "@type": "Audience", audienceType: "Mobilya mağazaları, mobilya üreticileri ve bayileri" },
+    audience: { "@type": "Audience", audienceType: c.audienceType ?? "Mobilya mağazaları, mobilya üreticileri ve bayileri" },
   };
 
   const faqJsonLd = {
@@ -61,7 +63,7 @@ export default function MobilyaLanding({ c }: { c: LandingContent }) {
 
   const breadcrumb = breadcrumbJsonLd([
     { name: "Ana Sayfa", path: "/" },
-    { name: "Mobilya Reklam Ajansı", path: "/mobilya-reklam-ajansi" },
+    { name: parent.name, path: parent.path },
     { name: c.breadcrumbLabel, path: c.path },
   ]);
 
@@ -84,7 +86,7 @@ export default function MobilyaLanding({ c }: { c: LandingContent }) {
               <Breadcrumb
                 items={[
                   { name: "Ana Sayfa", path: "/" },
-                  { name: "Mobilya Reklam Ajansı", path: "/mobilya-reklam-ajansi" },
+                  { name: parent.name, path: parent.path },
                   { name: c.breadcrumbLabel },
                 ]}
               />
@@ -104,8 +106,8 @@ export default function MobilyaLanding({ c }: { c: LandingContent }) {
                 <a href={wa} target="_blank" rel="noopener noreferrer" className="btn btn-primary">
                   WhatsApp&apos;tan Ücretsiz Teklif Al
                 </a>
-                <Link href="/mobilya-reklam-ajansi" className="btn btn-outline">
-                  Tüm Mobilya Hizmetleri
+                <Link href={parent.path} className="btn btn-outline">
+                  {parent.ctaLabel}
                 </Link>
               </div>
             </div>

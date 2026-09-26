@@ -22,6 +22,7 @@ const CATEGORY_SERVICE: Record<string, { href: string; label: string }> = {
   "Web Tasarım": { href: "/hizmetler/web-tasarim-hosting", label: "Web Tasarım & Hosting" },
   "İçerik Üretimi": { href: "/hizmetler/yapay-zeka-otomasyon", label: "Yapay Zeka & Otomasyon" },
   "Reklam Stratejisi": { href: "/hizmetler/dijital-pazarlama-danismanligi", label: "Dijital Pazarlama Danışmanlığı" },
+  "Kafe & Restoran": { href: "/ankara-kafe-restoran-reklam-ajansi", label: "Ankara Kafe & Restoran Reklam Ajansı" },
 };
 
 export async function generateMetadata({

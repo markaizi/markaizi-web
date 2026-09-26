@@ -743,6 +743,132 @@ export const BLOG_POSTS: BlogPost[] = [
       },
     ],
   },
+  {
+    slug: "ankara-kafe-acilis-dijital-pazarlama-rehberi",
+    category: "Kafe & Restoran",
+    color: "#fbbf24",
+    title: "Ankara'da Kafe Açtınız: İlk 90 Günde Müşteri Getiren Dijital Pazarlama Rehberi",
+    excerpt:
+      "Ankara'da yeni bir kafe ya da restoran açanlar için açılış öncesinden ilk üç aya kadar adım adım dijital pazarlama planı: Instagram, Google Haritalar, yorumlar ve konuma göre reklam.",
+    date: "27 Eylül 2026",
+    dateISO: "2026-09-27",
+    readTime: "9 dk",
+    intro:
+      "Yeni bir kafe açmak aylar süren bir emek: kira, dekorasyon, ekipman, menü, personel. Açılış günü geldiğinde çoğu mekân sahibi 'artık müşteri gelir' diye düşünüyor. Oysa Ankara'da, özellikle Çankaya ya da Etimesgut gibi yeni mekânların sürekli açıldığı bölgelerde, bir kafenin varlığından haberdar olmak bile kendiliğinden olmuyor. İlk 90 gün, mekânın kaderini belirleyen dönem: bu sürede edinilen müdavimler, toplanan yorumlar ve oluşan ilk izlenim, sonraki yılların temelini atıyor. Bu yazıda açılıştan önceki haftalardan üçüncü ayın sonuna kadar yapılması gerekenleri sırayla anlatıyoruz.",
+    sections: [
+      {
+        h2: "Açılıştan Önce: Dijital Kapınızı Kurun",
+        body: "Mekânın kapısı açılmadan önce dijital kapısı açılmalı. Google İşletme Profilinizi açılıştan birkaç hafta önce oluşturun: doğru kategori (kafe, kahvaltı salonu, restoran), tam adres, telefon, planlanan çalışma saatleri ve mekândan birkaç fotoğraf. Profilin doğrulanması zaman alabildiği için bu işi son güne bırakmayın. Instagram hesabınızı da aynı dönemde açın; biyografide semt ve ilçe adı, adres ve iletişim bağlantısı olsun. 'Kızılay, Çankaya' ya da 'Eryaman, Etimesgut' gibi net bir konum, profilinize giren kişinin ilk sorusunu cevaplar.",
+      },
+      {
+        h2: "Açılıştan 2-3 Hafta Önce: Merak Uyandırın",
+        body: "Açılıştan önceki haftalar sessiz geçmemeli. Dekorasyonun tamamlanışı, ilk kahvenin demlenişi, menünün tadımı gibi 'perde arkası' içerikler, insanlara mekânın açılacağını haber verir ve bir bekleyiş oluşturur. Bu içerikleri mekânın çevresindeki kişilere küçük bir bütçeyle göstermek, açılış gününden önce mahallede bir farkındalık yaratır. Açılış tarihini net olarak duyurun; belirsiz bir 'çok yakında' yerine takvime yazılabilen bir gün, insanların plan yapmasını sağlar.",
+      },
+      {
+        h2: "Açılış Haftası: Net Bir Teklif ve Doğru Yarıçap",
+        body: "Açılış haftası için insanları o hafta gelmeye ikna edecek net bir teklif belirleyin: ilk kahveye tatlı ikramı, belirli saatlerde indirim ya da ilk ziyarette sadakat kartına iki damga. Teklifin kendisi kadar anlatımı da önemli; ilk saniyede ne sunduğunuzu söyleyen kısa bir video, uzun bir afiş tasarımından daha fazla işe yarar. Reklamı mekânınızın çevresindeki birkaç kilometreye, insanların kafe planı yaptığı saatlerde gösterin. Şehrin öbür ucundaki birine gösterilen açılış reklamı, gelmeyecek birine harcanmış bütçedir.",
+      },
+      {
+        h2: "İlk Ay: Yorum Toplamayı Alışkanlık Haline Getirin",
+        body: "İlk ayın en değerli çıktısı müşteri sayısından çok Google yorumlarıdır. Boş bir profil, 'yeni açılmış, bilinmiyor' izlenimi verir ve 'yakınımdaki kafe' aramalarında sizi geriye düşürür. Memnun müşteriden yorum istemeyi ilk günden alışkanlık haline getirin: masada küçük bir QR kod, hesapla birlikte kibar bir rica. Gelen her yoruma yanıt verin; olumsuz bir yoruma sakin ve çözüm odaklı bir yanıt, yeni mekân için güvenilirlik göstergesidir. Satın alınmış yorumlardan ise uzak durun; tespit edildiğinde tüm profiliniz zarar görebilir.",
+      },
+      {
+        h2: "İlk Ay: Neyin Satıldığını İzleyin",
+        body: "Açılışta menünüzün hangi ürününün yıldız olacağını tahmin edebilirsiniz ama bilemezsiniz. İlk haftalarda hangi ürünün en çok sipariş edildiğini, hangisinin fotoğrafının çekilip paylaşıldığını ve hangi içeriğin Instagram'da daha çok kaydedildiğini takip edin. Mekânınızın 'imza ürünü' genellikle bu verilerden çıkar ve sonraki aylarda içeriğin ve reklamın merkezine o ürün oturur.",
+      },
+      {
+        h2: "İkinci Ay: Müdavim Kazanmaya Odaklanın",
+        body: "İlk merak dalgası geçtikten sonra asıl soru şu: gelenler geri geliyor mu? İkinci ayda odağı yeni kitleden mevcut müşteriye kaydırın. Günlük story akışıyla günün tatlısını, yeni gelen çekirdeği ya da haftanın kampanyasını paylaşmak, takipçinin 'bugün nereye gidelim' diye düşündüğü anda aklına gelmenizi sağlar. Sadakat kartı, müdavime özel küçük ikramlar ve takipçiye özel kampanyalar, geri gelme sebebi yaratır. Reklam tarafında ise mekânınızın profilini ziyaret etmiş ya da içeriklerinizle etkileşime girmiş kişilere yeniden ulaşmak, soğuk kitleye göre daha düşük maliyetle ziyaret getirir.",
+      },
+      {
+        h2: "Üçüncü Ay: Saatleri ve Günleri Dengeleyin",
+        body: "Üçüncü aya geldiğinizde mekânınızın ritmi belirginleşir: hangi günler dolu, hangi saatler boş? Çoğu kafede hafta sonu ile hafta içi, öğle ile öğleden sonra arasında belirgin bir fark vardır. Reklam bütçesini zaten dolu olan saatlere değil, boş saatlere müşteri çekecek tekliflere yönlendirin: hafta içi öğle menüsü, öğleden sonra çalışanlar ve öğrenciler için sessiz çalışma alanı, erken akşam kampanyası. Bu, aynı bütçeyle ciroyu daha dengeli büyütmenin yoludur.",
+      },
+      {
+        h2: "90 Günün Sonunda Neye Bakmalısınız?",
+        body: "Üç ayın sonunda şu soruların cevabını bilmelisiniz: Google profilinizde kaç yorum ve kaç puan var, profil kaç arama ve yol tarifi isteği aldı? Instagram'da hangi içerikler kaydedildi ve paylaşıldı? Reklamlardan kaç mesaj, rezervasyon ya da ziyaret geldi? İmza ürününüz belli oldu mu, müdavimleriniz oluştu mu? Bu cevaplar, bir sonraki dönemde neye yatırım yapacağınızı belirler. Takipçi sayısı ise bu listenin en sonunda gelir; bir kafenin başarısı takipçiyle değil, dolu masayla ve geri gelen müşteriyle ölçülür.",
+      },
+    ],
+    conclusion:
+      "Yeni bir kafenin ilk 90 günü, dijital pazarlama açısından en kritik dönem. Açılıştan önce kurulan Google profili ve Instagram hesabı, açılış haftasındaki net teklif, ilk aydan itibaren toplanan yorumlar ve ikinci aydan sonra müdavime dönen odak, mekânın uzun ömürlü olmasının temelini atıyor. markaizi olarak Ankara'nın her ilçesindeki kafe ve restoranlara bu süreçte sosyal medya, reklam ve Google Haritalar desteği veriyoruz. Yeni açılan ya da açılmak üzere olan mekânınız için ücretsiz yol haritası isterseniz bize yazın.",
+    faq: [
+      {
+        q: "Kafe açılışından ne kadar önce sosyal medyaya başlamalıyım?",
+        a: "En az iki-üç hafta önce. Google İşletme Profilinin doğrulanması zaman alabildiği için onu daha da erken oluşturun. Açılış öncesindeki perde arkası içerikler, açılış gününe kadar çevrede bir farkındalık oluşturur.",
+      },
+      {
+        q: "Açılış reklamı ne kadar geniş bir alana gösterilmeli?",
+        a: "Şehir içindeki bir kafe için genellikle mekânın çevresindeki birkaç kilometre yeterlidir. İnsanlar kafe seçerken yakınlığa önem verir; çok geniş bir alana gösterilen reklam, gelmeyecek kişilere harcanan bütçe demektir.",
+      },
+      {
+        q: "Yeni açılan kafe için Google yorumu nasıl toplanır?",
+        a: "Memnun müşteriden yorum istemeyi alışkanlık haline getirin: masada QR kod, hesapla birlikte kibar bir hatırlatma. Her yoruma yanıt verin. Satın alınmış yorumlardan kaçının; tespit edildiğinde profilinize zarar verebilir.",
+      },
+    ],
+  },
+  {
+    slug: "kafe-restoran-google-haritalar-rehberi",
+    category: "Kafe & Restoran",
+    color: "#fbbf24",
+    title: "Kafe ve Restoranlar İçin Google Haritalar Rehberi: 'Yakınımdaki Kafe' Aramalarında Öne Çıkmak",
+    excerpt:
+      "Kafe ve restoranlar için Google İşletme Profili nasıl doldurulur? Menü, fotoğraf, çalışma saatleri, özellikler, yorum yanıtları ve 'semt adı + kafe' aramalarında görünür olmanın yolları.",
+    date: "27 Eylül 2026",
+    dateISO: "2026-09-27",
+    readTime: "8 dk",
+    intro:
+      "Acıkan ya da bir kahve molası arayan biri telefonunu açıp 'yakınımdaki kafe' ya da 'Bahçelievler kahvaltı' yazdığında karşısına bir harita ve üç mekân çıkıyor. Kararın büyük kısmı o üç mekân arasında, birkaç saniyede veriliyor. Bir kafe ya da restoran için Google İşletme Profili bu yüzden bir tabela değil, en yoğun caddedeki vitrin. Bu rehberde yeme-içme işletmelerine özgü profil ayarlarını, yorum stratejisini ve harita aramalarında öne çıkmanın pratik yollarını anlatıyoruz.",
+    sections: [
+      {
+        h2: "Kategori: Doğru Aramada Görünmenin İlk Şartı",
+        body: "Google, mekânınızı hangi aramalarda göstereceğine büyük ölçüde kategoriye bakarak karar veriyor. Ana kategori mekânınızı en iyi anlatan tek bir tür olmalı: kafe, kahvaltı salonu, restoran, pastane, kahve dükkânı. Ek kategorilerle sunduğunuz diğer hizmetleri ekleyebilirsiniz; ama gerçekte olmayan kategorileri eklemek, alakasız aramalarda görünüp kötü deneyim yaşatmanıza yol açar. Kahvaltı sunan bir kafenin 'kahvaltı salonu' kategorisini eklemesi ise 'kahvaltı' aramalarında görünmesini sağlar.",
+      },
+      {
+        h2: "Menü ve Fiyat: Karar Anındaki En Önemli Bilgi",
+        body: "Harita üzerinden mekân seçen kişinin en çok baktığı bilgilerden biri menü ve fiyat aralığı. Menünüzü profil üzerinden ya da menü bağlantısıyla güncel tutun; menü fotoğrafları eklenecekse okunaklı ve güncel olsun. Fiyatı görünmeyen bir mekân, özellikle aile ve öğrenci müşterisinde listeden çıkıyor. Menü değiştiğinde profili güncellemeyi unutmayın; eski fiyatla gelip yeni fiyatla karşılaşan müşteri, bunu yoruma yansıtabilir.",
+      },
+      {
+        h2: "Fotoğraf: Tabak, Bardak ve Atmosfer",
+        body: "Yeme-içmede fotoğraf, müşterinin mekâna gelmeden önce yaşadığı deneyimdir. Profilde en az üç tür fotoğraf olmalı: yemek ve içecekler (en çok satanlar ve imza ürünler), mekânın içi (oturma düzeni, atmosfer, ışık) ve dışı (müşterinin mekânı bulmasını kolaylaştıran cephe). Fotoğrafları gün ışığında ya da mekânın en sıcak ışığında çekin, düzenli aralıklarla yeni fotoğraf ekleyin. Müşterilerin eklediği fotoğrafları da takip edin; profilinizin vitrini yalnızca sizin yüklediklerinizden oluşmuyor.",
+      },
+      {
+        h2: "Çalışma Saatleri ve 'Şimdi Açık' Bilgisi",
+        body: "Kafe ve restoran aramalarının önemli kısmı 'şimdi açık' olan mekânlara yönelik. Çalışma saatleriniz yanlışsa ya Google sizi göstermiyor ya da müşteri kapalı kapıyla karşılaşıp bunu yoruma yazıyor. Bayram, yılbaşı ve özel günlerde özel çalışma saatlerini mutlaka girin. Mutfağın kapanış saati salonunkinden farklıysa bunu açıklamada belirtin.",
+      },
+      {
+        h2: "Özellikler: Küçük Detaylar, Büyük Filtreler",
+        body: "Google İşletme Profilindeki 'özellikler' bölümü çoğu mekânın atladığı ama müşterinin filtrelediği bilgileri içerir: açık alanda oturma, Wi-Fi, çocuk dostu, evcil hayvan kabulü, rezervasyon, paket servis, tekerlekli sandalyeye uygun giriş gibi. 'Çalışmaya uygun kafe' ya da 'bahçeli kahvaltı' arayan birinin sizi bulması, bu küçük kutucuklara bağlı olabilir. Sunduğunuz her özelliği işaretleyin, sunmadıklarınızı işaretlemeyin.",
+      },
+      {
+        h2: "Yorumlar: Hem Sıralama Hem Güven",
+        body: "Yorum sayısı, puan ve yorumların güncelliği harita sıralamasını doğrudan etkiliyor. Memnun müşteriden yorum istemeyi mekânın bir rutini haline getirin: masada küçük bir QR kod, hesapla birlikte kibar bir hatırlatma ya da paket siparişlere eklenen bir not. Her yoruma yanıt verin; teşekkür etmek kadar olumsuz yoruma sakin ve çözüm odaklı yanıt vermek de önemli. Olumsuz bir yoruma verilen iyi bir yanıt, profili okuyan yeni müşteriye 'burası sorun çıkınca ilgileniyor' mesajını verir. Satın alınmış ya da karşılığında indirim verilerek toplanan yorumlar ise Google kurallarına aykırıdır ve profilinize zarar verebilir.",
+      },
+      {
+        h2: "Güncellemeler: Profilin Canlı Olduğunu Gösterin",
+        body: "Google İşletme Profili üzerinden güncelleme paylaşabilirsiniz: yeni menü, haftanın tatlısı, özel gün kampanyası, canlı müzik akşamı. Bu paylaşımlar profilinizi ziyaret eden kararsız müşteriye son bir sebep verir ve profilin aktif olduğunu gösterir. Haftada bir kısa güncelleme, çoğu mekân için yeterlidir.",
+      },
+      {
+        h2: "Semt Adıyla Aramalar ve Web Sitesi Uyumu",
+        body: "Ankara'da insanlar çoğu zaman ilçe yerine semt adıyla arıyor: 'Kızılay kafe', 'Tunalı kahvaltı', 'Batıkent restoran', 'Eryaman pastane'. Adresinizin ve konum işaretinizin doğru olması bu aramaların temeli. Bir web siteniz varsa sitede adres, telefon ve çalışma saatlerinin profildekiyle birebir aynı olması, sitede semt ve ilçe adının geçmesi ve profilden siteye bağlantı verilmesi Google'ın mekânınızı doğru aramalarla eşleştirmesine yardımcı olur.",
+      },
+    ],
+    conclusion:
+      "Bir kafe ya da restoran için Google İşletme Profili, reklam vermeden gelen en değerli müşteri kaynağı. Doğru kategori, güncel menü ve fiyat, iyi fotoğraflar, doğru çalışma saatleri, işaretlenmiş özellikler ve düzenli yanıtlanan yorumlar, 'yakınımdaki kafe' aramalarında öne çıkmanın temelini oluşturuyor. markaizi olarak Ankara'daki kafe ve restoranların Google profillerini sosyal medya ve reklam çalışmalarıyla birlikte yönetiyoruz. Profilinizin ücretsiz incelemesi için bize yazın.",
+    faq: [
+      {
+        q: "Google Haritalar'da kafem neden çıkmıyor?",
+        a: "En sık nedenler yanlış ya da eksik kategori, doğrulanmamış profil, hatalı konum işareti, az sayıda yorum ve güncel olmayan çalışma saatleridir. Profil bilgilerinin eksiksiz ve doğru olması, düzenli yorum ve fotoğraf akışı görünürlüğü artırır.",
+      },
+      {
+        q: "Google yorumu karşılığında indirim verebilir miyim?",
+        a: "Hayır. Yorum karşılığında indirim ya da hediye vermek Google kurallarına aykırıdır ve profilinizin zarar görmesine yol açabilir. Memnun müşteriden karşılıksız yorum istemek ve her yoruma yanıt vermek en sağlıklı yoldur.",
+      },
+      {
+        q: "Menü fiyatlarını Google profiline eklemeli miyim?",
+        a: "Genellikle evet. Harita üzerinden mekân seçen kişiler fiyat aralığına bakarak karar verir; fiyatı görünmeyen mekânlar özellikle aile ve öğrenci müşterisinde tercih edilmeyebilir. Menü değiştiğinde güncellemeyi unutmayın.",
+      },
+    ],
+  },
 ];
 
 export function getPostBySlug(slug: string): BlogPost | undefined {
