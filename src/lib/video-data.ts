@@ -3,8 +3,7 @@
 //      bölüm başlıkları BÜYÜK HARFLE).
 //   2) Aşağıdaki listenin EN BAŞINA yeni bir kayıt ekle.
 //   3) Video YouTube'a yüklenince youtubeId alanını doldur (watch?v=XXXX kısmı).
-// Sitemap, llms.txt dışındaki her şey (liste, detay, şema) otomatik oluşur;
-// llms.txt'ye yeni videonun satırını elle eklemeyi unutma.
+// Liste, detay, şema, sitemap ve llms.txt otomatik güncellenir.
 
 // Kanal açılınca doldur: https://www.youtube.com/@... — dolunca "Abone Ol"
 // butonları ve Organization sameAs bağlantısı otomatik görünür.
