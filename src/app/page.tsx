@@ -6,6 +6,7 @@ import Hero from "@/components/sections/Hero";
 import FreeAnalysisBar from "@/components/sections/FreeAnalysisBar";
 import Services from "@/components/sections/Services";
 import Approach from "@/components/sections/Approach";
+import Sectors from "@/components/sections/Sectors";
 import About from "@/components/sections/About";
 import Portfolio from "@/components/sections/Portfolio";
 import Contact from "@/components/sections/Contact";
@@ -16,9 +17,9 @@ import ScrollReveal from "@/components/ScrollReveal";
 export const metadata: Metadata = {
   title: "markaizi — Ankara Dijital Reklam Ajansı | Siteler, Mobilya Reklamı & Sosyal Medya",
   description:
-    "Ankara Siteler merkezli dijital reklam ajansı. Mobilya mağazaları, avizeciler, klinikler ve yerel işletmelere özel sosyal medya yönetimi, Google Ads, Meta reklam ve web tasarım. 10+ yıl Siteler deneyimi, 200+ mutlu müşteri.",
+    "Ankara Siteler merkezli dijital reklam ajansı. Mobilya mağazaları, kafe ve restoranlar, klinikler ve yerel işletmelere özel sosyal medya yönetimi, Google Ads, Meta reklam ve web tasarım. 10+ yıl deneyim, 200+ mutlu müşteri.",
   keywords:
-    "dijital reklam ajansı ankara, siteler reklam ajansı, ankara mobilya sosyal medya, ankara avize dijital pazarlama, ankara aksesuar instagram yönetimi, ankara klinik doktor google reklamları, ostim dijital ajans, keçiören sosyal medya ajansı, etimesgut reklam, çankaya dijital pazarlama, ankara google ads, ankara meta reklam, ankara tiktok reklamları, ankara instagram yönetimi, yerel işletme dijital pazarlama",
+    "dijital reklam ajansı ankara, siteler reklam ajansı, ankara kafe reklam ajansı, ankara restoran sosyal medya, gölbaşı kafe sosyal medya, ankara mobilya sosyal medya, ankara avize dijital pazarlama, ankara aksesuar instagram yönetimi, ankara klinik doktor google reklamları, ostim dijital ajans, keçiören sosyal medya ajansı, etimesgut reklam, çankaya dijital pazarlama, ankara google ads, ankara meta reklam, ankara tiktok reklamları, ankara instagram yönetimi, yerel işletme dijital pazarlama",
   alternates: { canonical: "https://markaizi.com.tr" },
 };
 
@@ -86,6 +87,8 @@ const jsonLd = {
       { "@type": "Offer", itemOffered: { "@type": "Service", name: "TikTok Reklamları" } },
       { "@type": "Offer", itemOffered: { "@type": "Service", name: "İçerik Üretimi" } },
       { "@type": "Offer", itemOffered: { "@type": "Service", name: "Web Tasarım & Hosting" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Ankara Kafe & Restoran Sosyal Medya ve Reklam Yönetimi", url: "https://markaizi.com.tr/ankara-kafe-restoran-reklam-ajansi" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Mobilya Reklam Ajansı Hizmetleri", url: "https://markaizi.com.tr/mobilya-reklam-ajansi" } },
       { "@type": "Offer", itemOffered: { "@type": "Service", name: "Dijital Pazarlama Danışmanlığı", url: "https://markaizi.com.tr/hizmetler/dijital-pazarlama-danismanligi" } },
       { "@type": "Offer", itemOffered: { "@type": "Service", name: "Kurumsal Dijital Pazarlama Eğitimi", url: "https://markaizi.com.tr/hizmetler/dijital-pazarlama-egitimi" } },
       { "@type": "Offer", itemOffered: { "@type": "Service", name: "Video Çekimi ve Drone Çekimi", url: "https://markaizi.com.tr/hizmetler/video-cekimi-drone" } },
@@ -106,6 +109,7 @@ export default function Home() {
         <FreeAnalysisBar />
 
 <Services />
+        <Sectors />
         <Approach />
         <About />
         <Portfolio />
