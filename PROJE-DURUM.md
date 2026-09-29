@@ -138,8 +138,14 @@ alıcı `/odeme/<kod>` sayfasında bilgilerini girip PayTR iFrame ile kartla öd
 2. PayTR Mağaza Paneli → Destek & Kurulum → Ayarlar → **Bildirim URL**:
    `https://markaizi.com.tr/api/paytr/callback`
 3. Test ödemesi başarılı olunca `PAYTR_TEST_MODE`'u kaldırıp redeploy.
-4. PayTR'nin mağaza onayı için sitede mesafeli satış sözleşmesi, ön bilgilendirme ve iade/iptal
-   koşulları sayfaları istenebilir — henüz yok.
+4. ✅ Test ödemesi başarılı (29 Eyl 2026), `PAYTR_TEST_MODE` kaldırıldı; PayTR canlı mod onayı bekleniyor.
+
+**Yasal sayfalar (29 Eyl 2026):** `/mesafeli-satis-sozlesmesi`, `/on-bilgilendirme-formu`,
+`/iptal-ve-iade-kosullari`. Satıcı bilgisi tek kaynaktan: `src/lib/company.ts` (Sevim Sağlam — şahıs
+işletmesi, Sincan VD). Vergi no (TCKN ile aynı) bilerek herkese açık sayfalarda gösterilmiyor.
+İade politikası: hizmete başlanmadan iptalde tam iade; başladıktan sonra ödenen dönem iade edilmez.
+Tutarlar KDV dahil. Ödeme sayfasında sözleşme onay kutusu zorunlu (sunucuda da kontrol ediliyor).
+KVKK/gizlilik/kullanım şartları PayTR'yi kapsayacak şekilde güncellendi; footer'da tam adres ve yasal linkler.
 
 ---
 

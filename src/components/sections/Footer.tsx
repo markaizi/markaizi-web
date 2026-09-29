@@ -71,7 +71,7 @@ export default function Footer() {
               links={[
                 { label: "markaizicom@gmail.com",  href: "mailto:markaizicom@gmail.com" },
                 { label: "+90 (552) 077 27 00",    href: "tel:+905520772700" },
-                { label: "Siteler, Ankara",          href: "https://maps.google.com/?q=Zübeyde+Hanım+Mahallesi+Elif+Sokak+No:7+Ankara" },
+                { label: "Zübeyde Hanım Mah. Elif Sok. No:7/106, Sütçü Kemal İş Mrk., Siteler / Ankara", href: "https://maps.google.com/?q=Zübeyde+Hanım+Mahallesi+Elif+Sokak+No:7+Ankara" },
                 { label: "SSS",                      href: "/sss" },
               ]}
             />
@@ -82,13 +82,19 @@ export default function Footer() {
       {/* Bottom Bar */}
       <div style={{ borderTop: "1px solid var(--border)" }}>
         <div className="max-w-[1200px] mx-auto px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-[13px] text-[#8a8a9a]">© {year} markaizi. Tüm hakları saklıdır.</p>
+          <div className="text-center sm:text-left">
+            <p className="text-[13px] text-[#8a8a9a]">© {year} markaizi. Tüm hakları saklıdır.</p>
+            <p className="text-[12px] text-[#666] mt-1">Güvenli ödeme: PayTR · Visa · Mastercard · Troy</p>
+          </div>
           <div className="flex flex-wrap gap-4 justify-center sm:justify-end">
             {[
               { label: "KVKK", href: "/kvkk" },
               { label: "Gizlilik Politikası", href: "/gizlilik-politikasi" },
               { label: "Çerez Politikası", href: "/cerez-politikasi" },
               { label: "Kullanım Şartları", href: "/kullanim-sartlari" },
+              { label: "Mesafeli Satış Sözleşmesi", href: "/mesafeli-satis-sozlesmesi" },
+              { label: "Ön Bilgilendirme Formu", href: "/on-bilgilendirme-formu" },
+              { label: "İptal ve İade Koşulları", href: "/iptal-ve-iade-kosullari" },
             ].map((l) => (
               <a key={l.label} href={l.href} className="text-[13px] text-[#8a8a9a] hover:text-white transition-colors inline-flex items-center min-h-[44px] py-1">
                 {l.label}

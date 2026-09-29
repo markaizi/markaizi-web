@@ -18,12 +18,12 @@ export default function KullanimSartlariPage() {
         badge="Yasal"
         title="Kullanım Şartları"
         subtitle="markaizi.com web sitesini ve hizmetlerini kullanarak aşağıdaki kullanım şartlarını kabul etmiş sayılırsınız."
-        lastUpdated="23 Mayıs 2025"
+        lastUpdated="29 Eylül 2026"
       >
         <h2>1. Taraflar ve Kapsam</h2>
         <p>
           Bu Kullanım Şartları, <strong>markaizi Dijital Reklam Ajansı</strong> (&ldquo;markaizi&rdquo; veya
-          &ldquo;Şirket&rdquo;) ile <strong>markaizi.com</strong> web sitesini ziyaret eden veya hizmetlerinden
+          &ldquo;Şirket&rdquo;) ile <strong>markaizi.com.tr</strong> web sitesini ziyaret eden veya hizmetlerinden
           yararlanan kullanıcılar (&ldquo;Kullanıcı&rdquo;) arasındaki hukuki ilişkiyi düzenler.
           Web sitemizi kullanmaya devam ederek bu şartları kabul etmiş sayılırsınız.
         </p>
@@ -77,9 +77,13 @@ export default function KullanimSartlariPage() {
 
         <h2>8. Ücretler ve Ödemeler</h2>
         <p>
-          Web sitesindeki fiyat bilgileri yalnızca bilgilendirme amaçlıdır. Nihai fiyat,
-          ihtiyaç analizi sonrasında hazırlanan teklif ile belirlenir. Ödemeler aylık peşin
-          olarak banka havalesi / EFT ile gerçekleştirilir.
+          Hizmet bedelleri, ihtiyaç analizi sonrasında hazırlanan teklif ile belirlenir; web
+          sitesinde paket fiyatı yayınlanmaz. Ödemeler banka havalesi / EFT ile ya da markaizi
+          tarafından iletilen ödeme linki üzerinden kredi veya banka kartıyla (PayTR güvenli
+          ödeme altyapısı) yapılabilir. Kartla yapılan ödemelerde{" "}
+          <a href="/on-bilgilendirme-formu">Ön Bilgilendirme Formu</a>,{" "}
+          <a href="/mesafeli-satis-sozlesmesi">Mesafeli Satış Sözleşmesi</a> ve{" "}
+          <a href="/iptal-ve-iade-kosullari">İptal ve İade Koşulları</a> geçerlidir.
         </p>
 
         <h2>9. Sözleşme Değişiklikleri</h2>

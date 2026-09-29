@@ -18,7 +18,7 @@ export default function GizlilikPolitikasiPage() {
         badge="Yasal"
         title="Gizlilik Politikası"
         subtitle="Kişisel verilerinizi nasıl topladığımız, kullandığımız ve koruduğumuz hakkında şeffaf bir şekilde bilgi sunmaktayız."
-        lastUpdated="23 Mayıs 2025"
+        lastUpdated="29 Eylül 2026"
       >
         <h2>1. Genel Bilgi</h2>
         <p>
@@ -56,6 +56,7 @@ export default function GizlilikPolitikasiPage() {
         <p>Kişisel verilerinizi aşağıdaki durumlar dışında üçüncü taraflarla paylaşmıyoruz:</p>
         <ul>
           <li><strong>Hizmet sağlayıcılar:</strong> E-posta gönderimi, barındırma hizmetleri gibi operasyonel hizmetler için sınırlı veri paylaşımı</li>
+          <li><strong>Ödeme kuruluşu:</strong> Ödeme linki ile yapılan kartlı ödemelerde ad soyad, e-posta, telefon, fatura adresi ve tutar, ödemenin gerçekleştirilmesi için PayTR Ödeme ve Elektronik Para Kuruluşu A.Ş. ile paylaşılır. Kart bilgileriniz doğrudan PayTR&apos;nin güvenli ödeme ekranına girilir ve tarafımıza ulaşmaz.</li>
           <li><strong>Yasal zorunluluk:</strong> Mahkeme kararı veya yasal yükümlülük durumunda</li>
           <li><strong>İş transferi:</strong> Şirket birleşmesi veya devri durumunda, önceden bilgilendirilmeniz koşuluyla</li>
         </ul>

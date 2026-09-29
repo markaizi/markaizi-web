@@ -40,6 +40,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/gizlilik-politikasi`,                    lastModified: SITE_UPDATED, changeFrequency: "yearly",  priority: 0.3 },
     { url: `${BASE}/cerez-politikasi`,                       lastModified: SITE_UPDATED, changeFrequency: "yearly",  priority: 0.3 },
     { url: `${BASE}/kullanim-sartlari`,                      lastModified: SITE_UPDATED, changeFrequency: "yearly",  priority: 0.3 },
+    { url: `${BASE}/mesafeli-satis-sozlesmesi`,              lastModified: new Date("2026-09-29"), changeFrequency: "yearly", priority: 0.3 },
+    { url: `${BASE}/on-bilgilendirme-formu`,                 lastModified: new Date("2026-09-29"), changeFrequency: "yearly", priority: 0.3 },
+    { url: `${BASE}/iptal-ve-iade-kosullari`,                lastModified: new Date("2026-09-29"), changeFrequency: "yearly", priority: 0.3 },
   ];
 
   const blog_pages: MetadataRoute.Sitemap = BLOG_POSTS.map((post) => ({

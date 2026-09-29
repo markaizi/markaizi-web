@@ -59,7 +59,10 @@ export default function PaymentForm({ code, initialResult }: { code: string; ini
       const res = await fetch(`/api/odeme/${code}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: get("name"), email: get("email"), phone: get("phone"), address: get("address") }),
+        body: JSON.stringify({
+          name: get("name"), email: get("email"), phone: get("phone"), address: get("address"),
+          accepted: (f.elements.namedItem("accepted") as HTMLInputElement).checked,
+        }),
       });
       const d = await res.json();
       if (!res.ok || !d.token) throw new Error(d.error || "Ödeme ekranı açılamadı.");
@@ -125,6 +128,16 @@ export default function PaymentForm({ code, initialResult }: { code: string; ini
         <label htmlFor="odeme-address" className={labelCls}>Fatura Adresi *</label>
         <textarea id="odeme-address" name="address" required minLength={5} maxLength={400} rows={2} autoComplete="street-address" className={`${inputCls} resize-none`} style={inputStyle} />
       </div>
+      <label className="flex items-start gap-3 text-[13.5px] text-[#c0c0d0] leading-relaxed cursor-pointer">
+        <input type="checkbox" name="accepted" required className="mt-1 w-4 h-4 flex-shrink-0 accent-purple-500" />
+        <span>
+          <a href="/on-bilgilendirme-formu" target="_blank" rel="noopener noreferrer" className="text-[#c084fc] underline underline-offset-2">Ön Bilgilendirme Formu</a>
+          &apos;nu ve{" "}
+          <a href="/mesafeli-satis-sozlesmesi" target="_blank" rel="noopener noreferrer" className="text-[#c084fc] underline underline-offset-2">Mesafeli Satış Sözleşmesi</a>
+          &apos;ni okudum, onaylıyorum.{" "}
+          <a href="/iptal-ve-iade-kosullari" target="_blank" rel="noopener noreferrer" className="text-[#8a8a9a] underline underline-offset-2">İptal ve iade koşulları</a>
+        </span>
+      </label>
       {error && <p className="text-[13px] text-red-400">{error}</p>}
       <button type="submit" disabled={sending} className="btn btn-primary w-full py-4 text-[15px] disabled:opacity-50">
         {sending ? "Ödeme ekranı hazırlanıyor…" : "Kartla Ödemeye Geç →"}

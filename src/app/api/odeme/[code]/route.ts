@@ -11,6 +11,8 @@ const schema = z.object({
   email: z.string().trim().max(100),
   phone: z.string().trim().min(10).max(20),
   address: z.string().trim().min(5).max(400),
+  // Ön Bilgilendirme Formu ve Mesafeli Satış Sözleşmesi onayı (sunucuda da zorunlu)
+  accepted: z.literal(true),
 });
 
 // Ödeme sayfasındaki formdan PayTR iFrame token'ı alır.
@@ -31,7 +33,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ cod
 
   const parsed = schema.safeParse(await req.json().catch(() => ({})));
   if (!parsed.success || !isValidEmail(parsed.data.email)) {
-    return NextResponse.json({ error: "Lütfen ad soyad, geçerli e-posta, telefon ve adres bilgilerini eksiksiz girin." }, { status: 400 });
+    return NextResponse.json({ error: "Lütfen bilgileri eksiksiz girin ve Ön Bilgilendirme Formu ile Mesafeli Satış Sözleşmesi'ni onaylayın." }, { status: 400 });
   }
   const { name, email, phone, address } = parsed.data;
 

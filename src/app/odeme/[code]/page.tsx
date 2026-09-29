@@ -5,6 +5,7 @@ import Logo from "@/components/Logo";
 import { prisma } from "@/lib/db";
 import { formatKurus } from "@/lib/paytr";
 import PaymentForm from "./PaymentForm";
+import { SELLER } from "@/lib/company";
 
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
@@ -40,7 +41,7 @@ export default async function OdemePage({
           {link.client && <p className="text-[13px] text-[#8a8a9a] mb-2">{link.client.name}</p>}
           {link.description && <p className="text-[14px] text-[#8a8a9a] leading-relaxed mb-4 whitespace-pre-line">{link.description}</p>}
           <div className="flex items-baseline justify-between pt-4" style={{ borderTop: "1px solid var(--border)" }}>
-            <span className="text-[13px] text-[#8a8a9a]">Ödenecek tutar</span>
+            <span className="text-[13px] text-[#8a8a9a]">Ödenecek tutar <span className="text-[11px]">(KDV dahil)</span></span>
             <span className="text-[26px] font-black text-white tabular-nums">{formatKurus(link.amountKurus)}</span>
           </div>
         </div>
@@ -57,6 +58,16 @@ export default async function OdemePage({
           Kart bilgileriniz markaizi&apos;ye iletilmez; ödeme PayTR güvenli ödeme altyapısı üzerinden alınır.
           <br />
           Sorunuz için: <a href="https://wa.me/905520772700" className="text-[#c084fc]">WhatsApp +90 552 077 27 00</a>
+        </p>
+        <p className="text-[11.5px] text-[#666] text-center mt-4 leading-relaxed">
+          Satıcı: {SELLER.legalName} — {SELLER.tradeName} · {SELLER.taxOffice}
+          <br />
+          {SELLER.address} · {SELLER.email}
+          <br />
+          <a href="/on-bilgilendirme-formu" className="underline">Ön Bilgilendirme</a> ·{" "}
+          <a href="/mesafeli-satis-sozlesmesi" className="underline">Mesafeli Satış Sözleşmesi</a> ·{" "}
+          <a href="/iptal-ve-iade-kosullari" className="underline">İptal ve İade</a> ·{" "}
+          <a href="/kvkk" className="underline">KVKK</a>
         </p>
       </div>
     </main>

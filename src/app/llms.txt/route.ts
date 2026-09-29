@@ -110,6 +110,9 @@ function build(): string {
   lines.push(link("Gizlilik Politikası", "/gizlilik-politikasi"));
   lines.push(link("Çerez Politikası", "/cerez-politikasi"));
   lines.push(link("Kullanım Şartları", "/kullanim-sartlari"));
+  lines.push(link("Mesafeli Satış Sözleşmesi", "/mesafeli-satis-sozlesmesi", "Ödeme linki ile kartla satın alınan hizmetler için sözleşme."));
+  lines.push(link("Ön Bilgilendirme Formu", "/on-bilgilendirme-formu"));
+  lines.push(link("İptal ve İade Koşulları", "/iptal-ve-iade-kosullari", "Hizmete başlanmadan önce iptalde tam iade; başladıktan sonra ödenen dönem iade edilmez; iadeler 14 gün içinde karta."));
   lines.push("");
   return lines.join("\n");
 }

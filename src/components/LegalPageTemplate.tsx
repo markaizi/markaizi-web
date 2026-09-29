@@ -46,7 +46,7 @@ export default function LegalPageTemplate({
         </div>
 
         {/* Back link */}
-        <div className="max-w-[860px] mx-auto px-6 mt-8 flex gap-4 text-[13px]">
+        <div className="max-w-[860px] mx-auto px-6 mt-8 flex flex-wrap gap-x-4 gap-y-2 text-[13px]">
           <a href="/" className="text-[#c084fc] hover:text-white transition-colors">
             ← Ana Sayfa
           </a>
@@ -61,6 +61,15 @@ export default function LegalPageTemplate({
           </a>
           <a href="/kullanim-sartlari" className="text-[#8a8a9a] hover:text-white transition-colors">
             Kullanım Şartları
+          </a>
+          <a href="/mesafeli-satis-sozlesmesi" className="text-[#8a8a9a] hover:text-white transition-colors">
+            Mesafeli Satış Sözleşmesi
+          </a>
+          <a href="/on-bilgilendirme-formu" className="text-[#8a8a9a] hover:text-white transition-colors">
+            Ön Bilgilendirme Formu
+          </a>
+          <a href="/iptal-ve-iade-kosullari" className="text-[#8a8a9a] hover:text-white transition-colors">
+            İptal ve İade Koşulları
           </a>
         </div>
       </section>

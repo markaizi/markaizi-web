@@ -3,6 +3,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/sections/Footer";
 import WhatsApp from "@/components/WhatsApp";
 import LegalPageTemplate from "@/components/LegalPageTemplate";
+import { SELLER } from "@/lib/company";
 
 export const metadata: Metadata = {
   title: "KVKK Aydınlatma Metni — markaizi",
@@ -18,17 +19,17 @@ export default function KVKKPage() {
         badge="Yasal"
         title="KVKK Aydınlatma Metni"
         subtitle="6698 Sayılı Kişisel Verilerin Korunması Kanunu kapsamında veri sorumlusu sıfatıyla hazırlanmış aydınlatma metnidir."
-        lastUpdated="23 Mayıs 2025"
+        lastUpdated="29 Eylül 2026"
       >
         <h2>1. Veri Sorumlusu</h2>
         <p>
-          Bu aydınlatma metni; <strong>markaizi Dijital Reklam Ajansı</strong> ("Şirket") tarafından,
+          Bu aydınlatma metni; <strong>{SELLER.legalName} — {SELLER.tradeName}</strong> ("Şirket") tarafından,
           6698 Sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") kapsamında veri sorumlusu
           sıfatıyla hazırlanmıştır.
         </p>
         <p>
-          <strong>Unvan:</strong> markaizi Dijital Reklam Ajansı<br />
-          <strong>Adres:</strong> Ankara, Türkiye<br />
+          <strong>Unvan:</strong> {SELLER.legalName} — {SELLER.tradeName} ({SELLER.businessType})<br />
+          <strong>Adres:</strong> {SELLER.address}<br />
           <strong>E-posta:</strong> markaizicom@gmail.com<br />
           <strong>Telefon:</strong> +90 (552) 077 27 00
         </p>
@@ -38,6 +39,7 @@ export default function KVKKPage() {
         <ul>
           <li><strong>Kimlik Verileri:</strong> Ad, soyad</li>
           <li><strong>İletişim Verileri:</strong> E-posta adresi, telefon numarası</li>
+          <li><strong>Müşteri İşlem Verileri:</strong> Ödeme linki üzerinden yapılan ödemelerde fatura adresi, ödenen hizmet ve tutar, ödeme tarihi ve sonucu. Kredi/banka kartı bilgileri tarafımıza ulaşmaz; yalnızca ödeme kuruluşu PayTR tarafından işlenir.</li>
           <li><strong>İşlem Verileri:</strong> İletişim formu mesajları, hizmet talepleri</li>
           <li><strong>Teknik Veriler:</strong> IP adresi, tarayıcı bilgisi, çerez verileri</li>
         </ul>
@@ -65,7 +67,9 @@ export default function KVKKPage() {
         <h2>5. Kişisel Verilerin Aktarılması</h2>
         <p>
           Kişisel verileriniz, yukarıda belirtilen amaçlar doğrultusunda; iş ortaklarımıza,
-          hizmet sağlayıcılarımıza (e-posta servisleri, hosting hizmeti sağlayıcıları) ve
+          hizmet sağlayıcılarımıza (e-posta servisleri, hosting hizmeti sağlayıcıları), online
+          ödemelerin gerçekleştirilmesi amacıyla lisanslı ödeme kuruluşu PayTR Ödeme ve Elektronik
+          Para Kuruluşu A.Ş.&apos;ye ve
           yetkili kamu kurum ve kuruluşlarına aktarılabilmektedir. Yurt dışına veri aktarımı,
           KVKK'nın 9. maddesi kapsamında gerçekleştirilmektedir.
         </p>
@@ -75,7 +79,8 @@ export default function KVKKPage() {
           Kişisel verileriniz, işleme amacının ortadan kalkmasına ya da ilgili mevzuatta
           öngörülen saklama sürelerinin dolmasına kadar saklanmaktadır. İletişim formu
           aracılığıyla iletilen veriler, talep sonuçlandırıldıktan itibaren en fazla 3 yıl
-          süreyle saklanır.
+          süreyle saklanır. Ödeme ve faturalandırma kayıtları, Vergi Usul Kanunu ve Türk Ticaret
+          Kanunu&apos;nda öngörülen süreler boyunca saklanır.
         </p>
 
         <h2>7. İlgili Kişi Hakları</h2>
