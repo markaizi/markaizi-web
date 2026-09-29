@@ -215,6 +215,7 @@ model Client {
   workflowCards       WorkflowCard[]
   adReports           AdReport[]
   clientNotifications ClientNotification[]
+  paymentLinks        PaymentLink[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -596,4 +597,68 @@ model StaffFeedback {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
+}
+
+// ── PayTR Ödeme Linkleri ─────────────────────────────────────────────
+// Admin bir tutar + açıklama ile link oluşturur (/odeme/<code>), linki
+// WhatsApp vb. ile gönderir; alıcı PayTR iFrame ile kartla öder. Ödemenin
+// kesin sonucu yalnızca PayTR Bildirim URL'sinden (/api/paytr/callback,
+// hash doğrulamalı) gelir — başarılı sayfaya yönlenmek ödeme kanıtı değildir.
+enum PaymentLinkStatus {
+  AKTIF
+  ODENDI
+  IPTAL
+}
+
+enum PaymentAttemptStatus {
+  BEKLIYOR
+  BASARILI
+  BASARISIZ
+}
+
+model PaymentLink {
+  id          String            @id @default(cuid())
+  code        String            @unique // tahmin edilemez, URL'de kullanılır
+  title       String
+  description String?
+  amountKurus Int
+  status      PaymentLinkStatus @default(AKTIF)
+
+  clientId String?
+  client   Client? @relation(fields: [clientId], references: [id], onDelete: SetNull)
+
+  createdById   String?
+  paidAt        DateTime?
+  transactionId String? // ödeme alınınca Ekonomi'ye yazılan GELIR kaydı
+
+  attempts PaymentAttempt[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model PaymentAttempt {
+  id            String               @id @default(cuid())
+  merchantOid   String               @unique // PayTR sipariş no — yalnızca harf/rakam
+  paymentLinkId String
+  paymentLink   PaymentLink          @relation(fields: [paymentLinkId], references: [id], onDelete: Cascade)
+  amountKurus   Int
+  status        PaymentAttemptStatus @default(BEKLIYOR)
+
+  payerName    String
+  payerEmail   String
+  payerPhone   String
+  payerAddress String
+  userIp       String
+
+  totalAmountKurus Int?    // PayTR'nin tahsil ettiği tutar (taksit farkı dahil olabilir)
+  paymentType      String? // card / eft
+  failedReasonCode String?
+  failedReasonMsg  String?
+  testMode         Boolean @default(false)
+
+  createdAt   DateTime  @default(now())
+  completedAt DateTime?
+
+  @@index([paymentLinkId])
 }

@@ -1,6 +1,6 @@
 # PROJE DURUM — markaizi.com.tr
 
-Son güncelleme: 27 Eylül 2026
+Son güncelleme: 29 Eylül 2026
 
 Bu dosya projenin güncel durumunu, alınmış kararları ve bekleyen işleri özetler.
 Kod ayrıntıları için kaynak dosyalara, veritabanı için `prisma/schema.prisma`'ya bakın.
@@ -104,7 +104,8 @@ KVKK / gizlilik / çerez / kullanım şartları.
 
 ### İçerik kuralları (alınmış kararlar)
 - **Fiyat yok:** Sitenin hiçbir yerinde markaizi'nin kendi ücreti/paket fiyatı yazılmaz (2 Ağu 2026).
-  Ödeme/PayTR altyapısı ve `/fiyatlar` tamamen kaldırıldı.
+  `/fiyatlar` ve eski paket satışı kaldırıldı. PayTR yalnızca **ödeme linki** olarak geri geldi
+  (29 Eyl 2026): tutar sadece linki alan kişiye görünür, sayfa arama motorlarına kapalı.
 - **Reklam bütçesi tavsiyeleri:** TikTok sayfasındaki sabit rakam, videodaki "önce aşama belirlenir"
   yaklaşımıyla değiştirildi. SSS'teki Meta (100-200 ₺) / Google (150-300 ₺) rakamları Samet'in isteğiyle
   duruyor.
@@ -117,7 +118,32 @@ KVKK / gizlilik / çerez / kullanım şartları.
 
 ---
 
-## 4. Müşteri / Ajans Paneli (`/musteri/**`)
+## 4. PayTR Ödeme Linkleri (29 Eyl 2026)
+
+Admin, panelden tutar + açıklama (+ opsiyonel firma) ile link oluşturur, linki WhatsApp'tan gönderir;
+alıcı `/odeme/<kod>` sayfasında bilgilerini girip PayTR iFrame ile kartla öder. Taksit açık.
+
+- Admin ekranı: `/musteri/admin/odeme-linkleri` (link oluştur, kopyala, WhatsApp, önizle, iptal)
+- Ödeme sayfası: `src/app/odeme/[code]/` — noindex, `robots.txt`'de kapalı
+- Token (1. adım): `POST /api/odeme/[code]` → `src/lib/paytr.ts` `fetchIframeToken`
+- Bildirim URL (2. adım): `POST /api/paytr/callback` — hash doğrulaması, tekrar eden bildirimde
+  yalnızca ilki işlenir, yanıt düz metin `OK`
+- Başarılı ödemede: link "Ödendi", **Ekonomi'ye GELİR kaydı** (test modunda yazılmaz), admin'e e-posta
+- Veritabanı: `PaymentLink`, `PaymentAttempt` (migration `20260929120000_paytr_payment_links`)
+- CSP: `frame-src` ve `script-src`'ye `https://www.paytr.com` eklendi
+
+**Canlıya almak için (Samet):**
+1. Vercel → Environment Variables: `PAYTR_MERCHANT_ID`, `PAYTR_MERCHANT_KEY`, `PAYTR_MERCHANT_SALT`,
+   ilk denemeler için `PAYTR_TEST_MODE=1`. Sonra redeploy.
+2. PayTR Mağaza Paneli → Destek & Kurulum → Ayarlar → **Bildirim URL**:
+   `https://markaizi.com.tr/api/paytr/callback`
+3. Test ödemesi başarılı olunca `PAYTR_TEST_MODE`'u kaldırıp redeploy.
+4. PayTR'nin mağaza onayı için sitede mesafeli satış sözleşmesi, ön bilgilendirme ve iade/iptal
+   koşulları sayfaları istenebilir — henüz yok.
+
+---
+
+## 5. Müşteri / Ajans Paneli (`/musteri/**`)
 
 ### Roller
 | Rol | Erişim |
@@ -154,7 +180,7 @@ PayrollPayment, Submission, StaffNotification, StaffFeedback. Ayrıntı: `prisma
 
 ---
 
-## 5. Nasıl Yapılır
+## 6. Nasıl Yapılır
 
 **Yeni blog yazısı:** `src/lib/blog-data.ts`'e kayıt ekle. Sitemap ve llms.txt otomatik güncellenir.
 Kategori "Mobilya Sektörü" ise mobilya sayfasına, `CATEGORY_SERVICE`'teki kategorilerde ilgili hizmet
@@ -172,6 +198,11 @@ Kanal açılınca `YOUTUBE_CHANNEL_URL`'i doldur → "Abone Ol" butonları ve sa
 
 **Veritabanı migration:** `prisma migrate dev` etkileşimsiz ortamda çalışmıyor. Migration klasörünü
 `prisma/migrations/<zaman>_<ad>/migration.sql` olarak elle yaz, sonra:
+
+> ⚠️ **ASLA** canlı veritabanı adresini `--shadow-database-url`'e ya da `migrate dev`, `migrate reset`,
+> `db push --force-reset` gibi sıfırlayabilen komutlara verme. 29 Eyl 2026'da bu hata canlı veriyi sildi,
+> Neon point-in-time restore ile geri getirildi. Önce salt okunur `migrate status`, sonra `migrate deploy`.
+
 ```bash
 npx dotenv -e .env.local -- prisma migrate deploy
 npx prisma generate
@@ -179,7 +210,7 @@ npx prisma generate
 
 ---
 
-## 6. Bekleyenler
+## 7. Bekleyenler
 
 ### Samet'in yapması gerekenler
 - [ ] İlk YouTube videosunu yükleyip linkini, kanal adresini ve video süresini iletmek
@@ -192,6 +223,7 @@ npx prisma generate
 - [ ] Kafe/restoran vaka çalışması için isimli bir örnek (varsa)
 - [ ] Sektör sitelerinde (ör. Mobilya Haber) Alitel başarısını anlatan haber/yazı
 - [ ] Ayda bir `docs/ai-gorunurluk-olcum.md` ölçümü
+- [ ] PayTR ortam değişkenleri + Bildirim URL + test ödemesi (bkz. bölüm 4)
 
 ### Teknik
 - [ ] Hizmet sayfalarının sekme başlığında "… | markaizi — markaizi" tekrarı (başlık dizeleri
@@ -203,7 +235,7 @@ npx prisma generate
 
 ---
 
-## 7. Deploy ve Ortam Değişkenleri
+## 8. Deploy ve Ortam Değişkenleri
 
 | Değişken | Açıklama |
 |---|---|
@@ -213,10 +245,12 @@ npx prisma generate
 | `GMAIL_USER` / `GMAIL_APP_PASSWORD` | Form ve bildirim e-postaları |
 | `NEXT_PUBLIC_GA_MEASUREMENT_ID` | Google Analytics (çerez onayından sonra) |
 | `NEXT_PUBLIC_META_PIXEL_ID` | Meta Pixel (çerez onayından sonra) |
+| `PAYTR_MERCHANT_ID` / `PAYTR_MERCHANT_KEY` / `PAYTR_MERCHANT_SALT` | PayTR mağaza bilgileri |
+| `PAYTR_TEST_MODE` | `1` ise test modu (gerçek çekim yok, Ekonomi'ye yazılmaz) |
 
 ---
 
-## 8. Değişiklik Geçmişi (Özet)
+## 9. Değişiklik Geçmişi (Özet)
 
 - **Temmuz 2026** — Mobilya SEO paketi (iniş sayfası + 4 blog), site denetimi.
 - **Ağustos 2026** — Panel: Trello tarzı iş akışı, çalışan iş kayıtları ve ödemeleri, ekonomi modülü,
@@ -231,3 +265,5 @@ npx prisma generate
   otomatik llms.txt, kurucu sayfası.
 - **27 Eylül 2026** — Ankara kafe & restoran sayfaları (ana + 7 ilçe + 2 blog), ana sayfaya
   "Sektöre Özel Uzmanlık" bölümü, sitemap/llms.txt tam tutarlılık kontrolü (60/60).
+- **29 Eylül 2026** — PayTR ödeme linkleri. Aynı gün yanlış bir Prisma komutu canlı veritabanını sildi;
+  Neon point-in-time restore ile 13:30 anına geri yüklendi, veri kaybı yok.

@@ -271,6 +271,34 @@ function Dashboard({ clients, adminName, employeeCount, totalUnread, totalOverdu
           </div>
         </button>
 
+        {/* Ödeme Linkleri */}
+        <button onClick={() => router.push("/musteri/admin/odeme-linkleri")}
+          className="group rounded-2xl p-6 text-left transition-all duration-200 relative overflow-hidden"
+          style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+          onMouseEnter={e => {
+            (e.currentTarget as HTMLElement).style.borderColor = "rgba(96,165,250,0.4)";
+            (e.currentTarget as HTMLElement).style.background = "rgba(96,165,250,0.06)";
+          }}
+          onMouseLeave={e => {
+            (e.currentTarget as HTMLElement).style.borderColor = "var(--border)";
+            (e.currentTarget as HTMLElement).style.background = "var(--surface)";
+          }}>
+          <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4"
+            style={{ background: "rgba(96,165,250,0.12)", border: "1px solid rgba(96,165,250,0.2)" }}>
+            <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="#60a5fa" strokeWidth="2">
+              <path d="M10 13a5 5 0 007.07 0l3-3a5 5 0 00-7.07-7.07l-1.5 1.5" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M14 11a5 5 0 00-7.07 0l-3 3a5 5 0 007.07 7.07l1.5-1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+          <p className="text-[17px] font-bold text-white mb-1">Ödeme Linkleri</p>
+          <p className="text-[13px] text-[#8a8a9a]">PayTR ile kartla tahsilat</p>
+          <div className="absolute right-5 top-1/2 -translate-y-1/2 text-[#555] group-hover:text-[#60a5fa] transition-colors">
+            <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="currentColor" strokeWidth="2">
+              <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+        </button>
+
         {/* Ekonomi */}
         <button onClick={() => router.push("/musteri/admin/ekonomi")}
           className="group rounded-2xl p-6 text-left transition-all duration-200 relative overflow-hidden"

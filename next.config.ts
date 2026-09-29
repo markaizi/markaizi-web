@@ -9,7 +9,9 @@ import type { NextConfig } from "next";
 // ve gömme (frame) korumaları kapatılıyor.
 const CSP = [
   "default-src 'self'",
-  "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://connect.facebook.net",
+  "script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://connect.facebook.net https://www.paytr.com",
+  // PayTR iFrame ödeme ekranı (/odeme/[code])
+  "frame-src https://www.paytr.com",
   "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: https: blob:",
   "font-src 'self' data:",
