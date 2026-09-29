@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
+import { getPaymentLinkAccess } from "@/lib/paymentLinkGuard";
 import { prisma } from "@/lib/db";
 import { paytrConfig } from "@/lib/paytr";
 import OdemeLinkleriView from "@/components/OdemeLinkleriView";
@@ -14,10 +15,13 @@ export const metadata: Metadata = {
 export default async function OdemeLinkleriPage() {
   const session = await getSession();
   if (!session) redirect("/musteri/giris?next=/musteri/admin/odeme-linkleri");
-  if (session.role !== "ADMIN") redirect("/musteri/admin");
+  const access = await getPaymentLinkAccess();
+  if (!access) redirect(session.role === "EMPLOYEE" ? "/musteri/calisan" : "/musteri/giris");
+  const isAdmin = access.isAdmin;
 
   const [links, clients] = await Promise.all([
     prisma.paymentLink.findMany({
+      where: isAdmin ? {} : { createdById: session.uid },
       orderBy: { createdAt: "desc" },
       take: 200,
       include: {
@@ -25,12 +29,15 @@ export default async function OdemeLinkleriPage() {
         attempts: { orderBy: { createdAt: "desc" }, take: 1, select: { payerName: true, status: true, failedReasonMsg: true, testMode: true } },
       },
     }),
-    prisma.client.findMany({ where: { active: true }, orderBy: { name: "asc" }, select: { id: true, name: true } }),
+    isAdmin
+      ? prisma.client.findMany({ where: { active: true }, orderBy: { name: "asc" }, select: { id: true, name: true } })
+      : Promise.resolve([]),
   ]);
 
   const cfg = paytrConfig();
   return (
     <OdemeLinkleriView
+      isAdmin={isAdmin}
       configured={cfg.configured}
       testMode={cfg.testMode}
       clients={clients}

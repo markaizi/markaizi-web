@@ -29,11 +29,13 @@ const inputStyle = { background: "var(--bg)", border: "1px solid var(--border)" 
 const labelCls = "block text-[11px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1.5";
 
 export default function OdemeLinkleriView({
+  isAdmin,
   configured,
   testMode,
   clients,
   links,
 }: {
+  isAdmin: boolean;
   configured: boolean;
   testMode: boolean;
   clients: { id: string; name: string }[];
@@ -55,7 +57,7 @@ export default function OdemeLinkleriView({
     const res = await fetch("/api/musteri/admin/payment-links", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ title: get("title"), amount: get("amount"), description: get("description"), clientId: get("clientId") }),
+      body: JSON.stringify({ title: get("title"), amount: get("amount"), description: get("description"), clientId: isAdmin ? get("clientId") : "" }),
     });
     const d = await res.json();
     setBusy(false);
@@ -85,7 +87,7 @@ export default function OdemeLinkleriView({
     <div className="min-h-screen" style={{ background: "var(--bg)" }}>
       <header className="sticky top-0 z-50 px-4 sm:px-6 py-3.5 sm:py-4 flex items-center gap-2"
         style={{ background: "var(--header-bg)", WebkitBackdropFilter: "blur(20px)", backdropFilter: "blur(20px)", borderBottom: "1px solid var(--border)" }}>
-        <a href="/musteri/admin" className="font-black text-[16px] sm:text-[18px] gradient-text">markaizi</a>
+        <a href={isAdmin ? "/musteri/admin" : "/musteri/calisan"} className="font-black text-[16px] sm:text-[18px] gradient-text">markaizi</a>
         <span className="text-[#555]">/</span>
         <span className="text-[14px] font-semibold text-white">Ödeme Linkleri</span>
       </header>
@@ -116,13 +118,13 @@ export default function OdemeLinkleriView({
               <input id="pl-amount" name="amount" required inputMode="decimal" placeholder="12.500" className={inputCls} style={inputStyle} />
             </div>
           </div>
-          <div>
+          {isAdmin && (<div>
             <label htmlFor="pl-client" className={labelCls}>Firma (opsiyonel)</label>
             <select id="pl-client" name="clientId" defaultValue="" className={inputCls} style={inputStyle}>
               <option value="">— Firma seçme —</option>
               {clients.map((c) => <option key={c.id} value={c.id}>{c.name}</option>)}
             </select>
-          </div>
+          </div>)}
           <div>
             <label htmlFor="pl-desc" className={labelCls}>Açıklama (opsiyonel, ödeme sayfasında görünür)</label>
             <textarea id="pl-desc" name="description" rows={2} maxLength={500} className={`${inputCls} resize-none`} style={inputStyle} />

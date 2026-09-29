@@ -26,7 +26,7 @@ export default async function CalisanPage() {
   if (session.role === "ADMIN") redirect("/musteri/admin");
 
   const [me, assignments, unreadNotes, myCards, myWorkLogs, myAvans] = await Promise.all([
-    prisma.user.findUnique({ where: { id: session.uid }, select: { workflowAccess: true, paymentDay: true, adminCanPriceWorklogs: true, adminCanViewEconomy: true } }),
+    prisma.user.findUnique({ where: { id: session.uid }, select: { workflowAccess: true, paymentDay: true, adminCanPriceWorklogs: true, adminCanViewEconomy: true, adminCanManagePaymentLinks: true } }),
     prisma.assignment.findMany({
       where: { userId: session.uid },
       include: {
@@ -119,6 +119,7 @@ export default async function CalisanPage() {
       stats={stats}
       canPriceWorklogs={me?.adminCanPriceWorklogs ?? false}
       canViewEconomy={me?.adminCanViewEconomy ?? false}
+      canManagePaymentLinks={me?.adminCanManagePaymentLinks ?? false}
     />
   );
 }

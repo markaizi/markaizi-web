@@ -140,6 +140,12 @@ alıcı `/odeme/<kod>` sayfasında bilgilerini girip PayTR iFrame ile kartla öd
 3. Test ödemesi başarılı olunca `PAYTR_TEST_MODE`'u kaldırıp redeploy.
 4. ✅ Test ödemesi başarılı (29 Eyl 2026), `PAYTR_TEST_MODE` kaldırıldı; PayTR canlı mod onayı bekleniyor.
 
+**Kısıtlı erişim (PayTR inceleme hesabı):** Çalışan yetkisi "Ödeme Linklerini Yönetme"
+(`User.adminCanManagePaymentLinks`). Bu yetkili çalışan yalnızca Ödeme Linkleri ekranına girer, sadece
+kendi linklerini görür/iptal eder, firma listesi görmez. İnceleme hesabında **İş Akışına Erişim kapatılmalı**
+(yeni çalışanlarda varsayılan açık ve tüm kartları gösteriyor), firma ataması yapılmamalı.
+Guard: `src/lib/paymentLinkGuard.ts`.
+
 **Yasal sayfalar (29 Eyl 2026):** `/mesafeli-satis-sozlesmesi`, `/on-bilgilendirme-formu`,
 `/iptal-ve-iade-kosullari`. Satıcı bilgisi tek kaynaktan: `src/lib/company.ts` (Sevim Sağlam — şahıs
 işletmesi, Sincan VD). Vergi no (TCKN ile aynı) bilerek herkese açık sayfalarda gösterilmiyor.

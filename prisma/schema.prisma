@@ -143,6 +143,7 @@ model User {
   adminCompleteCardsScope CompleteCardsScope @default(NONE) // "Tamamlandı" sütununa kart taşıyabilir (sütun kilidi bu hareket için aşılır) — kapsam: hiç/kendi/herkes
   adminCanPriceWorklogs   Boolean            @default(false) // tüm çalışanların iş kayıtlarına ücret girebilir
   adminCanViewEconomy   Boolean @default(false) // Ekonomi sayfasını salt okunur görebilir
+  adminCanManagePaymentLinks Boolean @default(false) // Ödeme Linkleri: yalnızca kendi linklerini oluşturur/görür/iptal eder (ör. PayTR inceleme hesabı)
 
   assignments     Assignment[]
   authoredUpdates Update[]      @relation("UpdateAuthor")

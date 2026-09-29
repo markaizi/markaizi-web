@@ -23,6 +23,7 @@ const patchSchema = z.object({
   adminCompleteCardsScope: z.enum(["NONE", "OWN", "ALL"]).optional(),
   adminCanPriceWorklogs: z.boolean().optional(),
   adminCanViewEconomy: z.boolean().optional(),
+  adminCanManagePaymentLinks: z.boolean().optional(),
   // İş kayıtları
   paymentDay: z.number().int().min(1).max(31).nullable().optional(),
 });

@@ -82,6 +82,7 @@ export default async function AdminEmployeeDetailPage({
     adminCompleteCardsScope: employee.adminCompleteCardsScope,
     adminCanPriceWorklogs: employee.adminCanPriceWorklogs,
     adminCanViewEconomy: employee.adminCanViewEconomy,
+    adminCanManagePaymentLinks: employee.adminCanManagePaymentLinks,
     paymentDay,
     currentPeriod: { key: currentPeriod.key, label: currentPeriod.label },
     currentLogs: currentLogs.map((l) => ({

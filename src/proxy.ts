@@ -33,7 +33,9 @@ export async function proxy(req: NextRequest) {
   // var mı) burada değil, sayfanın kendisinde DB'den taze okunarak yapılır — proxy
   // burada sadece kaba kapıyı EMPLOYEE için de aralık bırakıyor.
   const economyException = pathname === "/musteri/admin/ekonomi" && session.role === "EMPLOYEE";
-  if (pathname.startsWith("/musteri/admin") && session.role !== "ADMIN" && !economyException) {
+  // Aynı mantık: Ödeme Linkleri, "Ödeme Linklerini Yönetme" yetkili çalışana açık (sayfa DB'den kontrol eder)
+  const paymentLinksException = pathname === "/musteri/admin/odeme-linkleri" && session.role === "EMPLOYEE";
+  if (pathname.startsWith("/musteri/admin") && session.role !== "ADMIN" && !economyException && !paymentLinksException) {
     const url = req.nextUrl.clone();
     url.pathname = session.slug ? `/musteri/${session.slug}` : "/musteri/giris";
     return NextResponse.redirect(url);

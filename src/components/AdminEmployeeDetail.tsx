@@ -28,6 +28,7 @@ export interface EmployeeDetailData {
   adminCompleteCardsScope: "NONE" | "OWN" | "ALL";
   adminCanPriceWorklogs: boolean;
   adminCanViewEconomy: boolean;
+  adminCanManagePaymentLinks: boolean;
   paymentDay: number | null;
   currentPeriod: { key: string; label: string };
   currentLogs: WorkLogEntry[];
@@ -168,6 +169,7 @@ const WORKFLOW_TOGGLES = [
 const ADMIN_TOGGLES = [
   { key: "adminCanPriceWorklogs" as const, label: "Çalışanlara Ücret Girme", desc: "Tüm çalışanların bu dönem iş kayıtlarını görüp karşılarına ücret yazabilir (Ücret Girişi sayfası)." },
   { key: "adminCanViewEconomy" as const, label: "Ekonomiyi Görme", desc: "Ekonomi sayfasını salt okunur görebilir — gelir/gider ekleyemez, kayıt silemez." },
+  { key: "adminCanManagePaymentLinks" as const, label: "Ödeme Linklerini Yönetme", desc: "Ödeme Linkleri ekranına erişir; yalnızca kendi oluşturduğu linkleri görür ve iptal eder, firma bilgilerini göremez. PayTR inceleme hesabı için uygundur." },
 ];
 
 const COMPLETE_SCOPE_OPTIONS: { value: "NONE" | "OWN" | "ALL"; label: string }[] = [
@@ -222,6 +224,7 @@ export default function AdminEmployeeDetail({
     workflowSeeAllCards: employee.workflowSeeAllCards,
     adminCanPriceWorklogs: employee.adminCanPriceWorklogs,
     adminCanViewEconomy: employee.adminCanViewEconomy,
+    adminCanManagePaymentLinks: employee.adminCanManagePaymentLinks,
   });
   const [wfLoading, setWfLoading] = useState<string | null>(null);
 

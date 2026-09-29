@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { requireAdmin } from "@/lib/adminGuard";
+import { requirePaymentLinkAccess } from "@/lib/paymentLinkGuard";
 import { prisma } from "@/lib/db";
 import { newLinkCode, parseTLToKurus } from "@/lib/paytr";
 
@@ -13,9 +13,9 @@ const schema = z.object({
   clientId: z.string().trim().max(40).optional().default(""),
 });
 
-// Yeni ödeme linki (yalnızca admin)
+// Yeni ödeme linki — admin ya da "Ödeme Linklerini Yönetme" yetkili çalışan
 export async function POST(req: NextRequest) {
-  const { session, err } = await requireAdmin();
+  const { access, err } = await requirePaymentLinkAccess();
   if (err) return err;
 
   const parsed = schema.safeParse(await req.json().catch(() => ({})));
@@ -27,7 +27,8 @@ export async function POST(req: NextRequest) {
   }
 
   let clientId: string | null = null;
-  if (parsed.data.clientId) {
+  // Yetkili çalışan firma seçemez (firma bilgilerine erişimi yok)
+  if (parsed.data.clientId && access!.isAdmin) {
     const c = await prisma.client.findUnique({ where: { id: parsed.data.clientId }, select: { id: true } });
     if (!c) return NextResponse.json({ error: "Firma bulunamadı." }, { status: 400 });
     clientId = c.id;
@@ -40,7 +41,7 @@ export async function POST(req: NextRequest) {
       description: parsed.data.description || null,
       amountKurus,
       clientId,
-      createdById: session!.uid,
+      createdById: access!.session.uid,
     },
   });
   return NextResponse.json({ ok: true, link: { id: link.id, code: link.code } });

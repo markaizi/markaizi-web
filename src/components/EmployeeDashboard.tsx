@@ -27,6 +27,7 @@ export default function EmployeeDashboard({
   stats,
   canPriceWorklogs = false,
   canViewEconomy = false,
+  canManagePaymentLinks = false,
 }: {
   clients: AssignedClient[];
   employeeName: string;
@@ -34,6 +35,7 @@ export default function EmployeeDashboard({
   stats?: EmployeeStats;
   canPriceWorklogs?: boolean;
   canViewEconomy?: boolean;
+  canManagePaymentLinks?: boolean;
 }) {
   const router = useRouter();
   const [showFeedback, setShowFeedback] = useState(false);
@@ -124,6 +126,19 @@ export default function EmployeeDashboard({
         <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="#34d399" strokeWidth="2">
           <path d="M3 3v18h18" strokeLinecap="round" strokeLinejoin="round"/>
           <path d="M7 15l4-4 3 3 5-6" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      ),
+    },
+    canManagePaymentLinks && {
+      key: "odeme-linkleri",
+      label: "Ödeme Linkleri",
+      sub: "PayTR ile kartla tahsilat",
+      color: "#60a5fa",
+      onClick: () => router.push("/musteri/admin/odeme-linkleri"),
+      icon: (
+        <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="#60a5fa" strokeWidth="2">
+          <path d="M10 13a5 5 0 007.07 0l3-3a5 5 0 00-7.07-7.07l-1.5 1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          <path d="M14 11a5 5 0 00-7.07 0l-3 3a5 5 0 007.07 7.07l1.5-1.5" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       ),
     },
