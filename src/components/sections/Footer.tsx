@@ -23,6 +23,7 @@ export default function Footer() {
               title="Hizmetler"
               links={[
                 { label: "Ücretsiz Analiz",        href: "/ucretsiz-analiz" },
+                { label: "Ücretsiz Reklam Hesabı Denetimi", href: "/reklam-hesabi-denetimi" },
                 { label: "Mobilya Reklam Ajansı",  href: "/mobilya-reklam-ajansi" },
                 { label: "Ankara Kafe & Restoran Reklam Ajansı", href: "/ankara-kafe-restoran-reklam-ajansi" },
                 { label: "Sağlık & Klinik Reklam Ajansı", href: "/saglik-klinik-reklam-ajansi" },
@@ -31,6 +32,8 @@ export default function Footer() {
                 { label: "Meta Reklamları",        href: "/hizmetler/meta-reklamlari" },
                 { label: "Google Reklamları",      href: "/hizmetler/google-reklamlari" },
                 { label: "TikTok Reklamları",      href: "/hizmetler/tiktok-reklamlari" },
+                { label: "Dönüşüm Takibi (Pixel & CAPI)", href: "/hizmetler/donusum-takibi-kurulumu" },
+                { label: "Yapay Zeka Arama Görünürlüğü", href: "/hizmetler/yapay-zeka-arama-gorunurlugu" },
                 { label: "Yapay Zeka & Otomasyon", href: "/hizmetler/yapay-zeka-otomasyon" },
                 { label: "Web Tasarım & Hosting",  href: "/hizmetler/web-tasarim-hosting" },
                 { label: "Dijital Pazarlama Danışmanlığı", href: "/hizmetler/dijital-pazarlama-danismanligi" },
@@ -47,6 +50,7 @@ export default function Footer() {
                 { label: "Mobilya Google Reklamları",    href: "/mobilya-google-reklamlari" },
                 { label: "Mobilya Sosyal Medya",         href: "/mobilya-sosyal-medya-yonetimi" },
                 { label: "Mobilya E-Ticaret",            href: "/mobilya-e-ticaret-danismanligi" },
+                { label: "Mobilya Bayileri",             href: "/mobilya-bayi-reklam-ajansi" },
                 { label: "İstanbul Mobilya Reklamı",     href: "/istanbul-mobilya-reklam-ajansi" },
                 { label: "İnegöl Mobilya Reklamı",       href: "/inegol-mobilya-reklam-ajansi" },
                 { label: "Kayseri Mobilya Reklamı",      href: "/kayseri-mobilya-reklam-ajansi" },
@@ -63,6 +67,7 @@ export default function Footer() {
                 { label: "İletişim",   href: "/#iletisim" },
                 { label: "Blog",       href: "/blog" },
                 { label: "YouTube Videoları", href: "/videolar" },
+                { label: "Reklam Bütçesi Hesaplayıcı", href: "/araclar/reklam-butcesi-hesaplayici" },
                 { label: "Kariyer",    href: "/cv" },
               ]}
             />

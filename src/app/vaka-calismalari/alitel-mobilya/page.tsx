@@ -14,7 +14,7 @@ const DESC =
   "Alitel Mobilya ile 7 yıllık çalışma: her yıl İstikbal bayileri arasında Türkiye ciro birinciliği, 10 milyon TL'nin üzerinde yönetilen reklam bütçesi, Google reklamları ve dijital kanal yönetimi. markaizi mobilya vaka çalışması.";
 
 export const metadata: Metadata = {
-  title: TITLE,
+  title: { absolute: TITLE },
   description: DESC,
   keywords:
     "alitel mobilya, mobilya reklam vaka çalışması, mobilya google reklamları başarı hikayesi, mobilya reklam ajansı referans, mobilya dijital pazarlama vaka",

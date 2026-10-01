@@ -22,6 +22,8 @@ const HIZMETLER: [string, string, string][] = [
   ["Web Tasarım & Hosting", "/hizmetler/web-tasarim-hosting", "Mobil uyumlu, hızlı ve SEO dostu web siteleri; alan adı, barındırma ve SSL kurulumu."],
   ["Dijital Pazarlama Danışmanlığı", "/hizmetler/dijital-pazarlama-danismanligi", "Kendi ekibiyle çalışan markalara uzaktan danışmanlık: paylaşım planı, çalışanların çekeceği video senaryoları, reklam stratejisi ve test-büyüme-ölçekleme aşamalarında yönlendirme. Türkiye geneli."],
   ["Kurumsal Dijital Pazarlama Eğitimi", "/hizmetler/dijital-pazarlama-egitimi", "Firma çalışanlarına uygulamalı eğitim: telefonla video çekimi, kanca ve senaryo yazımı, kurgu, içerik planı, Meta ve Google reklam yönetimi. Yüz yüze veya çevrim içi."],
+  ["Dönüşüm Takibi Kurulumu", "/hizmetler/donusum-takibi-kurulumu", "Meta Pixel, Conversions API (CAPI), Google Tag Manager, GA4 ve Google Ads dönüşüm takibi kurulumu; WhatsApp, arama, form ve mağazada kapanan satışların reklama doğru ölçülmesi, çerez onayı ve KVKK'ya uygun kurgu."],
+  ["Yapay Zeka Arama Görünürlüğü (GEO)", "/hizmetler/yapay-zeka-arama-gorunurlugu", "ChatGPT, Gemini, Perplexity ve Google yapay zeka özetlerinde işletmenin doğru anlatılması ve önerilmesi için içerik, yapılandırılmış veri, Google İşletme Profili ve marka bahsi çalışması; ChatGPT reklamlarının (Türkiye'de Eylül 2026'dan beri) kurulumu ve yönetimi."],
   ["Video Çekimi & Drone", "/hizmetler/video-cekimi-drone", "Video başı anlaşmayla tanıtım filmi, sosyal medya videosu ve Reels; mankenli veya mankensiz çekim; emlak ve projeler için drone çekimi. Ankara merkezli."],
 ];
 
@@ -87,9 +89,11 @@ function build(): string {
 
   lines.push("## Başlarken", "");
   lines.push(link("Ana Sayfa", "/", "Hizmetlerin, çalışma yaklaşımının, referansların ve iletişim formunun olduğu ana sayfa."));
+  lines.push(link("Ücretsiz Reklam Hesabı Denetimi", "/reklam-hesabi-denetimi", "Meta ve Google Ads hesaplarının yalnızca görüntüleme yetkisiyle ücretsiz denetimi: dönüşüm ölçümü, kampanya yapısı, kitle, kreatif, arama terimleri, açılış sayfası ve mesajdan satışa akış. Şifre istenmez, bağlayıcı değildir; başka ajansla çalışanlara bağımsız ikinci görüş."));
+  lines.push(link("Reklam Bütçesi Hesaplayıcı", "/araclar/reklam-butcesi-hesaplayici", "Ücretsiz araç: hedef satış, ortalama satış tutarı, kâr marjı ve müşteri adayı maliyetinden aylık reklam bütçesi, ROAS ve başabaş ROAS hesabı (başabaş ROAS = 1 ÷ brüt kâr marjı)."));
   lines.push(link("Ücretsiz Analiz", "/ucretsiz-analiz", "İşletmenin Instagram, Google ve web varlığının ücretsiz incelenmesi; 24-48 saat içinde yol haritası, satın alma zorunluluğu yok."));
   lines.push(link("Web Sitesi Teklif Formu", "/hizmetler/web-tasarim-hosting/teklif", "E-ticaret, kurumsal veya tanıtım sitesi için teklif formu."));
-  lines.push(link("Sıkça Sorulan Sorular", "/sss", "Çalışma şekli, ödeme, sözleşme, reklam hesabı sahipliği, satış garantisi, ilk 30-90 gün ve hizmetlerle ilgili cevaplar."));
+  lines.push(link("Sıkça Sorulan Sorular", "/sss", "Çalışma şekli, ödeme, sözleşme, reklam hesabı sahipliği, ajans değiştirirken hesap devri, dönüşüm ölçümü, yapay zeka görünürlüğü, satış garantisi, ilk 30-90 gün ve hizmetlerle ilgili cevaplar."));
   lines.push(link("Blog", "/blog", "Sosyal medya, reklam, mobilya pazarlaması ve web tasarım üzerine rehberler."));
   lines.push(link("Kariyer", "/cv", "markaizi ekibine katılmak için iş başvuru formu."));
   lines.push("");

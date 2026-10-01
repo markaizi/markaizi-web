@@ -3,7 +3,7 @@ import Image from "next/image";
 import CvForm from "./CvForm";
 
 export const metadata: Metadata = {
-  title: "Kariyer — markaizi",
+  title: { absolute: "Kariyer — markaizi" },
   description: "markaizi dijital reklam ajansı ekibine katılmak için başvuru formunu doldurun.",
   alternates: { canonical: "https://markaizi.com.tr/cv" },
 };

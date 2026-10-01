@@ -42,6 +42,8 @@ export function founderJsonLd() {
       "Sosyal medya yönetimi",
       "Mobilya sektörü pazarlaması",
       "Reklam kreatifi ve video içerik stratejisi",
+      "Dönüşüm takibi (Meta Pixel, Conversions API, Google Tag Manager)",
+      "Yapay zeka arama görünürlüğü (GEO) ve ChatGPT reklamları",
     ],
     ...(FOUNDER.sameAs.length ? { sameAs: FOUNDER.sameAs } : {}),
   };

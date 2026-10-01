@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import ServicePageTemplate from "@/components/ServicePageTemplate";
 
 export const metadata: Metadata = {
-  title: "Dijital Pazarlama Danışmanlığı — Uzaktan Sosyal Medya & Reklam Danışmanlığı | markaizi",
+  title: { absolute: "Dijital Pazarlama Danışmanlığı — Uzaktan Sosyal Medya & Reklam Danışmanlığı | markaizi" },
   description:
     "Kendi ekibiyle çalışmak isteyen markalara dijital pazarlama danışmanlığı: içerik ve paylaşım planı, video senaryoları, reklam stratejisi ve düzenli uzaktan yönlendirme. Ankara merkezli, Türkiye geneli.",
   keywords:

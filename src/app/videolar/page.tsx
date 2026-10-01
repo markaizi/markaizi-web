@@ -13,7 +13,7 @@ const DESC =
   "markaizi YouTube kanalının videoları: işletme sahipleri için dijital pazarlama, Meta ve Google reklamları, sosyal medya ve ajansla çalışma üzerine rehberler. Her videonun tam metni sayfasında.";
 
 export const metadata: Metadata = {
-  title: "YouTube Videoları — Dijital Pazarlama ve Reklam Rehberleri | markaizi",
+  title: { absolute: "YouTube Videoları — Dijital Pazarlama ve Reklam Rehberleri | markaizi" },
   description: DESC,
   alternates: { canonical: `${SITE_URL}/videolar` },
   openGraph: { title: "markaizi YouTube Videoları", description: DESC, type: "website", locale: "tr_TR", url: `${SITE_URL}/videolar` },

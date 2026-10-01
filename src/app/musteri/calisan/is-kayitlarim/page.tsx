@@ -8,7 +8,7 @@ import EmployeeWorkLogs from "@/components/EmployeeWorkLogs";
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
-  title: "İş Kayıtlarım — markaizi",
+  title: { absolute: "İş Kayıtlarım — markaizi" },
 };
 
 function parseAmount(raw: string | null): number {

@@ -108,7 +108,10 @@ export default function GelenTaleplerView({ submissions: initial }: { submission
 
         <div className="space-y-2.5">
           {submissions.map((item) => {
-            const t = TYPE_LABEL[item.type];
+            // Reklam hesabı denetimi talepleri ANALIZ tipinde, "kaynak" alanıyla gelir
+            const t = item.type === "ANALIZ" && typeof item.data.kaynak === "string" && item.data.kaynak
+              ? { ...TYPE_LABEL.ANALIZ, label: item.data.kaynak }
+              : TYPE_LABEL[item.type];
             const isOpen = openId === item.id;
             const issues = cvIssues(item);
             const skills = item.type === "CV" ? (item.data.skills as Record<string, number> | undefined) : undefined;

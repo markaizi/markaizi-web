@@ -9,7 +9,7 @@ import JsonLd from "@/components/JsonLd";
 import { breadcrumbJsonLd } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "Doğal Ürün & Takviye Reklam Ajansı — Ürün Videosu, YouTube, E-Ticaret Reklamı | markaizi",
+  title: { absolute: "Doğal Ürün & Takviye Reklam Ajansı — Ürün Videosu, YouTube, E-Ticaret Reklamı | markaizi" },
   description:
     "Vitamin, mineral, bitkisel takviye, doğal yağ ve doğal kozmetik markaları için mankenli/mankensiz ürün tanıtım videosu, YouTube içerik üretimi, e-ticaret reklamı ve bayi/distribütör pazarlaması. Fıtrina gibi doğal ürün markalarının tercih ettiği ajans.",
   keywords:

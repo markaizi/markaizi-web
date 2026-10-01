@@ -9,7 +9,7 @@ import JsonLd from "@/components/JsonLd";
 import { breadcrumbJsonLd } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "Sağlık & Klinik Reklam Ajansı — Diş, Estetik, Tıp Merkezleri | markaizi",
+  title: { absolute: "Sağlık & Klinik Reklam Ajansı — Diş, Estetik, Tıp Merkezleri | markaizi" },
   description:
     "Diş klinikleri, estetisyen ve güzellik merkezleri, fizik tedavi ve alternatif tıp uygulayıcıları için Instagram & Google reklamları, sosyal medya yönetimi ve klinik çekimi. Sağlık reklam politikalarını bilen ajans.",
   keywords:

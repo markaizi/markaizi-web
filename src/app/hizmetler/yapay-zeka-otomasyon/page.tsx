@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import ServicePageTemplate from "@/components/ServicePageTemplate";
 
 export const metadata: Metadata = {
-  title: "Yapay Zeka & Otomasyon — markaizi",
+  title: { absolute: "Yapay Zeka & Otomasyon — markaizi" },
   description: "Yapay zeka ile görseller, reklam filmleri ve videolar üretiyoruz. AI destekli otomasyon araçlarıyla içerik süreçlerinizi hızlandırıyor, kampanyalarınızı akıllı hale getiriyoruz.",
   alternates: { canonical: "https://markaizi.com.tr/hizmetler/yapay-zeka-otomasyon" },
 };
@@ -26,7 +26,11 @@ export default function YapayZekaOtomasyonPage() {
       badge="Yeni Nesil Hizmetler"
       icon={ICON}
       path="/hizmetler/yapay-zeka-otomasyon"
-      relatedPosts={[{ slug: "yapay-zeka-icerik", title: "Yapay Zeka ile İçerik Üretimi" }]}
+      relatedPosts={[
+        { slug: "yapay-zeka-icerik", title: "Yapay Zeka ile İçerik Üretimi" },
+        { slug: "yapay-zeka-isletme-onerirken-neye-bakar", title: "Yapay Zeka İşletme Önerirken Neye Bakıyor?" },
+        { slug: "chatgpt-reklamlari-turkiye-rehberi", title: "ChatGPT Reklamları Türkiye Rehberi" },
+      ]}
       title="Yapay Zeka & Otomasyon"
       subtitle="AI destekli araçlarla görseller, reklam filmleri ve videolar üretiyoruz. İçerik süreçlerinizi otomatikleştirerek markanızı rekabette öne taşıyoruz."
       description={[

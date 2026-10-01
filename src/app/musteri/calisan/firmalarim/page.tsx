@@ -7,7 +7,7 @@ import EmployeeFirmalarim, { type AssignedClient } from "@/components/EmployeeFi
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
-  title: "Firmalarım — markaizi",
+  title: { absolute: "Firmalarım — markaizi" },
 };
 
 export default async function CalisanFirmalarimPage() {

@@ -6,7 +6,7 @@ import LegalPageTemplate from "@/components/LegalPageTemplate";
 import { SELLER } from "@/lib/company";
 
 export const metadata: Metadata = {
-  title: "KVKK Aydınlatma Metni — markaizi",
+  title: { absolute: "KVKK Aydınlatma Metni — markaizi" },
   description: "markaizi Dijital Reklam Ajansı KVKK kapsamında kişisel verilerin korunması hakkında aydınlatma metni.",
   alternates: { canonical: "https://markaizi.com.tr/kvkk" },
 };

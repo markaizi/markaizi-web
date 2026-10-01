@@ -18,9 +18,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/mobilya-reklam-ajansi`,                  lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.9 },
     { url: `${BASE}/saglik-klinik-reklam-ajansi`,             lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.9 },
     { url: `${BASE}/dogal-urun-takviye-reklam-ajansi`,        lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.9 },
-    { url: `${BASE}/ucretsiz-analiz`,                         lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.9 },
+    { url: `${BASE}/ucretsiz-analiz`,                         lastModified: new Date("2026-10-01"), changeFrequency: "monthly", priority: 0.9 },
+    { url: `${BASE}/reklam-hesabi-denetimi`,                  lastModified: new Date("2026-10-01"), changeFrequency: "monthly", priority: 0.9 },
+    { url: `${BASE}/araclar/reklam-butcesi-hesaplayici`,      lastModified: new Date("2026-10-01"), changeFrequency: "monthly", priority: 0.8 },
     { url: `${BASE}/samet-saglam`,                           lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.7 },
-    { url: `${BASE}/sss`,                                    lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.7 },
+    { url: `${BASE}/sss`,                                    lastModified: new Date("2026-10-01"), changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE}/cv`,                                     lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.5 },
 
     // ── Hizmet sayfaları ──────────────────────────────────────
@@ -33,6 +35,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/hizmetler/dijital-pazarlama-danismanligi`, lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.85 },
     { url: `${BASE}/hizmetler/dijital-pazarlama-egitimi`,    lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.85 },
     { url: `${BASE}/hizmetler/video-cekimi-drone`,           lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.85 },
+    { url: `${BASE}/hizmetler/donusum-takibi-kurulumu`,      lastModified: new Date("2026-10-01"), changeFrequency: "monthly", priority: 0.85 },
+    { url: `${BASE}/hizmetler/yapay-zeka-arama-gorunurlugu`, lastModified: new Date("2026-10-01"), changeFrequency: "monthly", priority: 0.85 },
     { url: `${BASE}/hizmetler/web-tasarim-hosting/teklif`,   lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.6 },
 
     // ── Yasal sayfalar ────────────────────────────────────────

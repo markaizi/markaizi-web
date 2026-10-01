@@ -11,7 +11,7 @@ import { CITY_PAGES, SERVICE_PAGES } from "@/lib/mobilya-pages";
 import VideoCallout from "@/components/VideoCallout";
 
 export const metadata: Metadata = {
-  title: "Mobilya Reklam Ajansı — Siteler / Ankara | markaizi",
+  title: { absolute: "Mobilya Reklam Ajansı — Siteler / Ankara | markaizi" },
   description:
     "Siteler merkezli mobilya reklam ajansı. İstikbal, Doğtaş, Kelebek bayileri dahil 200+ mobilya mağazasına Instagram & Google reklamları, sosyal medya yönetimi ve showroom çekimi. Mobilya sektörünü tanıyan ajans.",
   keywords:

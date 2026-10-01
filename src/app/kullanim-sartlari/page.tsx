@@ -5,7 +5,7 @@ import WhatsApp from "@/components/WhatsApp";
 import LegalPageTemplate from "@/components/LegalPageTemplate";
 
 export const metadata: Metadata = {
-  title: "Kullanım Şartları — markaizi",
+  title: { absolute: "Kullanım Şartları — markaizi" },
   description: "markaizi web sitesi ve hizmetlerine ilişkin kullanım şartları ve koşulları.",
   alternates: { canonical: "https://markaizi.com.tr/kullanim-sartlari" },
 };

@@ -8,7 +8,7 @@ import UcretGirisiView, { type EmployeeWorklogs } from "@/components/UcretGirisi
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
-  title: "Ücret Girişi — markaizi",
+  title: { absolute: "Ücret Girişi — markaizi" },
 };
 
 export default async function UcretGirisiPage() {

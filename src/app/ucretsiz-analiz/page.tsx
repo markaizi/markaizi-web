@@ -10,7 +10,7 @@ import JsonLd from "@/components/JsonLd";
 import { breadcrumbJsonLd } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "Ücretsiz Sosyal Medya & Dijital Varlık Analizi | markaizi",
+  title: { absolute: "Ücretsiz Sosyal Medya & Dijital Varlık Analizi | markaizi" },
   description:
     "İşletmenizin Instagram, Google ve web varlığını ücretsiz inceleyelim. 24-48 saat içinde size özel yol haritasını paylaşalım — satın alma zorunluluğu yok.",
   keywords:
@@ -128,6 +128,25 @@ export default function UcretsizAnalizPage() {
                 </div>
               ))}
             </div>
+          </div>
+        </section>
+
+        {/* ── Reklam veren işletmeler için denetim yönlendirmesi ── */}
+        <section className="pb-12" style={{ background: "var(--bg)" }}>
+          <div className="max-w-[1200px] mx-auto px-5 sm:px-6">
+            <a
+              href="/reklam-hesabi-denetimi"
+              className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-2xl p-5 sm:p-6 transition-colors hover:bg-white/[0.03]"
+              style={{ background: "var(--surface)", border: "1px solid rgba(168,85,247,0.3)" }}
+            >
+              <span>
+                <span className="block text-[15px] font-bold text-white">Zaten reklam veriyor musunuz?</span>
+                <span className="block text-[14px] text-[#8a8a9a] mt-0.5">
+                  Meta ve Google Ads hesabınızı görüntüleme yetkisiyle ücretsiz denetleyip bütçenin nereye gittiğini gösterelim.
+                </span>
+              </span>
+              <span className="text-[14px] font-semibold text-[#c084fc] whitespace-nowrap">Reklam Hesabı Denetimi →</span>
+            </a>
           </div>
         </section>
 

@@ -8,7 +8,7 @@ import EmployeeDashboard, { type AssignedClient, type EmployeeStats } from "@/co
 export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
-  title: "Çalışan Paneli — markaizi",
+  title: { absolute: "Çalışan Paneli — markaizi" },
 };
 
 function parseAmount(raw: string | null): number {

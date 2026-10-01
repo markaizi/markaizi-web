@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
-  title: "Müşteri Paneli — markaizi",
+  title: { absolute: "Müşteri Paneli — markaizi" },
 };
 
 export default async function MusteriPage({

@@ -28,7 +28,7 @@ Site iki parçadan oluşur:
 
 ## 2. Kamuya Açık Site — Sayfa Envanteri
 
-Yayındaki 60 sayfanın tamamı hem `sitemap.xml`'de hem `llms.txt`'de var (27 Eyl 2026 kontrolü).
+Yayındaki 72 sayfanın tamamı hem `sitemap.xml`'de hem `llms.txt`'de var (1 Eki 2026 kontrolü).
 
 ### Ana sayfa (`/`)
 Hero → Ücretsiz Analiz barı → Hizmetler (9 kart, 3×3) → **Sektöre Özel Uzmanlık** (kafe & restoran,
@@ -38,14 +38,17 @@ Hakkımızda (kurucu kartı) → Portföy (sektör etiketleri linkli) → İleti
 ### Hizmet sayfaları (`/hizmetler/*`) — `ServicePageTemplate`
 Sosyal Medya Yönetimi, Meta Reklamları, Google Reklamları, TikTok Reklamları, Yapay Zeka & Otomasyon,
 Web Tasarım & Hosting (+ `/teklif` formu), Dijital Pazarlama Danışmanlığı, Kurumsal Dijital Pazarlama
-Eğitimi, Video Çekimi & Drone.
+Eğitimi, Video Çekimi & Drone, **Dönüşüm Takibi Kurulumu** (`/hizmetler/donusum-takibi-kurulumu` —
+Meta Pixel, CAPI, GTM, mağaza satışı eşleştirme), **Yapay Zeka Arama Görünürlüğü** (`/hizmetler/yapay-zeka-arama-gorunurlugu`
+— GEO + ChatGPT reklamları).
 - Çoğunda "Yaklaşımımız" bölümü (YouTube rehber videosundan uyarlanmış) + video kartı + SSS.
 - `/hizmetler/icerik-uretimi` → Sosyal Medya Yönetimi'ne kalıcı yönlendirme (bilerek sitemap dışında).
 
 ### Mobilya sektörü (ana uzmanlık)
 - `/mobilya-reklam-ajansi` — ana sayfa (85 bin TL senaryosu, vaka, hizmet ve şehir linkleri)
 - Hizmet: `/mobilya-meta-reklamlari`, `/mobilya-google-reklamlari`, `/mobilya-sosyal-medya-yonetimi`,
-  `/mobilya-web-sitesi`, `/mobilya-seo`, `/mobilya-e-ticaret-danismanligi`
+  `/mobilya-web-sitesi`, `/mobilya-seo`, `/mobilya-e-ticaret-danismanligi`,
+  `/mobilya-bayi-reklam-ajansi` (İstikbal/Bellona/Doğtaş/Kelebek bayileri; "resmi ajansı değiliz" notu SSS'te)
 - Bölge: `/istanbul-`, `/inegol-`, `/kayseri-`, `/izmir-mobilya-reklam-ajansi`
 - Vaka: `/vaka-calismalari/alitel-mobilya` — 7 yıl, her yıl İstikbal bayileri arasında Türkiye ciro
   birinciliği, 10M TL+ yönetilen reklam bütçesi, ana kanal Google reklamları
@@ -73,17 +76,29 @@ Eğitimi, Video Çekimi & Drone.
 ProfilePage + Person şeması; Organization şemalarında `founder`, video sayfalarında yazar olarak bağlı.
 Veri: `src/lib/founder.ts` (kişisel hesaplar `sameAs` listesine eklenecek).
 
-### Blog (`/blog`) — 16 yazı
+### Blog (`/blog`) — 20 yazı
 Genel: Instagram algoritması, Google Ads bütçe, Meta ROAS, TikTok, yapay zeka içerik, Core Web Vitals.
 Mobilya: reklam nasıl verilir, Instagram, Siteler'de müşteri çekme, yerel SEO, Ankara sosyal medya büyüme,
 Ankara mobilya ajansı nasıl seçilir.
 Reklam stratejisi: reklam neden satış getirmiyor, reklam bütçesi nasıl belirlenir.
 Kafe & restoran: kafe açılışı ilk 90 gün, Google Haritalar rehberi.
-Veri: `src/lib/blog-data.ts` (opsiyonel `dateModifiedISO`, `faq`, `videoSlug` alanları).
+Ölçümleme / yapay zeka / ajans (1 Eki 2026): Meta Pixel & Conversions API rehberi, ChatGPT reklamları Türkiye
+rehberi, yapay zeka işletme önerirken neye bakar, ajans değiştirirken hesap devri. Bütçe ve ROAS yazılarına
+rakamlı bölümler eklendi (dateModified 1 Eki).
+Veri: `src/lib/blog-data.ts` (opsiyonel `dateModifiedISO`, `faq`, `videoSlug`; bölümlerde opsiyonel `link`).
+Yazar şeması: kurucu (Person, `/samet-saglam`); yazı sonunda yazar kutusu.
 
 ### Diğer
-`/sss` (Ajansla Çalışmak kategorisi dahil), `/ucretsiz-analiz` (İlk Görüşme bölümü), `/cv` (kariyer),
-KVKK / gizlilik / çerez / kullanım şartları.
+`/sss` (Ajansla Çalışmak, Ajans Değiştirmek & Hesap Devri, Ölçüm & Yapay Zeka kategorileri),
+`/ucretsiz-analiz` (İlk Görüşme bölümü + denetim yönlendirmesi), `/reklam-hesabi-denetimi` (ücretsiz Meta/Google
+hesap denetimi; aynı form `variant="reklam"`, panelde "Reklam Hesabı Denetimi" etiketiyle düşer),
+`/araclar/reklam-butcesi-hesaplayici` (bütçe/ROAS/başabaş hesaplayıcı, tamamen tarayıcıda), `/cv` (kariyer),
+KVKK / gizlilik / çerez / kullanım şartları. Ana sayfa iletişim formunda sektör alanı var.
+
+### Rakip takibi
+N-Kreatif Lab (nkreatif.com.tr) — Ankara, mobilya nişinde doğrudan rakip (1 Eki 2026 analizi). Onların
+güçlü yanlarına karşılık eklenenler: reklam hesabı denetimi, Pixel/CAPI hizmeti, GEO + ChatGPT reklamları,
+bayi sayfası, hesaplayıcı, ajans değiştirme SSS'leri. Ayda bir sitemap'lerine bakılabilir.
 
 ---
 
@@ -236,10 +251,12 @@ npx prisma generate
 - [ ] Sektör sitelerinde (ör. Mobilya Haber) Alitel başarısını anlatan haber/yazı
 - [ ] Ayda bir `docs/ai-gorunurluk-olcum.md` ölçümü
 - [ ] PayTR ortam değişkenleri + Bildirim URL + test ödemesi (bkz. bölüm 4)
+- [ ] Search Console'a 1 Eki sayfalarını göndermek: /reklam-hesabi-denetimi, /araclar/reklam-butcesi-hesaplayici,
+      /hizmetler/donusum-takibi-kurulumu, /hizmetler/yapay-zeka-arama-gorunurlugu, /mobilya-bayi-reklam-ajansi, 4 yeni blog
+- [ ] İsimli ve rakamlı yeni mobilya vakaları (ROAS / müşteri başına maliyet / süre) — rakiplerin en güçlü kozu
+- [ ] ChatGPT reklam hizmetini gerçekten sunmak istiyor musun? (GEO sayfasında anlatılıyor; istemezsen kaldırılır)
 
 ### Teknik
-- [ ] Hizmet sayfalarının sekme başlığında "… | markaizi — markaizi" tekrarı (başlık dizeleri
-      `| markaizi` ile bitiyor, kök şablon bir kez daha ekliyor). Mobilya/kafe sayfalarında düzeltildi.
 - [ ] `npm audit`: 3 "yüksek" uyarı yalnızca Prisma CLI'nin geliştirme bağımlılığında
       (`deepmerge-ts`); düzeltmesi Prisma 7'ye geçiş gerektiriyor.
 - [ ] Büyük sürüm geçişleri (Prisma 7, TypeScript 7, ESLint 10) yapılmadı.
@@ -279,3 +296,7 @@ npx prisma generate
   "Sektöre Özel Uzmanlık" bölümü, sitemap/llms.txt tam tutarlılık kontrolü (60/60).
 - **29 Eylül 2026** — PayTR ödeme linkleri. Aynı gün yanlış bir Prisma komutu canlı veritabanını sildi;
   Neon point-in-time restore ile 13:30 anına geri yüklendi, veri kaybı yok.
+- **1 Ekim 2026** — N-Kreatif rakip analizi sonrası: reklam hesabı denetimi sayfası, reklam bütçesi
+  hesaplayıcı, Dönüşüm Takibi ve Yapay Zeka Arama Görünürlüğü hizmetleri, mobilya bayi sayfası, 4 blog +
+  2 blog güncellemesi, SSS'e 8 soru, blog yazarı Person şeması, iletişim formuna sektör, 31 sayfada
+  "markaizi — markaizi" başlık tekrarı düzeltildi (`title: { absolute }`).

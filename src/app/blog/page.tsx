@@ -9,7 +9,7 @@ import { breadcrumbJsonLd } from "@/lib/seo";
 import { BLOG_POSTS } from "@/lib/blog-data";
 
 export const metadata: Metadata = {
-  title: "Blog — markaizi Dijital Reklam Ajansı",
+  title: { absolute: "Blog — markaizi Dijital Reklam Ajansı" },
   description: "Dijital pazarlama, sosyal medya yönetimi, Google Ads ve Meta reklamları hakkında güncel makaleler ve rehberler.",
   alternates: { canonical: "https://markaizi.com.tr/blog" },
 };

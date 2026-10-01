@@ -5,7 +5,7 @@ import WhatsApp from "@/components/WhatsApp";
 import LegalPageTemplate from "@/components/LegalPageTemplate";
 
 export const metadata: Metadata = {
-  title: "Gizlilik Politikası — markaizi",
+  title: { absolute: "Gizlilik Politikası — markaizi" },
   description: "markaizi Dijital Reklam Ajansı gizlilik politikası — kişisel verilerinizi nasıl topladığımız, kullandığımız ve koruduğumuz hakkında bilgi.",
   alternates: { canonical: "https://markaizi.com.tr/gizlilik-politikasi" },
 };

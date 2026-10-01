@@ -92,6 +92,10 @@ const jsonLd = {
       { "@type": "Offer", itemOffered: { "@type": "Service", name: "Dijital Pazarlama Danışmanlığı", url: "https://markaizi.com.tr/hizmetler/dijital-pazarlama-danismanligi" } },
       { "@type": "Offer", itemOffered: { "@type": "Service", name: "Kurumsal Dijital Pazarlama Eğitimi", url: "https://markaizi.com.tr/hizmetler/dijital-pazarlama-egitimi" } },
       { "@type": "Offer", itemOffered: { "@type": "Service", name: "Video Çekimi ve Drone Çekimi", url: "https://markaizi.com.tr/hizmetler/video-cekimi-drone" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Dönüşüm Takibi Kurulumu (Meta Pixel, Conversions API, Google Tag Manager)", url: "https://markaizi.com.tr/hizmetler/donusum-takibi-kurulumu" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Yapay Zeka Arama Görünürlüğü (GEO) ve ChatGPT Reklamları", url: "https://markaizi.com.tr/hizmetler/yapay-zeka-arama-gorunurlugu" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Mobilya Bayileri İçin Dijital Pazarlama", url: "https://markaizi.com.tr/mobilya-bayi-reklam-ajansi" } },
+      { "@type": "Offer", price: "0", priceCurrency: "TRY", itemOffered: { "@type": "Service", name: "Ücretsiz Reklam Hesabı Denetimi", url: "https://markaizi.com.tr/reklam-hesabi-denetimi" } },
     ],
   },
 };

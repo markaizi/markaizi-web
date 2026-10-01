@@ -3,6 +3,7 @@ import { useState, FormEvent } from "react";
 
 const SECTORS = [
   "Mobilya",
+  "Kafe / Restoran",
   "Sağlık / Klinik / Estetik",
   "Doğal Ürün / Takviye",
   "Gıda / Restoran",
@@ -11,7 +12,12 @@ const SECTORS = [
   "Diğer",
 ];
 
-export default function UcretsizAnalizForm() {
+// Reklam hesabı denetimi sayfası aynı formu kullanır; o sayfada hangi
+// platformda reklam verildiği de sorulur ve talep panelde ayrı etiketlenir.
+const PLATFORMS = ["Meta (Instagram & Facebook)", "Google Ads", "İkisi de", "Henüz reklam vermiyorum"];
+
+export default function UcretsizAnalizForm({ variant = "analiz" }: { variant?: "analiz" | "reklam" }) {
+  const isReklam = variant === "reklam";
   const [status, setStatus] = useState<"idle" | "sending" | "done" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
   const [showNote, setShowNote] = useState(false);
@@ -28,6 +34,12 @@ export default function UcretsizAnalizForm() {
       link: (form.elements.namedItem("link") as HTMLInputElement).value,
       sector: (form.elements.namedItem("sector") as HTMLSelectElement).value,
       note: (form.elements.namedItem("note") as HTMLTextAreaElement)?.value ?? "",
+      ...(isReklam
+        ? {
+            kaynak: "Reklam Hesabı Denetimi",
+            platform: (form.elements.namedItem("platform") as HTMLSelectElement).value,
+          }
+        : {}),
     };
 
     try {
@@ -61,7 +73,7 @@ export default function UcretsizAnalizForm() {
         <div className="text-4xl mb-3">✓</div>
         <p className="font-bold text-[18px] text-white mb-2">Talebiniz alındı!</p>
         <p className="text-[14px] text-[#8a8a9a] leading-relaxed mb-5">
-          24-48 saat içinde analizinizi hazırlayıp size dönüyoruz. Acele bir durumunuz varsa hemen WhatsApp&apos;tan da yazabilirsiniz.
+          {isReklam ? "24-48 saat içinde sizi arayıp reklam hesabınıza görüntüleme erişimini birlikte ayarlıyoruz." : "24-48 saat içinde analizinizi hazırlayıp size dönüyoruz."} Acele bir durumunuz varsa hemen WhatsApp&apos;tan da yazabilirsiniz.
         </p>
         <a
           href="https://wa.me/905520772700?text=Merhaba%2C%20az%20%C3%B6nce%20%C3%BCcretsiz%20analiz%20formunu%20doldurdum."
@@ -86,7 +98,7 @@ export default function UcretsizAnalizForm() {
         <Field label="Ad Soyad" id="name" type="text" placeholder="Ahmet Yılmaz" required />
         <Field label="Telefon / WhatsApp" id="phone" type="tel" placeholder="0532 000 00 00" required inputMode="tel" />
         <Field
-          label="Instagram Kullanıcı Adı veya Web Sitesi"
+          label={isReklam ? "Web Siteniz veya Instagram Hesabınız" : "Instagram Kullanıcı Adı veya Web Sitesi"}
           id="link"
           type="text"
           placeholder="@magazaniz veya siteniz.com"
@@ -101,13 +113,7 @@ export default function UcretsizAnalizForm() {
             name="sector"
             required
             className="w-full px-4 py-3.5 rounded-xl text-white"
-            style={{
-              background: "var(--bg)", border: "1.5px solid var(--border)", fontSize: "16px",
-              appearance: "none", WebkitAppearance: "none", cursor: "pointer",
-              backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238a8a9a' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`,
-              backgroundRepeat: "no-repeat", backgroundPosition: "right 14px center", paddingRight: "40px",
-              minHeight: "52px",
-            }}
+            style={SELECT_STYLE}
           >
             <option value="">Seçiniz...</option>
             {SECTORS.map((s) => (
@@ -115,6 +121,20 @@ export default function UcretsizAnalizForm() {
             ))}
           </select>
         </div>
+
+        {isReklam && (
+          <div>
+            <label htmlFor="platform" className="block text-[13px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-2">
+              Hangi Reklamları Veriyorsunuz?
+            </label>
+            <select id="platform" name="platform" className="w-full px-4 py-3.5 rounded-xl text-white" style={SELECT_STYLE}>
+              <option value="">Seçiniz...</option>
+              {PLATFORMS.map((p) => (
+                <option key={p} style={{ background: "#0f0f14" }}>{p}</option>
+              ))}
+            </select>
+          </div>
+        )}
 
         {!showNote ? (
           <button
@@ -133,7 +153,7 @@ export default function UcretsizAnalizForm() {
               id="note"
               name="note"
               rows={3}
-              placeholder="Örn: Şu an reklam vermiyorum, hiç başlamadım..."
+              placeholder={isReklam ? "Örn: Mesaj geliyor ama satış olmuyor, son 2 ayda maliyet arttı..." : "Örn: Şu an reklam vermiyorum, hiç başlamadım..."}
               className="w-full px-4 py-3.5 rounded-xl text-white placeholder:text-white/40 resize-y"
               style={{ background: "var(--bg)", border: "1.5px solid var(--border)", fontSize: "16px", minHeight: "90px" }}
             />
@@ -156,7 +176,7 @@ export default function UcretsizAnalizForm() {
             fontSize: "16px",
           }}
         >
-          {status === "sending" ? "Gönderiliyor..." : "Ücretsiz Analizimi İste →"}
+          {status === "sending" ? "Gönderiliyor..." : isReklam ? "Ücretsiz Denetim İste →" : "Ücretsiz Analizimi İste →"}
         </button>
         <p className="text-[12px] text-[#8a8a9a] text-center leading-relaxed">
           Formu göndermeniz herhangi bir satın alma yükümlülüğü doğurmaz.
@@ -165,6 +185,14 @@ export default function UcretsizAnalizForm() {
     </form>
   );
 }
+
+const SELECT_STYLE: React.CSSProperties = {
+  background: "var(--bg)", border: "1.5px solid var(--border)", fontSize: "16px",
+  appearance: "none", WebkitAppearance: "none", cursor: "pointer",
+  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238a8a9a' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`,
+  backgroundRepeat: "no-repeat", backgroundPosition: "right 14px center", paddingRight: "40px",
+  minHeight: "52px",
+};
 
 function Field({ label, id, type, placeholder, required, inputMode }: {
   label: string; id: string; type: string; placeholder: string; required?: boolean;

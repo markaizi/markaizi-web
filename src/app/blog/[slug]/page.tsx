@@ -8,6 +8,8 @@ import JsonLd from "@/components/JsonLd";
 import { breadcrumbJsonLd } from "@/lib/seo";
 import { BLOG_POSTS, getPostBySlug } from "@/lib/blog-data";
 import VideoCallout from "@/components/VideoCallout";
+import Link from "next/link";
+import { FOUNDER, founderRef } from "@/lib/founder";
 
 export function generateStaticParams() {
   return BLOG_POSTS.map((p) => ({ slug: p.slug }));
@@ -23,7 +25,11 @@ const CATEGORY_SERVICE: Record<string, { href: string; label: string }> = {
   "İçerik Üretimi": { href: "/hizmetler/yapay-zeka-otomasyon", label: "Yapay Zeka & Otomasyon" },
   "Reklam Stratejisi": { href: "/hizmetler/dijital-pazarlama-danismanligi", label: "Dijital Pazarlama Danışmanlığı" },
   "Kafe & Restoran": { href: "/ankara-kafe-restoran-reklam-ajansi", label: "Ankara Kafe & Restoran Reklam Ajansı" },
+  "Ölçümleme": { href: "/hizmetler/donusum-takibi-kurulumu", label: "Dönüşüm Takibi Kurulumu" },
+  "Yapay Zeka": { href: "/hizmetler/yapay-zeka-arama-gorunurlugu", label: "Yapay Zeka Arama Görünürlüğü" },
 };
+
+const AD_CATEGORIES = new Set(["Meta Reklamları", "Google Ads", "Reklam Stratejisi", "TikTok", "Ölçümleme", "Mobilya Sektörü"]);
 
 export async function generateMetadata({
   params,
@@ -43,7 +49,7 @@ export async function generateMetadata({
       type: "article",
       publishedTime: post.dateISO,
       modifiedTime: post.dateModifiedISO ?? post.dateISO,
-      authors: ["markaizi"],
+      authors: [FOUNDER.name],
     },
   };
 }
@@ -68,11 +74,8 @@ export default async function BlogPostPage({
     datePublished: post.dateISO,
     dateModified: post.dateModifiedISO ?? post.dateISO,
     image: "https://markaizi.com.tr/opengraph-image",
-    author: {
-      "@type": "Organization",
-      name: "markaizi Dijital Reklam Ajansı",
-      url: "https://markaizi.com.tr",
-    },
+    // Yazar kurucu (kişi) — tam tanımı /samet-saglam sayfasındaki Person şemasında
+    author: founderRef,
     publisher: {
       "@type": "Organization",
       name: "markaizi",
@@ -155,7 +158,9 @@ export default async function BlogPostPage({
               <span>·</span>
               <span>{post.readTime} okuma</span>
               <span>·</span>
-              <span>markaizi</span>
+              <Link href={FOUNDER.path} className="hover:text-white transition-colors underline-offset-2 hover:underline">
+                {FOUNDER.name}
+              </Link>
             </div>
           </div>
         </section>
@@ -186,6 +191,13 @@ export default async function BlogPostPage({
                 <div key={i} className="blog-section">
                   <h2>{section.h2}</h2>
                   <p>{section.body}</p>
+                  {section.link && (
+                    <p>
+                      <Link href={section.link.href} className="text-[#c084fc] underline underline-offset-2 hover:text-white transition-colors">
+                        {section.link.label} →
+                      </Link>
+                    </p>
+                  )}
                 </div>
               ))}
 
@@ -217,6 +229,30 @@ export default async function BlogPostPage({
 
               {post.videoSlug && <VideoCallout slug={post.videoSlug} className="mt-6" />}
 
+              {/* Yazar kutusu */}
+              <div
+                className="mt-8 flex items-start gap-4 p-5 rounded-xl"
+                style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
+              >
+                <div
+                  aria-hidden="true"
+                  className="w-12 h-12 flex-shrink-0 rounded-full flex items-center justify-center font-black text-[15px] text-white"
+                  style={{ background: "var(--grad)" }}
+                >
+                  SS
+                </div>
+                <div>
+                  <p className="text-[12px] font-semibold uppercase tracking-wider text-[#8a8a9a] mb-1">Yazar</p>
+                  <Link href={FOUNDER.path} className="text-[16px] font-bold text-white hover:text-[#c084fc] transition-colors">
+                    {FOUNDER.name}
+                  </Link>
+                  <p className="text-[13.5px] text-[#8a8a9a] leading-relaxed mt-1 m-0">
+                    markaizi&apos;nin kurucusu. Ankara Siteler&apos;de matbaa ve katalog tasarımıyla başladı; mobilya sektöründeki
+                    on yılı aşkın deneyimiyle işletmelerin Meta ve Google reklamlarını, sosyal medyasını ve ölçüm altyapısını yönetiyor.
+                  </p>
+                </div>
+              </div>
+
               {/* Mobilya yazıları → sektör sayfası iç linki */}
               {post.category === "Mobilya Sektörü" && (
                 <p className="mt-6 text-[14px] text-[#8a8a9a] leading-relaxed">
@@ -228,6 +264,20 @@ export default async function BlogPostPage({
                     Mobilya Reklam Ajansı
                   </a>{" "}
                   sayfamızda bulabilirsiniz.
+                </p>
+              )}
+
+              {/* Reklam konulu yazılar → ücretsiz reklam hesabı denetimi */}
+              {AD_CATEGORIES.has(post.category) && (
+                <p className="mt-6 text-[14px] text-[#8a8a9a] leading-relaxed">
+                  Reklam veriyor ama sonuçtan emin değil misiniz?{" "}
+                  <a
+                    href="/reklam-hesabi-denetimi"
+                    className="text-[#c084fc] underline underline-offset-2 hover:text-white transition-colors"
+                  >
+                    Reklam hesabınızı ücretsiz denetleyelim
+                  </a>
+                  ; yalnızca görüntüleme yetkisiyle bakıyoruz.
                 </p>
               )}
 

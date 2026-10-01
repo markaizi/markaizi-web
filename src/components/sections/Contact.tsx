@@ -43,6 +43,26 @@ const CONTACT_ITEMS = [
   },
 ];
 
+const SERVICES = [
+  "Sosyal Medya Yönetimi", "Meta Reklamları", "Google Reklamları", "TikTok Reklamları",
+  "Dönüşüm Takibi (Pixel & CAPI)", "Yapay Zeka Arama Görünürlüğü", "Yapay Zeka & Otomasyon",
+  "Web Tasarım & Hosting", "Dijital Pazarlama Danışmanlığı", "Kurumsal Eğitim",
+  "Video Çekimi & Drone", "Tüm Hizmetler",
+];
+
+// Sektör, talebi panelde ayırmak ve ilk görüşmeye hazırlıklı gelmek için sorulur.
+const SECTORS = [
+  "Mobilya", "Kafe / Restoran", "Sağlık / Klinik / Estetik", "Doğal Ürün / Takviye",
+  "Perakende / E-ticaret", "Emlak / İnşaat", "Hizmet / B2B", "Diğer",
+];
+
+const SELECT_STYLE: React.CSSProperties = {
+  background: "var(--bg)", border: "1.5px solid var(--border)",
+  appearance: "none", WebkitAppearance: "none", cursor: "pointer",
+  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238a8a9a' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`,
+  backgroundRepeat: "no-repeat", backgroundPosition: "right 14px center", paddingRight: "40px",
+};
+
 const GENERIC_ERROR = "Bir hata oluştu, lütfen tekrar deneyin veya doğrudan e-posta gönderin.";
 
 export default function Contact() {
@@ -59,6 +79,7 @@ export default function Contact() {
       name:    (form.elements.namedItem("name")    as HTMLInputElement).value,
       email:   (form.elements.namedItem("email")   as HTMLInputElement).value,
       phone:   (form.elements.namedItem("phone")   as HTMLInputElement).value,
+      sector:  (form.elements.namedItem("sector")  as HTMLSelectElement).value,
       service: (form.elements.namedItem("service") as HTMLSelectElement).value,
       message: (form.elements.namedItem("message") as HTMLTextAreaElement).value,
     };
@@ -124,26 +145,29 @@ export default function Contact() {
             <div className="mb-5">
               <Field label="Telefon" id="phone" type="tel" placeholder="+90 552 077 27 00" />
             </div>
-            <div className="mb-5">
-              <label htmlFor="service" className="block text-[13px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-2">
-                İlgilendiğiniz Hizmet
-              </label>
-              <select
-                id="service"
-                name="service"
-                className="w-full px-4 py-3.5 rounded-xl text-[15px] text-white"
-                style={{
-                  background: "var(--bg)", border: "1.5px solid var(--border)",
-                  appearance: "none", WebkitAppearance: "none", cursor: "pointer",
-                  backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%238a8a9a' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E")`,
-                  backgroundRepeat: "no-repeat", backgroundPosition: "right 14px center", paddingRight: "40px",
-                }}
-              >
-                <option value="">Seçiniz...</option>
-                {["Sosyal Medya Yönetimi", "Meta Reklamları", "TikTok Reklamları", "Google Reklamları", "Yapay Zeka & Otomasyon", "Web Tasarım & Hosting", "Tüm Hizmetler"].map((o) => (
-                  <option key={o} style={{ background: "#0f0f14" }}>{o}</option>
-                ))}
-              </select>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
+              <div>
+                <label htmlFor="sector" className="block text-[13px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-2">
+                  Sektörünüz
+                </label>
+                <select id="sector" name="sector" className="w-full px-4 py-3.5 rounded-xl text-[15px] text-white" style={SELECT_STYLE}>
+                  <option value="">Seçiniz...</option>
+                  {SECTORS.map((o) => (
+                    <option key={o} style={{ background: "#0f0f14" }}>{o}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label htmlFor="service" className="block text-[13px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-2">
+                  İlgilendiğiniz Hizmet
+                </label>
+                <select id="service" name="service" className="w-full px-4 py-3.5 rounded-xl text-[15px] text-white" style={SELECT_STYLE}>
+                  <option value="">Seçiniz...</option>
+                  {SERVICES.map((o) => (
+                    <option key={o} style={{ background: "#0f0f14" }}>{o}</option>
+                  ))}
+                </select>
+              </div>
             </div>
             <div className="mb-7">
               <label htmlFor="message" className="block text-[13px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-2">Mesajınız</label>

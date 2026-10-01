@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import ServicePageTemplate from "@/components/ServicePageTemplate";
 
 export const metadata: Metadata = {
-  title: "Video Çekimi & Drone Çekimi — Tanıtım Filmi, Sosyal Medya Videosu | markaizi",
+  title: { absolute: "Video Çekimi & Drone Çekimi — Tanıtım Filmi, Sosyal Medya Videosu | markaizi" },
   description:
     "Firmalara video başı anlaşmayla profesyonel video çekimi: tanıtım filmi, sosyal medya videosu ve Reels, mankenli ya da mankensiz çekim. Emlak, proje ve işletmeler için drone (hava) çekimi.",
   keywords:

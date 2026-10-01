@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import ServicePageTemplate from "@/components/ServicePageTemplate";
 
 export const metadata: Metadata = {
-  title: "Meta Reklamları Ankara & Türkiye Geneli — Instagram & Facebook Reklam | markaizi",
+  title: { absolute: "Meta Reklamları Ankara & Türkiye Geneli — Instagram & Facebook Reklam | markaizi" },
   description: "Ankara'da Meta (Instagram & Facebook) reklam yönetimi. Mobilyacı, avizeci, aksesuarcı ve yerel işletmelere ROAS odaklı, hedef kitleye özel Meta Ads kampanyaları. Türkiye genelinde uzaktan hizmet.",
   keywords: "meta reklam ankara, instagram reklamı ankara, facebook reklamı ankara, ankara mobilya meta reklam, siteler meta ads, ankara işletme facebook reklamı, instagram reklam yönetimi ankara",
   alternates: { canonical: "https://markaizi.com.tr/hizmetler/meta-reklamlari" },
@@ -20,7 +20,11 @@ export default function MetaReklamlariPage() {
       badge="Reklam Yönetimi"
       icon={ICON}
       path="/hizmetler/meta-reklamlari"
-      relatedPosts={[{ slug: "meta-ads-roas", title: "Meta Ads'de ROAS Artırma" }]}
+      relatedPosts={[
+        { slug: "meta-ads-roas", title: "Meta Ads'de ROAS Artırma" },
+        { slug: "meta-pixel-conversions-api-rehberi", title: "Meta Pixel ve Conversions API Rehberi" },
+        { slug: "ajans-degistirirken-reklam-hesabi-devri", title: "Ajans Değiştirirken Hesap Devri" },
+      ]}
       title="Meta Reklamları"
       subtitle="Instagram ve Facebook'ta tam hedefleme gücüyle reklam kampanyaları kuruyoruz. Yatırımınızın karşılığını maksimize etmek için veriyi merkeze koyuyoruz."
       description={[

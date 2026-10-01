@@ -1,7 +1,7 @@
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Sıkça Sorulan Sorular — markaizi Ankara Dijital Reklam Ajansı",
+  title: { absolute: "Sıkça Sorulan Sorular — markaizi Ankara Dijital Reklam Ajansı" },
   description:
     "Ankara dijital reklam ajansı hakkında merak edilenlerin yanıtları. Sosyal medya yönetimi, Google Ads, Meta reklamları ve çalışma süreci hakkında SSS.",
   keywords:

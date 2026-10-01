@@ -20,6 +20,7 @@ export async function POST(req: NextRequest) {
     const name = cleanStr(body.name, 120);
     const email = cleanStr(body.email, 254);
     const phone = cleanPhone(body.phone);
+    const sector = cleanStr(body.sector, 80);
     const service = cleanStr(body.service, 80);
     const message = cleanStr(body.message, 5000);
 
@@ -33,7 +34,7 @@ export async function POST(req: NextRequest) {
 
     // Önce veritabanına yaz — e-posta gönderimi başarısız olsa bile talep kaybolmasın.
     const submission = await prisma.submission.create({
-      data: { type: "CONTACT", data: { name, email, phone, service, message } },
+      data: { type: "CONTACT", data: { name, email, phone, sector, service, message } },
     });
 
     const transporter = nodemailer.createTransport({
@@ -69,6 +70,10 @@ export async function POST(req: NextRequest) {
               <tr>
                 <td style="padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.07);color:#8a8a9a;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:1px">Telefon</td>
                 <td style="padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.07);color:#fff;font-size:15px">${escapeHtml(phone) || "—"}</td>
+              </tr>
+              <tr>
+                <td style="padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.07);color:#8a8a9a;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:1px">Sektör</td>
+                <td style="padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.07);color:#fff;font-size:15px">${escapeHtml(sector) || "—"}</td>
               </tr>
               <tr>
                 <td style="padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.07);color:#8a8a9a;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:1px">Hizmet</td>

@@ -6,7 +6,7 @@ import WhatsApp from "@/components/WhatsApp";
 import WebTeklifForm from "@/components/WebTeklifForm";
 
 export const metadata: Metadata = {
-  title: "Web Sitesi Teklif Formu — markaizi",
+  title: { absolute: "Web Sitesi Teklif Formu — markaizi" },
   description: "E-ticaret, kurumsal veya tanıtım siteniz için ücretsiz teklif alın. Proje detaylarınızı paylaşın, 24 saat içinde size özel fiyat hazırlayalım.",
   alternates: { canonical: "https://markaizi.com.tr/hizmetler/web-tasarim-hosting/teklif" },
 };

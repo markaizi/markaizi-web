@@ -20,13 +20,20 @@ export async function POST(req: NextRequest) {
     const link = cleanStr(body.link, 200);
     const sector = cleanStr(body.sector, 80);
     const note = cleanStr(body.note, 1000);
+    // Reklam hesabı denetimi sayfasından gelen taleplerde dolu gelir
+    const kaynak = cleanStr(body.kaynak, 60);
+    const platform = cleanStr(body.platform, 60);
+    const isReklam = kaynak === "Reklam Hesabı Denetimi";
 
     if (!name || !phone || !link) {
       return NextResponse.json({ error: "Zorunlu alanlar eksik." }, { status: 400 });
     }
 
     const submission = await prisma.submission.create({
-      data: { type: "ANALIZ", data: { name, phone, link, sector, note } },
+      data: {
+        type: "ANALIZ",
+        data: isReklam ? { kaynak, name, phone, link, sector, platform, note } : { name, phone, link, sector, note },
+      },
     });
 
     const transporter = nodemailer.createTransport({
@@ -41,12 +48,12 @@ export async function POST(req: NextRequest) {
       await transporter.sendMail({
         from: `"markaizi Ücretsiz Analiz" <${process.env.GMAIL_USER}>`,
         to: process.env.GMAIL_USER,
-        subject: `[markaizi] Ücretsiz Analiz Talebi — ${name}`.slice(0, 200),
+        subject: `[markaizi] ${isReklam ? "Reklam Hesabı Denetimi Talebi" : "Ücretsiz Analiz Talebi"} — ${name}`.slice(0, 200),
         html: `
         <div style="font-family:Inter,Arial,sans-serif;max-width:600px;margin:0 auto;background:#050505;color:#fff;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,0.1)">
           <div style="background:linear-gradient(135deg,#7c3aed,#a855f7,#ec4899);padding:24px 32px">
-            <h1 style="margin:0;font-size:20px;font-weight:700;color:#fff">Yeni Ücretsiz Analiz Talebi</h1>
-            <p style="margin:4px 0 0;color:rgba(255,255,255,0.8);font-size:14px">markaizi.com.tr/ucretsiz-analiz üzerinden gönderildi</p>
+            <h1 style="margin:0;font-size:20px;font-weight:700;color:#fff">${isReklam ? "Yeni Reklam Hesabı Denetimi Talebi" : "Yeni Ücretsiz Analiz Talebi"}</h1>
+            <p style="margin:4px 0 0;color:rgba(255,255,255,0.8);font-size:14px">markaizi.com.tr/${isReklam ? "reklam-hesabi-denetimi" : "ucretsiz-analiz"} üzerinden gönderildi</p>
           </div>
           <div style="padding:32px">
             <table style="width:100%;border-collapse:collapse">
@@ -66,6 +73,10 @@ export async function POST(req: NextRequest) {
                 <td style="padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.07);color:#8a8a9a;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:1px">Sektör</td>
                 <td style="padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.07);color:#fff;font-size:15px">${escapeHtml(sector) || "—"}</td>
               </tr>
+              ${isReklam ? `<tr>
+                <td style="padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.07);color:#8a8a9a;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:1px">Reklamlar</td>
+                <td style="padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.07);color:#fff;font-size:15px">${escapeHtml(platform) || "—"}</td>
+              </tr>` : ""}
               <tr>
                 <td style="padding:12px 16px 12px 0;vertical-align:top;color:#8a8a9a;font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:1px">Not</td>
                 <td style="padding:12px 0;color:#8a8a9a;font-size:15px;line-height:1.7">${escapeHtml(note).replace(/\n/g, "<br>") || "—"}</td>

@@ -88,6 +88,48 @@ const FAQS = [
     ],
   },
   {
+    category: "Ajans Değiştirmek & Hesap Devri",
+    items: [
+      {
+        q: "Başka bir ajansla çalışıyorum, size geçersem reklam hesabım ve geçmiş verilerim ne olur?",
+        a: "Hesabınız sizinse hiçbir şey kaybolmaz. Mümkün olduğunda yeni hesap açmak yerine mevcut hesabı devralıyoruz; çünkü geçmiş kampanya, kitle ve dönüşüm verisi reklam sistemi için değerlidir ve sıfırdan başlamak öğrenme sürecini uzatır. Devralmadan önce hesabı inceleyip neyin korunacağını, neyin yeniden kurulacağını size anlatıyoruz.",
+      },
+      {
+        q: "Reklam hesabım ajansın üzerine açıldıysa ne yapmalıyım?",
+        a: "Önce mevcut ajanstan hesabın ve ödeme yönteminin size devrini isteyin; Meta İşletme Portföyü ve Google Ads'te hesap sahipliği aktarılabilir. Devir mümkün değilse yeni hesap açılır, ama kitleler, piksel verisi ve kampanya geçmişi büyük ölçüde sıfırlanır. Bu yüzden hangi ajansla çalışırsanız çalışın, reklam hesabının, sayfanın ve pikselin sizin işletme hesabınızda olmasını şart koşun.",
+      },
+      {
+        q: "Geçiş sürecinde reklamlarım durur mu?",
+        a: "Durması gerekmez. Erişim yetkileri sizin onayınızla eklendikten sonra çalışan kampanyalara dokunmadan hesabı inceliyor, ilk değişiklikleri planlı ve kademeli yapıyoruz. Çalışan bir kampanyayı bir gecede baştan kurmak, sistemi yeniden öğrenme sürecine sokacağı için genellikle tercih etmediğimiz bir yoldur.",
+      },
+      {
+        q: "Mevcut ajansımla çalışırken bağımsız bir ikinci görüş alabilir miyim?",
+        a: "Evet. Ücretsiz reklam hesabı denetiminde yalnızca görüntüleme yetkisiyle hesabınıza bakıyor, ölçüm kurulumunu, kampanya yapısını ve bütçenin nereye gittiğini inceliyoruz. Hiçbir ayarı değiştirmiyoruz; bulguları size anlatıyoruz, karar sizin.",
+      },
+      {
+        q: "Sizinle çalışırken kiminle muhatap olurum?",
+        a: "Satış temsilcisiyle değil, hesabınızı yöneten ekiple. İlk görüşmeyi ve strateji toplantılarını kurucumuz Samet Sağlam yapar; günlük iletişimde kampanyalarınızı yöneten ekip arkadaşımız sizinle doğrudan konuşur. Kampanyalarınızı ve raporlarınızı ayrıca size özel müşteri panelinden takip edebilirsiniz.",
+      },
+    ],
+  },
+  {
+    category: "Ölçüm & Yapay Zeka",
+    items: [
+      {
+        q: "Reklamlarımın gerçekten satış getirip getirmediğini nasıl anlarım?",
+        a: "Önce ölçümün doğru kurulu olması gerekir: form, WhatsApp, arama ve satın alma gibi dönüşümlerin Meta Pixel, Conversions API ve Google etiketleriyle eksiksiz ve tek sefer sayılması. Ölçüm hatalıysa panelde iyi görünen rapor yanıltıcı olabilir. Mağazada kapanan satışları da kayıt altına alıp reklam verisiyle eşleştirdiğinizde hangi kampanyanın gerçekten satış getirdiği netleşir.",
+      },
+      {
+        q: "Conversions API (CAPI) kurmak zorunlu mu?",
+        a: "Zorunlu değil ama çoğu işletme için güçlü bir öneri. Tarayıcı engelleri ve çerez kısıtlamaları yüzünden yalnızca Pixel ile ölçülen dönüşümlerin bir kısmı kaybolabiliyor. Conversions API aynı olayları sunucudan da iletir; doğru eşleştirildiğinde çift sayım olmaz ve reklam sistemi daha fazla veriyle öğrenir.",
+      },
+      {
+        q: "ChatGPT gibi yapay zeka asistanlarında işletmemin önerilmesi mümkün mü?",
+        a: "Garanti edilemez ama güçlendirilebilir. Yapay zeka asistanları cevap üretirken web sitenizdeki bilgilerin netliğine, sektörünüz ve bölgenizle ilgili içeriklere, Google İşletme Profilinize, yorumlara ve başka sitelerde markanızdan nasıl bahsedildiğine bakar. Bu sinyalleri düzenleyen çalışmaya yapay zeka arama görünürlüğü (GEO) deniyor; ChatGPT'de ayrıca ücretli reklam vermek de artık Türkiye'den mümkün.",
+      },
+    ],
+  },
+  {
     category: "Danışmanlık, Eğitim & Video Çekimi",
     items: [
       {

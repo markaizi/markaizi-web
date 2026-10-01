@@ -952,6 +952,110 @@ export const MOBILYA_WEB: LandingContent = {
   linkLabel: "Mobilya Web Sitesi",
 };
 
+export const MOBILYA_BAYI: LandingContent = {
+  path: "/mobilya-bayi-reklam-ajansi",
+  kind: "hizmet",
+  metaTitle: "Mobilya Bayileri İçin Reklam Ajansı — İstikbal, Bellona, Doğtaş, Kelebek Bayi Pazarlaması | markaizi",
+  metaDescription:
+    "İstikbal, Bellona, Doğtaş, Kelebek ve diğer mobilya markalarının bayileri için yerel Instagram, Meta ve Google reklamları. Ana markanın kampanyalarıyla uyumlu, bölgeye odaklı bayi pazarlaması. Alitel Mobilya: 7 yıl, her yıl İstikbal bayileri arasında Türkiye ciro birinciliği.",
+  keywords:
+    "mobilya bayi reklam ajansı, istikbal bayi reklam, bellona bayi reklam, doğtaş bayi reklam, kelebek bayi reklam, mobilya bayisi sosyal medya yönetimi, mobilya bayi google reklamları, bayi pazarlaması, mobilya bayisi instagram reklamı",
+  tag: "Mobilya Bayileri",
+  h1Plain: "Mobilya Bayileri İçin",
+  h1Accent: "Dijital Pazarlama ve Reklam",
+  lead: [
+    "Bir mobilya markasının bayisi olmak hem büyük bir avantaj hem de özel bir zorluk. Avantaj, tanınan bir markanın güveni ve ulusal kampanyaların yarattığı talep. Zorluk ise aynı ürünleri satan başka bayilerle aynı şehirde, hatta aynı caddede aynı müşteriyi beklemek. Müşteri markaya karar verdiğinde sorusu artık 'hangi marka' değil, 'hangi mağaza' oluyor.",
+    "markaizi olarak Ankara Siteler'den başlayıp Türkiye geneline uzanan on yılı aşkın mobilya deneyimimiz boyunca İstikbal, Doğtaş ve Kelebek bayileriyle çalıştık. Yedi yıldır birlikte çalıştığımız Alitel Mobilya, her yıl İstikbal bayileri arasında Türkiye ciro birinciliğini aldı. Bu sayfada bayi pazarlamasının bağımsız mağaza pazarlamasından nerede ayrıldığını ve bunu nasıl kurguladığımızı anlatıyoruz.",
+  ],
+  sections: [
+    {
+      h2: "Bayi Pazarlaması Neden Farklı Kurulur?",
+      paragraphs: [
+        "Bağımsız bir mobilya mağazası ürününü, tasarımını ve fiyatını öne çıkararak ayrışabilir. Bayide ise ürün kataloğu, fiyat politikası ve kurumsal kimlik büyük ölçüde ana markadan gelir; şehirdeki diğer bayiler de aynı koltuk takımını, aynı kampanyayla satar. Bu durumda reklamın görevi markayı tanıtmak değil, markaya zaten ısınmış müşteriyi sizin mağazanıza getirmektir.",
+        "Ayrışma bu yüzden mağazanın kendisinden gelir: konumunuz ve ulaşım kolaylığı, teslimat ve montaj hızınız, taksit ve ödeme seçenekleriniz, showroomunuzun büyüklüğü, satış ekibinizin ilgisi ve yıllar içinde biriktirdiğiniz müşteri memnuniyeti. Reklam metinlerini, videoları ve Google profilini bu farkları anlatacak şekilde kuruyoruz.",
+      ],
+    },
+    {
+      h2: "Ana Markanın Kampanyasını Yerelde Satışa Çevirmek",
+      paragraphs: [
+        "Mobilya markaları yıl içinde ulusal kampanyalar, sezon indirimleri ve televizyon-dijital reklamlarıyla geniş bir talep yaratıyor. Bu talebin önemli kısmı 'en yakın mağaza' sorusuyla sonuçlanıyor. Bayi olarak yapılacak en verimli iş, ana markanın kampanya takvimini önceden bilip o dönemlerde kendi bölgenizde görünürlüğü artırmaktır.",
+        "Kampanya dönemlerinde reklamı mağazanızın gerçekten hizmet verdiği bölgeye yoğunlaştırıyor, mesajı 'kampanya [semt adı] mağazamızda' netliğinde kuruyor ve WhatsApp, arama ve yol tarifi gibi mağazaya getiren eylemleri hedefliyoruz. Böylece markanın yarattığı ilgi, şehrin öbür ucundaki bayiye değil size akıyor.",
+      ],
+      bullets: [
+        "Ana markanın kampanya takvimine göre önceden planlanmış bütçe",
+        "Mağazanızın hizmet bölgesine göre daraltılmış hedefleme",
+        "Kampanya döneminde mağaza ziyaretine yönlendiren mesaj ve teklif",
+        "Kampanya sonrası yeniden hedefleme ile karar vermeyenlere ikinci temas",
+      ],
+    },
+    {
+      h2: "Marka Adıyla Yapılan Aramaları Kaçırmayın",
+      paragraphs: [
+        "Bayi müşterisinin önemli bir kısmı Google'da markanın adını semt ya da şehirle birlikte arar: '[marka] Siteler', '[marka] Etimesgut', '[marka] mağazası yakınımda' gibi. Bu aramalarda Google Haritalar'da ve arama sonuçlarında ilk görünen bayi, müşterinin ilk uğradığı mağaza olur.",
+        "Google İşletme Profilinizi markanın bayi isimlendirme kurallarına uygun, eksiksiz ve güncel tutuyor; fotoğraf, yorum ve ürün güncellemeleriyle profili canlı tutuyoruz. Google reklamlarında marka adının kullanımı ise bayi sözleşmenize ve Google'ın ticari marka kurallarına bağlıdır; kampanyaları bu sınırlar içinde, ana markayla çatışmayacak şekilde kuruyoruz.",
+      ],
+    },
+    {
+      h2: "Aynı Müşteriye Başka Bayilerle Birlikte Para Harcamamak",
+      paragraphs: [
+        "Aynı markanın birden fazla bayisi aynı şehre reklam verdiğinde, aynı kişiye aynı ürünün reklamı farklı mağazalardan defalarca gösterilir ve tıklama maliyetleri yükselir. Çözüm, bütçeyi şehrin geneline değil, müşterinin mağazanıza gerçekten gelebileceği yarıçapa ve ulaşım akslarına göre dağıtmaktır.",
+        "Birden fazla mağazası olan bayilerde her mağaza için ayrı kampanya ve ayrı hedef bölge kuruyor, raporu tek ekranda topluyoruz. Böylece hangi mağazanın hangi bütçeyle kaç müşteri getirdiğini ayrı ayrı görebiliyorsunuz.",
+      ],
+    },
+    {
+      h2: "Mağazada Kapanan Satışı Ölçmek",
+      paragraphs: [
+        "Bayide satış neredeyse her zaman mağazada kapanır. Reklam panelinde görünen mesaj ve arama sayısı tek başına başarıyı göstermez; asıl soru, bu temasların kaçının mağazaya gelip satın aldığıdır. Kurulumda WhatsApp, arama ve yol tarifi eylemlerini ayrı ayrı ölçüyor, mümkün olduğunda mağaza satış kayıtlarınızı reklam verisiyle eşleştiriyoruz.",
+        "Bu sayede bütçeyi 'en ucuz mesajı getiren' değil, 'en çok satışa dönen müşteriyi getiren' kampanyaya kaydırabiliyoruz. Yedi yıllık Alitel çalışmasında bütçenin sürekli verimli alanlara kaydırılabilmesinin temeli de bu ölçüm disipliniydi.",
+      ],
+    },
+    {
+      h2: "Alitel Mobilya: Bayi Pazarlamasında Yedi Yıl",
+      paragraphs: [
+        "Alitel Mobilya ile yedi yıldır birlikte çalışıyoruz. Bu sürede Alitel her yıl İstikbal bayileri arasında Türkiye ciro birinciliğini aldı; bugün Türkiye'nin en büyük ve en hızlı büyüyen İstikbal bayilerinden biri olarak anılıyor. İş birliği boyunca 10 milyon TL'nin üzerinde reklam bütçesi yönettik ve ana performans kanalı Google reklamları oldu.",
+        "Bu başarının ana unsurları Alitel'in kendi ürün ve hizmet anlayışı ile satış ekibidir; biz dijital kanallardan destek olan taraf olduk. Ama bir bayinin dijitalde nasıl uzun soluklu ve ölçülebilir biçimde büyüyebileceğine dair elimizdeki en somut örnek bu.",
+      ],
+    },
+  ],
+  faq: [
+    {
+      q: "Ana marka zaten reklam veriyor, bayi olarak ayrıca reklam vermeli miyim?",
+      a: "Ana markanın reklamı markaya talep yaratır ama müşteriyi hangi mağazaya gideceği konusunda yönlendirmez. Bayi reklamı bu talebi kendi bölgenizde yakalayıp mağazanıza getirmek içindir. Özellikle aynı şehirde birden fazla bayi varsa, yerel görünürlüğü olmayan bayi markanın yarattığı ilgiden payını alamaz.",
+    },
+    {
+      q: "Reklamlarımda ve Google profilimde marka adını kullanabilir miyim?",
+      a: "Genellikle evet, ama kuralları ana markanın bayi sözleşmesi ve kurumsal kimlik kılavuzu belirler. Google reklamlarında marka adının kullanımı ayrıca Google'ın ticari marka politikalarına tabidir. Kampanyaları kurmadan önce sözleşmenizdeki marka kullanım kurallarını birlikte gözden geçiriyoruz.",
+    },
+    {
+      q: "Aynı şehirde aynı markanın başka bayileri de var. Nasıl ayrışırım?",
+      a: "Ürün aynı olduğu için ayrışma mağazanızdan gelir: konum ve ulaşım, teslimat ve montaj hızı, ödeme seçenekleri, showroom deneyimi ve satış ekibinin ilgisi. Reklamı hizmet verdiğiniz bölgeye yoğunlaştırıp mesajı bu farklar üzerine kurduğumuzda, şehir genelinde diğer bayilerle aynı müşteriye para harcamaktan da kurtulursunuz.",
+    },
+    {
+      q: "Birden fazla mağazam var. Hepsini tek ajansla yönetebilir miyim?",
+      a: "Evet. Her mağaza için ayrı hedef bölge ve ayrı kampanya kuruyor, sonuçları tek raporda topluyoruz. Böylece hangi mağazanın ne kadar bütçeyle kaç müşteri getirdiğini ayrı ayrı görebilir, bütçeyi mağazalar arasında veriyle paylaştırabilirsiniz.",
+    },
+    {
+      q: "Hangi markaların bayileriyle çalıştınız? Markaların resmi ajansı mısınız?",
+      a: "İstikbal, Doğtaş ve Kelebek bayileriyle çalışma geçmişimiz var; en uzun soluklu iş birliğimiz yedi yıldır sürdürdüğümüz Alitel Mobilya. markaizi bu markaların resmi ajansı değildir; bayilerle bağımsız bir dijital reklam ajansı olarak çalışır ve kampanyaları markanın kurallarına uygun şekilde kurar.",
+    },
+  ],
+  related: [
+    MAIN,
+    CASE,
+    { href: "/mobilya-google-reklamlari", label: "Mobilya Google Reklamları" },
+    { href: "/hizmetler/donusum-takibi-kurulumu", label: "Dönüşüm Takibi Kurulumu" },
+  ],
+  serviceName: "Mobilya Bayileri İçin Dijital Pazarlama ve Reklam Yönetimi",
+  areaServed: ["Türkiye"],
+  breadcrumbLabel: "Mobilya Bayi Reklam Ajansı",
+  waText: "Merhaba, mobilya bayimiz için reklam ve sosyal medya hizmeti almak istiyorum.",
+  ctaTitle: "Bayiniz İçin Ücretsiz Analiz",
+  ctaText:
+    "Mağazanızın bölgesini, şehirdeki diğer bayileri ve mevcut reklam hesabınızı inceleyip size özel bir yol haritasını 24 saat içinde paylaşalım. Görüşme ücretsiz, karar sizin.",
+  linkLabel: "Mobilya Bayileri",
+  audienceType: "İstikbal, Bellona, Doğtaş, Kelebek ve diğer mobilya markalarının bayileri",
+};
+
 export const CITY_PAGES = [ISTANBUL, INEGOL, KAYSERI, IZMIR];
-export const SERVICE_PAGES = [MOBILYA_META, MOBILYA_GOOGLE, MOBILYA_SOSYAL, MOBILYA_WEB, MOBILYA_SEO, MOBILYA_ETICARET];
+export const SERVICE_PAGES = [MOBILYA_META, MOBILYA_GOOGLE, MOBILYA_SOSYAL, MOBILYA_WEB, MOBILYA_SEO, MOBILYA_ETICARET, MOBILYA_BAYI];
 export const ALL_MOBILYA_PAGES = [...CITY_PAGES, ...SERVICE_PAGES];

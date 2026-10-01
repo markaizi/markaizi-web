@@ -1,6 +1,7 @@
 export type BlogSection = {
   h2: string;
   body: string;
+  link?: { href: string; label: string }; // Bölümün altında gösterilen iç bağlantı (araç, hizmet, rehber)
 };
 
 export type BlogPost = {
@@ -134,10 +135,16 @@ export const BLOG_POSTS: BlogPost[] = [
       "Facebook ve Instagram reklamlarında reklam harcaması getirisini (ROAS) nasıl maksimize edersiniz? A/B test stratejileri ve kreatif ipuçları.",
     date: "5 Şubat 2026",
     dateISO: "2026-02-05",
-    readTime: "8 dk",
+    dateModifiedISO: "2026-10-01",
+    readTime: "10 dk",
     intro:
       "ROAS (Return on Ad Spend — Reklam Harcaması Getirisi), harcadığınız her lira için elde ettiğiniz geliri ölçer. ROAS = 3 demek, 1 TL harcayıp 3 TL kazanmak demektir. Meta Ads'de başarılı kampanyalar için bu oranı nasıl maksimize edeceğinizi adım adım açıklıyoruz.",
     sections: [
+      {
+        h2: "Önce Şunu Bilin: Sizin İçin İyi ROAS Kaç?",
+        body: "'ROAS 3 iyi mi?' sorusunun herkes için geçerli bir cevabı yok, çünkü cevap kâr marjınıza bağlı. Reklamın ne kâr ne zarar ettirdiği noktaya başabaş ROAS denir ve hesabı basittir: 1 ÷ brüt kâr marjı. Brüt marjı %50 olan bir kozmetik markası için başabaş ROAS 2'dir; ROAS 3 rahat bir kârdır. Brüt marjı %25 olan bir elektronik satıcısı için başabaş ROAS 4'tür; ROAS 3 her satışta zarar demektir. Mobilyada marj genellikle bu ikisinin arasında kalır: %30 marjla çalışan bir mağaza için başabaş ROAS yaklaşık 3,3'tür. Bu yüzden ROAS'ı artırmaya çalışmadan önce kendi başabaş noktanızı hesaplayın; hedefiniz başkasının rakamı değil, sizin marjınızın üstü olmalı.",
+        link: { href: "/araclar/reklam-butcesi-hesaplayici", label: "Başabaş ROAS'ınızı hesaplayın" },
+      },
       {
         h2: "ROAS'ı Etkileyen Temel Faktörler",
         body: "Meta Ads'de ROAS'ı üç ana faktör belirler: hedef kitle doğruluğu, kreatif (görsel/video) kalitesi ve açılış sayfası dönüşüm oranı. Bu üç unsurdan biri zayıfsa, diğerleri ne kadar güçlü olursa olsun ROAS düşer. Önce hangi faktörün en zayıf halkayı oluşturduğunu belirleyin.",
@@ -163,12 +170,31 @@ export const BLOG_POSTS: BlogPost[] = [
         body: "Performans gösteren bir reklam setini ölçeklendirirken günlük bütçeyi bir anda ikiye katlamayın. Algoritma her büyük değişiklikten sonra yeniden öğrenme sürecine girer ve performans geçici olarak düşer. Bütçeyi 3 günde bir %20–30 artırarak ölçeklendirin. Acele edilen ölçeklendirme, kazanan kampanyaları öldürür.",
       },
       {
+        h2: "Satış Mağazada Kapanıyorsa ROAS Nasıl Ölçülür?",
+        body: "Meta'nın panelde gösterdiği ROAS, yalnızca Meta'ya bildirilen satın almalardan hesaplanır. Satışınız WhatsApp'ta ya da mağazada kapanıyorsa panel ROAS'ı ya hiç görünmez ya da gerçeği yansıtmaz. Bu durumda iki yol var. Birincisi basit bir hesap: bir ay boyunca reklamdan gelen mesajları ve bunlardan kapanan satışların cirosunu kaydedin, toplam ciroyu o ayın Meta harcamasına bölün; bu sizin gerçek ROAS'ınızdır. İkincisi daha güçlü bir kurulum: mağaza satışlarını müşterinin onayıyla Conversions API üzerinden Meta'ya geri bildirmek. Böylece Meta hangi reklamı görenlerin mağazada satın aldığını eşleştirir ve kampanyaları mesaj atana değil, satın alana göre optimize etmeye başlar.",
+        link: { href: "/blog/meta-pixel-conversions-api-rehberi", label: "Meta Pixel ve Conversions API rehberi" },
+      },
+      {
         h2: "Açılış Sayfası Optimizasyonu",
         body: "ROAS'ın göz ardı edilen bileşeni açılış sayfasıdır. Reklamdan gelen trafik ne kadar kaliteli olursa olsun, açılış sayfası yavaş yükleniyorsa veya güven vermiyorsa dönüşüm gerçekleşmez. Sayfa yükleme süresini 3 saniyenin altında tutun, mobil uyumlu tasarım kullanın ve en fazla 1 net CTA koyun.",
       },
     ],
     conclusion:
       "Meta Ads'de yüksek ROAS sabah akşam optimizasyon gerektiren bir süreçtir. markaizi olarak Meta reklam kampanyalarınızı haftalık raporlarla yönetip sürekli iyileştiriyoruz. Kampanyanızın ROAS analizini ücretsiz yapmak için bizimle iletişime geçin.",
+    faq: [
+      {
+        q: "ROAS nasıl hesaplanır?",
+        a: "ROAS = reklamdan gelen ciro ÷ reklam harcaması. Ayda 40.000 TL reklam harcayıp reklamdan 200.000 TL ciro elde ettiyseniz ROAS 5'tir; yani her 1 TL reklam 5 TL ciro getirmiştir.",
+      },
+      {
+        q: "Başabaş ROAS nedir, nasıl bulunur?",
+        a: "Reklamın ne kâr ne zarar ettirdiği ROAS seviyesidir: 1 ÷ brüt kâr marjı. Marjınız %30 ise başabaş ROAS yaklaşık 3,3'tür. Bunun altındaki ROAS, ürün maliyeti ve reklam düşüldükten sonra zarar anlamına gelir.",
+      },
+      {
+        q: "Satışlarım mağazada oluyor, Meta'daki ROAS rakamına güvenebilir miyim?",
+        a: "Tek başına güvenmeyin. Meta yalnızca kendisine bildirilen satın almaları görür. Reklamdan gelen müşterilerin mağazadaki satışlarını kaydedip harcamaya bölerek gerçek ROAS'ınızı hesaplayabilir ya da bu satışları Conversions API ile Meta'ya geri bildirebilirsiniz.",
+      },
+    ],
   },
   {
     slug: "tiktok-for-business",
@@ -697,7 +723,8 @@ export const BLOG_POSTS: BlogPost[] = [
       "'Günlük kaç TL reklam verelim?' sorusunun herkese uyan cevabı yok. İşletmenizin hangi aşamada olduğuna göre reklam bütçesini belirlemenin, ne zaman artırıp ne zaman durmanın pratik rehberi.",
     date: "26 Eylül 2026",
     dateISO: "2026-09-26",
-    readTime: "8 dk",
+    dateModifiedISO: "2026-10-01",
+    readTime: "10 dk",
     intro:
       "Reklam vermeye karar veren hemen her işletme sahibinin ilk sorusu aynı: 'Günlük kaç lira ayırmalıyım?' İnternette bu soruya net rakamlar veren çok içerik var, ama o rakamlar sizin ürününüzü, fiyatınızı, müşterinizi ve kapasitenizi bilmiyor. Bütçeyi belirlemenin daha sağlıklı yolu, önce işletmenizin hangi aşamada olduğunu anlamak. Çünkü neyin çalıştığını henüz bilmeyen bir işletme ile çalışan bir sistemi büyütmek isteyen işletmenin bütçe sorusu birbirinden tamamen farklı.",
     sections: [
@@ -722,6 +749,15 @@ export const BLOG_POSTS: BlogPost[] = [
         body: "Hangi videonun ve teklifin çalıştığını bilmiyorsanız, müşteri başına maliyetinizi hesaplayamıyorsanız veya reklamdan gelen mesajların kaçının satışa döndüğünü takip etmiyorsanız test aşamasındasınız. Düzenli ve kabul edilebilir maliyetle müşteri geliyor ama işletmenin kapasitesi henüz sınanmadıysa büyüme aşamasındasınız. Müşteri maliyetinizi, kârlılığınızı ve operasyon sınırınızı biliyorsanız ölçeklemeye hazırsınız. Aşamayı atlamak en pahalı hatadır: test edilmemiş bir sisteme büyük bütçe vermek, cevabını bilmediğiniz bir soruya yüksek bahis koymak gibidir.",
       },
       {
+        h2: "Rakamla Hesap: Bütçeyi Hedeften Geriye Kurmak",
+        body: "Aşamanızı belirledikten sonra bütçeyi rakama dökmenin en sağlam yolu, hedeften geriye hesaplamaktır. Bunun için dört bilgiye ihtiyacınız var: ayda kaç satış istediğiniz, ortalama satış tutarınız, brüt kâr marjınız ve bir müşteri adayının (mesaj, form ya da arama) size kaça mal olduğu. Bir de bu adayların kaçının satışa döndüğü. Örnek: ortalama satışı 45.000 TL olan bir mobilya mağazası ayda 20 satış istiyor. Reklamdan gelen bir WhatsApp mesajı 90 TL'ye geliyor ve 100 mesajdan 2'si satışa dönüyor. 20 satış için 1.000 mesaj gerekir; 1.000 × 90 = 90.000 TL aylık bütçe. Bu bütçeyle beklenen ciro 900.000 TL, yani her 1 TL reklam 10 TL ciro getiriyor. Mağazanın kâr marjı %30 ise reklamın kendini çıkarması için gereken en düşük oran 3,3; hesap kârlı görünüyor.",
+        link: { href: "/araclar/reklam-butcesi-hesaplayici", label: "Kendi rakamlarınızla hesaplayın: Reklam Bütçesi Hesaplayıcı" },
+      },
+      {
+        h2: "Bütçeden Önce Dönüşüm Oranına Bakın",
+        body: "Aynı örnekte mağaza mesajlara daha hızlı döner, fiyatı ölçü, kumaş ve ödeme seçenekleriyle birlikte anlatır ve dönüşümü %2'den %3'e çıkarırsa ne olur? 20 satış için artık yaklaşık 667 mesaj yeter ve gereken bütçe 90.000 TL'den 60.000 TL'ye iner. Hiçbir reklam ayarına dokunmadan, yalnızca satış sürecini iyileştirerek bütçenin üçte biri serbest kalır. Bu yüzden 'bütçeyi artıralım mı?' sorusundan önce şu soruyu sorun: gelen müşteri adaylarının kaçını satışa çeviriyoruz ve bu oranı artırabilir miyiz? Bu rakamı bilmek için reklamdan gelen mesajların kaçının satışa döndüğünü basit bir tabloda takip etmeniz yeterli.",
+      },
+      {
         h2: "Reklam Bütçesi ile İçerik Bütçesini Dengelemek",
         body: "Bütçe konuşulurken çoğu zaman yalnızca reklama giden para düşünülür, ama reklamın yakıtı içeriktir. Sınırlı bir pazarlama bütçesini ayda 30 sıradan paylaşıma bölmek yerine, daha az sayıda ama gerçekten düşünülmüş içerik üretip kalan bütçeyi bu içerikleri doğru kişilere ulaştırmaya ayırmak çoğu işletmede daha verimlidir. Özellikle test aşamasında, farklı açılardan hazırlanmış birkaç güçlü video, tek bir videoya verilen büyük bütçeden daha çok şey öğretir.",
       },
@@ -736,6 +772,10 @@ export const BLOG_POSTS: BlogPost[] = [
       {
         q: "Reklam bütçesini ne zaman artırmalıyım?",
         a: "Çalışan ve kabul edilebilir maliyetle müşteri getiren bir model bulduğunuzda ve işletmeniz artan talebi karşılayabilecek durumdayken. Artışı bir anda değil, kademeli yapın.",
+      },
+      {
+        q: "Reklam bütçemi rakamla nasıl hesaplarım?",
+        a: "Aylık hedef satış sayınızı, adaydan satışa dönüşüm oranınıza bölerek gereken müşteri adayı sayısını bulun; bunu aday başına maliyetle çarpın. Örneğin 20 satış, %2 dönüşüm ve 90 TL aday maliyetiyle 1.000 aday ve 90.000 TL bütçe gerekir. Sonucu kâr marjınızla karşılaştırarak bütçenin kârlı olup olmadığını görebilirsiniz.",
       },
       {
         q: "Bütçeyi artırdım ama sonuç aynı oranda artmadı, neden?",
@@ -866,6 +906,267 @@ export const BLOG_POSTS: BlogPost[] = [
       {
         q: "Menü fiyatlarını Google profiline eklemeli miyim?",
         a: "Genellikle evet. Harita üzerinden mekân seçen kişiler fiyat aralığına bakarak karar verir; fiyatı görünmeyen mekânlar özellikle aile ve öğrenci müşterisinde tercih edilmeyebilir. Menü değiştiğinde güncellemeyi unutmayın.",
+      },
+    ],
+  },
+  {
+    slug: "meta-pixel-conversions-api-rehberi",
+    category: "Ölçümleme",
+    color: "#60a5fa",
+    title: "Meta Pixel ve Conversions API Nedir? WhatsApp ve Mağazadan Satış Yapan İşletmeler İçin Dönüşüm Takibi Rehberi",
+    excerpt:
+      "Meta Pixel neden tek başına yetmiyor, Conversions API ne işe yarıyor ve satışı WhatsApp'ta ya da mağazada kapanan bir işletme reklamın getirdiği sonucu nasıl ölçer? Kurulumunuzu kendiniz kontrol edebileceğiniz adımlarla.",
+    date: "1 Ekim 2026",
+    dateISO: "2026-10-01",
+    readTime: "9 dk",
+    intro:
+      "Meta reklamlarında en çok konuşulan şeyler kreatif, hedef kitle ve bütçe. En az konuşulan ama sonucu en çok belirleyen şey ise ölçüm. Çünkü Meta'nın reklam sistemi, ona hangi davranışı 'başarı' olarak bildirdiğinize bakarak kime reklam göstereceğini öğrenir. Bu bildirim eksik, hatalı ya da yanlış davranışa bağlıysa sistem yanlış kişiyi aramaya başlar ve panel iyi görünse bile kasaya para girmez. Bu yazıda Meta Pixel ile Conversions API'nin ne olduğunu, neden ikisinin birlikte kullanıldığını ve özellikle satışı sitede değil WhatsApp'ta ya da mağazada kapanan işletmelerin neyi ölçmesi gerektiğini sade bir dille anlatıyoruz.",
+    sections: [
+      {
+        h2: "Dönüşüm Takibi Reklamın Direksiyonudur",
+        body: "Bir kampanyayı 'mesaj' ya da 'satış' hedefiyle kurduğunuzda Meta'ya aslında şunu söylersiniz: bu davranışı yapan insanları bul. Sistem her gün milyonlarca kişiye bakar ve sizin bildirdiğiniz davranışı yapanlara benzeyen kişileri seçer. Bildirim doğruysa reklam her geçen gün daha isabetli hale gelir. Bildirim yanlışsa, örneğin her sayfa ziyaretini 'satın alma' olarak sayıyorsanız, sistem satın alma ihtimali olmayan ama sayfayı ziyaret etmeye meyilli kişileri bulmakta ustalaşır. Bütçe harcanır, rapor dolar, satış gelmez. Dönüşüm takibi bu yüzden teknik bir ayrıntı değil, reklamın yönünü belirleyen direksiyondur.",
+      },
+      {
+        h2: "Meta Pixel Nedir, Ne Yapar?",
+        body: "Meta Pixel, web sitenize eklenen ve ziyaretçinin tarayıcısında çalışan küçük bir koddur. Ziyaretçi sitenizde belirli bir şey yaptığında bunu Meta'ya bir 'olay' olarak bildirir. En sık kullanılan olaylar şunlardır: sayfa görüntüleme, ürün görüntüleme, iletişim (örneğin WhatsApp ya da telefon butonuna tıklama), müşteri adayı (form gönderimi), sepete ekleme ve satın alma. Bu olaylar hem reklamın optimizasyonu için hem de 'sitemi ziyaret edip iletişime geçmeyenler' gibi yeniden hedefleme kitleleri oluşturmak için kullanılır. Doğru kurulmuş bir Pixel'de her olay yalnızca gerçekten o eylem olduğunda ve bir kez tetiklenir.",
+      },
+      {
+        h2: "Pixel Neden Tek Başına Yetmiyor?",
+        body: "Pixel tarayıcıda çalıştığı için tarayıcıda olan her engel onu da etkiler. Reklam engelleyiciler kodu çalıştırmayabilir, bazı tarayıcılar ve telefonlar izleme kısıtlamaları uygular, ziyaretçi çerezleri reddedebilir ya da form gönderildikten hemen sonra sayfayı kapatabilir. Bu durumların her birinde olay Meta'ya hiç ulaşmaz. Sonuç olarak gerçekte 40 form gelmişken panelde 28 görünebilir. Bu fark yalnızca raporu yanıltmaz; reklam sistemi de daha az veriyle öğrendiği için daha yavaş ve daha pahalı optimize eder.",
+      },
+      {
+        h2: "Conversions API Nedir?",
+        body: "Conversions API (kısaca CAPI), aynı olayları tarayıcı yerine sunucudan Meta'ya ileten bağlantıdır. Ziyaretçinin tarayıcısında ne olursa olsun, form sunucunuza ulaştıysa olay da Meta'ya gönderilebilir. Pixel ve Conversions API birlikte kullanıldığında aynı olay iki kanaldan gelir; her ikisi aynı olay kimliğini taşıdığı için Meta bunları eşleştirir ve tek dönüşüm olarak sayar. Sunucudan gönderilen olaylara, ziyaretçinin onayıyla paylaştığı e-posta veya telefon gibi bilgiler şifrelenerek eklenebilir. Bu, Meta'nın olayı doğru kişiyle eşleştirme oranını artırır; Olay Yöneticisi'nde bunu 'eşleşme kalitesi' puanı olarak görürsünüz.",
+      },
+      {
+        h2: "Satışı WhatsApp'ta Kapanan İşletmeler Neyi Ölçmeli?",
+        body: "Mobilya, klinik ve pek çok hizmet işletmesinde müşteri sitede satın almaz; WhatsApp'tan yazar ya da arar. Bu işletmeler için 'satın alma' olayını beklemek, sistemi hiç gelmeyecek bir sinyali beklemeye mahkûm etmektir. Daha sağlıklı yol, satışa en yakın davranışı ölçmektir: sitedeki WhatsApp butonuna tıklama, telefon numarasına tıklama ve form gönderimi ayrı ayrı olay olarak kurulmalı. Reklamın kendisinden doğrudan WhatsApp sohbeti başlatan kampanyalarda ise sohbetler Meta tarafında zaten sayılır. Bir adım ileri gitmek isteyenler için Meta, iş mesajlaşmasında gerçekleşen satışları da Conversions API üzerinden geri bildirmeye imkân tanıyor; böylece sistem yalnızca mesaj atanı değil, mesaj atıp satın alanı tanımaya başlar.",
+      },
+      {
+        h2: "Mağazada Kapanan Satışı Reklama Bağlamak",
+        body: "Satışın mağazada kapandığı işletmelerde reklamın gerçek etkisini görmenin yolu, mağaza satış kayıtlarını reklam verisiyle eşleştirmektir. Pratikte bu şöyle işler: satış yaptığınız müşterinin telefon numarası ya da e-postası, onayı alınarak kaydedilir; bu kayıtlar düzenli aralıklarla şifrelenmiş halde Conversions API üzerinden Meta'ya gönderilir; Meta bu kişilerin daha önce reklamınızı görüp görmediğini eşleştirir. Böylece 'bu ay reklamdan kaç mesaj geldi' sorusunun yanına 'reklamı görenlerden kaçı mağazada satın aldı' sorusunun cevabı eklenir. Google Ads tarafında da benzer bir çevrimdışı dönüşüm aktarımı mümkündür. Bu kurulum ilk bakışta zahmetli görünse de bütçeyi 'en ucuz mesajı getiren' değil 'en çok satışa dönen' kampanyaya kaydırmanın en güvenilir yoludur.",
+        link: { href: "/hizmetler/donusum-takibi-kurulumu", label: "Dönüşüm takibi kurulum hizmetimiz" },
+      },
+      {
+        h2: "Kurulumunuzu 10 Dakikada Kontrol Edin",
+        body: "Bir uzmana ihtiyaç duymadan yapabileceğiniz basit bir kontrol var. Meta Olay Yöneticisi'ni açın ve son yedi günde hangi olayların geldiğine bakın: iletişim ve form olayları görünüyor mu? Olayların yanında hem tarayıcı hem sunucu kaynağı yazıyor mu, yoksa yalnızca tarayıcı mı? Ardından panelde görünen form ya da iletişim sayısını, aynı dönemde gerçekten gelen form ve WhatsApp mesajı sayısıyla karşılaştırın. Panel gerçekten çok daha fazlasını gösteriyorsa olaylar çift sayılıyor ya da yanlış yerde tetikleniyor olabilir; çok daha azını gösteriyorsa olaylar kayboluyor demektir. Son olarak kendi telefonunuzdan sitenize girip WhatsApp butonuna tıklayın ve Olay Yöneticisi'nin test bölümünde olayın düştüğünü görün.",
+      },
+      {
+        h2: "En Sık Karşılaştığımız Hatalar",
+        body: "Hesap denetimlerinde aynı hatalar tekrar tekrar karşımıza çıkıyor. Siteye iki farklı Pixel kurulmuş ve olaylar ikiye bölünmüş. Form gönderimi, formun gönderildiği an değil sayfanın açıldığı an sayılıyor. Her WhatsApp tıklaması 'satın alma' olarak işaretlenmiş ve kampanya satış hedefiyle bu sahte satışlara optimize ediliyor. Conversions API kurulmuş ama olay kimliği eşleşmediği için her dönüşüm iki kez sayılıyor. Çerez onayı hiç sorulmadan reklam etiketleri çalışıyor. Bunların her biri raporu da reklamın öğrenmesini de bozar. İyi haber şu ki hepsi bütçeye dokunmadan düzeltilebilir ve düzeltildiğinde kampanyalar genellikle birkaç hafta içinde daha isabetli çalışmaya başlar.",
+      },
+    ],
+    conclusion:
+      "Reklam bütçesi artırılmadan önce sorulması gereken soru şu: reklam sistemine doğru şeyi mi öğretiyoruz? Meta Pixel ve Conversions API'nin birlikte, doğru olaylarla ve tek sefer sayılacak şekilde kurulması; WhatsApp ve mağaza satışı gibi sitenin dışında kalan sonuçların da ölçüme katılması, aynı bütçeyle daha çok satış getirmenin en sağlam temelidir. markaizi olarak reklam hesabınızın ölçüm kurulumunu ücretsiz denetliyor, eksikleri dönüşüm takibi hizmetimizle kuruyoruz.",
+    faq: [
+      {
+        q: "Conversions API kurmak için web sitemin özel yazılmış olması gerekir mi?",
+        a: "Hayır. Pek çok hazır site ve e-ticaret altyapısı Conversions API için kendi entegrasyonunu sunuyor. Özel yazılmış sitelerde ise Google Tag Manager'ın sunucu tarafı ya da doğrudan sunucu kodu üzerinden kurulum yapılabiliyor.",
+      },
+      {
+        q: "Pixel ve Conversions API birlikte kullanılınca dönüşümler iki kez sayılmaz mı?",
+        a: "Doğru kurulduğunda sayılmaz. Her iki kanal aynı olay adı ve aynı olay kimliğiyle gönderildiğinde Meta tekrarı ayıklar. Olay kimliği eşleşmezse ise dönüşümler iki kez sayılır; bu yüzden kurulumdan sonra Olay Yöneticisi'nde tekrar ayıklamanın çalıştığını mutlaka kontrol etmek gerekir.",
+      },
+      {
+        q: "Satışlarım mağazada oluyor, hangi olaya optimize etmeliyim?",
+        a: "Genellikle satışa en yakın ve yeterli sıklıkta gerçekleşen davranışa: WhatsApp mesajı, arama ya da form. Mağaza satışlarını ayrıca reklam verisiyle eşleştirdiğinizde hangi kampanyanın gerçekten satış getirdiğini görür ve bütçeyi buna göre dağıtırsınız.",
+      },
+    ],
+  },
+  {
+    slug: "chatgpt-reklamlari-turkiye-rehberi",
+    category: "Yapay Zeka",
+    color: "#22d3ee",
+    title: "ChatGPT Reklamları Türkiye'de: Nedir, Nasıl Çalışır, Kimler Denemeli?",
+    excerpt:
+      "ChatGPT reklamları Türkiye'deki işletmelere açıldı. Reklamların nerede ve kime göründüğü, anahtar kelime yerine nasıl hedeflendiği, nasıl ölçüldüğü ve hangi işletmeler için denemeye değer olduğu.",
+    date: "1 Ekim 2026",
+    dateISO: "2026-10-01",
+    readTime: "8 dk",
+    intro:
+      "Yıllarca dijital reklamın iki büyük kapısı vardı: insanların aradığı yer olan Google ve insanların vakit geçirdiği yer olan Instagram ile Facebook. 2026'da bunlara üçüncü bir kapı eklendi: insanların soru sorduğu yer. OpenAI, ChatGPT içinde reklam göstermeye yılın başında ABD'de testle başladı ve platformu yıl içinde kademeli olarak yeni ülkelere açtı. Eylül 2026 itibarıyla Türkiye'de kurulu işletmeler de ChatGPT için reklamveren hesabı açabiliyor. Bu yazıda yeni kanalın nasıl çalıştığını, Google ve Meta reklamlarından nerede ayrıldığını ve hangi işletmeler için mantıklı bir test olduğunu anlatıyoruz.",
+    sections: [
+      {
+        h2: "ChatGPT Reklamları Nerede ve Kime Görünüyor?",
+        body: "Reklamlar, ChatGPT'nin verdiği cevabın altında, cevaptan ayrı ve açıkça 'sponsorlu' olarak etiketlenmiş bir alanda gösteriliyor. Kullanıcının sohbetiyle ilgili bir ürün ya da hizmet olduğunda reklam devreye giriyor. Reklamlar ChatGPT'nin ücretsiz ve Go planlarını kullanan uygun kullanıcılara gösteriliyor; Plus ve Pro gibi ücretli üst planlar reklamsız. OpenAI ayrıca reklamların 18 yaş altındaki kullanıcılara gösterilmediğini ve sağlık ya da siyaset gibi hassas konuların yanında yer almadığını açıklıyor. Platform kuralları hızla gelişen bir alanda olduğu için kampanya kurmadan önce güncel kuralları OpenAI'nin yardım sayfalarından kontrol etmek gerekiyor.",
+      },
+      {
+        h2: "Reklam ChatGPT'nin Cevabını Etkiliyor mu?",
+        body: "OpenAI'nin açıkladığı ilkelere göre hayır. Reklam, cevabın içine yerleştirilmiyor; cevap ayrı, reklam ayrı duruyor. Reklamverenler de kullanıcıların konuşmalarını görmüyor; yalnızca kampanyalarının gösterim, tıklama ve dönüşüm gibi toplu sonuçlarını görüyor. Bu ayrım işletmeler için önemli bir noktayı da ortaya koyuyor: ChatGPT'nin cevabında önerilmek ile cevabın altında reklam göstermek iki farklı iş. Birincisi organik görünürlükle, ikincisi reklam bütçesiyle ilgili.",
+      },
+      {
+        h2: "Anahtar Kelime Yok, Bağlam Var",
+        body: "Google Ads'te hangi aramalarda görünmek istediğinizi anahtar kelimelerle seçersiniz. ChatGPT reklamlarında böyle bir liste yok. Bunun yerine reklamın hangi ihtiyaç, hangi ürün ya da hangi kullanım durumu için uygun olduğunu anlatan bağlam bilgisi yazılıyor; sistem bu bilgiyi sohbetin içeriğiyle eşleştiriyor. Bunun yanına konum ve cihaz gibi kampanya düzeyinde seçimler ekleniyor. Fark küçük görünse de stratejiyi değiştiriyor: Google'da insanlar 'koltuk takımı ankara' yazar, ChatGPT'de ise 'üç çocuklu bir aileyiz, salonumuz 25 metrekare, leke tutmayan ve taksitle alabileceğimiz bir koltuk takımı arıyoruz' diye anlatır. Kampanyanın başarısı, müşterinizin bu tür sorularını ne kadar iyi tarif ettiğinize bağlı.",
+      },
+      {
+        h2: "Google ve Meta Reklamlarından Farkı Ne?",
+        body: "Instagram'da reklam, henüz ihtiyacını fark etmemiş kişide ilgi uyandırır. Google'da reklam, kısa bir arama yazmış ve niyeti belli kişiyi yakalar. ChatGPT'de ise kişi ihtiyacını, önceliklerini ve kısıtlarını cümlelerle anlatmış, çoğu zaman seçenekleri karşılaştırma aşamasına gelmiştir. Bu, reklamın karar anına yakın birine gösterilmesi demek. Ama aynı zamanda tıklayan kişinin beklentisinin yüksek olması demek: bir soruyla geldi ve tıkladığı sayfada o sorunun devamını görmek istiyor. Ana sayfaya düşen, aradığını bulamayan ziyaretçi hızla geri döner.",
+      },
+      {
+        h2: "Sonuç Nasıl Ölçülüyor?",
+        body: "ChatGPT reklamlarında da başarı panelde görünen tıklamayla değil, sitenizde gerçekleşen form, mesaj, arama ya da satışla ölçülmeli. Platform, dönüşümleri ölçmek için siteye eklenen bir etiket ve sunucu taraflı bağlantı seçenekleri sunuyor; mantığı Meta Pixel ve Conversions API'ye benziyor. Burada en önemli kural, yeni kanalı diğer kanallarla aynı dönüşüm tanımıyla ölçmek. Meta'da 'WhatsApp tıklaması' dönüşüm sayılıyorsa ChatGPT'de de aynısı sayılmalı ki hangi kanalın bir müşteriyi kaça getirdiği adil biçimde karşılaştırılabilsin.",
+        link: { href: "/blog/meta-pixel-conversions-api-rehberi", label: "Meta Pixel ve Conversions API rehberimiz" },
+      },
+      {
+        h2: "Hangi İşletmeler Denemeli?",
+        body: "ChatGPT reklamları en çok, müşterinin karar vermeden önce araştırdığı, karşılaştırdığı ve soru sorduğu işlerde anlam kazanıyor. Mobilya iyi bir örnek: sepet tutarı yüksek, karar süresi uzun ve insanlar ölçü, malzeme, teslimat ve ödeme seçenekleri hakkında ayrıntılı sorular soruyor. Ev dekorasyonu, özel eğitim kurumları, danışmanlık firmaları, yüksek sepetli e-ticaret ve pek çok hizmet işletmesi de benzer bir karar yolculuğuna sahip. Sağlık gibi hassas kategorilerde ise platform kuralları daha kısıtlayıcı; bu alanlarda önce güncel reklam politikalarını kontrol etmek gerekir. Buna karşılık anlık ve düşük tutarlı alımlarda, örneğin bir kafe için, Instagram ve Google Haritalar hâlâ çok daha doğal kanallar.",
+      },
+      {
+        h2: "Nasıl Başlanmalı?",
+        body: "Yeni bir kanalı denerken en pahalı hata, ölçümü kurmadan ve büyük bir bütçeyle başlamak. Önerdiğimiz sıra şu: önce dönüşüm ölçümünü kurun ve test edin. Ardından müşterilerinizin bu tür asistanlara sorabileceği soruları çıkarın ve bunları ihtiyaçlara göre gruplayın; her grup için ayrı bir bağlam tarifi yazın. Tıklayan kişiyi ana sayfaya değil, sorusuna cevap veren ve tek bir net teklif sunan bir sayfaya gönderin. Sınırlı bir test bütçesiyle başlayın, birkaç hafta veri toplayın ve sonucu Meta ve Google kampanyalarınızla aynı tanım üzerinden karşılaştırın. Kanal işe yarıyorsa bütçeyi kademeli artırın, yaramıyorsa diğer kanallara geri aktarın.",
+      },
+      {
+        h2: "Reklam mı, Organik Görünürlük mü?",
+        body: "İkisi birbirinin alternatifi değil. Reklam, bütçe ayırdığınız sürece cevabın altında görünmenizi sağlar. Organik görünürlük ise ChatGPT'nin ve diğer yapay zeka asistanlarının cevabın kendisinde işletmenizi doğru bilgilerle anlatması ve önermesiyle ilgilidir; bunun için sitenizin işinizi net anlatması, sektör ve bölge sorularına doğrudan cevap veren içerikleriniz, Google İşletme Profiliniz ve başka sitelerde markanızdan nasıl bahsedildiği belirleyicidir. Uzun vadede en güçlü konum, cevabın içinde önerilen ve gerektiğinde cevabın altında da görünen işletme olmaktır.",
+        link: { href: "/hizmetler/yapay-zeka-arama-gorunurlugu", label: "Yapay zeka arama görünürlüğü hizmetimiz" },
+      },
+    ],
+    conclusion:
+      "ChatGPT reklamları, Türkiye'deki işletmeler için yeni ve henüz kalabalıklaşmamış bir kanal. Bu bir fırsat ama aynı zamanda kıyaslanabilir verinin az olduğu bir alan. Ölçümü baştan kurup sınırlı bir test bütçesiyle başlayan, sonucu diğer kanallarla dürüstçe karşılaştıran işletmeler bu kanaldan en doğru dersi çıkaracak. markaizi olarak ChatGPT reklamlarını organik yapay zeka görünürlüğüyle birlikte ele alıyor, işletmeniz için mantıklı olup olmadığını ilk görüşmede açıkça söylüyoruz.",
+    faq: [
+      {
+        q: "ChatGPT reklamları Türkiye'de verilebiliyor mu?",
+        a: "Evet. Eylül 2026 itibarıyla Türkiye, OpenAI'nin reklamveren hesabı açılabilen ülkeleri arasında yer alıyor. Uygunluk, reklamı verecek ve faturalandırılacak işletmenin kayıtlı olduğu ülkeye göre belirleniyor.",
+      },
+      {
+        q: "ChatGPT reklamları herkese gösteriliyor mu?",
+        a: "Hayır. Reklamlar ücretsiz ve Go planlarındaki uygun kullanıcılara gösteriliyor; Plus ve Pro gibi üst planlar reklamsız. OpenAI, reklamların 18 yaş altındaki kullanıcılara gösterilmediğini ve hassas konuların yanında yer almadığını açıklıyor.",
+      },
+      {
+        q: "ChatGPT reklamında anahtar kelime seçiliyor mu?",
+        a: "Hayır. Google Ads'teki gibi anahtar kelime listesi yerine, reklamın hangi ihtiyaç ve kullanım durumu için uygun olduğunu anlatan bağlam bilgisi yazılıyor. Buna konum ve cihaz gibi kampanya düzeyinde seçimler ekleniyor.",
+      },
+      {
+        q: "ChatGPT reklamı vermek, ChatGPT'nin beni önermesini sağlar mı?",
+        a: "Hayır. OpenAI'ye göre reklamlar cevabı etkilemiyor; reklam cevabın altında ayrı bir alanda görünüyor. Cevabın içinde önerilmek organik görünürlükle ilgili ayrı bir çalışma gerektiriyor.",
+      },
+    ],
+  },
+  {
+    slug: "yapay-zeka-isletme-onerirken-neye-bakar",
+    category: "Yapay Zeka",
+    color: "#22d3ee",
+    title: "ChatGPT ve Gemini İşletme Önerirken Neye Bakıyor? Yerel İşletmeler İçin Yapay Zeka Görünürlüğü Rehberi",
+    excerpt:
+      "Müşterileriniz artık 'yakınımdaki en iyi ...' sorusunu yapay zeka asistanlarına soruyor. ChatGPT, Gemini ve benzerlerinin işletme önerirken hangi sinyallere baktığı ve yerel bir işletmenin bu cevaplarda yer almak için yapabilecekleri.",
+    date: "1 Ekim 2026",
+    dateISO: "2026-10-01",
+    readTime: "9 dk",
+    intro:
+      "Bir işletme sahibi düşünün: Gölbaşı'nda yeni bir kafe açmış, sosyal medyası için ajans arıyor. Eskiden Google'a 'ankara sosyal medya ajansı' yazar, birkaç siteye girer, karar verirdi. Bugün aynı kişi giderek daha sık ChatGPT'ye ya da Gemini'ye şöyle yazıyor: 'Gölbaşı'nda kafem var, Instagram'ı yönetecek ve reklam verecek bir ajans önerir misin?' Karşılığında iki üç isim ve kısa gerekçeler alıyor. O kısa listede olmayan işletme, karşılaştırmaya hiç girmiyor. Bu yazıda yapay zeka asistanlarının bir işletmeyi önerirken nelere baktığını ve yerel bir işletmenin bu cevaplarda yer almak için somut olarak neler yapabileceğini anlatıyoruz. Anlattıklarımızın çoğunu önce kendi markamızda uyguladık.",
+    sections: [
+      {
+        h2: "Yapay Zeka Cevabını Nereden Kuruyor?",
+        body: "ChatGPT, Gemini ve benzeri asistanlar bir soruyu cevaplarken iki kaynaktan beslenir. Birincisi, modelin eğitildiği büyük metin birikimidir; bu birikim belirli bir tarihe kadarki interneti yansıtır. İkincisi, özellikle güncel ya da yerel sorularda asistanın o an yaptığı web aramasıdır. 'Gölbaşı'nda kafe için ajans' gibi yerel ve güncel bir soruda asistan genellikle arama yapar, bulduğu sayfaları okur ve cevabını bunlardan derler. Bu yüzden yapay zeka görünürlüğünün temeli hâlâ iyi bir arama görünürlüğüdür: asistanın bulamadığı sayfayı okuması, okumadığı işletmeyi önermesi mümkün değil.",
+      },
+      {
+        h2: "Net Bir Kimlik: Kim Olduğunuzu Tek Cümlede Söyleyin",
+        body: "Asistanlar, bir işletmenin ne yaptığını, nerede olduğunu ve kime hizmet verdiğini net olarak anlayabildiğinde onu bir soruyla eşleştirebilir. Sitenizin ana sayfasında, hakkımızda bölümünde ve hizmet sayfalarında bu üç bilgi açık ve tutarlı olmalı: 'Ankara Siteler merkezli, mobilya mağazalarına ve kafelere sosyal medya ve reklam hizmeti veren ajans' gibi. İşletme adınız, adresiniz ve telefonunuz sitede, Google İşletme Profilinde, sosyal medya hesaplarında ve dizinlerde birebir aynı yazılmalı. Bir yerde 'Sütçü Kemal İş Merkezi', başka yerde yalnızca semt adı, bir başka yerde eski bir telefon numarası olması, makinelerin bu kayıtların aynı işletmeye ait olduğundan emin olmasını zorlaştırır.",
+      },
+      {
+        h2: "Soruyu Doğrudan Cevaplayan Sayfalar",
+        body: "Asistanlar, kullanıcının sorusuna en doğrudan cevap veren sayfayı sever. 'Gölbaşı'nda kafem var, ajans arıyorum' sorusuna en iyi cevap veren sayfa, genel bir 'hizmetlerimiz' sayfası değil, Gölbaşı'ndaki kafelerin dinamiklerini anlatan, orada nasıl çalışıldığını açıklayan ve sık sorulan soruları cevaplayan bir sayfadır. Bu yüzden sektörünüz ve bölgenizle ilgili soruları tek tek düşünüp her birine gerçekten bir şey anlatan sayfalar oluşturmak, yapay zeka görünürlüğünün en etkili adımıdır. Burada kritik nokta özgünlük: şehir ya da ilçe adı değiştirilmiş kopya sayfalar ne arama motorlarına ne asistanlara değer katar. Her sayfa o bölgenin ya da o müşteri tipinin gerçek ihtiyaçlarını anlatmalı.",
+      },
+      {
+        h2: "Sık Sorulan Sorular, Yapılandırılmış Veri ve llms.txt",
+        body: "Sayfalarınızdaki sık sorulan sorular bölümleri, asistanların doğrudan alıntılayabileceği kısa ve net cevaplar sunar. Bu cevapları gerçek müşteri sorularından seçin ve kaçamak değil, net yazın. Yapılandırılmış veri (schema) ise sayfanın içeriğini makinelerin anlayacağı bir dille etiketler: işletme bilgileri, hizmetler, sık sorulan sorular, makale yazarı. llms.txt dosyası da sitenizin özetini ve önemli sayfalarını yapay zeka araçlarının hızlıca okuyabileceği sade bir metinde toplayan bir öneridir. Bunların hiçbiri tek başına önerilmeyi garanti etmez; ama işletmenizi makinelere net anlatan sinyallerin toplamını güçlendirir.",
+      },
+      {
+        h2: "Google İşletme Profili ve Yorumlar",
+        body: "Yerel sorularda asistanlar sıklıkla harita verisine ve işletme profillerine başvurur. Google İşletme Profilinizin doğru kategoride, eksiksiz hizmet listesiyle, güncel fotoğraflarla ve doğru çalışma saatleriyle durması bu yüzden yalnızca Haritalar için değil, yapay zeka cevapları için de önemlidir. Yorumlar ikinci kritik sinyal: yorumların sayısı, güncelliği ve içeriği. Müşterinin yorumda hizmeti ve bölgeyi kendi kelimeleriyle anlatması, örneğin 'mobilya mağazamızın Instagram reklamlarını yönetiyorlar', işletmenizin hangi konuda tanındığını gösteren doğal bir işarettir. Yorumları satın almak ya da karşılığında indirim vermek ise kurallara aykırıdır ve fark edildiğinde güveni tamamen yok eder.",
+      },
+      {
+        h2: "Başkalarının Sizin Hakkınızda Söyledikleri",
+        body: "Bir işletmeyi öneren insan da yapay zeka da aynı şeye bakar: başkaları bu işletme hakkında ne diyor? Sektör dizinlerinde, yerel haber sitelerinde, iş ortaklarınızın sitelerinde, video platformlarında ve forumlarda markanızın doğru bilgilerle geçmesi, asistanın sizi bir konuyla ilişkilendirmesini kolaylaştırır. Bunun için yapay bağlantı ağlarına ya da para karşılığı yazılara gerek yok. Gerçek iş birliklerinizi anlatmak, müşterinizin izniyle vaka çalışması yayınlamak, sektörünüzle ilgili bilgi veren videolar ve rehberler üretmek hem insanlar hem makineler için güvenilir bir iz bırakır.",
+      },
+      {
+        h2: "Görünürlüğünüzü Nasıl Ölçersiniz?",
+        body: "Yapay zeka cevapları kişiye, konuma ve zamana göre değiştiği için tek bir sıralama yok. Ölçmenin en pratik yolu, müşterilerinizin sorabileceği 10-20 soruyu bir listeye yazıp bunları düzenli aralıklarla farklı asistanlara sormak ve işletmenizin hangi cevaplarda, hangi bilgilerle geçtiğini kaydetmek. Asistanın sizi yanlış anlattığı yerler, örneğin eski bir adres ya da artık vermediğiniz bir hizmet, düzeltmeniz gereken kaynakları da gösterir. Sitenizin ziyaretçi raporlarında yapay zeka asistanlarından gelen ziyaretleri ayrıca takip etmek de değişimi görmenize yardımcı olur.",
+      },
+      {
+        h2: "Yapılmaması Gerekenler",
+        body: "Yeni bir alan, yeni kısayol vaatlerini de beraberinde getiriyor. Sayfaları anlamsızca anahtar kelimeyle doldurmak, başka işletmelerin içeriğini kopyalamak, gerçekte olmayan ödül ve rakamlar yazmak, sahte yorum toplamak ya da yalnızca yapay zekayı kandırmak için yazılmış gizli metinler eklemek kısa vadede bile işe yaramaz; uzun vadede ise hem arama motorlarında hem müşterinin gözünde güveni zedeler. Yapay zeka asistanları giderek daha iyi ayırt ediyor: tutarlı, doğrulanabilir ve gerçekten yardımcı olan bilgiyi ödüllendiriyor.",
+        link: { href: "/hizmetler/yapay-zeka-arama-gorunurlugu", label: "Yapay zeka arama görünürlüğü hizmetimiz" },
+      },
+    ],
+    conclusion:
+      "Yapay zeka asistanlarında önerilmek bir sihir değil, iyi işletme bilgisinin ve iyi içeriğin doğal sonucu. Kim olduğunuzu net anlatan bir site, müşterinizin sorularına doğrudan cevap veren sayfalar, tutarlı iletişim bilgileri, güçlü bir Google İşletme Profili ve başka kaynaklarda bıraktığınız güvenilir iz, hem Google'da hem ChatGPT'de hem Gemini'de aynı işi görür. markaizi olarak bu yaklaşımı önce kendi markamızda uyguladık; işletmenizin bugün yapay zeka cevaplarında nasıl göründüğünü ücretsiz analizle birlikte kontrol edebiliriz.",
+    faq: [
+      {
+        q: "ChatGPT'de işletmemin önerilmesi için para ödemem gerekir mi?",
+        a: "Hayır. Cevabın içinde önerilmek ücretli değil; sitenizin, işletme profilinizin ve dijital izinizin kalitesine bağlı. ChatGPT'de ücretli reklam da verilebiliyor ama bu, cevabın altında ayrı ve sponsorlu olarak etiketlenmiş bir alanda görünür ve cevabı etkilemez.",
+      },
+      {
+        q: "Yapay zeka görünürlüğü için SEO'yu bırakmalı mıyım?",
+        a: "Hayır, tam tersine. Yapay zeka asistanları güncel ve yerel sorularda çoğunlukla web araması yapar ve bulduğu sayfaları okur. İyi bir SEO, yapay zeka görünürlüğünün temelidir; yapay zeka görünürlüğü ise buna net kimlik, soru-cevap içerik ve dış kaynaklardaki bahsedilmeyi ekler.",
+      },
+      {
+        q: "Yapay zeka asistanı işletmem hakkında yanlış bilgi veriyorsa ne yapmalıyım?",
+        a: "Önce yanlış bilginin nereden geldiğini bulun: eski bir dizin kaydı, güncellenmemiş bir profil ya da sitenizdeki eski bir sayfa olabilir. Bu kaynakları düzeltin, sitenizde ve Google İşletme Profilinizde doğru bilgiyi net biçimde yazın. Asistanların cevapları kaynaklar güncellendikçe zamanla değişir.",
+      },
+    ],
+  },
+  {
+    slug: "ajans-degistirirken-reklam-hesabi-devri",
+    category: "Reklam Stratejisi",
+    color: "#f87171",
+    title: "Reklam Ajansı Değiştirirken Hesaplarınızı Nasıl Korursunuz? Devir Kontrol Listesi",
+    excerpt:
+      "Ajans değiştirmek istiyorsunuz ama reklam hesabınız, Instagram sayfanız ve pikseliniz kimin üzerinde? Geçmiş verilerinizi kaybetmeden, kampanyaları durdurmadan ajans değiştirmenin adım adım kontrol listesi.",
+    date: "1 Ekim 2026",
+    dateISO: "2026-10-01",
+    readTime: "8 dk",
+    intro:
+      "İşletme sahiplerinin ajans değiştirmeyi ertelemesinin en yaygın nedeni memnuniyet değil, belirsizlik: 'Ayrılırsam hesaplarım ne olur, yıllardır biriken veriler kaybolur mu, reklamlar durur mu?' Bu soruların cevabı büyük ölçüde tek bir şeye bağlı: hesaplar kimin üzerinde. Hesaplar işletmenin kendi üzerindeyse ajans değiştirmek birkaç günlük bir yetki işlemidir. Ajansın üzerindeyse ise yıllarca biriken kitleler, piksel verisi ve kampanya geçmişi bir anda sıfırlanabilir. Bu yazıda ajans değiştirmeden önce, sırasında ve sonrasında yapmanız gerekenleri bir kontrol listesi halinde anlatıyoruz. Ajans değiştirmeyi düşünmüyor olsanız bile, ilk bölümdeki kontrolleri bugün yapmanızı öneririz.",
+    sections: [
+      {
+        h2: "En Pahalı Hata: Hesabın Ajansta Kalması",
+        body: "Pek çok işletme dijital reklama başlarken her şeyi ajansa bırakır: 'Siz açın, siz yönetin.' İlk yıllarda sorun çıkmaz. Ama reklam hesabı, Instagram ve Facebook sayfalarının yönetimi ve piksel ajansın işletme hesabında açıldıysa, ayrılık günü bunların sahibi siz değil ajans olur. Bu durumda en iyi ihtimalle uzun bir devir süreci, en kötü ihtimalle sıfırdan yeni hesap açmak gerekir. Yeni hesap; geçmiş kampanya verisi, yıllar içinde oluşan yeniden hedefleme kitleleri ve pikselin öğrendiği her şey olmadan başlamak demektir. Reklam sistemi her şeyi yeniden öğrenirken ilk haftalarda maliyetler genellikle yükselir.",
+      },
+      {
+        h2: "Önce Sahipliği Kontrol Edin",
+        body: "Meta tarafında İşletme Portföyü ayarlarına girin ve şu varlıkların sahibi olarak kendi işletmenizin göründüğünü kontrol edin: Facebook sayfası, Instagram hesabı, reklam hesabı, piksel (veri kümesi) ve varsa ürün kataloğu. Ajansın bu varlıklara 'iş ortağı' olarak erişimi olması normaldir; sahibi olması değil. Google tarafında Google Ads hesabının kimin kontrolünde olduğunu, ajansın yönetici hesabının yalnızca bağlı mı yoksa tek yetkili mi olduğunu kontrol edin. Google Analytics, Google Tag Manager, Search Console ve Google İşletme Profili için de aynı soruyu sorun: yönetici olarak sizin hesabınız var mı? Alan adınızın ve web sitenizin barındırma hesabının kimin üzerine kayıtlı olduğu da bu listeye dahil.",
+      },
+      {
+        h2: "Ödeme Yöntemi ve Faturalar",
+        body: "Reklam bütçesi kimin kartından ödeniyor? Bütçe ajansın kartından ödenip size ayrıca fatura ediliyorsa, ayrılıkta reklam hesabındaki ödeme yöntemi de değişmek zorundadır ve bu sırada kampanyalar kesintiye uğrayabilir. Sağlıklı olan, reklam bütçesinin baştan sizin ödeme yönteminizle doğrudan platforma gitmesi ve ajansın yalnızca yönetim ücretini fatura etmesidir. Böylece hem harcamayı kendi gözünüzle görürsünüz hem de ajans değişikliğinde ödeme tarafında hiçbir şey değişmez.",
+      },
+      {
+        h2: "Ayrılmadan Önce Neleri Yedeklemelisiniz?",
+        body: "Hesaplar sizin olsa bile bazı birikimler ajansın bilgisayarlarında ve dosyalarında durur. Ayrılık konuşmasından önce şunları isteyin: son bir iki yılın aylık reklam raporları, çalışan ve çalışmayan kreatiflerin listesi ve kaynak dosyaları (video, tasarım dosyaları), kullanılan müşteri listeleri ve kitle tanımları, dönüşüm takibinin nasıl kurulduğuna dair notlar ve varsa içerik takvimleri. Bunlar yeni ajansın sıfırdan değil, öğrenilmiş derslerin üzerine başlamasını sağlar.",
+      },
+      {
+        h2: "Yeni Ajansa Erişimi Doğru Verin",
+        body: "Yeni ajansa erişim verirken şifre paylaşmayın. Meta'da ajansı İşletme Portföyünüze iş ortağı olarak ekleyip yalnızca ihtiyaç duyduğu varlıklara, ihtiyaç duyduğu yetkiyle erişim verin; Google Ads'te ajansın yönetici hesabının bağlanma isteğini onaylayın. Bu yöntemle erişim tek tıkla kaldırılabilir ve kimin ne yaptığı kayıt altında kalır. Eski ajansın erişimini ise yeni ajans hesabı incelemeyi bitirip devraldıktan sonra, planlı biçimde kaldırın.",
+      },
+      {
+        h2: "Kampanyaları Durdurmadan Geçiş",
+        body: "Ajans değişikliği, çalışan kampanyaları kapatıp her şeyi baştan kurmak için bir bahane olmamalı. Reklam sistemleri büyük ve ani değişikliklerden sonra yeniden öğrenme sürecine girer. İyi bir geçişte yeni ajans önce mevcut hesabı inceler, neyin çalıştığını ve neyin çalışmadığını raporlar, ölçüm hatalarını düzeltir ve ardından değişiklikleri kademeli yapar. Çalışan bir kampanyaya ilk hafta dokunulmaması, çoğu zaman en doğru karardır.",
+      },
+      {
+        h2: "Yeni Ajanstan İlk 30 Günde Ne Beklemelisiniz?",
+        body: "İlk ay, sonuçlardan çok teşhis ayıdır. Yeni ajanstan şunları bekleyin: hesabın yazılı bir denetimi, ölçüm kurulumunun kontrolü ve gerekirse düzeltilmesi, öncelik sırasıyla bir yol haritası ve hangi rakamlarla takip edeceğinizin net tanımı. 'İlk hafta satışlarınızı ikiye katlarız' gibi vaatler yerine 'önce şunu düzelteceğiz, sonra şunu test edeceğiz' diyen bir ekip, uzun vadede daha güvenilirdir.",
+        link: { href: "/reklam-hesabi-denetimi", label: "Ücretsiz reklam hesabı denetimi" },
+      },
+      {
+        h2: "Sözleşmeye Mutlaka Yazdırın",
+        body: "Hangi ajansla çalışırsanız çalışın, sözleşmede şu maddelerin olmasını isteyin: reklam hesapları, sayfalar, piksel ve tüm dijital varlıkların işletmeye ait olduğu; reklam bütçesinin işletmenin ödeme yöntemiyle doğrudan platforma ödendiği; ayrılıkta erişimlerin ve dosyaların hangi süre içinde devredileceği; ve sözleşmenin süresi ile fesih koşulları. Bu maddeler iyi giden bir ilişkide hiçbir şey değiştirmez, kötü giden bir ilişkide ise sizi korur.",
+      },
+    ],
+    conclusion:
+      "Ajans değiştirmenin zorluğu, çoğu zaman ajansın kendisinden değil, hesapların kimin üzerinde olduğundan kaynaklanır. Hesaplar, sayfalar ve piksel sizin işletme hesabınızda durduğu sürece ajans değişikliği birkaç günlük, kontrollü bir yetki işlemidir. markaizi'de reklam hesapları her zaman müşteriye aittir ve bütçe müşterinin kendi ödeme yöntemiyle doğrudan platforma gider. Mevcut hesaplarınızın sahipliğini ve ölçüm kurulumunu ücretsiz denetimimizde birlikte kontrol edebiliriz.",
+    faq: [
+      {
+        q: "Reklam hesabım ajansın üzerine açılmış, geri alabilir miyim?",
+        a: "Çoğu durumda evet. Meta'da varlıkların sahipliği İşletme Portföyleri arasında aktarılabilir; Google Ads'te de hesap yönetimi devredilebilir. Bunun için mevcut ajansın işbirliği gerekir. Devir mümkün değilse yeni hesap açılır, ancak geçmiş veri ve kitleler büyük ölçüde sıfırlanır.",
+      },
+      {
+        q: "Ajans değiştirince reklamlarım durur mu?",
+        a: "Hesaplar sizdeyse durması gerekmez. Yeni ajansa iş ortağı erişimi verildikten sonra çalışan kampanyalara dokunmadan devralma yapılabilir. Ödeme yöntemi ajansa aitse ise ödeme değişikliği sırasında kısa bir kesinti yaşanabilir.",
+      },
+      {
+        q: "Eski ajansın erişimini ne zaman kaldırmalıyım?",
+        a: "Yeni ajans hesabı inceleyip devraldıktan, gerekli raporları ve dosyaları aldıktan sonra. Erişimi planlı ve kayıt altında kaldırmak, iki ajansın aynı anda kampanyalarda değişiklik yapmasını da önler.",
       },
     ],
   },
