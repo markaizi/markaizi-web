@@ -24,6 +24,7 @@ export async function POST(req: NextRequest) {
     const kaynak = cleanStr(body.kaynak, 60);
     const platform = cleanStr(body.platform, 60);
     const isReklam = kaynak === "Reklam Hesabı Denetimi";
+    const isYz = kaynak === "Yapay Zeka Görünürlük Ölçümü";
 
     if (!name || !phone || !link) {
       return NextResponse.json({ error: "Zorunlu alanlar eksik." }, { status: 400 });
@@ -32,7 +33,7 @@ export async function POST(req: NextRequest) {
     const submission = await prisma.submission.create({
       data: {
         type: "ANALIZ",
-        data: isReklam ? { kaynak, name, phone, link, sector, platform, note } : { name, phone, link, sector, note },
+        data: isReklam ? { kaynak, name, phone, link, sector, platform, note } : isYz ? { kaynak, name, phone, link, sector, note } : { name, phone, link, sector, note },
       },
     });
 
@@ -48,12 +49,12 @@ export async function POST(req: NextRequest) {
       await transporter.sendMail({
         from: `"markaizi Ücretsiz Analiz" <${process.env.GMAIL_USER}>`,
         to: process.env.GMAIL_USER,
-        subject: `[markaizi] ${isReklam ? "Reklam Hesabı Denetimi Talebi" : "Ücretsiz Analiz Talebi"} — ${name}`.slice(0, 200),
+        subject: `[markaizi] ${isReklam ? "Reklam Hesabı Denetimi Talebi" : isYz ? "Yapay Zeka Görünürlük Ölçümü Talebi" : "Ücretsiz Analiz Talebi"} — ${name}`.slice(0, 200),
         html: `
         <div style="font-family:Inter,Arial,sans-serif;max-width:600px;margin:0 auto;background:#050505;color:#fff;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,0.1)">
           <div style="background:linear-gradient(135deg,#7c3aed,#a855f7,#ec4899);padding:24px 32px">
-            <h1 style="margin:0;font-size:20px;font-weight:700;color:#fff">${isReklam ? "Yeni Reklam Hesabı Denetimi Talebi" : "Yeni Ücretsiz Analiz Talebi"}</h1>
-            <p style="margin:4px 0 0;color:rgba(255,255,255,0.8);font-size:14px">markaizi.com.tr/${isReklam ? "reklam-hesabi-denetimi" : "ucretsiz-analiz"} üzerinden gönderildi</p>
+            <h1 style="margin:0;font-size:20px;font-weight:700;color:#fff">${isReklam ? "Yeni Reklam Hesabı Denetimi Talebi" : isYz ? "Yeni Yapay Zeka Görünürlük Ölçümü Talebi" : "Yeni Ücretsiz Analiz Talebi"}</h1>
+            <p style="margin:4px 0 0;color:rgba(255,255,255,0.8);font-size:14px">markaizi.com.tr/${isReklam ? "reklam-hesabi-denetimi" : isYz ? "yapay-zeka-gorunurluk-olcumu" : "ucretsiz-analiz"} üzerinden gönderildi</p>
           </div>
           <div style="padding:32px">
             <table style="width:100%;border-collapse:collapse">

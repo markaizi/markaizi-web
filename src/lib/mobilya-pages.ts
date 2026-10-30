@@ -37,6 +37,7 @@ export type LandingContent = {
 
 const CASE = { href: "/vaka-calismalari/alitel-mobilya", label: "Alitel Mobilya Vaka Çalışması" };
 const MAIN = { href: "/mobilya-reklam-ajansi", label: "Mobilya Reklam Ajansı" };
+const KURUMSAL = { href: "/mobilya-kurumsal-meta-google-reklam-yonetimi", label: "Mobilya Markaları İçin Kurumsal Meta & Google Yönetimi" };
 
 // ───────────────────────── ŞEHİR SAYFALARI ─────────────────────────
 
@@ -528,6 +529,20 @@ export const MOBILYA_GOOGLE: LandingContent = {
         "Google Ads hesabının sahibi sizsiniz ve harcamalar doğrudan hesabınızdan yapılır. Yönetim ücreti ile reklam bütçesi iki ayrı kalemdir. Bizimle yolları ayırmanız hâlinde hesabınız, verileriniz ve kampanya yapınız sizde kalır.",
       ],
     },
+    {
+      h2: "Büyük Bütçede Google Ads: Mobilya Markaları ve Çok Şubeli Firmalar",
+      paragraphs: [
+        "Aylık bütçe büyüdükçe Google Ads hesabında küçük hatalar da büyür: alakasız bir arama terimi, yanlış eşleşme türü ya da ürün grubuna ayrılmamış bir kampanya binlerce lirayı sessizce harcar. Bu yüzden büyük bütçeli mobilya firmalarında hesap yapısını ürün grubuna, şubeye ve sezona göre kurar, arama terimlerini düzenli temizler ve bütçeyi haftalık verilere göre kaydırırız.",
+        "Bu düzeni 7 yıldır bir İstikbal bayisinde, 10 milyon TL'yi aşan reklam bütçesi boyunca uyguladık; ana performans kanalı Google reklamları oldu. Marka, üretici veya çok şubeli bir firmaysanız ayrıntıları kurumsal yönetim sayfamızda anlattık.",
+      ],
+      bullets: [
+        "Ürün grubu bazlı kampanya ve bütçe yapısı",
+        "Şube ve bölge bazlı hedefleme, harita reklamları",
+        "Arama terimi temizliği ve negatif anahtar kelime disiplini",
+        "Sezona göre bütçe: evlilik, taşınma ve kampanya dönemleri",
+        "Satış verisine bağlı dönüşüm takibi ve aylık yönetici raporu",
+      ],
+    },
   ],
   faq: [
     {
@@ -555,6 +570,7 @@ export const MOBILYA_GOOGLE: LandingContent = {
     MAIN,
     { href: "/hizmetler/google-reklamlari", label: "Google Reklamları (Genel)" },
     { href: "/blog/mobilya-reklami-nasil-verilir", label: "Mobilya Reklamı Nasıl Verilir? (Blog)" },
+    KURUMSAL,
     CASE,
   ],
   serviceName: "Mobilya Google Reklamları Yönetimi",
@@ -820,6 +836,20 @@ export const MOBILYA_META: LandingContent = {
         "Mobilya bir günde alınmaz. Reklamınızı görüp profilinize giren, videonuzu izleyen ya da web sitenizde ürün inceleyen kişi haftalarca karar verebilir. Bu kişileri ayrı bir kampanyada, farklı bir mesajla yeniden hedefleriz: önce ürünün faydası, sonra müşteri yorumları ve teslimat örnekleri, en son da dönemsel kampanya.",
       ],
     },
+    {
+      h2: "Büyük Bütçede Meta Reklamları: Mobilya Markaları ve Çok Şubeli Firmalar",
+      paragraphs: [
+        "Büyük bir mobilya markasında Meta reklamı yalnızca 'daha fazla bütçe' demek değildir. Aynı kreatifin yorulduğu, aynı kitlenin tekrar tekrar gördüğü ve mesajların satış ekibine yetişemediği noktada bütçe verimini kaybeder. Bu yüzden kreatif akışını düzenli yeniler, ürün grubuna göre kitleleri ayırır, yeniden hedeflemeyi ve katalog reklamlarını kurar ve mesajdan satışa kadar olan zinciri ölçeriz.",
+        "Mobilyada Meta, talebi yaratan kanaldır; Google ise o talebi toplar. İkisini aynı ölçüm mantığıyla yönettiğimizde hangi kanalın hangi ürün için daha ucuza müşteri getirdiğini veriyle görürüz. Marka ve çok şubeli yapılar için ayrıntılar kurumsal yönetim sayfamızda.",
+      ],
+      bullets: [
+        "Kreatif yenileme takvimi: yorulan reklamı fark edip değiştirmek",
+        "Katalog ve yeniden hedefleme: ürüne bakıp gidenleri geri çağırmak",
+        "Şube ve bayi bazlı konum hedefleme, merkezden yönetilen kreatif",
+        "WhatsApp'a mesaj reklamlarında yanıt süresi ve satış dönüşümü takibi",
+        "Conversions API ile iOS ve çerez kayıplarını azaltan ölçüm",
+      ],
+    },
   ],
   faq: [
     {
@@ -847,6 +877,7 @@ export const MOBILYA_META: LandingContent = {
     MAIN,
     { href: "/hizmetler/meta-reklamlari", label: "Meta Reklamları (Genel)" },
     { href: "/mobilya-sosyal-medya-yonetimi", label: "Mobilya Sosyal Medya Yönetimi" },
+    KURUMSAL,
     CASE,
   ],
   serviceName: "Mobilya Meta (Instagram & Facebook) Reklam Yönetimi",
@@ -1056,6 +1087,129 @@ export const MOBILYA_BAYI: LandingContent = {
   audienceType: "İstikbal, Bellona, Doğtaş, Kelebek ve diğer mobilya markalarının bayileri",
 };
 
+export const MOBILYA_KURUMSAL: LandingContent = {
+  path: "/mobilya-kurumsal-meta-google-reklam-yonetimi",
+  kind: "hizmet",
+  metaTitle: "Mobilya Markaları İçin Meta & Google Reklam Yönetimi — Büyük Bütçe, Çok Şubeli Firmalar | markaizi",
+  metaDescription:
+    "Büyük mobilya markaları, üreticiler ve çok şubeli firmalar için Meta (Instagram, Facebook) ve Google Ads yönetimi. 7 yıldır bir İstikbal bayisinde 10 milyon TL'yi aşan reklam bütçesi yöneten ajanstan kurumsal reklam yönetimi.",
+  keywords:
+    "mobilya markası reklam yönetimi, mobilya firması google ads, çok şubeli mobilya reklam, büyük mobilya firması meta reklam, mobilya zincir reklam ajansı, mobilya üretici marka dijital reklam, kurumsal mobilya reklamı, mobilya meta google reklam ajansı",
+  tag: "Kurumsal Mobilya Reklamı",
+  h1Plain: "Mobilya Markaları İçin",
+  h1Accent: "Meta & Google Reklam Yönetimi",
+  lead: [
+    "Büyük bir mobilya firmasında reklam, 'bir ajans bulup bütçeyi vermek' değildir. Birden fazla ürün grubu, birden fazla şube ya da bayi, mevsimsel talep ve satış ekibinin yetişme kapasitesi aynı anda yönetilmek zorundadır. Bütçe büyüdükçe verimsizliğin maliyeti de büyür.",
+    "markaizi, mobilya sektöründe Meta ve Google reklamlarını en çok yönettiğimiz alan. Alitel Mobilya ile 7 yıldır aralıksız çalışıyoruz: Alitel her yıl İstikbal bayileri arasında Türkiye ciro birinciliğine ulaştı ve bu sürede 10 milyon TL'nin üzerinde reklam bütçesi yönettik. Bu sayfa, bu tecrübeyi büyük firmalara nasıl taşıdığımızı anlatıyor.",
+  ],
+  sections: [
+    {
+      h2: "Büyük Bütçede Reklam Neden Farklı Yönetilir?",
+      paragraphs: [
+        "Küçük bütçede reklamın en büyük riski hiç sonuç alamamaktır. Büyük bütçede risk daha sinsidir: sonuç gelir ama verimli gelmez. Reklam çalışıyor gibi görünür; oysa bütçenin bir kısmı alakasız aramalara, yorulmuş kreatiflere ve aynı kişiye tekrar tekrar gösterilen reklama gider. Bu kaybı küçük bir bütçede fark etmek zordur, büyük bütçede ise doğrudan kâr marjına yansır.",
+        "Bu yüzden büyük firmalarda iş iki parçadan oluşur: kampanyayı kurmak ve onu aylar boyunca disiplinle işletmek. İkincisi çoğu zaman daha önemlidir.",
+      ],
+    },
+    {
+      h2: "7 Yıl, 10 Milyon TL ve Türkiye Birinciliği",
+      paragraphs: [
+        "Alitel Mobilya, Türkiye'nin en büyük ve en hızlı büyüyen İstikbal bayilerinden biri. 7 yıldır reklam ve dijital kanal yönetimini birlikte yürütüyoruz; ana performans kanalı Google reklamları, yanında Meta reklamları ve sosyal medya yönetimi var. İş birliği boyunca 10 milyon TL'nin üzerinde reklam bütçesi yönettik.",
+        "Bir firmanın satış başarısında ürün, hizmet ve satış ekibi belirleyicidir; reklam bu başarıya destek olan kanaldır. Bu yaklaşımı da bilerek anlatıyoruz: reklamın tek başına satış yapmadığını bilen bir ajansla çalışmak, büyük bütçede de yanlış beklentiye girmemenizi sağlar. Ayrıntılar vaka çalışmamızda.",
+      ],
+    },
+    {
+      h2: "Google Ads'te Ne Yapıyoruz?",
+      paragraphs: [
+        "Mobilyada Google, satın almaya en yakın müşteriyi yakalayan kanaldır. Büyük hesaplarda hedefimiz bu niyeti en az kayıpla toplamak.",
+      ],
+      bullets: [
+        "Ürün grubu, şube ve bölge bazlı kampanya yapısı",
+        "Arama, harita, alışveriş ve YouTube kampanyalarının hedefe göre dağılımı",
+        "Arama terimi raporlarının düzenli taranması, negatif anahtar kelime listesi",
+        "Marka aramasının korunması ve rakip aramalarında kontrollü görünürlük",
+        "Sezon ve kampanya takvimine göre bütçe kaydırma",
+      ],
+    },
+    {
+      h2: "Meta Reklamlarında Ne Yapıyoruz?",
+      paragraphs: [
+        "Meta, mobilyada talebi yaratan kanaldır: yeni eve taşınacak, evlenecek ya da salonunu yenilemeyi düşünen kişi henüz aramaya başlamadan ürünü akışında görür.",
+      ],
+      bullets: [
+        "Ürün grubuna göre ayrı kitle ve ayrı kreatif akışı",
+        "Kreatif yenileme takvimi: yorulan reklamın fark edilip değiştirilmesi",
+        "Katalog reklamları ve yeniden hedefleme",
+        "WhatsApp'a mesaj reklamları ve yanıt süresi takibi",
+        "Şube ve bayi bazlı konum hedefleme",
+      ],
+    },
+    {
+      h2: "Ölçüm: Mesajdan Mağaza Satışına",
+      paragraphs: [
+        "Büyük bütçede 'kaç tıklama geldi' yeterli bir cevap değildir. Meta Pixel, Conversions API, Google Etiket Yöneticisi ve GA4 ile mesaj, arama, form ve mümkünse mağazada kapanan satışı reklama bağlamaya çalışırız. Böylece bütçe, en çok satışa dönüşen ürün grubuna ve kanala kayar; en çok mesaj getirene değil.",
+        "Aylık yönetici raporunda harcama, mesaj ve arama sayısı, müşteri başına maliyet ve kanal karşılaştırması sade bir dille yer alır.",
+      ],
+    },
+    {
+      h2: "Çalışma Düzeni: İlk 30 Gün ve Sonrası",
+      paragraphs: [
+        "İlk ay sonuçtan çok teşhis ayıdır: mevcut hesap yazılı olarak denetlenir, ölçüm kurulumu kontrol edilir, öncelik sırasıyla bir yol haritası çıkarılır. Sonrasında kampanyalar kademeli olarak yeniden yapılandırılır; çalışan kampanyaya ilk hafta dokunulmaz.",
+        "Reklam hesapları, sayfalar ve veriler her zaman sizindir; reklam bütçesi sizin ödeme yönteminizle doğrudan platforma ödenir, bütçenizden komisyon almayız. Standart sözleşme süremiz 3 aydır. Satış sonucunu koşulsuz garanti etmeyiz; şeffaf raporlama, test disiplini ve dürüst iletişimi taahhüt ederiz.",
+      ],
+    },
+    {
+      h2: "Çekim Yapmadan da Çalışabiliriz",
+      paragraphs: [
+        "Ana işimiz reklam yönetimi. Reklam kreatifleri için kendi ürün fotoğraflarınızı, katalog görsellerinizi ve üretim materyalinizi kullanır, gerekirse yapay zeka destekli içerik üretimiyle destekleriz. Showroom veya fabrika çekimi istiyorsanız bu ayrı bir anlaşmayla yapılır; reklam yönetimi için şart değildir.",
+      ],
+    },
+  ],
+  faq: [
+    {
+      q: "Hangi büyüklükteki firmalarla çalışıyorsunuz?",
+      a: "Tek mağazadan çok şubeli firmalara, yerel üreticilerden marka ve bayi ağlarına kadar. Büyük bütçeli firmalar için hesap yapısı, ölçüm ve raporlama disiplini daha da önemli hale geliyor ve çalışma düzenimizi ona göre kuruyoruz. Ölçeğiniz için ücretsiz görüşmede netleştiririz.",
+    },
+    {
+      q: "Mevcut ajansımızla çalışıyoruz, ikinci görüş alabilir miyiz?",
+      a: "Evet. Ücretsiz reklam hesabı denetimimiz yalnızca görüntüleme yetkisiyle yapılır, şifre istemez ve bağlayıcı değildir. Ölçüm kurulumunu, kampanya yapısını ve harcama verimini yazılı raporlarız.",
+    },
+    {
+      q: "Reklam bütçesini siz mi yönetiyorsunuz, nasıl ödeniyor?",
+      a: "Kampanyaları ve bütçe dağılımını biz yönetiriz; bütçe sizin hesabınızdan doğrudan Meta ve Google'a ödenir. Yönetim ücreti ayrıdır ve bütçenizden komisyon almayız.",
+    },
+    {
+      q: "Alitel'e sağladığınız sonuçları bize de garanti eder misiniz?",
+      a: "Hayır. Her firmanın ürünü, bölgesi, rekabeti ve satış ekibi farklıdır; hiçbir ajans belirli bir sonucu garanti edemez. Alitel, uzun soluklu ve ölçüm odaklı bir ortaklığın neler getirebileceğine gerçek bir örnektir.",
+    },
+    {
+      q: "Üreticiyiz ve bayi ağımız var, bu sizin işiniz mi?",
+      a: "Evet. Bayi bazlı konum hedefleme ve merkezden yönetilen kreatifle çalışabiliriz. Bayi kazanımı ve bayilerin yerel reklamı için bayi sayfamıza bakabilirsiniz.",
+    },
+    {
+      q: "Reklam için çekim yapmak zorunda mıyız?",
+      a: "Hayır. Mevcut ürün görsellerinizle ve katalog materyalinizle çalışabiliriz. Çekim isterseniz ayrı bir anlaşmayla yaparız.",
+    },
+  ],
+  related: [
+    MAIN,
+    { href: "/hizmetler/meta-reklamlari", label: "Meta Reklamları (Genel)" },
+    { href: "/hizmetler/google-reklamlari", label: "Google Reklamları (Genel)" },
+    { href: "/mobilya-meta-reklamlari", label: "Mobilya Meta Reklamları" },
+    { href: "/mobilya-google-reklamlari", label: "Mobilya Google Reklamları" },
+    { href: "/mobilya-bayi-reklam-ajansi", label: "Mobilya Bayi Reklam Ajansı" },
+    { href: "/reklam-hesabi-denetimi", label: "Ücretsiz Reklam Hesabı Denetimi" },
+    CASE,
+  ],
+  serviceName: "Mobilya Markaları İçin Kurumsal Meta ve Google Reklam Yönetimi",
+  areaServed: ["Türkiye"],
+  breadcrumbLabel: "Kurumsal Meta & Google Yönetimi",
+  waText: "Merhaba, firmamız için kurumsal Meta ve Google reklam yönetimi hakkında görüşmek istiyorum.",
+  ctaTitle: "Firmanız İçin Kurumsal Görüşme",
+  ctaText:
+    "Mevcut Meta ve Google hesaplarınızı ücretsiz inceleyip harcama verimini ve ölçüm kurulumunu yazılı olarak paylaşalım. Bağlayıcı değildir.",
+  linkLabel: "Mobilya Markaları İçin Kurumsal Meta & Google Yönetimi",
+};
+
 export const CITY_PAGES = [ISTANBUL, INEGOL, KAYSERI, IZMIR];
-export const SERVICE_PAGES = [MOBILYA_META, MOBILYA_GOOGLE, MOBILYA_SOSYAL, MOBILYA_WEB, MOBILYA_SEO, MOBILYA_ETICARET, MOBILYA_BAYI];
+export const SERVICE_PAGES = [MOBILYA_KURUMSAL, MOBILYA_META, MOBILYA_GOOGLE, MOBILYA_SOSYAL, MOBILYA_WEB, MOBILYA_SEO, MOBILYA_ETICARET, MOBILYA_BAYI];
 export const ALL_MOBILYA_PAGES = [...CITY_PAGES, ...SERVICE_PAGES];

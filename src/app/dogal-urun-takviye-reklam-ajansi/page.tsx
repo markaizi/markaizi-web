@@ -7,6 +7,7 @@ import ServiceFAQ, { FAQItem } from "@/components/ServiceFAQ";
 import Breadcrumb from "@/components/Breadcrumb";
 import JsonLd from "@/components/JsonLd";
 import { breadcrumbJsonLd } from "@/lib/seo";
+import SektorLinkleri from "@/components/SektorLinkleri";
 
 export const metadata: Metadata = {
   title: { absolute: "Doğal Ürün & Takviye Reklam Ajansı — Ürün Videosu, YouTube, E-Ticaret Reklamı | markaizi" },
@@ -53,6 +54,14 @@ const FAQ: FAQItem[] = [
   {
     q: "E-ticaret sitem var, reklamı doğrudan oraya mı yönlendiriyorsunuz?",
     a: "Genellikle evet — reklamı doğrudan ilgili ürün/kategori sayfanıza yönlendirmek dönüşümü artırır. Sitenizin mobil hızı ve kullanılabilirliği reklam performansını doğrudan etkilediği için, gerekirse bu noktada da öneri sunuyoruz.",
+  },
+  {
+    q: "1 Ağustos 2026'dan itibaren takviye gıda reklamlarında ne değişti?",
+    a: "Ticari Reklam ve Haksız Ticari Uygulamalar Yönetmeliği'nde 1 Temmuz 2026'da yayımlanan değişiklikler 1 Ağustos 2026'da yürürlüğe girdi. Hukuk kaynaklarının özetine göre takviye edici gıdaların normal beslenme kapsamındaki gıdaların yerine geçtiği izlenimi uyandıracak şekilde reklamı yasak; ürünün fayda, içerik veya etkilerine dair her iddia ispatlanabilir olmalı; sağlık beyanları yalnızca onaylı ifadelerle ve belirsiz, yanıltıcı olmadan kullanılabilir. İnfluencer paylaşımlarında 'Reklam' veya 'Tanıtım' ifadesi açık ve en başta görünmeli. İndirimli satışta 'önceki fiyat', indirimin başladığı günden önceki 10 gündeki en düşük fiyattır. Ürün yorumlarını yalnızca satın alanlar yazabilir. Yapay zekâ ile üretilmiş karakter ya da kişi kullanımı, satın alma kararını etkileyecekse belirtilmelidir. Ayrıntı için ilgili yönetmelik metnine ve hukuk danışmanınıza bakın; biz içerik ve kampanyaları bu çerçevede kuruyoruz.",
+  },
+  {
+    q: "İnfluencer ile çalışırsak reklamı nasıl belirtmeliyiz?",
+    a: "Maddi kazanç, ücretsiz veya indirimli ürün, çekiliş ya da etkinliğe katılım gibi bir menfaat varsa paylaşım reklam sayılıyor. Yönetmeliğe göre 'Reklam' veya 'Tanıtım' etiketi görsel olarak ayırt edilebilir olmalı, ekranı kaydırmadan görünmeli, diğer etiketlerden önce yer almalı ve her mecrada ayrıca bulunmalı. Sesli yayınlarda yayının başında ve reklamdan önce benzer bir bildirim gerekiyor. Sözleşmede etiket yükümlülüğünü açıkça yazmanızı öneririz.",
   },
   {
     q: "Reklam bütçesi olarak ne kadar ayırmalıyım?",
@@ -260,6 +269,41 @@ export default function DogalUrunTakviyeReklamAjansiPage() {
           </div>
         </section>
 
+        {/* ── Mevzuat ── */}
+        <section className="py-20" style={{ background: "var(--bg-alt)" }}>
+          <div className="max-w-[860px] mx-auto px-6">
+            <span className="section-tag">Mevzuat</span>
+            <h2 className="font-black leading-tight mt-2 mb-5" style={{ fontSize: "clamp(26px,3.5vw,38px)" }}>
+              Takviye Reklamında <span className="gradient-text">1 Ağustos 2026 Kuralları</span>
+            </h2>
+            <p className="text-[#8a8a9a] text-[16px] leading-[1.9] mb-8">
+              Ticari Reklam ve Haksız Ticari Uygulamalar Yönetmeliği&apos;ndeki değişiklikler 1 Ağustos 2026&apos;da
+              yürürlüğe girdi. Takviye, vitamin ve doğal ürün markalarını doğrudan ilgilendiren başlıklar:
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              {[
+                { t: "Normal beslenmenin yerine geçme izlenimi yok", d: "Takviye edici gıdalar, normal beslenme kapsamındaki gıdaların yerine geçiyormuş gibi gösterilemez." },
+                { t: "Her fayda iddiası ispatlanabilir olmalı", d: "Ürünün faydası, içeriği veya etkisiyle ilgili iddialar gıda otoritelerinin kriterlerine göre kanıtlanabilmeli; sağlık beyanları onaylı ve açık ifadelerle kullanılmalı." },
+                { t: "İnfluencer paylaşımında 'Reklam' etiketi", d: "Menfaat içeren paylaşımlarda etiket açık, ekranı kaydırmadan görünür ve diğer etiketlerden önce yer almalı." },
+                { t: "İndirimde fiyat geçmişi kuralı", d: "İndirim öncesi fiyat, indirimin başlangıcından önceki 10 gündeki en düşük fiyat olarak alınır; her satış kanalı kendi fiyat geçmişiyle değerlendirilir." },
+                { t: "Yorumlar ve yapay zekâ", d: "Yorumları yalnızca ürünü satın alanlar yazabilir; sahte yorum yasak. Yapay zekâ ile üretilen karakter veya kişi, karar vermeyi etkileyecekse belirtilmeli." },
+                { t: "Tıbbi iddia yok", d: "'Tedavi eder', 'iyileştirir' gibi ifadeler hem mevzuatta hem Meta ve Google politikalarında sorun yaratır." },
+              ].map((x) => (
+                <div key={x.t} className="rounded-2xl p-6" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+                  <h3 className="text-[15px] font-bold mb-2 text-white">{x.t}</h3>
+                  <p className="text-[13px] text-[#8a8a9a] leading-relaxed">{x.d}</p>
+                </div>
+              ))}
+            </div>
+            <p className="text-[#8a8a9a] text-[13px] leading-relaxed mt-6">
+              Genel bilgilendirmedir, hukuki danışmanlık değildir; kesin uygulama için yönetmelik metnine ve
+              hukuk danışmanınıza bakın. Ayrıntılı rehber:{" "}
+              <Link href="/blog/takviye-edici-gida-reklam-kurallari-2026" className="text-[#c084fc] underline underline-offset-2">takviye edici gıda reklam kuralları</Link>,{" "}
+              <Link href="/blog/influencer-reklam-etiketi-zorunlulugu-2026" className="text-[#c084fc] underline underline-offset-2">influencer reklam etiketi</Link>.
+            </p>
+          </div>
+        </section>
+
         {/* ── Hizmetler ── */}
         <section className="py-20" style={{ background: "var(--bg-alt)" }}>
           <div className="max-w-[1200px] mx-auto px-6">
@@ -311,6 +355,8 @@ export default function DogalUrunTakviyeReklamAjansiPage() {
         <section className="py-20" style={{ background: "var(--bg-alt)" }}>
           <ServiceFAQ faqs={FAQ} />
         </section>
+
+        <SektorLinkleri current="/dogal-urun-takviye-reklam-ajansi" />
 
         {/* ── CTA ── */}
         <section className="py-20" style={{ background: "var(--bg)", borderTop: "1px solid var(--border)" }}>

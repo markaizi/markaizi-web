@@ -1170,6 +1170,550 @@ export const BLOG_POSTS: BlogPost[] = [
       },
     ],
   },
+  {
+    "slug": "saglikta-tanitim-ve-bilgilendirme-yonetmeligi-rehberi",
+    "category": "Mevzuat",
+    "color": "#f87171",
+    "title": "Sağlıkta Tanıtım ve Bilgilendirme Yönetmeliği: Klinikler ve Hekimler Sosyal Medyada Ne Paylaşabilir?",
+    "excerpt": "12 Kasım 2025'te yürürlüğe giren yönetmelik hasta teşekkürlerini, öncesi-sonrası görsellerini, fiyat/kampanya duyurularını ve sponsorlu tanıtımı yeniden düzenledi. Yapılabilenler ve yapılamayanlar.",
+    "date": "30 Ekim 2026",
+    "dateISO": "2026-10-30",
+    "readTime": "8 dk",
+    "intro": "12 Kasım 2025 tarihli ve 33075 sayılı Resmî Gazete'de yayımlanan Sağlık Hizmetlerinde Tanıtım ve Bilgilendirme Faaliyetleri Hakkında Yönetmelik, hekimlerin, özel sağlık tesislerinin ve sağlık turizmi aktörlerinin tanıtım kurallarını yeniden belirledi. Klinikler için sosyal medya hesabı, web sitesi ve reklam çalışmasının büyük kısmı bu kurallardan etkileniyor. Bu yazıda hukuk kaynaklarındaki özetlere dayanarak neyin değiştiğini, neyin yapılıp neyin yapılamayacağını anlatıyoruz. Bu yazı genel bilgilendirmedir, hukuki danışmanlık değildir. Kesin uygulama için ilgili yönetmeliğin Resmî Gazete'deki metnine ve hukuk danışmanınıza başvurun.",
+    "sections": [
+      {
+        "h2": "Kimleri Kapsıyor?",
+        "body": "Kaynaklara göre yönetmelik sağlık meslek mensuplarını, özel sağlık tesislerini ve uluslararası sağlık turizmi aktörlerini kapsıyor. Güzellik merkezleri ve geleneksel-tamamlayıcı tıp (GETAT) uygulamaları metinde ayrıca anılmıyor; bu alanlar için kuralların nasıl uygulandığını il sağlık müdürlüğünüzden ve hukuk danışmanınızdan teyit etmenizi öneririz. Genel ilke şu: bilgilendirme yalnızca yetkili sağlık meslek mensuplarınca ve kendi uzmanlık alanları kapsamında yapılabilir."
+      },
+      {
+        "h2": "Hasta Teşekkürü ve Yorumları",
+        "body": "Hasta veya yakınlarının teşekkür ya da memnuniyet ifadeleri üzerinden reklam niteliğinde paylaşım yapılması yasaklandı; ihlalden paylaşımı yapan tesis veya hekim sorumlu tutuluyor. Bu, 'hastalarımızdan gelen mesajlar' tarzı hikâye paylaşımlarını ve sitedeki 'hasta yorumları' bölümlerini doğrudan etkiliyor. Sağlık turizmi kapsamında ise açık rızanın belgelenmesi şartıyla hasta hikâyelerinin kullanılabileceği belirtiliyor."
+      },
+      {
+        "h2": "Öncesi-Sonrası Görselleri",
+        "body": "Öncesi-sonrası görseli tamamen yasak değil ama koşullu: tarihleri belirtilmeli, aynı ortam ve teknik koşullarda çekilmeli, yanıltıcı düzenleme, filtre veya makyaj olmamalı ve yapılan işlemin sınırlarıyla sınırlı kalmalı. Hastanın açık rızası gerekiyor ve bu rıza her zaman geri çekilebiliyor. Görsel karşılığında ödeme, indirim veya hediye verilemiyor ya da vaat edilemiyor. Yurt içi tanıtımlarda 'Her cerrahi veya girişimsel işlemde sonuçlar kişiden kişiye değişiklik gösterebilir.' uyarısı zorunlu. Ayrıca bu tür görsellerde yorum, beğeni ve yeniden paylaşımın kapatılması isteniyor."
+      },
+      {
+        "h2": "Fiyat, Kampanya, Çekiliş ve Hediye",
+        "body": "Tanıtımlarda ücret, indirim, kampanya ve promosyon bilgisi verilemiyor. Çekiliş ve hediyeyle yapılan pazarlama da yasak. 'Bu ay %20 indirim' ya da 'ilk seans hediye' gibi klasik kampanya dili sağlık tesisleri için kullanılabilir olmaktan çıkıyor."
+      },
+      {
+        "h2": "Sponsorlu Tanıtım",
+        "body": "Hukuk kaynaklarının özetinde sponsorlu tanıtımın genel olarak yasak olduğu, tesisin açılışını izleyen ilk bir ayın istisna tutulduğu belirtiliyor. Bu, kliniklerin Instagram ve Google'da ücretli reklam verme planlarını doğrudan etkiliyor. Sosyal medya ve arama motorlarına kayıt ise ücretsiz olmak ve öne çıkmaya yönelik olmamak koşuluyla serbest. Kaynaklar arasında hedefleme kısıtları (ör. Türkiye'nin hedeflenememesi) konusunda farklı yorumlar var; bu nedenle ücretli kampanyadan önce kendi durumunuzu teyit etmeniz gerekir."
+      },
+      {
+        "h2": "Sağlık Turizmi",
+        "body": "Yurt dışına yönelik tanıtım ayrı kurallara bağlandı: yetki belgeli tesis ve aracı kuruluşlar yalnızca yurt dışı hedef kitleyi seçerek, ilgili logo ve Türkçe dışı dillerde ayrı site ve hesaplarla tanıtım yapabiliyor. Sağlık turizmi yapan kuruluşların yurt içi ve yurt dışı iletişimini ayırması gerekiyor."
+      },
+      {
+        "h2": "Yaptırımlar",
+        "body": "Kontroller il düzeyindeki bir değerlendirme komisyonu tarafından yapılıyor. Yaptırımlar arasında idari yaptırım, erişim engelleme, KVKK yaptırımları ve gerektiğinde suç duyurusu sayılıyor; ayrıca konu Reklam Kurulu'na bildirilebiliyor. Yani kural ihlali yalnızca platform tarafında hesap kısıtı değil, idari bir sorun da olabiliyor."
+      },
+      {
+        "h2": "Pratikte Ne Yapmalı?",
+        "body": "Önce mevcut hesabınızı ve sitenizi bu kurallara göre tarayın: hasta teşekkürü, fiyat-kampanya paylaşımı ve öncesi-sonrası görselleri en riskli alanlar. Sonra içeriği bilgilendirme odağına çekin: işlem nedir, kimlere uygundur, süreç nasıl işler, hekim kimdir. Web sitesi, Google İşletme Profili ve yerel SEO, yönetmeliğin izin verdiği alanın içinde kalan en kalıcı yatırımlardır.",
+        "link": {
+          "href": "/saglik-klinik-reklam-ajansi",
+          "label": "Sağlık & Klinik Reklam Ajansı sayfamız"
+        }
+      }
+    ],
+    "conclusion": "Yeni yönetmelik, sağlıkta dijital pazarlamayı 'reklam vermek'ten 'doğru bilgilendirmek'e kaydırıyor. Bu çerçevede çalışan klinikler hem idari riskten hem platform kısıtından korunuyor. markaizi olarak sağlık tesisleriyle bilgilendirme odaklı içerik, web sitesi ve yerel görünürlük çalışması yapıyoruz; kesin hukuki sorularda ise hukuk danışmanınıza yönlendiriyoruz.",
+    "faq": [
+      {
+        "q": "Klinik Instagram'da hasta yorumu paylaşabilir mi?",
+        "a": "Yönetmelik, hasta veya yakınlarının teşekkür ve memnuniyet ifadeleriyle reklam niteliğinde paylaşımı yasaklıyor. Bu paylaşımlardan tesis veya hekim sorumlu tutuluyor."
+      },
+      {
+        "q": "Öncesi-sonrası fotoğrafı tamamen yasak mı?",
+        "a": "Hayır, koşullu. Tarih, aynı ortam, düzenlemesiz görsel, açık rıza, uyarı metni ve etkileşimin kapatılması gibi şartlar var. Ayrıntı için yönetmelik metnine bakın."
+      },
+      {
+        "q": "Fiyat paylaşabilir miyiz?",
+        "a": "Tanıtımlarda ücret, indirim, kampanya ve promosyon bilgisi verilemiyor. Hastaya bireysel bilgi vermek ayrı bir konudur; sınırı hukuk danışmanınızla netleştirin."
+      }
+    ]
+  },
+  {
+    "slug": "takviye-edici-gida-reklam-kurallari-2026",
+    "category": "Mevzuat",
+    "color": "#fb923c",
+    "title": "Takviye Edici Gıda Reklam Kuralları 2026: Yeni Yönetmelik, Meta ve Google Politikaları",
+    "excerpt": "1 Ağustos 2026'da yürürlüğe giren değişiklikler takviye reklamında neyi değiştirdi? Normal beslenme izlenimi, ispat yükümlülüğü, sağlık beyanları ve platform kuralları.",
+    "date": "30 Ekim 2026",
+    "dateISO": "2026-10-30",
+    "readTime": "7 dk",
+    "intro": "Takviye edici gıda, vitamin ve doğal ürün reklamı Türkiye'de hem mevzuat hem platform politikaları açısından en hassas alanlardan biri. Ticari Reklam ve Haksız Ticari Uygulamalar Yönetmeliği'nde 1 Temmuz 2026'da yayımlanan değişiklikler 1 Ağustos 2026'da yürürlüğe girdi ve takviye reklamına yeni bir madde ekledi. Bu yazıda kaynaklardaki özetlere dayanarak değişiklikleri ve reklamcıya düşen sorumlulukları anlatıyoruz. Bu yazı genel bilgilendirmedir, hukuki danışmanlık değildir. Kesin uygulama için ilgili yönetmeliğin Resmî Gazete'deki metnine ve hukuk danışmanınıza başvurun.",
+    "sections": [
+      {
+        "h2": "Yeni Kural: Normal Beslenmenin Yerine Geçme İzlenimi Yok",
+        "body": "Yönetmeliğin 27. maddesine eklenen fıkraya göre takviye edici gıdaların, normal beslenme kapsamında tüketilen gıdaların yerine geçtiği izlenimini uyandıracak şekilde reklamı yapılamıyor. 'Öğün yerine', 'sebze meyve ihtiyacınızı karşılar' gibi ifadeler bu kapsamda risk taşıyor."
+      },
+      {
+        "h2": "Her İddia İspatlanabilir Olmalı",
+        "body": "Ürünün faydalarına, içeriğine veya etkilerine dair ortaya atılan her iddianın, gıda otoritelerinin belirlediği kriterlere göre ispatlanabilir olması gerekiyor. Sağlık beyanları belirsiz, yanlış veya yanıltıcı olamaz; yalnızca onaylı sağlık beyanı ifadeleri kullanılabilir. Örneğin A vitamini için 'normal görme yetisinin korunmasına katkıda bulunur' gibi onaylı bir ifade kullanılabilirken, 'gözünüzü iyileştirir' kullanılamaz."
+      },
+      {
+        "h2": "Tıbbi İddia ve İlaç Algısı",
+        "body": "'Tedavi eder', 'iyileştirir', 'hastalığı geçirir' gibi ifadeler takviye ve kozmetik ürünler için hem reklam mevzuatında hem Meta ve Google politikalarında sorun yaratır. Beşerî tıbbi ürünlerin reklamı ayrıca yasak olduğu için ürünün ilaç gibi algılanması da riskli."
+      },
+      {
+        "h2": "Karşılaştırmalı Reklam",
+        "body": "Sağlık beyanı kapsamına giren konular hariç olmak üzere fiyat, miktar ve ambalaj gibi nesnel kriterlerle karşılaştırmalı reklam yapılabildiği belirtiliyor. Rakibi kötüleyen ya da sağlık etkisi üzerinden üstünlük iddia eden karşılaştırmalar ise riskli."
+      },
+      {
+        "h2": "Mecra Bazında Tutarlılık",
+        "body": "Aynı iddia ürün sayfasında, sosyal medya gönderisinde, influencer paylaşımında ve reklam metninde tutarlı ve kurala uygun olmalı. Reklam metnini temizleyip ürün sayfasında 'tedavi' ifadesini bırakmak, hesap incelemesinde de sorun çıkarır."
+      },
+      {
+        "h2": "Meta ve Google Tarafı",
+        "body": "Meta ve Google'ın sağlık, takviye ve kilo verme reklamlarına ayrı politikaları var; öncesi-sonrası görselleri, gerçekçi olmayan sonuç vaatleri ve kişisel sağlık özelliğine işaret eden ifadeler kısıtlanıyor. Politikalar sık değiştiği için resmî Meta ve Google politika sayfalarını güncel haliyle kontrol etmek gerekir."
+      },
+      {
+        "h2": "Pratik Kontrol Listesi",
+        "body": "Reklamı yayınlamadan önce şunları sorun: Her iddianın onaylı bir sağlık beyanı karşılığı var mı? Ürün tedavi edici ya da ilaç gibi sunuluyor mu? Normal beslenmenin yerine geçtiği izlenimi var mı? Influencer paylaşımında reklam etiketi görünür mü? Aynı ifade ürün sayfasında da uygun mu?",
+        "link": {
+          "href": "/dogal-urun-takviye-reklam-ajansi",
+          "label": "Doğal Ürün & Takviye Reklam Ajansı sayfamız"
+        }
+      }
+    ],
+    "conclusion": "Takviye reklamında kural net: ispatlanabilir, onaylı ve tıbbi iddia içermeyen bir dil. Bu sınırlar içinde bile ürünün kullanım deneyimi, içeriği ve markanın güvenilirliği güçlü biçimde anlatılabilir. markaizi olarak vitamin, takviye ve doğal ürün markalarında mesajı bu sınırlar içinde kuruyoruz.",
+    "faq": [
+      {
+        "q": "Takviye reklamında 'bağışıklığı güçlendirir' denebilir mi?",
+        "a": "Onaylı sağlık beyanları listesinde olan ifadeler kullanılabilir; listede olmayan ifadeler ispat gerektirir ve risklidir. Kesin ifade için güncel sağlık beyanı rehberine bakın."
+      },
+      {
+        "q": "Takviye ürünlerini internetten satmak serbest mi?",
+        "a": "Satış koşulları mevzuata ve ürünün bildirim durumuna bağlıdır. Satışa başlamadan önce ürün bildirimini ve ilgili izinleri kontrol edin."
+      },
+      {
+        "q": "Meta'da takviye reklamı verilebilir mi?",
+        "a": "Verilebiliyor ama sağlık ve takviye politikalarına tabi; tıbbi iddia, öncesi-sonrası ve kilo verme vaadi gibi içerikler reddedilir."
+      }
+    ]
+  },
+  {
+    "slug": "influencer-reklam-etiketi-zorunlulugu-2026",
+    "category": "Mevzuat",
+    "color": "#fbbf24",
+    "title": "Influencer Reklamlarında 'Reklam' Etiketi Zorunluluğu (2026): Markalar İçin Kontrol Listesi",
+    "excerpt": "Yönetmeliğe göre menfaat içeren her paylaşım reklamdır. Etiketin nerede, nasıl görünmesi gerektiği ve markaların sözleşmede neye dikkat etmesi gerektiği.",
+    "date": "30 Ekim 2026",
+    "dateISO": "2026-10-30",
+    "readTime": "6 dk",
+    "intro": "Ticari Reklam ve Haksız Ticari Uygulamalar Yönetmeliği'nde 1 Ağustos 2026'da yürürlüğe giren değişikliklerden biri sosyal medya etkileyicilerinin (influencer) paylaşımlarına ilişkin. Hukuk kaynaklarının özetlerine göre madde 23/A, etkileyici reklamlarının açık, anlaşılır ve ayırt edilebilir olmasını istiyor. Bu yazıda markaların ve ajansların bilmesi gerekenleri anlatıyoruz. Bu yazı genel bilgilendirmedir, hukuki danışmanlık değildir. Kesin uygulama için ilgili yönetmeliğin Resmî Gazete'deki metnine ve hukuk danışmanınıza başvurun.",
+    "sections": [
+      {
+        "h2": "Hangi Paylaşım Reklam Sayılıyor?",
+        "body": "Maddi kazanç, ücretsiz veya indirimli ürün, çekiliş ya da etkinliğe katılım gibi bir menfaat içeren paylaşımlar reklam sayılıyor. Yani yalnızca 'ücret karşılığı' paylaşımlar değil, hediye ürün gönderilen ve karşılığında paylaşım yapılan durumlar da kapsama giriyor."
+      },
+      {
+        "h2": "Etiket Nasıl Olmalı?",
+        "body": "Paylaşımda 'Reklam' veya 'Tanıtım' ifadesi bulunmalı. Etiket görsel olarak ayırt edilebilir olmalı, ekranı kaydırmadan görünmeli, diğer etiketlerden önce yer almalı ve her mecrada ayrıca bulunmalı. Küçük puntoyla gizlenmiş ya da açıklamanın sonundaki bir etiket bu tarife uymuyor."
+      },
+      {
+        "h2": "Sesli ve Canlı Yayınlar",
+        "body": "Podcast ve canlı yayın gibi sesli yayınlarda, yayının başında ve reklamdan önce benzer bir bildirim yapılması gerekiyor. Videoda yalnızca açıklama kısmında etiket belirtmek yeterli kabul edilmeyebilir."
+      },
+      {
+        "h2": "Marka ve Ajans Ne Yapmalı?",
+        "body": "Kaynaklar, etiketleme yükümlülüğünün influencer sözleşmesinde açıkça yer almasını ve markanın bir denetim mekanizması kurmasını öneriyor. Paylaşım yayınlandıktan sonra etiketin görünürlüğünü kontrol etmek ve eksik olanı düzelttirmek marka tarafındaki sorumluluğu azaltır."
+      },
+      {
+        "h2": "Yapay Zekâ ile Üretilmiş Karakterler",
+        "body": "Aynı düzenlemeler yapay zekâ veya dijital karakter kullanımının, tüketicinin satın alma davranışını önemli ölçüde etkileyecekse açıkça belirtilmesini istiyor. Gerçek bir kişinin yapay zekâ ile üretilmiş kopyasının ürünü deneyimlediği izlenimini veren reklamlar ise yasak."
+      },
+      {
+        "h2": "Kontrol Listesi",
+        "body": "Sözleşmede etiket maddesi var mı? Etiket ilk bakışta görünür mü? Paylaşım takviye ya da sağlık ürünüyse içerik kurallara uygun mu? Hediye ürün gönderildi mi, öyleyse etiket yerinde mi? Yapay zekâ ile üretilmiş görsel varsa belirtildi mi?",
+        "link": {
+          "href": "/blog/takviye-edici-gida-reklam-kurallari-2026",
+          "label": "Takviye reklam kuralları rehberimiz"
+        }
+      }
+    ],
+    "conclusion": "Etiket zorunluluğu hem tüketiciyi hem markayı korur; açık etiketli bir tanıtım güveni zedelemez, gizlenmiş bir tanıtım ise yaptırım riski taşır. İnfluencer çalışmalarını sözleşme, etiket ve takip düzeniyle yürütmek en güvenli yoldur.",
+    "faq": [
+      {
+        "q": "Hediye ürün gönderirsem paylaşım reklam sayılır mı?",
+        "a": "Ücretsiz ürün gibi bir menfaat varsa paylaşım reklam sayılıyor ve etiket gerekiyor."
+      },
+      {
+        "q": "Etiket nerede olmalı?",
+        "a": "Ekranı kaydırmadan görünür, diğer etiketlerden önce gelen ve her mecrada ayrıca bulunan bir 'Reklam' veya 'Tanıtım' ifadesi."
+      },
+      {
+        "q": "Marka sorumlu tutulabilir mi?",
+        "a": "Kaynaklar markanın sözleşmeye etiket maddesi koymasını ve denetim kurmasını öneriyor. Sorumluluk dağılımı için hukuk danışmanınıza başvurun."
+      }
+    ]
+  },
+  {
+    "slug": "e-ticarette-indirim-yorum-ve-yapay-zeka-reklam-kurallari-2026",
+    "category": "Mevzuat",
+    "color": "#22d3ee",
+    "title": "E-Ticarette İndirim, Yorum ve Yapay Zekâ Reklam Kuralları (1 Ağustos 2026)",
+    "excerpt": "İndirim öncesi fiyat nasıl hesaplanır, yorumları kim yazabilir, yapay zekâ karakterleri nasıl belirtilir? E-ticaret ve reklam yapanlar için yeni kurallar.",
+    "date": "30 Ekim 2026",
+    "dateISO": "2026-10-30",
+    "readTime": "7 dk",
+    "intro": "1 Ağustos 2026'da yürürlüğe giren Ticari Reklam ve Haksız Ticari Uygulamalar Yönetmeliği değişiklikleri, e-ticaret sitelerini ve onlara reklam yapan ajansları doğrudan ilgilendiriyor: indirim fiyatı, ürün yorumları, hedefli reklam ve yapay zekâ kullanımı. Bu yazı kaynaklardaki özetlere dayanır. Bu yazı genel bilgilendirmedir, hukuki danışmanlık değildir. Kesin uygulama için ilgili yönetmeliğin Resmî Gazete'deki metnine ve hukuk danışmanınıza başvurun.",
+    "sections": [
+      {
+        "h2": "İndirim Öncesi Fiyat Nasıl Hesaplanır?",
+        "body": "Mal satışlarında indirim öncesi fiyat, indirimin başlangıcından önceki 10 gün içindeki en düşük fiyat olarak alınıyor. Meyve, sebze gibi çabuk bozulan mallar ile hizmetlerde ise indirimli fiyattan bir önceki fiyat esas alınıyor. Birden fazla satış kanalı olan işletmelerde her kanal kendi fiyat geçmişiyle değerlendiriliyor; bir kanaldaki fiyat başka kanaldaki indirim için referans olamıyor."
+      },
+      {
+        "h2": "Sadakat ve Koşullu Kampanyalar",
+        "body": "Sadakat programları ile 'belirli tutar üzeri indirim' gibi koşullu kampanyalar da aynı kurallara tabi. Üstü çizili eski fiyatı kampanya öncesinde şişirip sonra indirim göstermek, bu düzenleme ile doğrudan risk taşıyor."
+      },
+      {
+        "h2": "Ürün Yorumları",
+        "body": "Yalnızca ürünü ya da hizmeti satın alanlar yorum yapabiliyor; satın alma doğrulaması yapılamayan mecralardan gelen yorumlar yayınlanamıyor. Yorumlar en az bir yıl, olumlu ve olumsuz ayrımı yapılmadan ve objektif ölçütlere göre yayınlanmalı. Satışı artırmak için sahte yorum yazdırmak ya da satın almak yasak."
+      },
+      {
+        "h2": "Şikâyetlere Yanıt Süresi",
+        "body": "Satıcının değerlendirmelere yanıt süresi 72 saatten 48 saate indirildi; bu süre içinde yanıt verilmezse değerlendirme doğrudan yayınlanıyor. Bu, e-ticaret müşteri hizmetlerinin yanıt düzenini doğrudan etkiliyor."
+      },
+      {
+        "h2": "Hedefli Reklam",
+        "body": "Reklamın hangi kriterlere göre gösterildiği tüketiciye kolayca ulaşılabilir biçimde bildirilmeli. Çocuğun kullanıcı olduğu bilinen veya makul olarak bilinmesi beklenen durumlarda, kişisel verilere dayalı profilleme ile hedefli reklam yapılamıyor."
+      },
+      {
+        "h2": "Yapay Zekâ ve Dijital Karakterler",
+        "body": "Yapay zekâ ya da dijital karakter kullanımı, tüketicinin satın alma davranışını önemli ölçüde etkileyecekse açıkça belirtilmeli. Gerçek bir kişinin yapay zekâ ile üretilmiş kopyasının ürünü deneyimlediği izlenimini veren reklamlar yasak."
+      },
+      {
+        "h2": "Çevresel Beyanlar",
+        "body": "'Çevre dostu' gibi genel ifadeler tek başına yeterli değil; beyanlar belgelendirilebilir olmalı ve belirsizlik yaratmamalı."
+      },
+      {
+        "h2": "Reklam Hesabında Ne Değişir?",
+        "body": "Reklam metinlerinde 'en düşük fiyat' ve üstü çizili fiyat ifadelerini fiyat geçmişine göre kurmak, ürün sayfası yorumlarının doğrulanmış alıcılardan geldiğinden emin olmak ve influencer paylaşımlarına etiket eklemek en somut adımlardır.",
+        "link": {
+          "href": "/e-ticaret-reklam-ajansi",
+          "label": "E-Ticaret Reklam Ajansı sayfamız"
+        }
+      }
+    ],
+    "conclusion": "Yeni kurallar fiyat şeffaflığını, yorum güvenilirliğini ve reklamın ayırt edilebilirliğini öne çıkarıyor. E-ticarette reklamın sürdürülebilir olması için fiyat ve yorum düzenini bu kurallara uygun kurmak, reklam optimizasyonu kadar önemli.",
+    "faq": [
+      {
+        "q": "'En düşük fiyat' ifadesi nasıl kullanılabilir?",
+        "a": "İfade, kaynaklardaki 10 günlük fiyat geçmişi kuralına dayanmalı ve her satış kanalı için ayrı değerlendirilmeli. Kesin kullanım için hukuk danışmanınıza bakın."
+      },
+      {
+        "q": "Sitedeki yorumlar için ne yapmalıyım?",
+        "a": "Yorumların yalnızca ürünü satın alanlardan geldiğini doğrulayın, olumsuz yorumları gizlemeyin ve sahte yorum kullanmayın."
+      },
+      {
+        "q": "Yapay zekâ ile ürettiğim görseli belirtmeli miyim?",
+        "a": "Satın alma kararını önemli ölçüde etkileyecekse evet. Gerçek bir kişinin ürünü deneyimlediği izlenimi veren yapay zekâ içerikleri yasak."
+      }
+    ]
+  },
+  {
+    "slug": "guzellik-merkezleri-icin-google-haritalar-ve-instagram-rehberi",
+    "category": "Sosyal Medya",
+    "color": "#f472b6",
+    "title": "Güzellik Merkezleri İçin Google Haritalar ve Instagram Rehberi: Randevu Takvimini Doldurmak",
+    "excerpt": "Güzellik merkezi müşterisi nasıl karar verir? Google İşletme Profili, hizmet bazlı Instagram içeriği, WhatsApp randevu akışı ve boş saatleri doldurmanın yolları.",
+    "date": "30 Ekim 2026",
+    "dateISO": "2026-10-30",
+    "readTime": "7 dk",
+    "intro": "Bir güzellik merkezi için en pahalı şey boş randevu saatidir. Müşteri kararının büyük kısmı iki yerde şekilleniyor: Google'da 'yakınımdaki güzellik merkezi' araması ve Instagram'da gördüğü içerik. Bu rehberde ikisini randevuya dönüştürmenin pratik adımlarını anlatıyoruz.",
+    "sections": [
+      {
+        "h2": "Müşteri Nasıl Karar Verir?",
+        "body": "Güzellik merkezi seçimi yakınlık, güven ve değerlendirmeler üzerinden yapılıyor. Müşteri önce Google'da arıyor, profile bakıyor, yorumları okuyor, ardından Instagram hesabına geçip mekânı ve uzmanı görmek istiyor. İki yerdeki bilgi tutarlı değilse güven zedeleniyor."
+      },
+      {
+        "h2": "Google İşletme Profilini Düzenleyin",
+        "body": "Doğru ana kategori, hizmet listesi, çalışma saatleri, güncel fotoğraflar, telefon ve konum bilgisi temel. Hizmetleri tek tek yazın: lazer epilasyon, cilt bakımı, kalıcı makyaj gibi. Profildeki bilgiler web siteniz ve Instagram biyografinizle birebir aynı olmalı."
+      },
+      {
+        "h2": "Yorumlar",
+        "body": "Memnun müşteriden yorum istemek alışkanlık olmalı: işlem sonrası kısa bir mesaj ya da masada QR kod. Olumsuz yorumlara sakin ve çözüm odaklı yanıt vermek yeni müşteriye güven verir. Satın alınmış ya da sahte yorum hem platform kuralları hem tüketici mevzuatı açısından risklidir."
+      },
+      {
+        "h2": "Instagram'da Hizmet Bazlı İçerik",
+        "body": "Her hizmeti ayrı bir içerik serisi olarak ele alın: nasıl yapılır, kimlere uygundur, ne kadar sürer, işlem sonrası nelere dikkat edilir. Uzmanı ve mekânı gösterin; temizlik ve hijyen güven verir. Süslü kampanya görselinden çok, süreci anlatan kısa videolar işe yarar."
+      },
+      {
+        "h2": "Öncesi-Sonrası ve Kampanya Dili",
+        "body": "Öncesi-sonrası görselleri ve kesin sonuç vaadi platform kurallarında kısıtlıdır; müşteri fotoğrafı için yazılı açık rıza (KVKK) gerekir. Kampanya fiyatında geçerlilik tarihini ve koşulları açıkça yazın. Hekim kontrolündeki klinikler için ayrıca sağlıkta tanıtım yönetmeliği geçerlidir.",
+        "link": {
+          "href": "/guzellik-merkezi-reklam-ajansi",
+          "label": "Güzellik Merkezi Reklam Ajansı sayfamız"
+        }
+      },
+      {
+        "h2": "WhatsApp Randevu Akışı",
+        "body": "Reklamdan ve profilden gelen mesaja hızlı dönmek dönüşümün en kritik halkası. Hazır yanıtlar, mesai dışı otomatik mesaj ve randevu onay mesajı kurun. Randevudan bir gün önce hatırlatma göndermek no-show oranını düşürür."
+      },
+      {
+        "h2": "Boş Saatleri Doldurmak",
+        "body": "Hafta içi öğle saatleri, akşam öncesi ve hafta sonu öncesi gibi boş saatler için gün ve saate göre reklam kampanyası kurulabilir. Reklam, doluluk düşükken yoğunlaşır ve doluluk artınca kısılır."
+      }
+    ],
+    "conclusion": "Güzellik merkezinde reklamdan önce profilin, içeriğin ve randevu akışının hazır olması gerekir; aksi halde reklam gelen talebi karşılayamaz. Önce görünürlüğü ve güveni kurun, sonra reklamla büyütün.",
+    "faq": [
+      {
+        "q": "Google İşletme Profili ücretli mi?",
+        "a": "Hayır, profil ücretsizdir. Reklam ayrı bir hizmettir."
+      },
+      {
+        "q": "Instagram mı Google mı daha önemli?",
+        "a": "Güzellikte ikisi birlikte çalışır; Google aktif arayanı, Instagram henüz karar vermemişi yakalar."
+      },
+      {
+        "q": "Boş saatler için reklam nasıl kurulur?",
+        "a": "Gün ve saat bazlı kampanya zamanlaması ve konum hedeflemesiyle; doluluk takibine göre bütçe kaydırılır."
+      }
+    ]
+  },
+  {
+    "slug": "restoranlar-icin-google-ads-rezervasyon-ve-paket-servis",
+    "category": "Kafe & Restoran",
+    "color": "#fbbf24",
+    "title": "Restoranlar İçin Google Ads: Rezervasyon ve Paket Servis Odaklı Strateji",
+    "excerpt": "Restoranda karar anı kafeden farklı. Rezervasyon, grup yemeği ve paket servis için Google aramaları, konum ve saat hedeflemesi, yemek platformlarına bağımlılığı azaltma.",
+    "date": "30 Ekim 2026",
+    "dateISO": "2026-10-30",
+    "readTime": "6 dk",
+    "intro": "Restoran sahipleri Google Ads'e çoğu zaman 'yakınımdaki restoran' aramasını yakalamak için başlar. Oysa restoranda talep üç ayrı yoldan geliyor: rezervasyon ve grup yemekleri, anlık 'şimdi yemek yiyeceğim' kararı ve paket servis. Her biri farklı arama, farklı saat ve farklı mesaj istiyor.",
+    "sections": [
+      {
+        "h2": "Üç Farklı Talep, Üç Farklı Kampanya",
+        "body": "Rezervasyon aramaları ('restoran rezervasyon', 'doğum günü yemeği', 'grup yemeği') planlı ve akşam/hafta sonu ağırlıklı. Anlık aramalar ('yakınımdaki restoran', 'açık restoran') mobilde ve yemek saatlerinde yoğunlaşıyor. Paket servis aramaları ise hizmet yarıçapı ve açık saatle sınırlı. Bu üçünü tek kampanyada karıştırmak bütçenin dağılmasına yol açar."
+      },
+      {
+        "h2": "Konum ve Saat Hedeflemesi",
+        "body": "Reklamı mekânın çevresindeki yarıçapa ve açık olduğunuz saatlere göre kurun. Kapalıyken reklam göstermek bütçe kaybıdır. Öğle menüsü reklamını iş merkezlerinin yakınında öğleden önce, akşam reklamını daha geniş çevrede öğleden sonra göstermek verimi artırır."
+      },
+      {
+        "h2": "Google Haritalar ve Arama Birlikte",
+        "body": "Harita görünürlüğü ve arama reklamları birbirini besler. İşletme profilinizin menü, fotoğraf, rezervasyon bağlantısı ve çalışma saatleriyle eksiksiz olması, reklamın dönüşümünü artırır. Profil tutarlı değilse reklam trafiği boşa gider.",
+        "link": {
+          "href": "/blog/kafe-restoran-google-haritalar-rehberi",
+          "label": "Google Haritalar rehberimiz"
+        }
+      },
+      {
+        "h2": "Aramaların Negatifleri",
+        "body": "'Restoran' kelimesi geniş bir arama alanı demek: iş ilanı, tarif, menü fiyat listesi, farklı şehir. Negatif anahtar kelime listesi düzenli güncellenmezse bütçe alakasız aramalara gider."
+      },
+      {
+        "h2": "Yemek Platformlarına Bağımlılığı Azaltmak",
+        "body": "Paket servis platformları sipariş getirir ama komisyon alır ve müşteri bilgisi vermez. Kendi WhatsApp sipariş hattınızı, Instagram profilinizi ve Google profilinizi güçlendirmek bağımlılığı azaltır. Platformları keşif, kendi kanallarınızı tekrar eden müşteri kanalı olarak kurgulayın."
+      },
+      {
+        "h2": "Ölçüm",
+        "body": "Telefon aramaları, yol tarifi isteği, rezervasyon formu ve WhatsApp mesajı dönüşüm olarak izlenmeli. Masaya dönüşen müşteriyi ölçmek zor olsa da 'bu reklamdan geldim' sorusu ve rezervasyon kaynağı takibi işe yarar."
+      }
+    ],
+    "conclusion": "Restoranda Google Ads, 'daha fazla tıklama' değil doğru saatte, doğru yerde, doğru niyetle gelen müşteriyi yakalamaktır. Rezervasyon ve paket servisi ayrı kurgulamak ve profili düzenli tutmak sonucu belirler.",
+    "faq": [
+      {
+        "q": "Restoran için Google Ads mi Instagram mı?",
+        "a": "İkisi farklı iş görür: Google aktif arayanı, Instagram henüz karar vermemişi yakalar. Çoğu restoran için ikisi birlikte kurulmalı."
+      },
+      {
+        "q": "Kapalıyken reklam gösterilir mi?",
+        "a": "Reklam programı açık saatlere göre ayarlanabilir; kapalıyken göstermek bütçe kaybıdır."
+      },
+      {
+        "q": "Paket servis için ayrı kampanya gerekli mi?",
+        "a": "Evet. Yarıçap, mesaj ve saat farklı olduğu için ayrı kurgulanması verimi artırır."
+      }
+    ]
+  },
+  {
+    "slug": "mobilya-ureticileri-icin-ihracat-dijital-pazarlama",
+    "category": "Mobilya Sektörü",
+    "color": "#fb923c",
+    "title": "Mobilya Üreticileri İçin İhracat Odaklı Dijital Pazarlama: Çok Dilli Katalog, Körfez ve Avrupa",
+    "excerpt": "Mobilya üreticisi yurt dışı alıcıya nasıl ulaşır? Çok dilli site ve katalog, B2B teklif formu, Google Ads ve Meta ile yurt dışı hedefleme, güven unsurları.",
+    "date": "30 Ekim 2026",
+    "dateISO": "2026-10-30",
+    "readTime": "7 dk",
+    "intro": "Mobilya üreticilerinin dijital pazarlaması perakendeden farklıdır: alıcı bir mağaza, bayi, proje müteahhidi ya da ithalatçı olabilir; karar süreci uzun, sipariş hacmi büyüktür. İhracat odaklı çalışırken siteniz, kataloğunuz ve reklamlarınız bu alıcının diliyle konuşmalı. Bu yazı genel bir yol haritasıdır.",
+    "sections": [
+      {
+        "h2": "Alıcı Profilini Netleştirin",
+        "body": "Yurt dışında hedefiniz son tüketici mi, yoksa toptancı, bayi ya da otel-proje alıcısı mı? Mesaj, kanal ve reklam türü buna göre değişir. B2B alıcı fiyat listesi, minimum sipariş, teslim süresi ve sertifika bilgisi arar; tüketici ise görsel ve ilham arar."
+      },
+      {
+        "h2": "Çok Dilli Site ve Katalog",
+        "body": "İngilizce temel dil olarak çoğu pazarda yeterli bir başlangıçtır; Körfez pazarı için Arapça, Avrupa için Almanca ya da ilgili ülke dili güven verir. Her dil ayrı URL'de, doğru dil etiketleriyle (hreflang) yayınlanmalı ve çeviri makine çevirisi kalitesinde bırakılmamalı. İndirilebilir dijital katalog, alıcının sizi iç değerlendirmede paylaşmasını kolaylaştırır."
+      },
+      {
+        "h2": "Güven Unsurları",
+        "body": "Üretim tesisi görselleri, sertifikalar, referans projeler, sevkiyat deneyimi ve net iletişim bilgileri yurt dışı alıcı için kritiktir. Alıcı sizi hiç görmeden güvenmek zorunda; bu güveni site ve katalog kurar."
+      },
+      {
+        "h2": "Teklif Formu ve Bayi Bulucu",
+        "body": "Toptan teklif formu; ürün, adet, ülke ve teslim koşulunu soran sade bir yapıda olmalı. Bayi arayan üreticiler için bayilik şartlarını anlatan ve başvuru alan ayrı bir sayfa, rastgele mesajlardan çok daha nitelikli talep getirir."
+      },
+      {
+        "h2": "Google Ads ve Meta ile Yurt Dışı Hedefleme",
+        "body": "Google'da hedef ülkenin dilinde ve alıcı niyetiyle ('furniture manufacturer Turkey', 'wholesale sofa' gibi) arama reklamları kurulabilir. Meta ve LinkedIn tarafında ise proje alıcılarına, mimar ve iç mimarlara yönelik kreatif akışı işe yarar. Her ülkenin reklam maliyeti ve rekabeti farklı olduğundan küçük testlerle başlamak ve pazara göre bütçe kaydırmak gerekir."
+      },
+      {
+        "h2": "Ölçüm",
+        "body": "Yurt dışı alıcı talepleri uzun sürede kapanır; formdan satışa kadar süreyi izlemek için talep kaynağını (reklam, organik, fuar) kayıt altına alın. Ölçüm kurulumu yapılmadan yurt dışı reklam bütçesinin verimi anlaşılamaz.",
+        "link": {
+          "href": "/hizmetler/donusum-takibi-kurulumu",
+          "label": "Dönüşüm takibi kurulumu"
+        }
+      }
+    ],
+    "conclusion": "İhracat odaklı dijital pazarlama, perakende reklamından çok bir güven ve süreç işidir: doğru dil, doğru katalog, kolay teklif ve düzenli ölçüm. Yurt dışı hedefleme için ayrıca mobilya üreticileri sayfamıza ve kurumsal Meta-Google yönetimi sayfamıza bakabilirsiniz.",
+    "faq": [
+      {
+        "q": "Hangi dilde site yayınlamalıyım?",
+        "a": "Hedef pazara göre belirlenir; İngilizce temel, Körfez için Arapça, Avrupa için ilgili ülke dili güven verir."
+      },
+      {
+        "q": "Yurt dışına Google Ads verilebilir mi?",
+        "a": "Verilebilir; ülke, dil ve arama niyetine göre ayrı kampanya kurulur. Maliyet ülkeye göre değişir."
+      },
+      {
+        "q": "Dijital katalog gerekli mi?",
+        "a": "B2B alıcı için çok değerli: indirilebilir, çok dilli ve güncel bir katalog satış sürecini hızlandırır."
+      }
+    ]
+  },
+  {
+    "slug": "mobilya-markalari-icin-meta-google-butce-dagilimi",
+    "category": "Mobilya Sektörü",
+    "color": "#fb923c",
+    "title": "Büyük Mobilya Firmalarında Meta ve Google Reklam Bütçesi Nasıl Dağıtılır?",
+    "excerpt": "Büyük bütçede reklamın en büyük riski verimsizliktir. Ürün grubu, şube, sezon ve kanal bazında bütçe dağılımı, ölçüm ve raporlama düzeni.",
+    "date": "30 Ekim 2026",
+    "dateISO": "2026-10-30",
+    "readTime": "8 dk",
+    "intro": "Küçük bütçeli mağazada reklamın riski sonuç alamamaktır. Büyük bütçeli bir mobilya markasında risk daha sinsidir: sonuç gelir ama verimli gelmez. Bu yazıda büyük bütçelerde Meta ve Google dağılımını nasıl kurduğumuzu genel bir çerçeve olarak anlatıyoruz. Rakamlar işletmeden işletmeye değiştiği için yüzdelik reçete vermiyoruz.",
+    "sections": [
+      {
+        "h2": "Önce Ürün Grubu, Sonra Kanal",
+        "body": "Bütçe önce ürün gruplarına, sonra kanallara bölünmeli. Koltuk takımı, yatak odası, yemek odası ve genç odasının müşterisi, karar süresi ve sepet büyüklüğü farklı. Her grup kendi kampanyasında, kendi hedefiyle yönetilmeli. Aksi halde güçlü satan grup, zayıf grubun bütçesini örter ve kayıp görünmez olur."
+      },
+      {
+        "h2": "Google: Niyeti Toplamak",
+        "body": "Google, satın almaya en yakın aramaları toplar. Büyük hesaplarda arama terimi temizliği, marka aramasının korunması, harita reklamları ve alışveriş kampanyalarının dengesi belirleyicidir. Hesabı haftalık arama terimi raporuyla taramak, alakasız harcamanın büyümeden fark edilmesini sağlar."
+      },
+      {
+        "h2": "Meta: Talebi Yaratmak",
+        "body": "Meta, henüz aramaya başlamamış hazır alıcıyı yakalar. Büyük bütçede kreatif yorgunluğu ana risktir: aynı reklam aynı kitleye tekrar tekrar gösterildikçe maliyet yükselir. Düzenli kreatif yenileme, katalog ve yeniden hedefleme bütçenin verimini korur."
+      },
+      {
+        "h2": "Sezona Göre Kaydırma",
+        "body": "Mobilya talebi sezonluk: evlilik dönemi, taşınma sezonu, bayram ve indirim kampanyaları. Bütçeyi sabit dağıtmak yerine bu dönemlerde yoğunlaştırıp durgun dönemde kısmak toplam verimi artırır. Geçmiş yılların verisi bu planlamanın en değerli girdisidir."
+      },
+      {
+        "h2": "Şube ve Bayi Bazlı Dağılım",
+        "body": "Çok şubeli yapıda her şubenin çevresine ayrı hedefleme ve bütçe tanımlamak, merkezi reklamla şubeleri birbirinin müşterisini çalmaktan korur. Merkezden yönetilen kreatif ve yerel bütçe dengesi kurulmalı."
+      },
+      {
+        "h2": "Ölçüm ve Raporlama",
+        "body": "Mesaj sayısı tek başına yanıltıcıdır. Mesajdan satışa kadar olan zinciri, mümkün olduğunca mağazada kapanan satışla birlikte izlemek gerekir. Aylık yönetici raporu; harcama, mesaj/arama sayısı, müşteri başına maliyet ve kanal karşılaştırmasını sade bir dille vermelidir.",
+        "link": {
+          "href": "/mobilya-kurumsal-meta-google-reklam-yonetimi",
+          "label": "Kurumsal Meta & Google yönetimi sayfamız"
+        }
+      },
+      {
+        "h2": "7 Yıllık Bir Örnek",
+        "body": "Alitel Mobilya ile 7 yıldır çalışıyoruz: Alitel her yıl İstikbal bayileri arasında Türkiye ciro birinciliğine ulaştı ve bu süre boyunca 10 milyon TL'nin üzerinde reklam bütçesi yönettik; ana kanal Google reklamlarıydı. Satış başarısında ürün, hizmet ve satış ekibi belirleyicidir; reklam bu başarıya destek olan kanaldır.",
+        "link": {
+          "href": "/vaka-calismalari/alitel-mobilya",
+          "label": "Alitel Mobilya vaka çalışması"
+        }
+      }
+    ],
+    "conclusion": "Büyük bütçede reklam, kampanya kurmaktan çok onu aylar boyunca disiplinle işletmektir: ürün grubu bazlı yapı, arama terimi temizliği, kreatif yenileme, sezon planı ve satış verisine bağlı ölçüm. Bu düzeni firmanızda nasıl kurabileceğimizi ücretsiz hesap denetimimizde birlikte inceleyebiliriz.",
+    "faq": [
+      {
+        "q": "Bütçenin yüzde kaçı Google, yüzde kaçı Meta olmalı?",
+        "a": "Sabit bir oran yok; ürün grubuna, sezona ve ölçüm verisine göre değişir. İlk aylarda test edilir, sonra verimli kanala kaydırılır."
+      },
+      {
+        "q": "Çok şubeli firmada tek hesap mı çoklu hesap mı?",
+        "a": "Çoğu yapıda tek merkezi hesap içinde şube ve bölge bazlı kampanya yeterli ve yönetimi kolaydır. Kesin yapı ölçeğe ve satış modeline bağlıdır."
+      },
+      {
+        "q": "Reklam hesabı kimde kalır?",
+        "a": "Reklam hesapları ve veriler her zaman müşteriye aittir; bütçe doğrudan müşterinin ödeme yöntemiyle platforma ödenir."
+      }
+    ]
+  },
+  {
+    "slug": "isletmenizin-chatgpt-de-gorunup-gorunmedigini-nasil-olcersiniz",
+    "category": "Yapay Zeka",
+    "color": "#a78bfa",
+    "title": "İşletmenizin ChatGPT'de Görünüp Görünmediğini Nasıl Ölçersiniz? Adım Adım Rehber",
+    "excerpt": "Müşteriniz yapay zekaya sorduğunda adınız geçiyor mu? 10-12 soruluk basit bir yöntemle ChatGPT, Gemini, Perplexity ve Google yapay zeka özetinde görünürlüğünüzü kendiniz ölçebilirsiniz.",
+    "date": "30 Ekim 2026",
+    "dateISO": "2026-10-30",
+    "readTime": "7 dk",
+    "intro": "İşletmenizin yapay zekadaki görünürlüğünü ölçmek için pahalı bir araca ihtiyacınız yok. Yapay zeka asistanlarına müşterinizin soracağı soruları sorup cevapları düzenli bir tabloya yazmak, ilk bakış için yeterli. Bu rehberde ölçümü adım adım anlatıyoruz. Önemli bir uyarı: yapay zeka cevapları kişiye, konuma ve güne göre değişir; tek bir sonucu kesin kabul etmeyin, trendi izleyin.",
+    "sections": [
+      {
+        "h2": "1. Müşterinizin Soracağı Soruları Yazın",
+        "body": "Kendi işletme adınızı sormayın; müşterinin sizi henüz bilmeden soracağı soruları yazın. Sektörünüze, şehrinize ve hizmetinize göre 10-12 soru yeterli: 'Ankara'da en iyi kahvaltı mekanı hangisi?', 'Siteler'de mobilya mağazası öner', 'Mobilya mağazam için sosyal medya ajansı arıyorum, kimi önerirsin?', 'Diş implantı için nelere dikkat etmeliyim?' Sorular tek kelimelik arama değil, doğal cümleler olsun. Farklı niyetleri karıştırın: öneri isteyen, karşılaştıran ve bilgi arayan sorular."
+      },
+      {
+        "h2": "2. Dört Yerde Sorun",
+        "body": "Aynı soruları ChatGPT, Gemini, Perplexity ve Google'ın yapay zeka özetinde (arama sonucunun üstünde çıkan özet) sorun. Her araç farklı kaynaklara bakar; birinde çıkıp diğerinde çıkmamak çok normaldir. Mümkünse gizli sekme kullanın ve giriş yapmadan da bir deneme yapın, çünkü kişiselleştirme sonucu değiştirir."
+      },
+      {
+        "h2": "3. Sonucu Tabloya Yazın",
+        "body": "Her soru ve araç için şunları kaydedin: Adınız geçiyor mu? Hangi sırada ve hangi cümleyle? Cevap işletmeniz hakkında doğru bilgi veriyor mu (adres, hizmet, çalışma alanı)? Hangi sayfa kaynak olarak gösteriliyor? Hangi rakipler öneriliyor? Basit bir tablo (tarih, soru, araç, çıktı mı, kaynak, rakipler) yeter."
+      },
+      {
+        "h2": "4. Sonuçları Yorumlayın",
+        "body": "Hiç çıkmıyorsanız sorun genellikle iki yerdedir: web sitenizin işinizi ve bölgenizi net anlatmaması ya da internette sizden bahseden başka bir kaynağın olmaması. Çıkıyor ama yanlış bilgiyle anılıyorsanız, kaynağı bulup düzeltmek gerekir. Rakipler çıkıyor ve siz çıkmıyorsanız, onların hangi sayfalarla kaynak gösterildiğine bakın; çoğu zaman soruyu doğrudan cevaplayan bir sayfaları vardır."
+      },
+      {
+        "h2": "5. Altyapınızı Kontrol Edin",
+        "body": "Görünürlüğü etkileyen şeyleri kontrol listesine çevirin: Web sitesinde işletmenin ne yaptığı ve nerede çalıştığı ilk ekranda net mi? Sık sorulan soruları cevaplayan sayfalar var mı? Adres, telefon ve işletme adı her yerde (site, Google İşletme Profili, sosyal medya, dizinler) aynı mı? Google İşletme Profili eksiksiz ve yorumlar düzenli mi? Yapılandırılmış veri (şema) ve llms.txt gibi makine okunabilir özetler var mı? Başka sitelerde markanızdan söz ediliyor mu?",
+        "link": {
+          "href": "/blog/yapay-zeka-isletme-onerirken-neye-bakar",
+          "label": "Yapay zeka işletme önerirken neye bakıyor?"
+        }
+      },
+      {
+        "h2": "6. Ayda Bir Tekrarlayın",
+        "body": "Aynı soruları ayda bir, ayın ilk haftasında tekrar sorun ve aynı tabloya ekleyin. Tek bir ölçümde çıkıp çıkmamak tesadüf olabilir; üç dört ay boyunca aynı yönde giden bir değişim anlamlıdır. Search Console'da markanızla ilgili aramaları ve Google İşletme Profili istatistiklerini de yanına koyun."
+      },
+      {
+        "h2": "Kendiniz Yapamıyorsanız",
+        "body": "Soru seçimi, çıktıların yorumlanması ve eksiklerin önceliklendirilmesi zaman alır. İsterseniz bu ölçümü sizin için ücretsiz yapıp yazılı raporlayalım; hesabınıza erişim gerekmez.",
+        "link": {
+          "href": "/yapay-zeka-gorunurluk-olcumu",
+          "label": "Ücretsiz yapay zeka görünürlük ölçümü"
+        }
+      }
+    ],
+    "conclusion": "Yapay zeka görünürlüğü ölçülebilir ve iyileştirilebilir, ama garanti edilemez. Önce müşterinizin sorularıyla nerede olduğunuzu görün, sonra eksikleri sırayla kapatın ve ayda bir tekrar bakın. İyileştirme çalışmasının ayrıntısı için Yapay Zeka Arama Görünürlüğü hizmet sayfamıza bakabilirsiniz.",
+    "faq": [
+      {
+        "q": "ChatGPT'de görünmek için ödeme yapmak gerekir mi?",
+        "a": "Organik cevaplarda yer almak için ödeme yapılmıyor. ChatGPT'nin ayrıca sponsorlu reklam alanı var; bu ücretli taraftır ve organik görünürlükten ayrıdır."
+      },
+      {
+        "q": "Bir kez çıkmak yeterli mi?",
+        "a": "Hayır. Cevaplar kişiye, konuma ve güne göre değişir. Trendi izlemek için ölçümü ayda bir tekrarlamak gerekir."
+      },
+      {
+        "q": "İşletme adımı doğrudan yazarsam ne olur?",
+        "a": "Adınızı doğrudan sormak, yapay zekanın sizi tanıyıp tanımadığını gösterir; ama müşteri çoğu zaman adınızı bilmez. Asıl ölçüm, adınızı vermeden sorduğunuz sorulardır."
+      }
+    ]
+  }
 ];
 
 export function getPostBySlug(slug: string): BlogPost | undefined {

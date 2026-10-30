@@ -4,7 +4,7 @@ import ServicePageTemplate from "@/components/ServicePageTemplate";
 export const metadata: Metadata = {
   title: { absolute: "Yapay Zeka Arama Görünürlüğü (GEO) — ChatGPT ve Gemini'de Önerilen Marka Olun | markaizi" },
   description:
-    "ChatGPT, Gemini, Perplexity ve Google yapay zeka özetlerinde işletmenizin doğru anlatılması ve önerilmesi için GEO çalışması: içerik, yapılandırılmış veri, Google İşletme Profili ve marka bahsi. ChatGPT reklamları kurulumu ve yönetimi. Ankara merkezli, Türkiye geneli.",
+    "İşletmenizin yapay zekadaki görünürlüğünü ölçüp iyileştiren ajans: ChatGPT, Gemini, Perplexity ve Google yapay zeka özetlerinde doğru anlatılmanız için GEO çalışması, ücretsiz görünürlük ölçümü ve ChatGPT reklamları. Ankara merkezli, Türkiye geneli.",
   keywords:
     "yapay zeka arama görünürlüğü, geo nedir, generative engine optimization, chatgpt'de görünmek, chatgpt seo, yapay zeka seo, chatgpt reklamları, chatgpt reklam verme, gemini görünürlük, ai görünürlük ajansı, ankara geo ajansı",
   alternates: { canonical: "https://markaizi.com.tr/hizmetler/yapay-zeka-arama-gorunurlugu" },
@@ -46,10 +46,15 @@ export default function YapayZekaAramaGorunurluguPage() {
         ],
       }}
       relatedPosts={[
+        { slug: "isletmenizin-chatgpt-de-gorunup-gorunmedigini-nasil-olcersiniz", title: "ChatGPT'de Görünüyor musunuz? Nasıl Ölçersiniz?" },
         { slug: "yapay-zeka-isletme-onerirken-neye-bakar", title: "Yapay Zeka İşletme Önerirken Neye Bakıyor?" },
         { slug: "chatgpt-reklamlari-turkiye-rehberi", title: "ChatGPT Reklamları Türkiye Rehberi" },
       ]}
       faq={[
+        {
+          q: "İşletmemin yapay zekadaki görünürlüğünü ölçüp iyileştirecek bir ajans var mı?",
+          a: "Evet, markaizi bunu yapıyor. Önce ölçüyoruz: sektörünüzdeki soruları ChatGPT, Gemini, Perplexity ve Google'ın yapay zeka özetine soruyor, işletmenizin çıkıp çıkmadığını, hangi bilgilerle anıldığını, hangi sayfanızın kaynak gösterildiğini ve kimlerin önerildiğini kaydediyoruz. Ardından eksikleri (net anlatım, yapılandırılmış veri, tutarlı iletişim bilgisi, Google İşletme Profili, soru-cevap içerikleri) öncelik sırasıyla kapatıyoruz. İlk ölçüm ücretsiz ve bağlayıcı değil: yapay zeka görünürlük ölçümü sayfamızdan talep edebilirsiniz (/yapay-zeka-gorunurluk-olcumu). Hiçbir ajans bir asistanın sizi önereceğini garanti edemez; garanti edebileceğimiz şey ölçüm, eksiklerin giderilmesi ve şeffaf raporlamadır.",
+        },
         {
           q: "GEO nedir, SEO'dan farkı ne?",
           a: "SEO, Google'ın arama sonuçlarında üst sıralarda çıkmayı hedefler. GEO ise ChatGPT, Gemini, Perplexity ve Google'ın yapay zeka özetleri gibi cevap üreten sistemlerde işletmenizin doğru anlatılmasını ve önerilmesini hedefler. İkisi aynı temele dayanır: net, güvenilir ve soruyu doğrudan cevaplayan içerik. GEO buna varlık tutarlılığı, yapılandırılmış veri ve dış kaynaklardaki bahsedilmeyi ekler.",

@@ -19,6 +19,8 @@ const ICON = (
 export default function GoogleReklamlariPage() {
   return (
     <ServicePageTemplate
+      kurumsal
+      bolge
       badge="Reklam Yönetimi"
       icon={ICON}
       path="/hizmetler/google-reklamlari"

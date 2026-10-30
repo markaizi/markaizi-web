@@ -9,6 +9,8 @@ import JsonLd from "@/components/JsonLd";
 import { breadcrumbJsonLd } from "@/lib/seo";
 import { CITY_PAGES, SERVICE_PAGES } from "@/lib/mobilya-pages";
 import VideoCallout from "@/components/VideoCallout";
+import KurumsalReklam from "@/components/KurumsalReklam";
+import SektorLinkleri from "@/components/SektorLinkleri";
 
 export const metadata: Metadata = {
   title: { absolute: "Mobilya Reklam Ajansı — Siteler / Ankara | markaizi" },
@@ -309,6 +311,8 @@ export default function MobilyaReklamAjansiPage() {
           </div>
         </section>
 
+        <KurumsalReklam sektor="mobilya" />
+
         {/* ── SSS ── */}
         <section className="py-20" style={{ background: "var(--bg-alt)" }}>
           <ServiceFAQ faqs={FAQ} />
@@ -380,6 +384,8 @@ export default function MobilyaReklamAjansiPage() {
             </div>
           </div>
         </section>
+
+        <SektorLinkleri current="/mobilya-reklam-ajansi" />
 
         {/* ── CTA ── */}
         <section className="py-20" style={{ background: "var(--bg-alt)", borderTop: "1px solid var(--border)" }}>

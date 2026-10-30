@@ -16,8 +16,9 @@ const SECTORS = [
 // platformda reklam verildiği de sorulur ve talep panelde ayrı etiketlenir.
 const PLATFORMS = ["Meta (Instagram & Facebook)", "Google Ads", "İkisi de", "Henüz reklam vermiyorum"];
 
-export default function UcretsizAnalizForm({ variant = "analiz" }: { variant?: "analiz" | "reklam" }) {
+export default function UcretsizAnalizForm({ variant = "analiz" }: { variant?: "analiz" | "reklam" | "yz" }) {
   const isReklam = variant === "reklam";
+  const isYz = variant === "yz";
   const [status, setStatus] = useState<"idle" | "sending" | "done" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
   const [showNote, setShowNote] = useState(false);
@@ -39,7 +40,9 @@ export default function UcretsizAnalizForm({ variant = "analiz" }: { variant?: "
             kaynak: "Reklam Hesabı Denetimi",
             platform: (form.elements.namedItem("platform") as HTMLSelectElement).value,
           }
-        : {}),
+        : isYz
+          ? { kaynak: "Yapay Zeka Görünürlük Ölçümü" }
+          : {}),
     };
 
     try {
@@ -73,7 +76,7 @@ export default function UcretsizAnalizForm({ variant = "analiz" }: { variant?: "
         <div className="text-4xl mb-3">✓</div>
         <p className="font-bold text-[18px] text-white mb-2">Talebiniz alındı!</p>
         <p className="text-[14px] text-[#8a8a9a] leading-relaxed mb-5">
-          {isReklam ? "24-48 saat içinde sizi arayıp reklam hesabınıza görüntüleme erişimini birlikte ayarlıyoruz." : "24-48 saat içinde analizinizi hazırlayıp size dönüyoruz."} Acele bir durumunuz varsa hemen WhatsApp&apos;tan da yazabilirsiniz.
+          {isReklam ? "24-48 saat içinde sizi arayıp reklam hesabınıza görüntüleme erişimini birlikte ayarlıyoruz." : isYz ? "Ölçümü yapıp sonucu 2-3 iş günü içinde size iletiyoruz; gerekirse önce kısa bir soru için arayabiliriz." : "24-48 saat içinde analizinizi hazırlayıp size dönüyoruz."} Acele bir durumunuz varsa hemen WhatsApp&apos;tan da yazabilirsiniz.
         </p>
         <a
           href="https://wa.me/905520772700?text=Merhaba%2C%20az%20%C3%B6nce%20%C3%BCcretsiz%20analiz%20formunu%20doldurdum."
@@ -98,7 +101,7 @@ export default function UcretsizAnalizForm({ variant = "analiz" }: { variant?: "
         <Field label="Ad Soyad" id="name" type="text" placeholder="Ahmet Yılmaz" required />
         <Field label="Telefon / WhatsApp" id="phone" type="tel" placeholder="0532 000 00 00" required inputMode="tel" />
         <Field
-          label={isReklam ? "Web Siteniz veya Instagram Hesabınız" : "Instagram Kullanıcı Adı veya Web Sitesi"}
+          label={isReklam ? "Web Siteniz veya Instagram Hesabınız" : isYz ? "Web Siteniz" : "Instagram Kullanıcı Adı veya Web Sitesi"}
           id="link"
           type="text"
           placeholder="@magazaniz veya siteniz.com"
@@ -153,7 +156,7 @@ export default function UcretsizAnalizForm({ variant = "analiz" }: { variant?: "
               id="note"
               name="note"
               rows={3}
-              placeholder={isReklam ? "Örn: Mesaj geliyor ama satış olmuyor, son 2 ayda maliyet arttı..." : "Örn: Şu an reklam vermiyorum, hiç başlamadım..."}
+              placeholder={isReklam ? "Örn: Mesaj geliyor ama satış olmuyor, son 2 ayda maliyet arttı..." : isYz ? "Örn: Ankara'da kafe işletiyorum; 'Ankara'da en iyi kahvaltı' gibi sorularda çıkmak istiyorum..." : "Örn: Şu an reklam vermiyorum, hiç başlamadım..."}
               className="w-full px-4 py-3.5 rounded-xl text-white placeholder:text-white/40 resize-y"
               style={{ background: "var(--bg)", border: "1.5px solid var(--border)", fontSize: "16px", minHeight: "90px" }}
             />
@@ -176,7 +179,7 @@ export default function UcretsizAnalizForm({ variant = "analiz" }: { variant?: "
             fontSize: "16px",
           }}
         >
-          {status === "sending" ? "Gönderiliyor..." : isReklam ? "Ücretsiz Denetim İste →" : "Ücretsiz Analizimi İste →"}
+          {status === "sending" ? "Gönderiliyor..." : isReklam ? "Ücretsiz Denetim İste →" : isYz ? "Ücretsiz Ölçüm İste →" : "Ücretsiz Analizimi İste →"}
         </button>
         <p className="text-[12px] text-[#8a8a9a] text-center leading-relaxed">
           Formu göndermeniz herhangi bir satın alma yükümlülüğü doğurmaz.

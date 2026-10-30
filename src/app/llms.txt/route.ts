@@ -1,5 +1,6 @@
 import { BLOG_POSTS } from "@/lib/blog-data";
 import { CITY_PAGES, SERVICE_PAGES } from "@/lib/mobilya-pages";
+import { SEKTOR_PAGES } from "@/lib/sektor-pages";
 import { ANKARA_ILCELER, KAFE_DISTRICT_PAGES, KAFE_HUB } from "@/lib/kafe-pages";
 import { VIDEOS, YOUTUBE_CHANNEL_URL } from "@/lib/video-data";
 
@@ -28,8 +29,8 @@ const HIZMETLER: [string, string, string][] = [
 ];
 
 const SEKTORLER: [string, string, string][] = [
-  ["Mobilya Reklam Ajansı", "/mobilya-reklam-ajansi", "Ana uzmanlık alanı. Siteler/Ankara merkezli; Türkiye genelinde mobilya mağazaları, üreticileri ve bayileri için Instagram ve Google reklamları, sosyal medya yönetimi, showroom çekimi. İstikbal, Doğtaş ve Kelebek bayileriyle çalışma geçmişi."],
-  ["Sağlık & Klinik Reklam Ajansı", "/saglik-klinik-reklam-ajansi", "Diş klinikleri, estetik ve güzellik merkezleri, fizik tedavi ve alternatif tıp uygulayıcıları için Instagram ve Google reklamları, sosyal medya yönetimi ve klinik çekimi; sağlık reklam politikalarına uygun çalışma."],
+  ["Mobilya Reklam Ajansı", "/mobilya-reklam-ajansi", "Ana uzmanlık alanı; büyük bütçeli mobilya markaları, çok şubeli firmalar ve üreticiler için Meta ve Google reklam yönetimi (7 yıllık Alitel Mobilya iş birliği, 10 milyon TL üzeri yönetilen bütçe). Siteler/Ankara merkezli; Türkiye genelinde mobilya mağazaları, üreticileri ve bayileri için Instagram ve Google reklamları, sosyal medya yönetimi, showroom çekimi. İstikbal, Doğtaş ve Kelebek bayileriyle çalışma geçmişi."],
+  ["Sağlık & Klinik Reklam Ajansı", "/saglik-klinik-reklam-ajansi", "Diş klinikleri, estetik klinikleri, fizik tedavi ve GETAT merkezleri için bilgilendirme içeriği, web sitesi, yerel SEO ve mevzuata uygun dijital pazarlama; 12 Kasım 2025 Sağlıkta Tanıtım Yönetmeliği ve Meta/Google sağlık politikalarına uygun çalışma."],
   ["Doğal Ürün & Takviye Reklam Ajansı", "/dogal-urun-takviye-reklam-ajansi", "Vitamin, bitkisel takviye, doğal yağ ve doğal kozmetik markaları için ürün tanıtım videosu, YouTube içerik üretimi, e-ticaret reklamı ve bayi/distribütör pazarlaması."],
 ];
 
@@ -57,6 +58,10 @@ function build(): string {
 
   lines.push("## Sektörler", "");
   for (const [t, p, d] of SEKTORLER) lines.push(link(t, p, d));
+  lines.push("");
+
+  lines.push("## Diğer Sektörler", "");
+  for (const c of SEKTOR_PAGES) lines.push(link(c.breadcrumbLabel, c.path, c.metaDescription));
   lines.push("");
 
   lines.push("## Mobilya Sektörü: Hizmet Sayfaları", "");
@@ -90,6 +95,7 @@ function build(): string {
   lines.push("## Başlarken", "");
   lines.push(link("Ana Sayfa", "/", "Hizmetlerin, çalışma yaklaşımının, referansların ve iletişim formunun olduğu ana sayfa."));
   lines.push(link("Ücretsiz Reklam Hesabı Denetimi", "/reklam-hesabi-denetimi", "Meta ve Google Ads hesaplarının yalnızca görüntüleme yetkisiyle ücretsiz denetimi: dönüşüm ölçümü, kampanya yapısı, kitle, kreatif, arama terimleri, açılış sayfası ve mesajdan satışa akış. Şifre istenmez, bağlayıcı değildir; başka ajansla çalışanlara bağımsız ikinci görüş."));
+  lines.push(link("Ücretsiz Yapay Zeka Görünürlük Ölçümü", "/yapay-zeka-gorunurluk-olcumu", "İşletmenin ChatGPT, Gemini, Perplexity ve Google yapay zeka özetlerinde görünüp görünmediğinin ücretsiz ölçümü: müşterinin soracağı 10-12 soru, işletmenin anılıp anılmadığı, kaynak gösterilen sayfa ve önerilen rakipler; yazılı rapor, hesap erişimi gerekmez, bağlayıcı değil."));
   lines.push(link("Reklam Bütçesi Hesaplayıcı", "/araclar/reklam-butcesi-hesaplayici", "Ücretsiz araç: hedef satış, ortalama satış tutarı, kâr marjı ve müşteri adayı maliyetinden aylık reklam bütçesi, ROAS ve başabaş ROAS hesabı (başabaş ROAS = 1 ÷ brüt kâr marjı)."));
   lines.push(link("Ücretsiz Analiz", "/ucretsiz-analiz", "İşletmenin Instagram, Google ve web varlığının ücretsiz incelenmesi; 24-48 saat içinde yol haritası, satın alma zorunluluğu yok."));
   lines.push(link("Web Sitesi Teklif Formu", "/hizmetler/web-tasarim-hosting/teklif", "E-ticaret, kurumsal veya tanıtım sitesi için teklif formu."));

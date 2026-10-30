@@ -1,6 +1,6 @@
 # PROJE DURUM — markaizi.com.tr
 
-Son güncelleme: 29 Eylül 2026
+Son güncelleme: 30 Ekim 2026
 
 Bu dosya projenin güncel durumunu, alınmış kararları ve bekleyen işleri özetler.
 Kod ayrıntıları için kaynak dosyalara, veritabanı için `prisma/schema.prisma`'ya bakın.
@@ -28,7 +28,7 @@ Site iki parçadan oluşur:
 
 ## 2. Kamuya Açık Site — Sayfa Envanteri
 
-Yayındaki 72 sayfanın tamamı hem `sitemap.xml`'de hem `llms.txt`'de var (1 Eki 2026 kontrolü).
+Sitemap'te 84 URL var (30 Eki 2026). Yeni sabit sayfalar `llms.txt`'de de listeli (kontrol: build sonrası `/llms.txt`).
 
 ### Ana sayfa (`/`)
 Hero → Ücretsiz Analiz barı → Hizmetler (9 kart, 3×3) → **Sektöre Özel Uzmanlık** (kafe & restoran,
@@ -61,7 +61,20 @@ Meta Pixel, CAPI, GTM, mağaza satışı eşleştirme), **Yapay Zeka Arama Gör�
 - İçerik kaynağı: `src/lib/kafe-pages.ts` (aynı `MobilyaLanding` şablonu, `parent` alanıyla)
 
 ### Diğer sektör sayfaları
-`/saglik-klinik-reklam-ajansi`, `/dogal-urun-takviye-reklam-ajansi`
+`/saglik-klinik-reklam-ajansi`, `/dogal-urun-takviye-reklam-ajansi` (ikisine 30 Eki 2026'da mevzuat bölümü eklendi:
+12 Kasım 2025 Sağlıkta Tanıtım Yönetmeliği ve 1 Ağustos 2026 Ticari Reklam Yönetmeliği değişiklikleri).
+Yeni (30 Eki 2026, `src/lib/sektor-pages.ts`, `MobilyaLanding` şablonu): `/guzellik-merkezi-reklam-ajansi`,
+`/e-ticaret-reklam-ajansi`, `/getat-merkezi-dijital-pazarlama`. Sektör sayfalarının altında ortak
+"Diğer Sektörler" bloğu: `src/components/SektorLinkleri.tsx` (yeni sektör eklenince listeye ekle).
+
+### Büyük firmalar için Meta & Google (30 Eki 2026)
+Hedef: büyük bütçeli firmalara Meta ve Google yönetimi, özellikle mobilya. Çekim ikinci planda.
+- Yeni sayfa: `/mobilya-kurumsal-meta-google-reklam-yonetimi` (`mobilya-pages.ts` → `MOBILYA_KURUMSAL`)
+- `src/components/KurumsalReklam.tsx`: "Büyük Firmalar İçin" bölümü; `/hizmetler/meta-reklamlari`,
+  `/hizmetler/google-reklamlari` (ServicePageTemplate `kurumsal` prop) ve mobilya ana sayfasında
+- `src/components/HizmetBolgesi.tsx`: sosyal medya/Meta/Google sayfalarında Ankara hizmet bölgesi + sektör linkleri
+- Yalnızca teyitli iddialar kullanıldı: 7 yıl Alitel, 10 milyon TL+ bütçe, her yıl İstikbal bayileri arasında
+  Türkiye ciro birinciliği, 200+ işletme. Garanti yok.
 
 ### YouTube (`/videolar`)
 - Liste + detay (`/videolar/[slug]`): video (tıklanınca yüklenen oynatıcı), kısa özet, içindekiler,
@@ -76,7 +89,7 @@ Meta Pixel, CAPI, GTM, mağaza satışı eşleştirme), **Yapay Zeka Arama Gör�
 ProfilePage + Person şeması; Organization şemalarında `founder`, video sayfalarında yazar olarak bağlı.
 Veri: `src/lib/founder.ts` (kişisel hesaplar `sameAs` listesine eklenecek).
 
-### Blog (`/blog`) — 20 yazı
+### Blog (`/blog`) — 28 yazı
 Genel: Instagram algoritması, Google Ads bütçe, Meta ROAS, TikTok, yapay zeka içerik, Core Web Vitals.
 Mobilya: reklam nasıl verilir, Instagram, Siteler'de müşteri çekme, yerel SEO, Ankara sosyal medya büyüme,
 Ankara mobilya ajansı nasıl seçilir.
@@ -86,6 +99,9 @@ Kafe & restoran: kafe açılışı ilk 90 gün, Google Haritalar rehberi.
 rehberi, yapay zeka işletme önerirken neye bakar, ajans değiştirirken hesap devri. Bütçe ve ROAS yazılarına
 rakamlı bölümler eklendi (dateModified 1 Eki).
 Veri: `src/lib/blog-data.ts` (opsiyonel `dateModifiedISO`, `faq`, `videoSlug`; bölümlerde opsiyonel `link`).
+Mevzuat (30 Eki 2026, kategori "Mevzuat"): sağlıkta tanıtım yönetmeliği, takviye reklam kuralları, influencer
+reklam etiketi, e-ticarette indirim/yorum/yapay zeka kuralları. Ayrıca: güzellik merkezi Google Haritalar+Instagram,
+restoranlar için Google Ads, mobilya üreticileri ihracat, büyük mobilya firmalarında Meta/Google bütçe dağılımı.
 Yazar şeması: kurucu (Person, `/samet-saglam`); yazı sonunda yazar kutusu.
 
 ### Diğer
@@ -256,6 +272,18 @@ npx prisma generate
 - [ ] İsimli ve rakamlı yeni mobilya vakaları (ROAS / müşteri başına maliyet / süre) — rakiplerin en güçlü kozu
 - [ ] ChatGPT reklam hizmetini gerçekten sunmak istiyor musun? (GEO sayfasında anlatılıyor; istemezsen kaldırılır)
 
+### 30 Ekim 2026 rakip analizi sonrası bekleyenler
+Plan ve kaynaklar: `docs/rakip-analizi-2026-10.md`.
+- [ ] **Hukuki teyit:** Sağlık sayfasındaki mevzuat anlatımı ve "sponsorlu tanıtım genel olarak yasak" bilgisi
+      hukuk kaynaklarının özetine dayanıyor; resmî metinden (RG 12.11.2025, 33075) ve bir avukattan teyit edilmeli.
+      GETAT sayfası da aynı şekilde. Gerekirse sağlık sayfasındaki "Meta Kampanyaları" vaadi daha da daraltılır.
+- [ ] Search Console'a yeni sayfaları kademeli göndermek (önce 2-3 sayfa, kontrol, sonra kalanı): guzellik, e-ticaret,
+      getat, mobilya-kurumsal, 8 yeni blog.
+- [ ] Site dışı (yapılmadı, Samet istemedi/sonraya): Armut + dizin profilleri, yerel basın, partner rozetleri, GİP.
+- [ ] Mobilya sayfalarındaki "showroom çekimi" anlatımı SEO için bozulmadı; çekimden uzaklaşma kararı netleşirse
+      meta açıklamaları ve hizmet kartları gözden geçirilebilir.
+- [ ] Rakamlı/isimli yeni vakalar (mobilya, kafe, klinik) hâlâ en güçlü eksik.
+
 ### Teknik
 - [ ] `npm audit`: 3 "yüksek" uyarı yalnızca Prisma CLI'nin geliştirme bağımlılığında
       (`deepmerge-ts`); düzeltmesi Prisma 7'ye geçiş gerektiriyor.
@@ -300,3 +328,13 @@ npx prisma generate
   hesaplayıcı, Dönüşüm Takibi ve Yapay Zeka Arama Görünürlüğü hizmetleri, mobilya bayi sayfası, 4 blog +
   2 blog güncellemesi, SSS'e 8 soru, blog yazarı Person şeması, iletişim formuna sektör, 31 sayfada
   "markaizi — markaizi" başlık tekrarı düzeltildi (`title: { absolute }`).
+- **30 Ekim 2026** — Rakip analizi (Ankara, ilçeler, nişler) ve uygulama: sağlık ve takviye sayfalarına mevzuat
+  güncellemesi, "alternatif tıp" ve hasta yorumu ifadeleri düzeltildi; güzellik merkezi, e-ticaret ve GETAT
+  sayfaları; büyük firmalar için Meta & Google bölümü ve mobilya kurumsal sayfası; kafe sayfasına restoran
+  bölümü; hizmet sayfalarına bölge/sektör bloğu; 8 yeni blog; sitemap, llms.txt ve footer güncellendi.
+- **30 Ekim 2026 (ek)** — Search Console'da "işletmemin yapay zekadaki görünürlüğünü ölçüp iyileştirecek bir ajans var mı"
+  sorgusunda gösterim var, tıklama yoktu. Çözüm: yeni ücretsiz `/yapay-zeka-gorunurluk-olcumu` sayfası (form:
+  `UcretsizAnalizForm variant="yz"`, panelde "Yapay Zeka Görünürlük Ölçümü" etiketiyle düşer), GEO hizmet sayfasına
+  soruya birebir cevap veren ilk SSS ve yeni meta açıklama (başlık/H1 aynı), blog yazısı
+  `isletmenizin-chatgpt-de-gorunup-gorunmedigini-nasil-olcersiniz`. 3-4 hafta sonra o sorgunun tıklama oranına bak.
+  **Bekleyen:** markaizi.com (düz) Vercel projesine eklenip markaizi.com.tr'ye 308 yönlendirilecek (şu an projede yok).

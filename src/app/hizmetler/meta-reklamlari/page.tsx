@@ -17,6 +17,8 @@ const ICON = (
 export default function MetaReklamlariPage() {
   return (
     <ServicePageTemplate
+      kurumsal
+      bolge
       badge="Reklam Yönetimi"
       icon={ICON}
       path="/hizmetler/meta-reklamlari"

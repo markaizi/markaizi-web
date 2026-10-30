@@ -8,6 +8,7 @@ import Breadcrumb from "@/components/Breadcrumb";
 import JsonLd from "@/components/JsonLd";
 import VideoCallout from "@/components/VideoCallout";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
+import SektorLinkleri from "@/components/SektorLinkleri";
 import { ANKARA_ILCELER, KAFE_DISTRICT_PAGES, KAFE_HUB } from "@/lib/kafe-pages";
 
 const TITLE = "Ankara Kafe & Restoran Reklam Ajansı — Sosyal Medya, Instagram, Google Haritalar | markaizi";
@@ -53,6 +54,14 @@ const FAQ: FAQItem[] = [
   {
     q: "Ankara'nın hangi ilçelerindeki mekânlarla çalışıyorsunuz?",
     a: "Ankara'nın 25 ilçesinin tamamındaki mekânlarla çalışabiliyoruz. Ankara Siteler'de olduğumuz için Çankaya, Keçiören, Yenimahalle, Altındağ, Mamak, Etimesgut ve Gölbaşı gibi merkeze yakın ilçelere çekim ve görüşme için kısa sürede gelebiliyor; Beypazarı ve Polatlı gibi uzak ilçeler için çekim tarihini önceden planlıyoruz.",
+  },
+  {
+    q: "Restoranlar için Google reklamı kafelerden farklı mı kurulur?",
+    a: "Evet. Restoranda karar genellikle belirli bir gün ve saate bağlıdır: akşam yemeği, hafta sonu kahvaltısı, grup rezervasyonu ya da paket servis. Google'da 'yakınımdaki restoran', 'rezervasyon' ve 'paket servis' gibi aramalara, mekânın açık olduğu saatlere ve çevre yarıçapına göre kampanya kurarız. Kafede ise karar daha anlıktır ve harita görünürlüğü daha belirleyicidir. Ayrıntıları rehber yazımızda anlattık.",
+  },
+  {
+    q: "Yemek siparişi platformlarına bağımlılığı azaltabilir miyiz?",
+    a: "Paket servis platformları sipariş getirir ama komisyon alır ve müşteri bilgisini size vermez. Kendi Instagram, Google İşletme Profili ve WhatsApp sipariş hattınızı güçlendirmek bu bağımlılığı azaltır. Tamamen çıkmak yerine platformları keşif kanalı, kendi kanallarınızı ise tekrar eden müşteri kanalı olarak kurgulamanızı öneririz.",
   },
   {
     q: "Reklam verirsek masalar dolar mı?",
@@ -226,6 +235,36 @@ export default function AnkaraKafeRestoranPage() {
           </div>
         </section>
 
+        <section className="py-20" style={{ background: "var(--bg)" }}>
+          <div className="max-w-[860px] mx-auto px-6">
+            <span className="section-tag">Restoranlar İçin</span>
+            <h2 className="font-black leading-tight mt-2 mb-5" style={{ fontSize: "clamp(26px,3.5vw,38px)" }}>
+              Rezervasyon ve Paket Servis İçin <span className="gradient-text">Ayrı Kurgu</span>
+            </h2>
+            <p className="text-[#8a8a9a] text-[16px] leading-[1.9] mb-6">
+              Restoran, kafeden farklı çalışır: masa doluluğu saatlere ve günlere göre değişir, rezervasyon ve grup
+              yemekleri ayrı bir talep yaratır, paket servis ise başka bir müşteri yolculuğudur. Reklamı bu üç talebe
+              göre ayırıyoruz.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              {[
+                { t: "Rezervasyon & grup yemeği", d: "Akşam ve hafta sonu doluluğuna, özel gün ve kurumsal yemek taleplerine göre Google arama ve Meta kampanyaları." },
+                { t: "Paket servis", d: "Sipariş yarıçapına, açık saate ve menüye göre kampanya; kendi WhatsApp sipariş hattınızın güçlendirilmesi." },
+                { t: "Boş saat ve düşük gün doluluğu", d: "Hafta içi öğle menüsü ve sakin günler için konum ve saat bazlı mesajlar." },
+              ].map((x) => (
+                <div key={x.t} className="rounded-2xl p-6" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+                  <h3 className="text-[15px] font-bold mb-2 text-white">{x.t}</h3>
+                  <p className="text-[13px] text-[#8a8a9a] leading-relaxed">{x.d}</p>
+                </div>
+              ))}
+            </div>
+            <p className="text-[#8a8a9a] text-[14px] leading-relaxed mt-6">
+              Rehber:{" "}
+              <Link href="/blog/restoranlar-icin-google-ads-rezervasyon-ve-paket-servis" className="text-[#c084fc] underline underline-offset-2">Restoranlar için Google Ads: rezervasyon ve paket servis stratejisi</Link>.
+            </p>
+          </div>
+        </section>
+
         <section className="py-20" style={{ background: "var(--bg-alt)" }}>
           <div className="max-w-[760px] mx-auto px-6 mb-12">
             <VideoCallout slug="isletmeler-icin-dijital-pazarlama-ve-reklam-rehberi" text="Reklamın neden tek başına masayı doldurmadığını ve ajanstan ne beklemeniz gerektiğini videoda anlattık." />
@@ -241,6 +280,7 @@ export default function AnkaraKafeRestoranPage() {
               {[
                 { href: "/blog/ankara-kafe-acilis-dijital-pazarlama-rehberi", l: "Kafe Açılışı İçin Dijital Pazarlama →" },
                 { href: "/blog/kafe-restoran-google-haritalar-rehberi", l: "Google Haritalar'da Öne Çıkmak →" },
+                { href: "/blog/restoranlar-icin-google-ads-rezervasyon-ve-paket-servis", l: "Restoranlar İçin Google Ads →" },
               ].map((x) => (
                 <Link key={x.href} href={x.href} className="text-[14px] font-semibold text-[#c084fc] px-5 py-2.5 rounded-full transition-all hover:bg-white/[0.06]" style={{ border: "1px solid rgba(168,85,247,0.3)" }}>{x.l}</Link>
               ))}
@@ -248,7 +288,9 @@ export default function AnkaraKafeRestoranPage() {
           </div>
         </section>
 
-        <section className="py-20" style={{ background: "var(--bg-alt)", borderTop: "1px solid var(--border)" }}>
+        <SektorLinkleri current="/ankara-kafe-restoran-reklam-ajansi" />
+
+        <section className="py-20" style={{ background: "var(--bg)", borderTop: "1px solid var(--border)" }}>
           <div className="max-w-[680px] mx-auto px-6 text-center">
             <h2 className="font-black text-[30px] mb-4">Mekânınız İçin <span className="gradient-text">Ücretsiz Analiz</span></h2>
             <p className="text-[#8a8a9a] mb-8 leading-relaxed">

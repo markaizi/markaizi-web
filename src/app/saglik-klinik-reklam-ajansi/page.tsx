@@ -7,13 +7,14 @@ import ServiceFAQ, { FAQItem } from "@/components/ServiceFAQ";
 import Breadcrumb from "@/components/Breadcrumb";
 import JsonLd from "@/components/JsonLd";
 import { breadcrumbJsonLd } from "@/lib/seo";
+import SektorLinkleri from "@/components/SektorLinkleri";
 
 export const metadata: Metadata = {
   title: { absolute: "Sağlık & Klinik Reklam Ajansı — Diş, Estetik, Tıp Merkezleri | markaizi" },
   description:
-    "Diş klinikleri, estetisyen ve güzellik merkezleri, fizik tedavi ve alternatif tıp uygulayıcıları için Instagram & Google reklamları, sosyal medya yönetimi ve klinik çekimi. Sağlık reklam politikalarını bilen ajans.",
+    "Diş klinikleri, estetik klinikleri, fizik tedavi merkezleri ve geleneksel-tamamlayıcı tıp (GETAT) merkezleri için sosyal medya yönetimi, Google İşletme Profili, yerel SEO ve mevzuata uygun dijital pazarlama. 12 Kasım 2025 Sağlıkta Tanıtım Yönetmeliği ve Meta/Google sağlık politikalarını bilen ajans.",
   keywords:
-    "sağlık reklam ajansı, klinik reklam ajansı, diş kliniği reklamı, estetisyen instagram reklamı, ankara sağlık dijital pazarlama, diş hekimi sosyal medya yönetimi, alternatif tıp reklamı, poliklinik google reklamları",
+    "sağlık reklam ajansı, klinik reklam ajansı, diş kliniği reklamı, estetisyen instagram reklamı, ankara sağlık dijital pazarlama, diş hekimi sosyal medya yönetimi, getat tanıtım, sağlıkta tanıtım yönetmeliği, poliklinik dijital pazarlama",
   alternates: { canonical: "https://markaizi.com.tr/saglik-klinik-reklam-ajansi" },
   openGraph: {
     title: "Sağlık & Klinik Reklam Ajansı — Ankara | markaizi",
@@ -28,19 +29,27 @@ export const metadata: Metadata = {
 const FAQ: FAQItem[] = [
   {
     q: "Sağlık sektöründe reklam vermenin genel reklamdan farkı ne?",
-    a: "Meta ve Google, sağlıkla ilgili reklamlara ekstra kurallar uyguluyor: bazı hedefleme seçenekleri kısıtlı, 'tedavi eder', 'kesin sonuç' gibi iddialı ifadeler reddediliyor, öncesi-sonrası görsellerinde de belirli sınırlar var. Bu kuralları bilmeyen bir ajans kampanyanızı sürekli reddedilme veya hesap kısıtlanması riskiyle karşı karşıya bırakır. Biz kampanyaları baştan bu kurallara uygun kuruyoruz.",
+    a: "İki katman var. Birincisi platform kuralları: Meta ve Google sağlıkla ilgili reklamlarda bazı hedeflemeleri kısıtlar, 'tedavi eder', 'kesin sonuç' gibi ifadeleri reddeder. İkincisi mevzuat: 12 Kasım 2025'te yürürlüğe giren Sağlık Hizmetlerinde Tanıtım ve Bilgilendirme Faaliyetleri Hakkında Yönetmelik, hekim ve sağlık kuruluşlarının neyi, nasıl paylaşabileceğini sınırlıyor (hasta teşekkürleri, fiyat ve kampanya bilgisi, öncesi-sonrası görselleri, sponsorlu tanıtım gibi). Bu kuralları bilmeyen bir ajans sizi hem hesap kısıtlanması hem idari yaptırım riskine açar. Biz çalışmayı baştan bu iki katmana göre kuruyoruz.",
   },
   {
     q: "Hasta öncesi/sonrası fotoğraflarını reklamda kullanabilir miyiz?",
-    a: "Kullanılabilir ama hem platform politikaları hem hasta onam/KVKK süreçleri gerektirir — hastanın yazılı izni olmadan hiçbir görsel veya vaka bilgisi paylaşılmaz. İzin süreçlerini nasıl yöneteceğinizi de birlikte netleştiririz.",
+    a: "Yönetmeliğe göre belirli koşullarla mümkün: görsellerin tarihi belirtilmeli, aynı ortam ve teknik koşullarda çekilmeli, filtre, makyaj veya yanıltıcı düzenleme olmamalı, hastanın açık rızası alınmalı (rıza her zaman geri çekilebilir), görsel karşılığında ödeme veya indirim verilmemeli ve yurt içi tanıtımda 'Her cerrahi veya girişimsel işlemde sonuçlar kişiden kişiye değişiklik gösterebilir.' uyarısı yer almalı. Ayrıca bu tür görsellerde yorum, beğeni ve yeniden paylaşımın kapatılması gerekiyor. Kapsam ve ayrıntılar için yönetmelik metnine ve hukuk danışmanınıza bakmanızı öneririz; biz süreci bu çerçevede kuruyoruz.",
   },
   {
-    q: "Klinik/muayenehane içi çekimleri siz mi yapıyorsunuz?",
-    a: "Evet. Kliniğinize gelip hekim tanıtım videosu, tedavi süreci anlatımı ve mekan çekimi yapıyoruz. Sağlık sektöründe hastanın karar sürecinde güven duygusu belirleyicidir — profesyonel, temiz ve güven veren görsel dil bunu doğrudan etkiler.",
+    q: "Klinik içi çekim ve içerik üretimini nasıl yapıyorsunuz?",
+    a: "Çalışmamız ağırlıklı olarak strateji, bilgilendirme içeriği, web sitesi ve Google tarafında yürüyor. Görsel ihtiyacınız varsa kliniğinizin kendi çektiği materyali yönetmeliğe uygun, temiz bir görsel dile getiriyor ya da ayrı bir video çekimi anlaşması yapıyoruz. Hekim bilgilendirme videosu gibi içeriklerde güven veren, sade bir anlatım hastanın karar sürecini doğrudan etkiler.",
   },
   {
     q: "Google Haritalar'da öne çıkmak için ne yapıyorsunuz?",
-    a: "\"Yakınımdaki diş kliniği\" gibi lokal aramalarda görünürlüğünüzü artırmak için işletme profilinizi optimize eder, hasta yorumlarını yönetir ve randevu odaklı içerik ekleriz. Sağlık sektöründe hasta kararının büyük kısmı Google Haritalar üzerinden şekilleniyor.",
+    a: "\"Yakınımdaki diş kliniği\" gibi lokal aramalarda görünürlüğünüz için işletme profilinizi doğru kategori, hizmet ve çalışma saatleriyle düzenler, bilgilerin web sitenizle tutarlı olmasını sağlarız. Yorumlar hastanın kendi değerlendirmesidir; yönetmelik, hasta teşekkürleriyle reklam niteliğinde paylaşım yapılmasını yasakladığı için yorumları kendi sayfalarınızda reklam malzemesi olarak kullanmaz, yalnızca mevzuata uygun ve kısa yanıtlar vermenizi öneririz.",
+  },
+  {
+    q: "Klinikler Instagram ve Google'da ücretli reklam verebilir mi?",
+    a: "Bu en çok karıştırılan konu. Yönetmeliğe ilişkin hukuk kaynaklarının özetine göre sağlık hekimleri ve özel sağlık tesisleri için sponsorlu tanıtım genel olarak yasak; tesisin açılışını izleyen ilk bir ay istisna olarak anılıyor. Ücret, indirim ve kampanya bilgisi de tanıtımda verilemiyor. Ücretsiz ve öne çıkmaya yönelik olmayan işletme profili, web sitesi ve bilgilendirme içeriği ise serbest. Sizin durumunuzun (hekim, tesis, sağlık turizmi, açılış dönemi) bu kurallara nasıl girdiğini hukuk danışmanınızla teyit etmenizi, biz de çalışmayı ona göre kurmamızı öneririz. Aynı kural güzellik merkezleri için geçerli olmayabilir; bkz. güzellik merkezi sayfamız.",
+  },
+  {
+    q: "Geleneksel ve tamamlayıcı tıp (GETAT) merkezleri için tanıtım yapabiliyor musunuz?",
+    a: "GETAT uygulamaları yalnızca yetkili sağlık meslek mensuplarınca ve yetkilendirilmiş birimlerde yapılabiliyor; tanıtımda 'alternatif tıp' gibi modern tıbbın yerine geçme izlenimi veren ifadeler sorun yaratıyor. Bu nedenle GETAT merkezleriyle bilgilendirme odaklı, mevzuata uygun bir dijital varlık kuruyoruz. Ayrıntılar için GETAT sayfamıza bakabilirsiniz.",
   },
   {
     q: "Reklam bütçesi olarak ne kadar ayırmalıyım?",
@@ -50,14 +59,14 @@ const FAQ: FAQItem[] = [
 
 const SERVICES = [
   {
-    icon: "🎬",
-    title: "Klinik & Hekim Çekimi",
-    desc: "Muayenehane/klinik içi profesyonel fotoğraf ve tanıtım videosu. Güven veren, temiz bir görsel dil hasta kararını doğrudan etkiler.",
+    icon: "📋",
+    title: "Bilgilendirme İçeriği",
+    desc: "Hekimin uzmanlık alanı kapsamında, yönetmeliğe uygun, sade ve doğru bilgilendirme içerikleri. Hasta karar vermeden önce güvenilir bilgi arar.",
   },
   {
     icon: "🎯",
-    title: "Instagram & Facebook Reklamları",
-    desc: "Diş, estetik, fizik tedavi gibi ilgi alanlarına göre hedefli kampanyalar — sağlık reklam politikalarına uygun kurgu.",
+    title: "Meta Kampanyaları (Mevzuata Uygun Kapsamda)",
+    desc: "Sağlık tesislerinde sponsorlu tanıtım kısıtlıdır. Uygun olduğu durumlarda (ör. açılış dönemi, sağlık turizmi için yurt dışı hedefleme) platform ve yönetmelik kurallarına göre kampanya kurgusu yapıyoruz.",
   },
   {
     icon: "🔍",
@@ -67,12 +76,12 @@ const SERVICES = [
   {
     icon: "📍",
     title: "Google Haritalar & Yerel SEO",
-    desc: "\"Yakınımdaki klinik\" aramalarında öne çıkın. İşletme profili optimizasyonu ve hasta yorumu yönetimi.",
+    desc: "\"Yakınımdaki klinik\" aramalarında doğru ve tutarlı görünün. İşletme profili bilgileri, hizmet kategorileri ve web sitesiyle uyum.",
   },
   {
     icon: "📱",
     title: "Sosyal Medya Yönetimi",
-    desc: "Tedavi süreçlerini, hasta memnuniyetini ve klinik kültürünü anlatan düzenli, güven veren içerik takvimi.",
+    desc: "Tedavi süreçlerini ve klinik kültürünü anlatan, hasta teşekkürü ve fiyat/kampanya içermeyen düzenli, güven veren içerik takvimi.",
   },
   {
     icon: "🌐",
@@ -81,7 +90,7 @@ const SERVICES = [
   },
 ];
 
-const ALANLAR = ["Diş Klinikleri", "Estetik & Güzellik Merkezleri", "Fizik Tedavi Merkezleri", "Alternatif Tıp Uygulayıcıları", "Özel Poliklinikler"];
+const ALANLAR = ["Diş Klinikleri", "Estetik Klinikleri", "Fizik Tedavi Merkezleri", "GETAT Merkezleri", "Özel Poliklinikler"];
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -106,7 +115,7 @@ const jsonLd = {
     { "@type": "City", name: "Ankara" },
     { "@type": "Country", name: "Türkiye" },
   ],
-  audience: { "@type": "Audience", audienceType: "Diş klinikleri, estetisyenler, fizik tedavi merkezleri ve alternatif tıp uygulayıcıları" },
+  audience: { "@type": "Audience", audienceType: "Diş klinikleri, estetik klinikleri, fizik tedavi merkezleri, GETAT merkezleri ve özel poliklinikler" },
 };
 
 const faqJsonLd = {
@@ -154,13 +163,13 @@ export default function SaglikKlinikReklamAjansiPage() {
                 Sağlık & Klinik <span className="gradient-text">Reklam Ajansı</span>
               </h1>
               <p className="text-[#8a8a9a] text-[18px] leading-relaxed mb-4">
-                Diş kliniğinden estetisyene, fizik tedaviden alternatif tıp uygulayıcısına — hasta güveni
-                gerektiren bir sektörde reklam politikalarını bilen bir ekiple çalışın.
+                Diş kliniğinden estetik kliniğine, fizik tedaviden GETAT merkezlerine — hasta güveni
+                gerektiren bir sektörde mevzuatı ve platform kurallarını bilen bir ekiple çalışın.
               </p>
               <p className="text-[#8a8a9a] text-[16px] leading-relaxed mb-8">
-                Sağlıkla ilgili reklamlarda Meta ve Google&apos;ın kendine özgü kısıtlamaları var. Bu kuralları
-                bilmeden kurulan kampanyalar reddedilir veya hesap kısıtlanmasına yol açar — biz baştan
-                doğru kuruyoruz.
+                Sağlıkta tanıtım, 12 Kasım 2025&apos;ten beri yeni bir yönetmeliğe tabi; Meta ve Google&apos;ın da
+                kendine özgü kısıtlamaları var. Bu kuralları bilmeden yapılan paylaşım ve kampanyalar hem
+                hesap hem idari yaptırım riski taşır — biz baştan doğru kuruyoruz.
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <a href="https://wa.me/905520772700?text=Merhaba%2C%20klini%C4%9Fim%2Fmuayenehanem%20i%C3%A7in%20reklam%20hizmeti%20almak%20istiyorum." target="_blank" rel="noopener noreferrer" className="btn btn-primary">
@@ -228,6 +237,68 @@ export default function SaglikKlinikReklamAjansiPage() {
           </div>
         </section>
 
+        {/* ── Yönetmelik ── */}
+        <section className="py-20" style={{ background: "var(--bg-alt)" }}>
+          <div className="max-w-[860px] mx-auto px-6">
+            <span className="section-tag">Mevzuat</span>
+            <h2 className="font-black leading-tight mt-2 mb-5" style={{ fontSize: "clamp(26px,3.5vw,38px)" }}>
+              12 Kasım 2025 Sağlıkta Tanıtım Yönetmeliği: <span className="gradient-text">Neler Yapılabilir?</span>
+            </h2>
+            <p className="text-[#8a8a9a] text-[16px] leading-[1.9] mb-8">
+              Sağlık Hizmetlerinde Tanıtım ve Bilgilendirme Faaliyetleri Hakkında Yönetmelik, 12 Kasım 2025
+              tarihli Resmî Gazete&apos;de (sayı 33075) yayımlandı ve hekimler, özel sağlık tesisleri ile sağlık
+              turizmi aktörleri için tanıtım kurallarını yeniden belirledi. Aşağıdaki liste, hukuk
+              kaynaklarındaki özetlere dayanan genel bir çerçevedir.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+              <div className="rounded-2xl p-7" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+                <h3 className="text-[17px] font-bold mb-4 text-white">Genel olarak yapılabilenler</h3>
+                <ul className="space-y-2.5">
+                  {[
+                    "Yetkili hekimin kendi uzmanlık alanı kapsamında doğru bilgilendirmesi",
+                    "Web sitesi ve bilgilendirme içeriği",
+                    "Ücretsiz ve öne çıkmaya yönelik olmayan işletme profili / arama motoru kaydı",
+                    "Koşullara uygun öncesi-sonrası görseli (tarihli, aynı ortam, düzenlemesiz, açık rızalı, uyarı metinli)",
+                    "Sağlık turizminde, yetki belgeli kuruluşlar için yurt dışına yönelik tanıtım",
+                  ].map((b) => (
+                    <li key={b} className="flex gap-3 text-[14px] text-[#c0c0d0] leading-relaxed">
+                      <span className="mt-[8px] w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: "var(--grad)" }} />
+                      <span>{b}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="rounded-2xl p-7" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+                <h3 className="text-[17px] font-bold mb-4 text-white">Genel olarak yapılamayanlar</h3>
+                <ul className="space-y-2.5">
+                  {[
+                    "Hasta veya yakınlarının teşekkür/memnuniyet ifadeleriyle reklam niteliğinde paylaşım",
+                    "Ücret, indirim, kampanya ve promosyon bilgisi",
+                    "Çekiliş ve hediye ile pazarlama",
+                    "Üstünlük algısı yaratan veya yanıltıcı tanıtım; sertifika temelli unvan",
+                    "Sponsorlu tanıtım (tesisin açılışını izleyen ilk ay istisna olarak anılıyor)",
+                    "Öncesi-sonrası görsel karşılığında ödeme, indirim veya hediye vaadi",
+                  ].map((b) => (
+                    <li key={b} className="flex gap-3 text-[14px] text-[#c0c0d0] leading-relaxed">
+                      <span className="mt-[8px] w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: "#ec4899" }} />
+                      <span>{b}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+            <p className="text-[#8a8a9a] text-[13px] leading-relaxed mt-6">
+              Bu bölüm genel bilgilendirmedir, hukuki danışmanlık değildir. Kapsam ve istisnalar hekimin,
+              tesisin ve faaliyetin türüne göre değişir; kesin uygulama için yönetmeliğin resmî metnine ve
+              hukuk danışmanınıza başvurun. Güzellik merkezleri ve GETAT için ayrı sayfalarımıza bakın:{" "}
+              <Link href="/guzellik-merkezi-reklam-ajansi" className="text-[#c084fc] underline underline-offset-2">güzellik merkezi</Link>,{" "}
+              <Link href="/getat-merkezi-dijital-pazarlama" className="text-[#c084fc] underline underline-offset-2">GETAT merkezi</Link>.
+              Rehber yazımız:{" "}
+              <Link href="/blog/saglikta-tanitim-ve-bilgilendirme-yonetmeligi-rehberi" className="text-[#c084fc] underline underline-offset-2">klinikler ve hekimler sosyal medyada ne paylaşabilir?</Link>
+            </p>
+          </div>
+        </section>
+
         {/* ── Hizmetler ── */}
         <section className="py-20" style={{ background: "var(--bg-alt)" }}>
           <div className="max-w-[1200px] mx-auto px-6">
@@ -261,8 +332,8 @@ export default function SaglikKlinikReklamAjansiPage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {[
                 { step: "01", title: "Tanışma & Analiz", desc: "Kliniğinizi, tedavi alanlarınızı ve mevcut dijital durumunuzu inceliyoruz." },
-                { step: "02", title: "Politika Uyumlu Strateji", desc: "Meta/Google sağlık kurallarına uygun kampanya planı ve klinik çekimi." },
-                { step: "03", title: "Reklam & İçerik", desc: "Kampanyalar yayına giriyor, sosyal medyanız düzenli, güven veren içerikle besleniyor." },
+                { step: "02", title: "Mevzuat Uyumlu Strateji", desc: "Yönetmelik ve Meta/Google sağlık kurallarına uygun içerik ve kampanya planı." },
+                { step: "03", title: "Reklam & İçerik", desc: "İçerikler ve uygun kampanyalar yayına giriyor, sosyal medyanız düzenli, güven veren içerikle besleniyor." },
                 { step: "04", title: "Rapor & Optimizasyon", desc: "Gelen randevu talebini ölçüyor, bütçeyi en verimli hedef kitleye kaydırıyoruz." },
               ].map((p) => (
                 <div key={p.step} className="rounded-2xl p-7" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
@@ -279,6 +350,8 @@ export default function SaglikKlinikReklamAjansiPage() {
         <section className="py-20" style={{ background: "var(--bg-alt)" }}>
           <ServiceFAQ faqs={FAQ} />
         </section>
+
+        <SektorLinkleri current="/saglik-klinik-reklam-ajansi" />
 
         {/* ── CTA ── */}
         <section className="py-20" style={{ background: "var(--bg)", borderTop: "1px solid var(--border)" }}>

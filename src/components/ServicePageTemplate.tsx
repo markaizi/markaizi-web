@@ -8,6 +8,8 @@ import JsonLd from "@/components/JsonLd";
 import { SITE_URL, ORG_NAME, breadcrumbJsonLd } from "@/lib/seo";
 import { FeatureIcon, type FeatureIconName } from "@/components/icons/FeatureIcons";
 import VideoCallout from "@/components/VideoCallout";
+import KurumsalReklam from "@/components/KurumsalReklam";
+import HizmetBolgesi from "@/components/HizmetBolgesi";
 
 export interface ServicePageProps {
   title: string;
@@ -22,6 +24,8 @@ export interface ServicePageProps {
   relatedPosts?: { slug: string; title: string }[]; // ilgili blog yazıları
   // Hizmete özel çalışma yaklaşımı (YouTube rehber videosundan uyarlanmış kısa bölüm)
   approach?: { title: string; paragraphs: string[]; videoSlug?: string; videoText?: string };
+  bolge?: boolean; // Sektör ve Ankara hizmet bölgesi bloğunu gösterir
+  kurumsal?: boolean; // Meta/Google sayfalarında "Büyük Firmalar İçin" bölümünü gösterir
 }
 
 export default function ServicePageTemplate({
@@ -35,6 +39,8 @@ export default function ServicePageTemplate({
   path,
   relatedPosts,
   approach,
+  kurumsal,
+  bolge,
 }: ServicePageProps) {
   const faqJsonLd = faq && faq.length > 0
     ? {
@@ -190,12 +196,16 @@ export default function ServicePageTemplate({
           </section>
         )}
 
+        {kurumsal && <KurumsalReklam />}
+
         {/* ── SSS ── */}
         {faq && faq.length > 0 && (
           <section className="py-20" style={{ background: approach ? "var(--bg-alt)" : "var(--bg)" }}>
             <ServiceFAQ faqs={faq} />
           </section>
         )}
+
+        {bolge && <HizmetBolgesi hizmet={title} />}
 
         {/* ── İlgili Rehberler ── */}
         {relatedPosts && relatedPosts.length > 0 && (

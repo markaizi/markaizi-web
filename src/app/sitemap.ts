@@ -2,6 +2,7 @@ import { MetadataRoute } from "next";
 import { BLOG_POSTS } from "@/lib/blog-data";
 import { ALL_MOBILYA_PAGES } from "@/lib/mobilya-pages";
 import { KAFE_DISTRICT_PAGES, KAFE_HUB } from "@/lib/kafe-pages";
+import { SEKTOR_PAGES } from "@/lib/sektor-pages";
 import { VIDEOS, ytThumb, ytEmbed } from "@/lib/video-data";
 
 const BASE = "https://markaizi.com.tr";
@@ -15,20 +16,21 @@ export default function sitemap(): MetadataRoute.Sitemap {
     // ── Ana sayfalar ──────────────────────────────────────────
     { url: BASE,                                             lastModified: SITE_UPDATED, changeFrequency: "weekly",  priority: 1.0 },
     { url: `${BASE}/blog`,                                   lastModified: SITE_UPDATED, changeFrequency: "weekly",  priority: 0.8 },
-    { url: `${BASE}/mobilya-reklam-ajansi`,                  lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.9 },
-    { url: `${BASE}/saglik-klinik-reklam-ajansi`,             lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.9 },
-    { url: `${BASE}/dogal-urun-takviye-reklam-ajansi`,        lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.9 },
+    { url: `${BASE}/mobilya-reklam-ajansi`,                  lastModified: new Date("2026-10-30"), changeFrequency: "monthly", priority: 0.9 },
+    { url: `${BASE}/saglik-klinik-reklam-ajansi`,             lastModified: new Date("2026-10-30"), changeFrequency: "monthly", priority: 0.9 },
+    { url: `${BASE}/dogal-urun-takviye-reklam-ajansi`,        lastModified: new Date("2026-10-30"), changeFrequency: "monthly", priority: 0.9 },
     { url: `${BASE}/ucretsiz-analiz`,                         lastModified: new Date("2026-10-01"), changeFrequency: "monthly", priority: 0.9 },
     { url: `${BASE}/reklam-hesabi-denetimi`,                  lastModified: new Date("2026-10-01"), changeFrequency: "monthly", priority: 0.9 },
+    { url: `${BASE}/yapay-zeka-gorunurluk-olcumu`,           lastModified: new Date("2026-10-30"), changeFrequency: "monthly", priority: 0.9 },
     { url: `${BASE}/araclar/reklam-butcesi-hesaplayici`,      lastModified: new Date("2026-10-01"), changeFrequency: "monthly", priority: 0.8 },
     { url: `${BASE}/samet-saglam`,                           lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE}/sss`,                                    lastModified: new Date("2026-10-01"), changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE}/cv`,                                     lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.5 },
 
     // ── Hizmet sayfaları ──────────────────────────────────────
-    { url: `${BASE}/hizmetler/sosyal-medya-yonetimi`,        lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.9 },
-    { url: `${BASE}/hizmetler/meta-reklamlari`,              lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.9 },
-    { url: `${BASE}/hizmetler/google-reklamlari`,            lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.9 },
+    { url: `${BASE}/hizmetler/sosyal-medya-yonetimi`,        lastModified: new Date("2026-10-30"), changeFrequency: "monthly", priority: 0.9 },
+    { url: `${BASE}/hizmetler/meta-reklamlari`,              lastModified: new Date("2026-10-30"), changeFrequency: "monthly", priority: 0.9 },
+    { url: `${BASE}/hizmetler/google-reklamlari`,            lastModified: new Date("2026-10-30"), changeFrequency: "monthly", priority: 0.9 },
     { url: `${BASE}/hizmetler/tiktok-reklamlari`,            lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.8 },
     { url: `${BASE}/hizmetler/yapay-zeka-otomasyon`,         lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.8 },
     { url: `${BASE}/hizmetler/web-tasarim-hosting`,          lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.8 },
@@ -36,7 +38,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { url: `${BASE}/hizmetler/dijital-pazarlama-egitimi`,    lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.85 },
     { url: `${BASE}/hizmetler/video-cekimi-drone`,           lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.85 },
     { url: `${BASE}/hizmetler/donusum-takibi-kurulumu`,      lastModified: new Date("2026-10-01"), changeFrequency: "monthly", priority: 0.85 },
-    { url: `${BASE}/hizmetler/yapay-zeka-arama-gorunurlugu`, lastModified: new Date("2026-10-01"), changeFrequency: "monthly", priority: 0.85 },
+    { url: `${BASE}/hizmetler/yapay-zeka-arama-gorunurlugu`, lastModified: new Date("2026-10-30"), changeFrequency: "monthly", priority: 0.85 },
     { url: `${BASE}/hizmetler/web-tasarim-hosting/teklif`,   lastModified: SITE_UPDATED, changeFrequency: "monthly", priority: 0.6 },
 
     // ── Yasal sayfalar ────────────────────────────────────────
@@ -67,9 +69,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
   ];
 
   const kafe_pages: MetadataRoute.Sitemap = [
-    { url: `${BASE}${KAFE_HUB.path}`, lastModified: new Date("2026-09-27"), changeFrequency: "monthly" as const, priority: 0.9 },
+    { url: `${BASE}${KAFE_HUB.path}`, lastModified: new Date("2026-10-30"), changeFrequency: "monthly" as const, priority: 0.9 },
     ...KAFE_DISTRICT_PAGES.map((p) => ({ url: `${BASE}${p.path}`, lastModified: new Date("2026-09-27"), changeFrequency: "monthly" as const, priority: 0.8 })),
   ];
+
+  const sektor_pages: MetadataRoute.Sitemap = SEKTOR_PAGES.map((p) => ({
+    url: `${BASE}${p.path}`,
+    lastModified: new Date("2026-10-30"),
+    changeFrequency: "monthly" as const,
+    priority: 0.85,
+  }));
 
   const video_pages: MetadataRoute.Sitemap = [
     { url: `${BASE}/videolar`, lastModified: new Date(VIDEOS[0]?.dateISO ?? SITE_UPDATED), changeFrequency: "weekly" as const, priority: 0.8 },
@@ -84,5 +93,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
     })),
   ];
 
-  return [...static_pages, ...mobilya_pages, ...kafe_pages, ...video_pages, ...blog_pages];
+  return [...static_pages, ...mobilya_pages, ...kafe_pages, ...sektor_pages, ...video_pages, ...blog_pages];
 }

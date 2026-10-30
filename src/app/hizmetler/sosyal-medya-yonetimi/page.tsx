@@ -19,6 +19,7 @@ const ICON = (
 export default function SosyalMedyaPage() {
   return (
     <ServicePageTemplate
+      bolge
       badge="Hizmetlerimiz"
       icon={ICON}
       path="/hizmetler/sosyal-medya-yonetimi"
