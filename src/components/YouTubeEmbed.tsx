@@ -4,7 +4,7 @@ import { useState } from "react";
 
 // Tıklanana kadar yalnızca küçük resmi gösterir; YouTube'un ağır oynatıcı
 // betikleri sayfa açılışını yavaşlatmaz. youtubeId yoksa "yakında" kartı.
-export default function YouTubeEmbed({ id, title }: { id: string | null; title: string }) {
+export default function YouTubeEmbed({ id, title, poster }: { id: string | null; title: string; poster?: string }) {
   const [play, setPlay] = useState(false);
 
   if (!id) {
@@ -33,7 +33,7 @@ export default function YouTubeEmbed({ id, title }: { id: string | null; title: 
       ) : (
         <button type="button" onClick={() => setPlay(true)} aria-label={`Videoyu oynat: ${title}`} className="group absolute inset-0 w-full h-full">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={`https://i.ytimg.com/vi/${id}/hqdefault.jpg`} alt={title} className="w-full h-full object-cover" loading="eager" />
+          <img src={poster ?? `https://i.ytimg.com/vi/${id}/hqdefault.jpg`} alt={title} className="w-full h-full object-cover" loading="eager" />
           <span className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors" />
           <YouTubeLogo className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[72px] h-[72px] transition-transform group-hover:scale-110" />
         </button>

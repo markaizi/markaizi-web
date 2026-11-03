@@ -3,7 +3,7 @@ import { BLOG_POSTS } from "@/lib/blog-data";
 import { ALL_MOBILYA_PAGES } from "@/lib/mobilya-pages";
 import { KAFE_DISTRICT_PAGES, KAFE_HUB } from "@/lib/kafe-pages";
 import { SEKTOR_PAGES } from "@/lib/sektor-pages";
-import { VIDEOS, ytThumb, ytEmbed } from "@/lib/video-data";
+import { VIDEOS, videoThumbAbs, ytEmbed } from "@/lib/video-data";
 
 const BASE = "https://markaizi.com.tr";
 
@@ -88,7 +88,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly" as const,
       priority: 0.8,
       ...(v.youtubeId
-        ? { videos: [{ title: v.title, description: v.excerpt, thumbnail_loc: ytThumb(v.youtubeId), player_loc: ytEmbed(v.youtubeId) }] }
+        ? { videos: [{ title: v.title, description: v.excerpt, thumbnail_loc: videoThumbAbs(v)!, player_loc: ytEmbed(v.youtubeId) }] }
         : {}),
     })),
   ];

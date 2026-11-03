@@ -7,7 +7,7 @@ import Breadcrumb from "@/components/Breadcrumb";
 import JsonLd from "@/components/JsonLd";
 import { YouTubeLogo } from "@/components/YouTubeEmbed";
 import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
-import { VIDEOS, YOUTUBE_CHANNEL_URL, ytThumb } from "@/lib/video-data";
+import { VIDEOS, YOUTUBE_CHANNEL_URL, videoThumb } from "@/lib/video-data";
 
 const DESC =
   "markaizi YouTube kanalının videoları: işletme sahipleri için dijital pazarlama, Meta ve Google reklamları, sosyal medya ve ajansla çalışma üzerine rehberler. Her videonun tam metni sayfasında.";
@@ -82,7 +82,7 @@ export default function VideolarPage() {
                 <div className="relative aspect-video overflow-hidden" style={{ background: "linear-gradient(135deg, rgba(124,58,237,0.3), rgba(236,72,153,0.25))" }}>
                   {v.youtubeId ? (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img src={ytThumb(v.youtubeId)} alt={v.title} className="w-full h-full object-cover" loading="lazy" />
+                    <img src={videoThumb(v)!} alt={v.title} className="w-full h-full object-cover" loading="lazy" />
                   ) : (
                     <div className="absolute inset-0 flex items-center justify-center">
                       <span className="text-[12px] font-bold uppercase tracking-wider px-3 py-1.5 rounded-full text-white" style={{ background: "rgba(0,0,0,0.35)" }}>

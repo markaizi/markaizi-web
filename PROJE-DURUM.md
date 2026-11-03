@@ -79,8 +79,9 @@ Hedef: büyük bütçeli firmalara Meta ve Google yönetimi, özellikle mobilya.
 ### YouTube (`/videolar`)
 - Liste + detay (`/videolar/[slug]`): video (tıklanınca yüklenen oynatıcı), kısa özet, içindekiler,
   tam metin, SSS, ilgili sayfalar.
-- İlk video: `isletmeler-icin-dijital-pazarlama-ve-reklam-rehberi` — **henüz YouTube'a yüklenmedi**,
-  sayfa "Video çok yakında" gösteriyor.
+- İlk video yayında (3 Kas 2026): `isletmeler-icin-dijital-pazarlama-ve-reklam-rehberi`, YouTube ID `_kt_IL7GQio`, kanal
+  https://www.youtube.com/@Markaizi (YouTube adı "Marka İzi"). Kapak görseli: `public/videolar/<slug>.webp`
+  (`VideoPost.cover`; yoksa YouTube küçük resmi kullanılır). Video süresi (`durationISO`) henüz girilmedi.
 - Veri: `src/lib/video-data.ts`, metin: `src/content/videolar/<slug>.txt`,
   ayrıştırıcı: `src/lib/video-transcript.ts`.
 - Navbar'da kırmızı YouTube butonu (masaüstü, mobil başlık, mobil menü).
@@ -233,7 +234,7 @@ sayfasına otomatik link çıkar. Konuyla ilgili video varsa `videoSlug` ekle.
 1. Metni `src/content/videolar/<slug>.txt` olarak kaydet (bölümler `⸻` ile, başlıklar BÜYÜK HARFLE).
 2. `src/lib/video-data.ts`'teki `VIDEOS` listesinin **en başına** kayıt ekle (özet, SSS, ilgili linkler).
 3. Video yüklenince `youtubeId` (ve biliniyorsa `durationISO`) alanını doldur.
-Kanal açılınca `YOUTUBE_CHANNEL_URL`'i doldur → "Abone Ol" butonları ve sameAs otomatik.
+`YOUTUBE_CHANNEL_URL` dolu (Abone Ol butonları ve sameAs otomatik).
 
 **Yeni mobilya bölge/hizmet sayfası:** `src/lib/mobilya-pages.ts`'e içerik + `src/app/<yol>/page.tsx`.
 **Yeni kafe ilçe sayfası:** `src/lib/kafe-pages.ts`'e `district(...)` kaydı + `KAFE_DISTRICT_PAGES`'e ekle
@@ -256,7 +257,7 @@ npx prisma generate
 ## 7. Bekleyenler
 
 ### Samet'in yapması gerekenler
-- [ ] İlk YouTube videosunu yükleyip linkini, kanal adresini ve video süresini iletmek
+- [ ] İlk videonun süresini (`durationISO`, ör. PT24M30S) ve gerçek yayın tarihini iletmek (şimdilik 3 Kas 2026 varsayıldı)
 - [ ] YouTube açıklamasına bölüm zaman damgaları eklemek (sitedeki içindekiler videoya bağlanabilir)
 - [ ] Kişi sayfası için fotoğraf; LinkedIn ve kişisel sosyal hesap linkleri (`FOUNDER.sameAs`)
 - [ ] Hesap biyografilerinde `markaizi.com.tr/samet-saglam` linki
@@ -338,3 +339,4 @@ Plan ve kaynaklar: `docs/rakip-analizi-2026-10.md`.
   soruya birebir cevap veren ilk SSS ve yeni meta açıklama (başlık/H1 aynı), blog yazısı
   `isletmenizin-chatgpt-de-gorunup-gorunmedigini-nasil-olcersiniz`. 3-4 hafta sonra o sorgunun tıklama oranına bak.
   **Bekleyen:** markaizi.com (düz) Vercel projesine eklenip markaizi.com.tr'ye 308 yönlendirilecek (şu an projede yok).
+- **3 Kasım 2026** — İlk YouTube videosu sayfaya eklendi (ID, kapak görseli, kanal adresi, VideoObject şeması, video sitemap).

@@ -9,7 +9,7 @@ import JsonLd from "@/components/JsonLd";
 import ServiceFAQ from "@/components/ServiceFAQ";
 import YouTubeEmbed, { YouTubeLogo } from "@/components/YouTubeEmbed";
 import { breadcrumbJsonLd, SITE_URL, LOGO_URL } from "@/lib/seo";
-import { VIDEOS, YOUTUBE_CHANNEL_URL, getVideoBySlug, ytEmbed, ytThumb, ytWatch } from "@/lib/video-data";
+import { VIDEOS, YOUTUBE_CHANNEL_URL, getVideoBySlug, videoThumb, videoThumbAbs, ytEmbed, ytWatch } from "@/lib/video-data";
 import { loadTranscript, countWords } from "@/lib/video-transcript";
 import { founderRef } from "@/lib/founder";
 
@@ -35,7 +35,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       url,
       locale: "tr_TR",
       type: v.youtubeId ? "video.other" : "article",
-      ...(v.youtubeId ? { images: [ytThumb(v.youtubeId)], videos: [{ url: ytEmbed(v.youtubeId) }] } : {}),
+      ...(v.youtubeId ? { images: [videoThumbAbs(v)!], videos: [{ url: ytEmbed(v.youtubeId) }] } : {}),
     },
   };
 }
@@ -57,7 +57,7 @@ export default async function VideoPage({ params }: { params: Promise<{ slug: st
         "@type": "VideoObject",
         name: v.seoTitle,
         description: v.excerpt,
-        thumbnailUrl: [ytThumb(v.youtubeId)],
+        thumbnailUrl: [videoThumbAbs(v)!],
         uploadDate: `${v.dateISO}T09:00:00+03:00`,
         embedUrl: ytEmbed(v.youtubeId),
         contentUrl: ytWatch(v.youtubeId),
@@ -79,7 +79,7 @@ export default async function VideoPage({ params }: { params: Promise<{ slug: st
     datePublished: v.dateISO,
     dateModified: v.dateISO,
     wordCount: words,
-    image: v.youtubeId ? ytThumb(v.youtubeId) : `${SITE_URL}/opengraph-image`,
+    image: videoThumbAbs(v) ?? `${SITE_URL}/opengraph-image`,
     author: AUTHOR,
     publisher: { "@type": "Organization", name: "markaizi", logo: { "@type": "ImageObject", url: LOGO_URL } },
     ...(videoObject ? { video: videoObject } : {}),
@@ -130,7 +130,7 @@ export default async function VideoPage({ params }: { params: Promise<{ slug: st
               <span>·</span>
               <span>{readMin} dk okuma</span>
             </div>
-            <YouTubeEmbed id={v.youtubeId} title={v.title} />
+            <YouTubeEmbed id={v.youtubeId} title={v.title} poster={videoThumb(v) ?? undefined} />
             {YOUTUBE_CHANNEL_URL && (
               <div className="flex flex-wrap gap-3 mt-4">
                 <a href={`${YOUTUBE_CHANNEL_URL}?sub_confirmation=1`} target="_blank" rel="noopener noreferrer" className="btn text-white text-sm px-5 py-2.5" style={{ background: "#FF0033" }}>

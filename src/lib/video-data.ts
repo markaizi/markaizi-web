@@ -7,7 +7,7 @@
 
 // Kanal açılınca doldur: https://www.youtube.com/@... — dolunca "Abone Ol"
 // butonları ve Organization sameAs bağlantısı otomatik görünür.
-export const YOUTUBE_CHANNEL_URL: string | null = null;
+export const YOUTUBE_CHANNEL_URL: string | null = "https://www.youtube.com/@Markaizi";
 
 export type VideoPost = {
   slug: string;
@@ -17,6 +17,7 @@ export type VideoPost = {
   date: string;
   dateISO: string; // YYYY-MM-DD — video YouTube'da yayınlandığı gün
   youtubeId: string | null; // yüklenmeden önce null: sayfa "yakında" gösterir
+  cover?: string; // /public altındaki kapak görseli (ör. "/videolar/<slug>.webp"); yoksa YouTube küçük resmi
   durationISO?: string; // ör. "PT24M30S" — biliniyorsa şemaya eklenir
   keywords: string;
   ozet: string[]; // sayfanın başındaki kısa özet (yapay zeka ve okuyucu için)
@@ -31,9 +32,10 @@ export const VIDEOS: VideoPost[] = [
     seoTitle: "İşletmeler İçin Dijital Pazarlama ve Reklam Rehberi: Ajansla Çalışmadan Önce Bilmeniz Gerekenler",
     excerpt:
       "Reklam neden tek başına satış yapmaz? Her gün paylaşım gerekli mi, takipçi sayısı ne kadar önemli, reklam bütçesi nasıl belirlenir, ajans neyi garanti edebilir? İşletme sahipleri için başlangıç rehberi.",
-    date: "Eylül 2026",
-    dateISO: "2026-09-26",
-    youtubeId: null,
+    date: "Kasım 2026",
+    dateISO: "2026-11-03",
+    youtubeId: "_kt_IL7GQio",
+    cover: "/videolar/isletmeler-icin-dijital-pazarlama-ve-reklam-rehberi.webp",
     keywords:
       "dijital pazarlama rehberi, işletmeler için reklam rehberi, meta reklamları nasıl çalışır, reklam bütçesi ne kadar olmalı, her gün paylaşım yapmak gerekli mi, takipçi sayısı önemli mi, reklam ajansı nasıl seçilir, ajans satış garantisi, reklam neden çalışmıyor, sosyal medya ajansı ile çalışmak",
     ozet: [
@@ -95,5 +97,11 @@ export function getVideoBySlug(slug: string) {
 }
 
 export const ytThumb = (id: string) => `https://i.ytimg.com/vi/${id}/hqdefault.jpg`;
+// Sayfada gösterilecek küçük resim: kendi kapak görselimiz varsa o, yoksa YouTube'un
+export const videoThumb = (v: { youtubeId: string | null; cover?: string }) =>
+  v.cover ?? (v.youtubeId ? ytThumb(v.youtubeId) : null);
+// Şema, Open Graph ve sitemap için mutlak adres
+export const videoThumbAbs = (v: { youtubeId: string | null; cover?: string }) =>
+  v.cover ? `https://markaizi.com.tr${v.cover}` : v.youtubeId ? ytThumb(v.youtubeId) : null;
 export const ytWatch = (id: string) => `https://www.youtube.com/watch?v=${id}`;
 export const ytEmbed = (id: string) => `https://www.youtube-nocookie.com/embed/${id}`;

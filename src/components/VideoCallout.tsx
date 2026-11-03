@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { YouTubeLogo } from "@/components/YouTubeEmbed";
-import { getVideoBySlug, ytThumb } from "@/lib/video-data";
+import { getVideoBySlug, videoThumb } from "@/lib/video-data";
 
 // Sitenin farklı yerlerinden video sayfasına bağlanan küçük kart.
 // Videonun tam metni tek kaynak olarak video sayfasında durur; diğer sayfalar
@@ -20,7 +20,7 @@ export default function VideoCallout({ slug, text, className = "" }: { slug: str
       >
         {v.youtubeId && (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={ytThumb(v.youtubeId)} alt="" className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
+          <img src={videoThumb(v)!} alt="" className="absolute inset-0 w-full h-full object-cover" loading="lazy" />
         )}
         <YouTubeLogo className="relative w-9 h-9 transition-transform group-hover:scale-110" />
       </div>
