@@ -81,7 +81,7 @@ Hedef: büyük bütçeli firmalara Meta ve Google yönetimi, özellikle mobilya.
   tam metin, SSS, ilgili sayfalar.
 - İlk video yayında (3 Kas 2026): `isletmeler-icin-dijital-pazarlama-ve-reklam-rehberi`, YouTube ID `_kt_IL7GQio`, kanal
   https://www.youtube.com/@Markaizi (YouTube adı "Marka İzi"). Kapak görseli: `public/videolar/<slug>.webp`
-  (`VideoPost.cover`; yoksa YouTube küçük resmi kullanılır). Video süresi (`durationISO`) henüz girilmedi.
+  (`VideoPost.cover`; yoksa YouTube küçük resmi kullanılır). Süre: 30:17 (`PT30M17S`).
 - Veri: `src/lib/video-data.ts`, metin: `src/content/videolar/<slug>.txt`,
   ayrıştırıcı: `src/lib/video-transcript.ts`.
 - Navbar'da kırmızı YouTube butonu (masaüstü, mobil başlık, mobil menü).
@@ -257,7 +257,7 @@ npx prisma generate
 ## 7. Bekleyenler
 
 ### Samet'in yapması gerekenler
-- [ ] İlk videonun süresini (`durationISO`, ör. PT24M30S) ve gerçek yayın tarihini iletmek (şimdilik 3 Kas 2026 varsayıldı)
+- [ ] İlk videonun gerçek yayın tarihini iletmek (şimdilik 3 Kas 2026 varsayıldı)
 - [ ] YouTube açıklamasına bölüm zaman damgaları eklemek (sitedeki içindekiler videoya bağlanabilir)
 - [ ] Kişi sayfası için fotoğraf; LinkedIn ve kişisel sosyal hesap linkleri (`FOUNDER.sameAs`)
 - [ ] Hesap biyografilerinde `markaizi.com.tr/samet-saglam` linki

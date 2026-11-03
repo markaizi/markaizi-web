@@ -36,6 +36,7 @@ export const VIDEOS: VideoPost[] = [
     dateISO: "2026-11-03",
     youtubeId: "_kt_IL7GQio",
     cover: "/videolar/isletmeler-icin-dijital-pazarlama-ve-reklam-rehberi.webp",
+    durationISO: "PT30M17S",
     keywords:
       "dijital pazarlama rehberi, işletmeler için reklam rehberi, meta reklamları nasıl çalışır, reklam bütçesi ne kadar olmalı, her gün paylaşım yapmak gerekli mi, takipçi sayısı önemli mi, reklam ajansı nasıl seçilir, ajans satış garantisi, reklam neden çalışmıyor, sosyal medya ajansı ile çalışmak",
     ozet: [
