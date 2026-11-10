@@ -73,6 +73,10 @@ export const metadata: Metadata = {
     follow: true,
     googleBot: { index: true, follow: true, "max-image-preview": "large" },
   },
+  // Meta (Facebook) İşletme Yöneticisi alan adı doğrulaması
+  verification: {
+    other: { "facebook-domain-verification": "eal8vf1qo96yyamxtnj0kqowgpmq18" },
+  },
 };
 
 // themeColor: iOS Safari / Android Chrome adres çubuğunu site zeminiyle aynı
