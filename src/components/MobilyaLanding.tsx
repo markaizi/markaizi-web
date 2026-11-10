@@ -6,7 +6,7 @@ import WhatsApp from "@/components/WhatsApp";
 import ServiceFAQ from "@/components/ServiceFAQ";
 import Breadcrumb from "@/components/Breadcrumb";
 import JsonLd from "@/components/JsonLd";
-import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
+import { breadcrumbJsonLd, SITE_URL, ORG_ID, OG_IMAGES } from "@/lib/seo";
 import type { LandingContent } from "@/lib/mobilya-pages";
 import VideoCallout from "@/components/VideoCallout";
 
@@ -23,6 +23,8 @@ export function mobilyaMetadata(c: LandingContent): Metadata {
       type: "website",
       locale: "tr_TR",
       url: `${SITE_URL}${c.path}`,
+      siteName: "markaizi",
+      images: OG_IMAGES,
     },
   };
 }
@@ -35,19 +37,26 @@ export default function MobilyaLanding({ c }: { c: LandingContent }) {
     name: c.serviceName,
     serviceType: c.serviceType ?? "Mobilya sektörü dijital pazarlama ve reklam yönetimi",
     url: `${SITE_URL}${c.path}`,
+    description: c.metaDescription,
     provider: {
       "@type": "ProfessionalService",
+      "@id": ORG_ID,
       name: "markaizi Dijital Reklam Ajansı",
       url: SITE_URL,
       telephone: "+90-552-077-27-00",
       address: {
         "@type": "PostalAddress",
+        streetAddress: "Zübeyde Hanım Mahallesi Elif Sokak No:7/106 2. Kat, Sütçü Kemal İş Merkezi",
         addressLocality: "Ankara",
         addressRegion: "Ankara",
+        postalCode: "06110",
         addressCountry: "TR",
       },
     },
-    areaServed: c.areaServed.map((name) => ({ "@type": name === "Türkiye" ? "Country" : "City", name })),
+    areaServed: c.areaServed.map((name) => ({
+      "@type": name === "Türkiye" ? "Country" : name.includes(",") ? "AdministrativeArea" : "City",
+      name,
+    })),
     audience: { "@type": "Audience", audienceType: c.audienceType ?? "Mobilya mağazaları, mobilya üreticileri ve bayileri" },
   };
 

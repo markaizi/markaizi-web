@@ -2,7 +2,47 @@
 
 > **Bu dosya araçlar arası devir-teslim defteridir.** En üstteki sürüm = en son durum.
 > Kurallar ve şablon: [`AGENTS.md`](./AGENTS.md). Eski sürümler silinmez.
-> Güncel sürüm: **v3.1.0** (`package.json` ile aynı olmalı).
+> Güncel sürüm: **v3.2.0** (`package.json` ile aynı olmalı).
+
+---
+
+## v3.2.0 — 10 Kasım 2026 — Google SEO, GEO (Yapay Zeka Bulunabilirliği) ve UI/UX İyileştirme Paketi
+**Araç:** Antigravity (Gemini 3.8 Flash & Claude Sonnet 5.5)  **Tür:** MINOR
+
+### Yapılanlar
+**1. Google SEO & Knowledge Graph (Entity Bütünlüğü)**
+- `src/lib/seo.ts`: Paylaşılan merkezi varlık kimliği `ORG_ID = "https://markaizi.com.tr/#organization"` ve `OG_IMAGES` tanımlandı.
+- `src/app/layout.tsx`: Kök şema `publisher` ve `organization` düğümü `@id: ORG_ID` ile birleştirildi. Kök `openGraph` ve `twitter` nesneleri sadeleştirilerek alt sayfaların kendi dinamik başlıklarını ezmesi engellendi.
+- `src/app/page.tsx`: Ana sayfa `ProfessionalService` ve `Organization` şeması `@id: ORG_ID` ile senkronize edildi; `hasOfferCatalog` listesine eksik olan tüm hizmet ve sektörler (`/yapay-zeka-gorunurluk-olcumu`, `/saglik-klinik-reklam-ajansi`, `/guzellik-merkezi-reklam-ajansi`, vb.) URL'leriyle eklendi.
+- `src/components/ServicePageTemplate.tsx`: Tüm 11 hizmet sayfasında JSON-LD `provider` `@id: ORG_ID` düğümüne bağlandı; `H1`'den sonra doğrudan `H3`'e atlayan yapı arasına `H2` başlığı eklenerek semantik başlık hiyerarşisi sağlandı; alt CTA bloğuna `/ucretsiz-analiz` yönlendirmesi eklendi.
+- `src/components/MobilyaLanding.tsx`: Tüm mobilya ve dikey iniş sayfalarında `provider` `@id: ORG_ID`'ye bağlandı; `description` şemaya dahil edildi; `areaServed` ilçe/şehir ayrımı düzeltildi; `openGraph.images` ve `siteName` tanımlandı.
+- `src/app/blog/[slug]/page.tsx`: Blog yazılarının `openGraph` etiketlerine `url`, `locale: "tr_TR"`, `siteName` ve `images: OG_IMAGES` eklendi; `CATEGORY_SERVICE` eşlemesine `"Mevzuat"` kategorisi dahil edildi.
+- `src/app/blog/page.tsx`: Blog liste sayfası en yeni yazıları en üstte gösterecek şekilde `dateISO` azalan sıralamasına (`sort`) alındı.
+
+**2. Yapay Zeka Bulunabilirliği (GEO) & Factual / Policy Tutarlılığı**
+- `src/components/sections/Contact.tsx`: Çalışma saatleri `llms.txt`, JSON-LD ve site geneli kuralıyla tam uyumlu hale getirildi: **Pazartesi — Cumartesi 09:00 — 20:00** (Pazar kapalı).
+- `src/components/sections/Sectors.tsx`: Sağlık & Klinik kartındaki mevzuata aykırı `"alternatif tıp"` ifadesi kaldırıldı; ana sayfaya eksik olan 3 yeni sektör eklendi (Güzellik Merkezi, E-Ticaret, GETAT).
+- `src/components/sections/Services.tsx`: Ana sayfa hizmet grid'ine eksik olan 2 ana hizmet eklendi (Dönüşüm Takibi Kurulumu, Yapay Zeka Arama Görünürlüğü - GEO).
+- `src/components/sections/Footer.tsx`: Mobilya sütununa eksik olan `/mobilya-kurumsal-meta-google-reklam-yonetimi` linki eklendi.
+- `src/app/gizlilik-politikasi/page.tsx` & `src/app/kullanim-sartlari/page.tsx`: Eski `.tr`'siz `markaizi.com` ifadeleri `markaizi.com.tr` olarak düzeltildi.
+- `src/app/hizmetler/sosyal-medya-yonetimi/page.tsx`: "Sabit paket yok" ilkesiyle çelişen eski paket bazlı SSS metni güncellendi.
+- `src/app/sss/page.tsx`: Eski 100-200 ₺ reklam bütçesi ifadesi güncel video rehberleri ve bütçe hesaplayıcı ile uyumlu hale getirildi (günlük min 400-500 ₺).
+- `src/app/hizmetler/yapay-zeka-arama-gorunurlugu/page.tsx`: Düz metin halindeki `/yapay-zeka-gorunurluk-olcumu` referansı açık linke dönüştürüldü.
+- `src/app/robots.ts`: `GPTBot`, `ClaudeBot`, `PerplexityBot`, `Google-Extended` gibi tüm yapay zeka arama tarayıcıları için `/` ve `/llms.txt` erişimine açık izin kuralları eklendi.
+- `src/app/sitemap.ts`: `SITE_UPDATED` tarihi `2026-11-10` olarak güncellendi.
+- `src/app/musteri/layout.tsx`: Panel sayfalarının kazara arama motorlarında dizine girmesini önlemek için `robots: { index: false, follow: false }` eklendi.
+
+**3. UI/UX, Mobil Uyum ve Aydınlık Tema Düzeltmeleri**
+- `src/components/CookieBanner.tsx` & `src/components/WhatsApp.tsx`: WhatsApp butonu (`z-[980]`) ve çerez bandı (`z-[990]`) z-index çakışmaları çözüldü; `CookieBanner`'ın panel (`/musteri/**`) ve ödeme sayfalarında bildirim zilleri üzerine binmesi engellendi.
+- `src/app/globals.css`: Aydınlık tema (`[data-panel-theme="light"]`) için beyaz kartlar üzerinde kontrastı düşüren açık gri metin sınıfları (`text-[#c8c8d0]`, `text-[#c8c8d8]`, `text-[#d8d8e4]`) ve koyu/renkli butonlardaki metin renkleri düzeltildi.
+- `src/app/musteri/admin/yeni/page.tsx` & `src/components/AdminClientDetail.tsx`: Select dropdown `<option>` elemanlarındaki sabit `#0f0f14` arka planı `var(--surface)` olarak güncellendi.
+- `src/components/sections/Hero.tsx` & `src/components/WhatsApp.tsx`: Gereksiz `"use client"` direktifleri kaldırılarak Server Component uyumluluğu ve LCP hidrasyon optimizasyonu sağlandı.
+
+### Doğrulama
+- `tsc --noEmit`: 0 hata (Tamamen temiz geçti).
+
+### Yarım kalanlar / Sıradaki
+- v3.3.0: 81 noktada yer alan `<a href>` etiketlerinin Next.js `<Link>` bileşenine dönüştürülmesi ve ESLint temizliği.
 
 ---
 

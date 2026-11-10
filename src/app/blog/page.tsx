@@ -45,7 +45,7 @@ export default function BlogPage() {
         <section className="py-16" style={{ background: "var(--bg-alt)" }}>
           <div className="max-w-[1200px] mx-auto px-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {BLOG_POSTS.map((post) => (
+              {[...BLOG_POSTS].sort((a, b) => b.dateISO.localeCompare(a.dateISO)).map((post) => (
                 <Link
                   key={post.slug}
                   href={`/blog/${post.slug}`}

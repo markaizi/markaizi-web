@@ -50,7 +50,7 @@ const FAQS = [
     items: [
       {
         q: "Reklam bütçemin ne kadar olması gerekiyor?",
-        a: "Meta reklamlarında günlük minimum 100-200 ₺ ile başlanabilir. Google Ads için sektöre göre değişse de günlük 150-300 ₺ uygun bir başlangıç noktasıdır. Bütçeyi ne kadar artırırsanız, veri birikimi hızlanır ve optimizasyon daha etkili olur.",
+        a: "Sağlıklı bir algoritma öğrenimi ve test süreci için günlük minimum 400-500 ₺ (aylık 15.000-20.000 ₺) bütçe ile başlamak genellikle en verimli sonuçları verir. Bütçenizi sektörünüzün rekabetine ve hedeflerinize göre Reklam Bütçesi Hesaplayıcı aracımızdan da hesaplayabilirsiniz.",
       },
       {
         q: "Reklam hesabım kimin üzerine açılıyor?",

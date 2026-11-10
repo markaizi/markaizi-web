@@ -23,7 +23,7 @@ export default function GizlilikPolitikasiPage() {
         <h2>1. Genel Bilgi</h2>
         <p>
           markaizi Dijital Reklam Ajansı olarak gizliliğinize değer veriyoruz. Bu Gizlilik
-          Politikası, <strong>markaizi.com</strong> web sitesini ziyaret ettiğinizde veya
+          Politikası, <strong>markaizi.com.tr</strong> web sitesini ziyaret ettiğinizde veya
           hizmetlerimizden yararlandığınızda kişisel verilerinizi nasıl topladığımızı,
           kullandığımızı ve koruduğumuzu açıklamaktadır.
         </p>

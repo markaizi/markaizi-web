@@ -79,10 +79,13 @@ export default function Sectors() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {[
-            { href: "/saglik-klinik-reklam-ajansi", t: "Sağlık & Klinik Reklam Ajansı", d: "Diş, estetik ve güzellik merkezleri, fizik tedavi ve alternatif tıp için reklam politikalarına uygun Instagram ve Google reklamları." },
-            { href: "/dogal-urun-takviye-reklam-ajansi", t: "Doğal Ürün & Takviye Reklam Ajansı", d: "Takviye, doğal yağ ve doğal kozmetik markaları için ürün videosu, YouTube içeriği ve e-ticaret reklamı." },
+            { href: "/saglik-klinik-reklam-ajansi", t: "Sağlık & Klinik Reklam Ajansı", d: "Diş, estetik, fizik tedavi ve poliklinikler için sağlık tanıtım yönetmeliğine ve reklam politikalarına uygun Google ve yerel arama yönetimi." },
+            { href: "/dogal-urun-takviye-reklam-ajansi", t: "Doğal Ürün & Takviye Reklam Ajansı", d: "Takviye, doğal yağ ve doğal kozmetik markaları için mevzuata uygun ürün videosu, YouTube içeriği ve reklam yönetimi." },
+            { href: "/guzellik-merkezi-reklam-ajansi", t: "Güzellik Merkezi Reklam Ajansı", d: "Lazer epilasyon, cilt bakımı ve güzellik salonları için randevu takvimini dolduran Meta ve Google reklamları." },
+            { href: "/e-ticaret-reklam-ajansi", t: "E-Ticaret Reklam Ajansı", d: "Online satış yapan markalar için Meta, Google Alışveriş, katalog feed'i ve Conversions API kurulumu." },
+            { href: "/getat-merkezi-dijital-pazarlama", t: "GETAT Merkezi Dijital Pazarlama", d: "Geleneksel ve tamamlayıcı tıp uygulamaları için yasal tanıtım kurallarına uygun dijital varlık ve bilgilendirme yönetimi." },
           ].map((x) => (
             <Link key={x.href} href={x.href} className="reveal rounded-2xl p-6 transition-all hover:border-purple-500/40" style={{ background: "var(--surface)", border: "1px solid var(--border)", textDecoration: "none" }}>
               <h3 className="text-[17px] font-bold text-white mb-2">{x.t}</h3>

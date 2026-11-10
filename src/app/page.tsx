@@ -1,4 +1,4 @@
-import { SAME_AS } from "@/lib/seo";
+import { SAME_AS, ORG_ID, OG_IMAGES } from "@/lib/seo";
 import { founderRef } from "@/lib/founder";
 import { Metadata } from "next";
 import Navbar from "@/components/Navbar";
@@ -21,12 +21,23 @@ export const metadata: Metadata = {
   keywords:
     "dijital reklam ajansı ankara, siteler reklam ajansı, ankara kafe reklam ajansı, ankara restoran sosyal medya, gölbaşı kafe sosyal medya, ankara mobilya sosyal medya, ankara avize dijital pazarlama, ankara aksesuar instagram yönetimi, ankara klinik doktor google reklamları, ostim dijital ajans, keçiören sosyal medya ajansı, etimesgut reklam, çankaya dijital pazarlama, ankara google ads, ankara meta reklam, ankara tiktok reklamları, ankara instagram yönetimi, yerel işletme dijital pazarlama",
   alternates: { canonical: "https://markaizi.com.tr" },
+  openGraph: {
+    title: "markaizi — Dijital Reklam Ajansı | Ankara",
+    description: "Sosyal medya, Google & Meta reklamları, içerik üretimi ve web tasarım. Markanızı dijitalde zirveye taşıyoruz.",
+    type: "website",
+    locale: "tr_TR",
+    url: "https://markaizi.com.tr",
+    siteName: "markaizi",
+    images: OG_IMAGES,
+  },
 };
 
 const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "ProfessionalService",
+  "@type": ["ProfessionalService", "Organization"],
+  "@id": ORG_ID,
   name: "markaizi Dijital Reklam Ajansı",
+  alternateName: "markaizi",
   url: "https://markaizi.com.tr",
   logo: "https://markaizi.com.tr/logo.svg",
   image: "https://markaizi.com.tr/opengraph-image",
@@ -81,12 +92,12 @@ const jsonLd = {
     "@type": "OfferCatalog",
     name: "Dijital Pazarlama Hizmetleri",
     itemListElement: [
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Sosyal Medya Yönetimi" } },
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Meta Reklamları" } },
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Google Reklamları" } },
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "TikTok Reklamları" } },
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "İçerik Üretimi" } },
-      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Web Tasarım & Hosting" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Sosyal Medya Yönetimi", url: "https://markaizi.com.tr/hizmetler/sosyal-medya-yonetimi" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Meta Reklamları", url: "https://markaizi.com.tr/hizmetler/meta-reklamlari" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Google Reklamları", url: "https://markaizi.com.tr/hizmetler/google-reklamlari" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "TikTok Reklamları", url: "https://markaizi.com.tr/hizmetler/tiktok-reklamlari" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Yapay Zeka ve Otomasyon", url: "https://markaizi.com.tr/hizmetler/yapay-zeka-otomasyon" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Web Tasarım & Hosting", url: "https://markaizi.com.tr/hizmetler/web-tasarim-hosting" } },
       { "@type": "Offer", itemOffered: { "@type": "Service", name: "Ankara Kafe & Restoran Sosyal Medya ve Reklam Yönetimi", url: "https://markaizi.com.tr/ankara-kafe-restoran-reklam-ajansi" } },
       { "@type": "Offer", itemOffered: { "@type": "Service", name: "Mobilya Reklam Ajansı Hizmetleri", url: "https://markaizi.com.tr/mobilya-reklam-ajansi" } },
       { "@type": "Offer", itemOffered: { "@type": "Service", name: "Dijital Pazarlama Danışmanlığı", url: "https://markaizi.com.tr/hizmetler/dijital-pazarlama-danismanligi" } },
@@ -95,7 +106,14 @@ const jsonLd = {
       { "@type": "Offer", itemOffered: { "@type": "Service", name: "Dönüşüm Takibi Kurulumu (Meta Pixel, Conversions API, Google Tag Manager)", url: "https://markaizi.com.tr/hizmetler/donusum-takibi-kurulumu" } },
       { "@type": "Offer", itemOffered: { "@type": "Service", name: "Yapay Zeka Arama Görünürlüğü (GEO) ve ChatGPT Reklamları", url: "https://markaizi.com.tr/hizmetler/yapay-zeka-arama-gorunurlugu" } },
       { "@type": "Offer", itemOffered: { "@type": "Service", name: "Mobilya Bayileri İçin Dijital Pazarlama", url: "https://markaizi.com.tr/mobilya-bayi-reklam-ajansi" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Sağlık ve Klinik Reklam Ajansı Hizmetleri", url: "https://markaizi.com.tr/saglik-klinik-reklam-ajansi" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Doğal Ürün ve Takviye Reklam Ajansı Hizmetleri", url: "https://markaizi.com.tr/dogal-urun-takviye-reklam-ajansi" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Güzellik Merkezi Reklam ve Sosyal Medya Yönetimi", url: "https://markaizi.com.tr/guzellik-merkezi-reklam-ajansi" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "E-Ticaret Reklam Yönetimi (Meta, Google Alışveriş)", url: "https://markaizi.com.tr/e-ticaret-reklam-ajansi" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "GETAT Merkezi Dijital Pazarlama", url: "https://markaizi.com.tr/getat-merkezi-dijital-pazarlama" } },
+      { "@type": "Offer", itemOffered: { "@type": "Service", name: "Mobilya Markaları İçin Kurumsal Meta ve Google Reklam Yönetimi", url: "https://markaizi.com.tr/mobilya-kurumsal-meta-google-reklam-yonetimi" } },
       { "@type": "Offer", price: "0", priceCurrency: "TRY", itemOffered: { "@type": "Service", name: "Ücretsiz Reklam Hesabı Denetimi", url: "https://markaizi.com.tr/reklam-hesabi-denetimi" } },
+      { "@type": "Offer", price: "0", priceCurrency: "TRY", itemOffered: { "@type": "Service", name: "Ücretsiz Yapay Zeka Görünürlük Ölçümü", url: "https://markaizi.com.tr/yapay-zeka-gorunurluk-olcumu" } },
     ],
   },
 };

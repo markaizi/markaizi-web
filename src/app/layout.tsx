@@ -4,7 +4,7 @@ import "./globals.css";
 import CookieBanner from "@/components/CookieBanner";
 import Analytics from "@/components/Analytics";
 import JsonLd from "@/components/JsonLd";
-import { SITE_URL, ORG_NAME, LOGO_URL, SAME_AS } from "@/lib/seo";
+import { SITE_URL, ORG_NAME, ORG_ID, LOGO_URL, SAME_AS, OG_IMAGES } from "@/lib/seo";
 import { founderRef } from "@/lib/founder";
 
 const websiteJsonLd = {
@@ -15,6 +15,7 @@ const websiteJsonLd = {
   inLanguage: "tr-TR",
   publisher: {
     "@type": "Organization",
+    "@id": ORG_ID,
     name: ORG_NAME,
     url: SITE_URL,
     logo: LOGO_URL,
@@ -55,18 +56,17 @@ export const metadata: Metadata = {
     "mobilya reklam ajansı, mobilya sosyal medya ajansı, mobilya google reklamları, mobilya meta reklamları, mobilya web sitesi, türkiye geneli dijital reklam ajansı, dijital reklam ajansı ankara, sosyal medya yönetimi ankara, google reklamları ankara, meta ads ankara, instagram yönetimi ankara, siteler dijital reklam, ankara mobilya reklamı, ankara avize reklam ajansı, ankara doktor dijital pazarlama, ankara aksesuar sosyal medya, ostim reklam ajansı, keçiören reklam ajansı, etimesgut reklam ajansı, çankaya dijital ajans, tiktok reklamları ankara, web tasarım ankara, işletme sosyal medya yönetimi, yerel işletme dijital pazarlama ankara",
   authors: [{ name: "markaizi" }],
   creator: "markaizi",
+  // Kök openGraph/twitter yalnızca ortak alanları taşır. title/description/url BİLEREK yok:
+  // her sayfa kendi <title>/description değerini (ve canonical'ını) miras alır; aksi halde 20+ sayfa
+  // ana sayfanın OG/Twitter başlığını basıyordu. Ana sayfanın kendi OG'si src/app/page.tsx'te.
   openGraph: {
-    title: "markaizi — Dijital Reklam Ajansı | Ankara",
-    description: "Sosyal medya, Google & Meta reklamları, içerik üretimi ve web tasarım. Markanızı dijitalde zirveye taşıyoruz.",
     type: "website",
     locale: "tr_TR",
-    url: "https://markaizi.com.tr",
     siteName: "markaizi",
+    images: OG_IMAGES,
   },
   twitter: {
     card: "summary_large_image",
-    title: "markaizi — Dijital Reklam Ajansı",
-    description: "Sosyal medya, Google & Meta reklamları, içerik üretimi ve web tasarım.",
   },
   robots: {
     index: true,

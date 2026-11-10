@@ -17,7 +17,7 @@ export default function KullanimSartlariPage() {
       <LegalPageTemplate
         badge="Yasal"
         title="Kullanım Şartları"
-        subtitle="markaizi.com web sitesini ve hizmetlerini kullanarak aşağıdaki kullanım şartlarını kabul etmiş sayılırsınız."
+        subtitle="markaizi.com.tr web sitesini ve hizmetlerini kullanarak aşağıdaki kullanım şartlarını kabul etmiş sayılırsınız."
         lastUpdated="29 Eylül 2026"
       >
         <h2>1. Taraflar ve Kapsam</h2>

@@ -55,6 +55,7 @@ export default function Footer() {
                 { label: "Mobilya Sosyal Medya",         href: "/mobilya-sosyal-medya-yonetimi" },
                 { label: "Mobilya E-Ticaret",            href: "/mobilya-e-ticaret-danismanligi" },
                 { label: "Mobilya Bayileri",             href: "/mobilya-bayi-reklam-ajansi" },
+                { label: "Mobilya Kurumsal Reklam",      href: "/mobilya-kurumsal-meta-google-reklam-yonetimi" },
                 { label: "İstanbul Mobilya Reklamı",     href: "/istanbul-mobilya-reklam-ajansi" },
                 { label: "İnegöl Mobilya Reklamı",       href: "/inegol-mobilya-reklam-ajansi" },
                 { label: "Kayseri Mobilya Reklamı",      href: "/kayseri-mobilya-reklam-ajansi" },

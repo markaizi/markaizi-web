@@ -128,7 +128,7 @@ export const GUZELLIK: LandingContent = {
   ctaText:
     "Instagram hesabınızı, Google İşletme Profilinizi ve çevrenizdeki rakipleri inceleyip randevu defterinizi dolduracak yol haritasını 24-48 saat içinde paylaşalım.",
   linkLabel: "Güzellik Merkezi",
-  parent: SAGLIK,
+  parent: { name: "Hizmetlerimiz", path: "/#hizmetler", ctaLabel: "Hizmetlerimiz" },
   serviceType: "Güzellik merkezleri için sosyal medya yönetimi, Meta ve Google reklamları, yerel SEO",
   audienceType: "Güzellik merkezleri, güzellik salonları, lazer epilasyon merkezleri ve spa işletmeleri",
   video: VIDEO,

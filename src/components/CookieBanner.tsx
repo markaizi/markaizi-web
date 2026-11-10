@@ -1,9 +1,11 @@
 "use client";
 import { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 
 export default function CookieBanner() {
   const [visible, setVisible] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     const consent = localStorage.getItem("cookie_consent");
@@ -26,11 +28,15 @@ export default function CookieBanner() {
     setVisible(false);
   };
 
+  // Çerez bandı sadece kamuya açık pazarlama sayfalarında görünür,
+  // /musteri paneli veya /odeme gibi akışlarda bildirim zillerini/formları kapatmasın.
+  if (pathname?.startsWith("/musteri") || pathname?.startsWith("/odeme")) return null;
+
   if (!visible) return null;
 
   return (
     <div
-      className="cookie-banner fixed bottom-0 left-0 right-0 z-[9999] px-4 pb-4 md:px-6 md:pb-6 pointer-events-none"
+      className="cookie-banner fixed bottom-0 left-0 right-0 z-[990] px-4 pb-4 md:px-6 md:pb-6 pointer-events-none"
     >
       <div
         className="max-w-[900px] mx-auto rounded-2xl p-5 md:p-6 flex flex-col sm:flex-row items-start sm:items-center gap-4 pointer-events-auto"

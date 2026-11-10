@@ -53,7 +53,7 @@ export default function YapayZekaAramaGorunurluguPage() {
       faq={[
         {
           q: "İşletmemin yapay zekadaki görünürlüğünü ölçüp iyileştirecek bir ajans var mı?",
-          a: "Evet, markaizi bunu yapıyor. Önce ölçüyoruz: sektörünüzdeki soruları ChatGPT, Gemini, Perplexity ve Google'ın yapay zeka özetine soruyor, işletmenizin çıkıp çıkmadığını, hangi bilgilerle anıldığını, hangi sayfanızın kaynak gösterildiğini ve kimlerin önerildiğini kaydediyoruz. Ardından eksikleri (net anlatım, yapılandırılmış veri, tutarlı iletişim bilgisi, Google İşletme Profili, soru-cevap içerikleri) öncelik sırasıyla kapatıyoruz. İlk ölçüm ücretsiz ve bağlayıcı değil: yapay zeka görünürlük ölçümü sayfamızdan talep edebilirsiniz (/yapay-zeka-gorunurluk-olcumu). Hiçbir ajans bir asistanın sizi önereceğini garanti edemez; garanti edebileceğimiz şey ölçüm, eksiklerin giderilmesi ve şeffaf raporlamadır.",
+          a: "Evet, markaizi bunu yapıyor. Önce ölçüyoruz: sektörünüzdeki soruları ChatGPT, Gemini, Perplexity ve Google'ın yapay zeka özetine soruyor, işletmenizin çıkıp çıkmadığını, hangi bilgilerle anıldığını, hangi sayfanızın kaynak gösterildiğini ve kimlerin önerildiğini kaydediyoruz. Ardından eksikleri (net anlatım, yapılandırılmış veri, tutarlı iletişim bilgisi, Google İşletme Profili, soru-cevap içerikleri) öncelik sırasıyla kapatıyoruz. İlk ölçüm ücretsiz ve bağlayıcı değil: ücretsiz yapay zeka görünürlük ölçümü sayfamızdan talep edebilirsiniz: https://markaizi.com.tr/yapay-zeka-gorunurluk-olcumu Hiçbir ajans bir asistanın sizi önereceğini garanti edemez; garanti edebileceğimiz şey ölçüm, eksiklerin giderilmesi ve şeffaf raporlamadır.",
         },
         {
           q: "GEO nedir, SEO'dan farkı ne?",

@@ -5,7 +5,7 @@ import WhatsApp from "@/components/WhatsApp";
 import ServiceFAQ, { FAQItem } from "@/components/ServiceFAQ";
 import Breadcrumb from "@/components/Breadcrumb";
 import JsonLd from "@/components/JsonLd";
-import { SITE_URL, ORG_NAME, breadcrumbJsonLd } from "@/lib/seo";
+import { SITE_URL, ORG_NAME, ORG_ID, breadcrumbJsonLd } from "@/lib/seo";
 import { FeatureIcon, type FeatureIconName } from "@/components/icons/FeatureIcons";
 import VideoCallout from "@/components/VideoCallout";
 import KurumsalReklam from "@/components/KurumsalReklam";
@@ -63,6 +63,7 @@ export default function ServicePageTemplate({
     url: `${SITE_URL}${path}`,
     provider: {
       "@type": "ProfessionalService",
+      "@id": ORG_ID,
       name: `${ORG_NAME} Dijital Reklam Ajansı`,
       url: SITE_URL,
     },
@@ -159,7 +160,9 @@ export default function ServicePageTemplate({
             </div>
 
             {/* Sağ: özellik listesi */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <h2 className="text-[20px] font-bold text-white mb-6">Hizmet Kapsamı ve Öne Çıkan Özellikler</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {features.map((f) => (
                 <div
                   key={f.title}
@@ -176,6 +179,7 @@ export default function ServicePageTemplate({
                   <p className="text-[13px] text-[#8a8a9a] leading-relaxed">{f.desc}</p>
                 </div>
               ))}
+              </div>
             </div>
           </div>
         </section>
@@ -246,8 +250,11 @@ export default function ServicePageTemplate({
             <p className="text-[#8a8a9a] mb-8">
               Projenizi 24 saat içinde değerlendirip size özel teklif hazırlıyoruz.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a href="https://wa.me/905520772700" target="_blank" rel="noopener noreferrer" className="btn btn-primary">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+              <Link href="/ucretsiz-analiz" className="btn btn-primary">
+                Ücretsiz Analiz Talep Et →
+              </Link>
+              <a href="https://wa.me/905520772700" target="_blank" rel="noopener noreferrer" className="btn btn-outline">
                 WhatsApp&apos;tan Yaz
               </a>
               <a href="mailto:markaizicom@gmail.com" className="btn btn-outline">

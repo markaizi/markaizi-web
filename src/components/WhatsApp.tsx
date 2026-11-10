@@ -1,4 +1,3 @@
-"use client";
 
 export default function WhatsApp() {
   return (
@@ -7,7 +6,7 @@ export default function WhatsApp() {
       target="_blank"
       rel="noopener noreferrer"
       aria-label="WhatsApp ile iletişime geç"
-      className="group fixed bottom-7 right-7 z-[9999] w-[60px] h-[60px] rounded-full flex items-center justify-center text-white transition-all duration-300 hover:scale-110"
+      className="group fixed bottom-7 right-7 z-[980] w-[60px] h-[60px] rounded-full flex items-center justify-center text-white transition-all duration-300 hover:scale-110"
       style={{
         background: "#25d366",
         boxShadow: "0 4px 20px rgba(37,211,102,0.4)",

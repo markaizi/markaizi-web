@@ -120,6 +120,30 @@ const SERVICES = [
       </svg>
     ),
   },
+  {
+    title: "Dönüşüm Takibi Kurulumu",
+    desc: "Meta Pixel, Conversions API (CAPI), Google Tag Manager ve GA4 e-ticaret/lead takibi kurulumu. Reklam bütçenizin nereye gittiğini ve hangi kampanyanın kazandırdığını net görün.",
+    tags: ["Meta Pixel", "CAPI", "GA4 & GTM"],
+    href: "/hizmetler/donusum-takibi-kurulumu",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6" style={{ stroke: "#c084fc" }} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M18 20V10M12 20V4M6 20v-6"/>
+        <circle cx="12" cy="4" r="1.5" fill="#c084fc"/>
+      </svg>
+    ),
+  },
+  {
+    title: "Yapay Zeka Arama Görünürlüğü (GEO)",
+    desc: "ChatGPT, Gemini, Perplexity ve Google AI Overviews aramalarında işletmenizin doğru bilgilerle önerilmesini sağlayın. Yapılandırılmış veri, entity otoritesi ve yapay zeka SEO çalışması.",
+    tags: ["GEO", "ChatGPT SEO", "AI Overviews"],
+    href: "/hizmetler/yapay-zeka-arama-gorunurlugu",
+    icon: (
+      <svg viewBox="0 0 24 24" fill="none" className="w-6 h-6" style={{ stroke: "#c084fc" }} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="11" cy="11" r="8"/>
+        <path d="M21 21l-4.35-4.35M11 8v6M8 11h6"/>
+      </svg>
+    ),
+  },
 ];
 
 export default function Services() {

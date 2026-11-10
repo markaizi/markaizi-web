@@ -9,7 +9,8 @@ const BASE = "https://markaizi.com.tr";
 
 // Sitenin en son içerik revizyon tarihi. Her istekte "şimdi" döndürmek yerine
 // sabit bir tarih kullanılır — gerçek bir güncelleme olduğunda elle güncellenir.
-const SITE_UPDATED = new Date("2026-09-26");
+// En son genel site güncelleme tarihi (v3.2.0 paketi)
+const SITE_UPDATED = new Date("2026-11-10");
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const static_pages: MetadataRoute.Sitemap = [

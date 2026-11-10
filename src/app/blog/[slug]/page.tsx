@@ -10,6 +10,7 @@ import { BLOG_POSTS, getPostBySlug } from "@/lib/blog-data";
 import VideoCallout from "@/components/VideoCallout";
 import Link from "next/link";
 import { FOUNDER, founderRef } from "@/lib/founder";
+import { OG_IMAGES } from "@/lib/seo";
 
 export function generateStaticParams() {
   return BLOG_POSTS.map((p) => ({ slug: p.slug }));
@@ -27,6 +28,7 @@ const CATEGORY_SERVICE: Record<string, { href: string; label: string }> = {
   "Kafe & Restoran": { href: "/ankara-kafe-restoran-reklam-ajansi", label: "Ankara Kafe & Restoran Reklam Ajansı" },
   "Ölçümleme": { href: "/hizmetler/donusum-takibi-kurulumu", label: "Dönüşüm Takibi Kurulumu" },
   "Yapay Zeka": { href: "/hizmetler/yapay-zeka-arama-gorunurlugu", label: "Yapay Zeka Arama Görünürlüğü" },
+  "Mevzuat": { href: "/saglik-klinik-reklam-ajansi", label: "Sağlık & Mevzuat Uyumlu Reklam Yönetimi" },
 };
 
 const AD_CATEGORIES = new Set(["Meta Reklamları", "Google Ads", "Reklam Stratejisi", "TikTok", "Ölçümleme", "Mobilya Sektörü"]);
@@ -47,9 +49,13 @@ export async function generateMetadata({
       title: post.title,
       description: post.excerpt,
       type: "article",
+      url: `https://markaizi.com.tr/blog/${slug}`,
+      locale: "tr_TR",
+      siteName: "markaizi",
       publishedTime: post.dateISO,
       modifiedTime: post.dateModifiedISO ?? post.dateISO,
       authors: [FOUNDER.name],
+      images: OG_IMAGES,
     },
   };
 }

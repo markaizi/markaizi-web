@@ -59,9 +59,28 @@
 
 /* Metin renkleri — hover: önekli varyantlar dahil (ör. hover:text-white) */
 [data-panel-theme="light"] [class*="text-white"]      { color: var(--fg) !important; }
+[data-panel-theme="light"] [class*="text-[#c8c8d0]"]  { color: var(--fg) !important; }
+[data-panel-theme="light"] [class*="text-[#c8c8d8]"]  { color: var(--fg) !important; }
+[data-panel-theme="light"] [class*="text-[#d8d8e4]"]  { color: var(--fg) !important; }
 [data-panel-theme="light"] [class*="text-[#8a8a9a]"]  { color: var(--fg-muted) !important; }
 [data-panel-theme="light"] [class*="text-[#555]"]     { color: var(--fg-faint) !important; }
 [data-panel-theme="light"] [class*="placeholder-[#555]"]::placeholder { color: var(--fg-faint) !important; opacity: 1; }
+
+/* Renkli/koyu butonlarda text-white'ı siyah yapma, beyaz tut */
+[data-panel-theme="light"] .btn-primary,
+[data-panel-theme="light"] button[style*="background: linear-gradient"],
+[data-panel-theme="light"] button[style*="background: rgb(168"],
+[data-panel-theme="light"] button[style*="background: rgba(168"],
+[data-panel-theme="light"] button[style*="background: #7c3aed"],
+[data-panel-theme="light"] .badge-red,
+[data-panel-theme="light"] [style*="background: #ef4444"],
+[data-panel-theme="light"] [style*="background: rgb(239, 68, 68)"] {
+  color: #ffffff !important;
+}
+[data-panel-theme="light"] .btn-primary [class*="text-white"],
+[data-panel-theme="light"] button[style*="background: linear-gradient"] [class*="text-white"] {
+  color: #ffffff !important;
+}
 
 /* Beyaz-opaklık arka plan yardımcıları — koyu temada "beyaza doğru açılma"
    anlamına gelen bu sınıflar aydınlıkta tersine "koyuya doğru koyulaşmalı",

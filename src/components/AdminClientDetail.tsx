@@ -442,7 +442,7 @@ function GenelTab({ data, router }: { data: ClientDetailData; router: ReturnType
               onChange={(e) => setForm((f) => ({ ...f, billingPeriod: e.target.value as BillingPeriod }))}
             >
               {BILLING_PERIODS.map((p) => (
-                <option key={p} value={p} style={{ background: "#0f0f14" }}>
+                <option key={p} value={p} style={{ background: "var(--surface)" }}>
                   {BILLING_PERIOD_LABEL[p]}
                 </option>
               ))}

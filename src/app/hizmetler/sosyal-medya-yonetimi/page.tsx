@@ -60,7 +60,7 @@ export default function SosyalMedyaPage() {
         },
         {
           q: "Ayda kaç paylaşım yapılıyor?",
-          a: "Paketinize göre değişir: Başlangıç pakedinde haftada 3, Büyüme pakedinde haftada 5, Kurumsal ve Elite paketlerde haftada 7+ paylaşım yapılır. Bu paylaşımlara feed gönderileri, Reels videoları ve Story içerikleri dahildir.",
+          a: "markaizi'de şablon paketler yoktur; içerik sayısını takvim değil işletmenizin hedefi, sektörü ve bütçesi belirler. Genellikle haftada 3 ila 5 nitelikli paylaşım (Reels, görsel ve hikâye kurguları) ile düzenli ve tutarlı bir yayın ritmi oluşturulur.",
         },
         {
           q: "Hesabımın şifresini paylaşmak zorunda mıyım?",
