@@ -36,7 +36,9 @@ export async function POST(req: NextRequest) {
   }
   if (attempt.status !== "BEKLIYOR") return ok(); // tekrar eden bildirim
 
-  const testMode = get("test_mode") === "1";
+  // Test modu: PayTR'nin hash'i test_mode alanını kapsamaz; bu yüzden token alınırken
+  // kaydedilen attempt.testMode asıl kaynaktır, bildirimdeki alan yalnızca ek sinyal.
+  const testMode = attempt.testMode || get("test_mode") === "1";
 
   if (status !== "success") {
     await prisma.paymentAttempt.updateMany({
@@ -45,6 +47,22 @@ export async function POST(req: NextRequest) {
         status: "BASARISIZ",
         failedReasonCode: get("failed_reason_code").slice(0, 50) || null,
         failedReasonMsg: get("failed_reason_msg").slice(0, 500) || null,
+        testMode,
+        completedAt: new Date(),
+      },
+    });
+    return ok();
+  }
+
+  // Tutar doğrulaması: ödenen tutar link tutarından az olamaz (taksit komisyonu fazla olabilir).
+  const paidKurus = Number(totalAmount);
+  if (!Number.isFinite(paidKurus) || paidKurus < attempt.amountKurus) {
+    console.error("[paytr] tutar uyuşmuyor, ödeme işlenmedi:", merchantOid, totalAmount, attempt.amountKurus);
+    await prisma.paymentAttempt.updateMany({
+      where: { id: attempt.id, status: "BEKLIYOR" },
+      data: {
+        status: "BASARISIZ",
+        failedReasonMsg: `Tutar uyuşmazlığı: beklenen ${attempt.amountKurus}, gelen ${totalAmount}`.slice(0, 500),
         testMode,
         completedAt: new Date(),
       },
@@ -68,9 +86,15 @@ export async function POST(req: NextRequest) {
     if (updated.count === 0) return; // eşzamanlı ikinci bildirim
     firstSuccess = true;
 
+    // Önce linki kapat: aynı link için eşzamanlı iki başarılı bildirim gelirse yalnızca
+    // ilki (count > 0) Ekonomi'ye gelir yazar → mükerrer GELIR kaydı oluşmaz.
+    const closed = await tx.paymentLink.updateMany({
+      where: { id: link.id, status: "AKTIF" },
+      data: { status: "ODENDI", paidAt: new Date() },
+    });
+
     // Test ödemeleri Ekonomi'ye gelir olarak yazılmaz
-    let transactionId: string | null = null;
-    if (!testMode) {
+    if (closed.count > 0 && !testMode) {
       const t = await tx.transaction.create({
         data: {
           type: "GELIR",
@@ -79,12 +103,8 @@ export async function POST(req: NextRequest) {
           date: new Date(),
         },
       });
-      transactionId = t.id;
+      await tx.paymentLink.update({ where: { id: link.id }, data: { transactionId: t.id } });
     }
-    await tx.paymentLink.updateMany({
-      where: { id: link.id, status: "AKTIF" },
-      data: { status: "ODENDI", paidAt: new Date(), transactionId },
-    });
   });
 
   if (firstSuccess) {

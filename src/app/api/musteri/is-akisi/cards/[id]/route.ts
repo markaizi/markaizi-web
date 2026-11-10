@@ -36,7 +36,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   if (err) return err;
   const { id } = await params;
 
-  const parsed = patchSchema.safeParse(await req.json());
+  const parsed = patchSchema.safeParse(await req.json().catch(() => ({})));
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
   }
@@ -56,7 +56,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
       columnId: true,
       assigneeId: true,
       workLog: { select: { id: true, amount: true } },
-      column: { select: { adminOnly: true, triggersWorkLog: true } },
+      column: { select: { adminOnly: true, hiddenFromEmployees: true, triggersWorkLog: true } },
     },
   });
   if (!before) return NextResponse.json({ error: "Kart bulunamadı." }, { status: 404 });
@@ -79,7 +79,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   // (taşıyamaz, düzenleyemez, silemez) — sütun "kilitli" sayılır. "Tamamlandı'ya
   // taşıma" yetkisi bunu aşmaz — kart oraya bir kez taşındıktan sonra herkes için
   // (yetkili çalışan dahil) kilitli kalır, sadece admin dokunabilir.
-  if (before.column.adminOnly && !isAdmin) {
+  if ((before.column.adminOnly || before.column.hiddenFromEmployees) && !isAdmin) {
     return NextResponse.json({ error: "Bu sütundaki kartlara yalnızca admin dokunabilir." }, { status: 403 });
   }
 
@@ -195,12 +195,12 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
 
   const card = await prisma.workflowCard.findUnique({
     where: { id },
-    select: { creatorId: true, column: { select: { adminOnly: true } } },
+    select: { creatorId: true, column: { select: { adminOnly: true, hiddenFromEmployees: true } } },
   });
   if (!card) return NextResponse.json({ error: "Kart bulunamadı." }, { status: 404 });
 
   if (session!.role !== "ADMIN") {
-    if (card.column.adminOnly) {
+    if (card.column.adminOnly || card.column.hiddenFromEmployees) {
       return NextResponse.json({ error: "Bu sütundaki kartlara yalnızca admin dokunabilir." }, { status: 403 });
     }
     const me = await prisma.user.findUnique({

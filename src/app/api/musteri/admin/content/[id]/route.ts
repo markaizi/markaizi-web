@@ -3,15 +3,16 @@ import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { requireStaffForContentItem } from "@/lib/staffGuard";
 import { ContentStatus } from "@prisma/client";
+import { isValidDateString } from "@/lib/security";
 
 export const runtime = "nodejs";
 
 const patchSchema = z.object({
   title: z.string().min(1).max(300).optional(),
   description: z.string().max(1000).nullable().optional(),
-  scheduledDate: z.string().optional(),
+  scheduledDate: z.string().refine(isValidDateString, { message: "Geçersiz tarih." }).optional(),
   status: z.nativeEnum(ContentStatus).optional(),
-  publishedAt: z.string().nullable().optional(),
+  publishedAt: z.string().refine(isValidDateString, { message: "Geçersiz tarih." }).nullable().optional(),
 });
 
 export async function PATCH(
@@ -22,7 +23,7 @@ export async function PATCH(
   const { err } = await requireStaffForContentItem(id);
   if (err) return err;
 
-  const body = await req.json();
+  const body = await req.json().catch(() => ({}));
   const parsed = patchSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });

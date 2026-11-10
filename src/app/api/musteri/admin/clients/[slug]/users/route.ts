@@ -25,7 +25,7 @@ export async function POST(
   const client = await prisma.client.findUnique({ where: { slug } });
   if (!client) return NextResponse.json({ error: "Firma bulunamadı." }, { status: 404 });
 
-  const body = await req.json();
+  const body = await req.json().catch(() => ({}));
   const parsed = schema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
@@ -42,6 +42,11 @@ export async function POST(
   if (existing) {
     if (existing.clientId !== client.id) {
       return NextResponse.json({ error: "Bu kullanıcı adı/e-posta başka firmaya ait." }, { status: 409 });
+    }
+    // Yeni e-posta başka bir kullanıcıya aitse Prisma P2002 (500) yerine net hata dön
+    const emailOwner = await prisma.user.findFirst({ where: { email, NOT: { id: existing.id } }, select: { id: true } });
+    if (emailOwner) {
+      return NextResponse.json({ error: "Bu e-posta başka bir kullanıcıya ait." }, { status: 409 });
     }
     await prisma.user.update({
       where: { id: existing.id },

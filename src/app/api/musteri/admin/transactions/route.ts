@@ -19,7 +19,7 @@ export async function POST(req: NextRequest) {
   const { session, err } = await requireAdmin();
   if (err) return err;
 
-  const parsed = postSchema.safeParse(await req.json());
+  const parsed = postSchema.safeParse(await req.json().catch(() => ({})));
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
   }

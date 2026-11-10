@@ -17,7 +17,7 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   if (err) return err;
   const { id } = await params;
 
-  const parsed = schema.safeParse(await req.json());
+  const parsed = schema.safeParse(await req.json().catch(() => ({})));
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
   }
@@ -43,6 +43,16 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
   }
   if (!card.clientId) {
     return NextResponse.json({ error: "Kart bir firmaya bağlı değil." }, { status: 400 });
+  }
+  // Çalışan, yalnızca içerik yönetme yetkisi olduğu bir firmanın takvimine ekleyebilir
+  if (session!.role === "EMPLOYEE") {
+    const a = await prisma.assignment.findUnique({
+      where: { userId_clientId: { userId: session!.uid, clientId: card.clientId } },
+      select: { canManageContent: true },
+    });
+    if (!a?.canManageContent) {
+      return NextResponse.json({ error: "Bu firmanın içerik takvimini yönetme yetkiniz yok." }, { status: 403 });
+    }
   }
   if (card.contentItem) {
     return NextResponse.json({ error: "Bu kart zaten İçerik Takvimi'ne eklendi." }, { status: 409 });

@@ -2,10 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
-import { signSession, setSessionCookie } from "@/lib/auth";
+import { signSession, setSessionCookie, passwordVersion } from "@/lib/auth";
 import { rateLimit, getClientIp } from "@/lib/security";
 
 export const runtime = "nodejs";
+
+// Kullanıcı bulunamadığında bcrypt maliyetini eşitlemek için geçerli (cost 12) sahte hash.
+// Gerçek hash'ler de cost 12 — yanıt süresi farkından kullanıcı adı sızmasın.
+const DUMMY_HASH = "$2b$12$ZNeu8m1u0LreL7Z1Ay7MX.C2.zpzbXRcNc.XvOAJTuTt0youCt6BW";
 
 // Bakım modu: true iken sadece ADMIN girebilir. "aç" dediğinde false yap.
 const MAINTENANCE_MODE = false;
@@ -34,13 +38,22 @@ export async function POST(req: NextRequest) {
 
   const username = parsed.username.toLowerCase();
 
+  // Hesap başına ek sınır: IP rotasyonuyla tek hesaba yönelik kaba kuvveti engeller
+  const rlUser = rateLimit(`musteri-login-user:${username}`, 10, 5 * 60_000);
+  if (!rlUser.ok) {
+    return NextResponse.json(
+      { ok: false, error: "Çok fazla deneme. Lütfen biraz sonra tekrar deneyin." },
+      { status: 429, headers: { "Retry-After": String(rlUser.retryAfter) } }
+    );
+  }
+
   // Kullanıcıyı username veya email ile bul
   const user = await prisma.user.findFirst({
     where: {
       active: true,
       OR: [{ username }, { email: username }],
     },
-    include: { client: { select: { slug: true } } },
+    include: { client: { select: { slug: true, active: true } } },
   });
 
   const FAIL = NextResponse.json(
@@ -50,12 +63,15 @@ export async function POST(req: NextRequest) {
 
   if (!user) {
     // Zamanlama saldırısını zorlaştırmak için yine de hash karşılaştır
-    await bcrypt.compare(parsed.password, "$2a$10$invalidinvalidinvalidinvalidinvalidinvalidinv");
+    await bcrypt.compare(parsed.password, DUMMY_HASH);
     return FAIL;
   }
 
   const ok = await bcrypt.compare(parsed.password, user.passwordHash);
   if (!ok) return FAIL;
+
+  // Pasife alınmış firmanın müşteri kullanıcıları giriş yapamaz
+  if (user.role === "CLIENT" && user.client && !user.client.active) return FAIL;
 
   if (MAINTENANCE_MODE && user.role !== "ADMIN") {
     return NextResponse.json({
@@ -71,6 +87,7 @@ export async function POST(req: NextRequest) {
     clientId: user.clientId,
     slug: user.client?.slug ?? null,
     name: user.name,
+    pv: passwordVersion(user.passwordHash),
   });
   await setSessionCookie(token);
 

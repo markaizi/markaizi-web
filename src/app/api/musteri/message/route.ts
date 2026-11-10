@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 import { escapeHtml, cleanStr, rateLimit, getClientIp } from "@/lib/security";
 import { prisma } from "@/lib/db";
-import { getSession } from "@/lib/auth";
+import { getSession, assertCanAccessClient } from "@/lib/auth";
 
 export const runtime = "nodejs";
 
@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const body = await req.json();
+    const body = await req.json().catch(() => ({}));
     const slug    = cleanStr(body.slug, 60);
     const message = cleanStr(body.message, 2000);
 
@@ -37,8 +37,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Firma bulunamadı." }, { status: 404 });
     }
 
-    // CLIENT rolü sadece kendi firmasına mesaj gönderebilir
-    if (session.role === "CLIENT" && session.clientId !== client.id) {
+    // CLIENT yalnızca kendi firmasına, EMPLOYEE yalnızca atandığı firmaya mesaj gönderebilir
+    try {
+      await assertCanAccessClient(session, client.id);
+    } catch {
       return NextResponse.json({ error: "Yetkisiz." }, { status: 403 });
     }
 

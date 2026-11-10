@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { hasRedLock } from "@/lib/clientView";
 
 export const runtime = "nodejs";
 
@@ -36,9 +37,18 @@ export async function GET(req: NextRequest) {
   // Role-scoped where clause for client
   let clientWhere = {};
   if (session.role === "CLIENT") {
+    // Aktif KIRMIZI bildirim kilidi varken içerik takvimi müşteriye kapalıdır
+    if (session.clientId && (await hasRedLock(session.clientId))) {
+      return NextResponse.json({ items: [] });
+    }
     clientWhere = { id: session.clientId ?? "__none__" };
   } else if (session.role === "EMPLOYEE") {
-    clientWhere = { assignments: { some: { userId: session.uid } } };
+    // Yalnızca içerik görme/yönetme yetkisi olan atamalar
+    clientWhere = {
+      assignments: {
+        some: { userId: session.uid, OR: [{ canViewContent: true }, { canManageContent: true }] },
+      },
+    };
   } else if (session.role === "ADMIN" && clientSlugParam) {
     // Admin belirli bir firma panelinden bakıyorsa sadece o firmayı göster
     clientWhere = { slug: clientSlugParam };

@@ -52,7 +52,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ cod
     },
   });
 
-  const origin = req.nextUrl.origin;
+  // Dönüş adresleri sabit kanonik alan adından türetilir (Host başlığına güvenilmez); yerelde istek origin'i
+  const origin = process.env.NODE_ENV === "production" ? "https://markaizi.com.tr" : req.nextUrl.origin;
   const result = await fetchIframeToken({
     userIp: ip,
     merchantOid,

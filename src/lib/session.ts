@@ -14,6 +14,8 @@ export interface SessionPayload {
   clientId: string | null;
   slug: string | null; // CLIENT için firma slug'ı (yönlendirme için)
   name: string;
+  /** Parola sürümü: parola hash'inin kısa özeti. Parola değişince eski çerezler geçersiz olur. */
+  pv?: string;
 }
 
 function getSecret(): Uint8Array {
@@ -41,6 +43,7 @@ export async function verifySession(token: string): Promise<SessionPayload | nul
       clientId: (payload.clientId as string | null) ?? null,
       slug: (payload.slug as string | null) ?? null,
       name: String(payload.name ?? ""),
+      pv: typeof payload.pv === "string" ? payload.pv : undefined,
     };
   } catch {
     return null;

@@ -11,7 +11,7 @@ export async function POST(req: NextRequest) {
   const { err } = await requireWorkflowManageColumns();
   if (err) return err;
 
-  const parsed = schema.safeParse(await req.json());
+  const parsed = schema.safeParse(await req.json().catch(() => ({})));
   if (!parsed.success) {
     return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
   }

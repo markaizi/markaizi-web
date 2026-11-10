@@ -35,7 +35,8 @@ export async function POST(req: NextRequest) {
   const passwordHash = await bcrypt.hash(parsed.password, 12);
   await prisma.$transaction([
     prisma.user.update({ where: { id: record.userId }, data: { passwordHash } }),
-    prisma.passwordResetToken.update({ where: { id: record.id }, data: { usedAt: new Date() } }),
+    // Bu kullanıcının kullanılmamış tüm sıfırlama bağlantıları geçersiz olur
+    prisma.passwordResetToken.updateMany({ where: { userId: record.userId, usedAt: null }, data: { usedAt: new Date() } }),
   ]);
 
   return NextResponse.json({ ok: true });

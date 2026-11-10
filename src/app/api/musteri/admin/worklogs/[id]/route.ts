@@ -3,6 +3,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { requireAdmin, requireAdminOrWorklogPricer } from "@/lib/adminGuard";
 import { notifyWorklogPriced } from "@/lib/staffNotify";
+import { isValidDateString } from "@/lib/security";
 
 export const runtime = "nodejs";
 
@@ -10,7 +11,7 @@ const patchSchema = z.object({
   amount: z.string().max(60).nullable().optional(),
   description: z.string().min(1).max(500).optional(),
   adminNote: z.string().trim().max(500).nullable().optional(),
-  date: z.string().min(1).optional(),
+  date: z.string().min(1).refine(isValidDateString, { message: "Geçersiz tarih." }).optional(),
 });
 
 export async function PATCH(

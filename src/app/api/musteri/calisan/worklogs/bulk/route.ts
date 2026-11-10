@@ -2,11 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { getSession } from "@/lib/auth";
+import { isValidDateString } from "@/lib/security";
 
 export const runtime = "nodejs";
 
 const postSchema = z.object({
-  date: z.string().min(1),
+  date: z.string().min(1).refine(isValidDateString, { message: "Geçersiz tarih." }),
   descriptions: z.array(z.string().trim().min(1).max(500)).min(1).max(50),
 });
 

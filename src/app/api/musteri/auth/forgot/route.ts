@@ -3,7 +3,7 @@ import crypto from "crypto";
 import nodemailer from "nodemailer";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
-import { rateLimit, getClientIp } from "@/lib/security";
+import { rateLimit, getClientIp, escapeHtml } from "@/lib/security";
 
 export const runtime = "nodejs";
 
@@ -65,7 +65,7 @@ export async function POST(req: NextRequest) {
           </div>
           <div style="padding:32px">
             <p style="margin:0 0 20px;color:#c0c0d0;font-size:15px;line-height:1.7">
-              Merhaba ${user.name}, markaizi panel hesabınız için bir şifre sıfırlama talebi aldık.
+              Merhaba ${escapeHtml(user.name)}, markaizi panel hesabınız için bir şifre sıfırlama talebi aldık.
               Aşağıdaki bağlantıya tıklayarak yeni bir şifre belirleyebilirsiniz. Bu bağlantı
               <strong>1 saat</strong> geçerlidir.
             </p>

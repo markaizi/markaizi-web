@@ -4,6 +4,7 @@
  * Böylece mevcut portal UI'ı değişmeden DB'den beslenir.
  */
 import { prisma } from "@/lib/db";
+import type { SessionPayload } from "@/lib/session";
 import { getInvoiceStage, INVOICE_STAGE_LABEL, OVERDUE_GRACE_DAYS } from "@/lib/invoiceStage";
 import type { ClientData, InvoiceStatus, RequestStatus } from "@/lib/clients";
 import {
@@ -30,8 +31,24 @@ export interface ClientView {
   data: ClientData;
 }
 
-/** Slug ile firmayı DB'den çekip portal-şekline dönüştürür (yoksa null). */
-export async function getClientView(slug: string): Promise<ClientView | null> {
+/** Firmada aktif (silinmemiş) bir KIRMIZI bildirim kilidi var mı? */
+export async function hasRedLock(clientId: string): Promise<boolean> {
+  const n = await prisma.clientNotification.findFirst({
+    where: { clientId, severity: "KIRMIZI" },
+    select: { id: true },
+  });
+  return !!n;
+}
+
+/**
+ * Slug ile firmayı DB'den çekip portal-şekline dönüştürür (yoksa null).
+ *
+ * `viewer` verilirse yetki kısıtları VERİ SEVİYESİNDE uygulanır (yalnızca arayüzde gizlemek
+ * yetmez; sayfa kaynağı/RSC payload'ından okunabilir):
+ * - CLIENT + aktif KIRMIZI kilit → içerik takvimi ve reklam raporları boş döner
+ * - EMPLOYEE → atamadaki canView ve canManage bayraklarına göre fatura/içerik/güncelleme boş döner
+ */
+export async function getClientView(slug: string, viewer?: SessionPayload | null): Promise<ClientView | null> {
   const client = await prisma.client.findUnique({
     where: { slug },
     include: {
@@ -59,10 +76,25 @@ export async function getClientView(slug: string): Promise<ClientView | null> {
     select: { title: true, body: true },
   });
 
-  const agencyUpdates = client.updates
+  // Veri seviyesi kısıtlar
+  const clientLocked = viewer?.role === "CLIENT" && !!redLock;
+  let showInvoices = true;
+  let showContent = true;
+  let showUpdates = true;
+  if (viewer?.role === "EMPLOYEE") {
+    const a = await prisma.assignment.findUnique({
+      where: { userId_clientId: { userId: viewer.uid, clientId: client.id } },
+    });
+    showInvoices = !!a?.canViewInvoices;
+    showContent = !!a && (a.canViewContent || a.canManageContent);
+    showUpdates = !!a && (a.canViewUpdates || a.canManageUpdates);
+  }
+
+  const visibleUpdates = showUpdates ? client.updates : [];
+  const agencyUpdates = visibleUpdates
     .filter((u) => u.kind === UpdateKind.AJANS)
     .map((u) => ({ date: trDate(u.date), text: u.text }));
-  const websiteUpdates = client.updates
+  const websiteUpdates = visibleUpdates
     .filter((u) => u.kind === UpdateKind.WEBSITE)
     .map((u) => ({ date: trDate(u.date), text: u.text }));
 
@@ -70,29 +102,29 @@ export async function getClientView(slug: string): Promise<ClientView | null> {
     slug: client.slug,
     name: client.name,
     envKey: "", // portal'da kullanılmıyor
-    dailyMetaSpend: client.dailyMetaSpend ?? undefined,
-    dailyGoogleSpend: client.dailyGoogleSpend ?? undefined,
+    dailyMetaSpend: showInvoices ? client.dailyMetaSpend ?? undefined : undefined,
+    dailyGoogleSpend: showInvoices ? client.dailyGoogleSpend ?? undefined : undefined,
     websiteUpdates,
     updates: agencyUpdates,
-    contentCalendar: client.contentItems.map((ci) => ({
+    contentCalendar: (showContent && !clientLocked ? client.contentItems : []).map((ci) => ({
       date: trDateShort(ci.scheduledDate),
       content: ci.title,
     })),
-    invoices: client.invoices.map((inv) => ({
+    invoices: (showInvoices ? client.invoices : []).map((inv) => ({
       period: inv.period,
       amount: inv.amount,
       status: INVOICE_STAGE_LABEL[getInvoiceStage(inv, new Date(), client.overdueGraceDays ?? OVERDUE_GRACE_DAYS)] as InvoiceStatus,
       dueDate: inv.dueDate ? trDate(inv.dueDate) : undefined,
       paid: inv.status === "ODENDI",
     })),
-    invoiceNote: client.invoiceNote ?? undefined,
+    invoiceNote: showInvoices ? client.invoiceNote ?? undefined : undefined,
     requests: client.notes.map((n) => ({
       id: n.id,
       text: n.text,
       status: REQUEST_STATUS[n.status],
       createdAt: n.createdAt.toISOString(),
     })),
-    adReports: client.adReports.map((r) => ({
+    adReports: (clientLocked ? [] : client.adReports).map((r) => ({
       id: r.id,
       platform: r.platform,
       month: r.month,

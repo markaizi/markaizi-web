@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession, assertCanAccessClient } from "@/lib/auth";
 import { prisma } from "@/lib/db";
+import { hasRedLock } from "@/lib/clientView";
 
 export const runtime = "nodejs";
 
@@ -23,6 +24,11 @@ export async function GET(_req: NextRequest, { params }: { params: Promise<{ id:
     await assertCanAccessClient(session, report.clientId);
   } catch {
     return NextResponse.json({ error: "Bu firmaya erişim yetkiniz yok." }, { status: 403 });
+  }
+
+  // Aktif KIRMIZI bildirim kilidi varken raporlar müşteriye kapalıdır
+  if (session.role === "CLIENT" && (await hasRedLock(report.clientId))) {
+    return NextResponse.json({ error: "Raporlara erişim şu an kilitli." }, { status: 403 });
   }
 
   return new NextResponse(new Uint8Array(report.pdfData), {

@@ -1,7 +1,9 @@
 # markaizi.com — Next.js Web Sitesi
 
-> ⚠️ **ÖNCE OKU:** Projenin güncel durumu, bekleyen işler ve geçmiş değişiklikler
-> [`PROJE-DURUM.md`](./PROJE-DURUM.md) dosyasındadır. Yeni oturuma başlarken o dosyayı oku.
+> ⚠️ **ÖNCE OKU:** Birden çok yapay zeka aracı (Claude Code, Codex, Antigravity) bu projede çalışır.
+> Ortak devir-teslim protokolü: [`AGENTS.md`](./AGENTS.md) · Son durum/sürüm: [`CHANGELOG.md`](./CHANGELOG.md) (en üst sürüm) ·
+> Projenin durumu, kararlar ve bekleyenler: [`PROJE-DURUM.md`](./PROJE-DURUM.md). Yeni oturuma başlarken bu üçünü oku.
+> Her değişiklikte `CHANGELOG.md` + `package.json` sürümünü güncelle (sürüm kuralları `AGENTS.md` §2–§3).
 > Samet "not al / güncelle" dediğinde ilgili bölümü güncelleyip commit et.
 
 ## Proje Nedir?

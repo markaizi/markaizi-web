@@ -21,7 +21,7 @@ export default async function MusteriPage({
   const session = await getSession();
   if (!session) redirect(`/musteri/giris?next=/musteri/${slug}`);
 
-  const view = await getClientView(slug);
+  const view = await getClientView(slug, session);
   if (!view) notFound();
 
   // İnce kapsam: bu oturum bu firmaya erişebilir mi?

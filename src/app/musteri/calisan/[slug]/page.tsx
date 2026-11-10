@@ -43,8 +43,9 @@ export default async function CalisanClientPage({
   const client = await prisma.client.findUnique({
     where: { slug },
     include: {
-      updates: { orderBy: { date: "desc" }, take: 20 },
-      contentItems: { orderBy: { scheduledDate: "desc" } },
+      // Yetkisiz veri sayfaya hiç gönderilmez (RSC payload'ı sayfa kaynağından okunabilir).
+      updates: assignment.canViewUpdates || assignment.canManageUpdates ? { orderBy: { date: "desc" }, take: 20 } : false,
+      contentItems: assignment.canViewContent || assignment.canManageContent ? { orderBy: { scheduledDate: "desc" } } : false,
       // Fatura görüntüleme yetkisi yoksa veri sayfaya hiç gönderilmez (sadece UI'da
       // gizlemek yetmez — sayfa kaynağından okunabilir olurdu).
       invoices: assignment.canViewInvoices ? { orderBy: { id: "desc" } } : false,
@@ -71,13 +72,13 @@ export default async function CalisanClientPage({
       canViewInvoices: assignment.canViewInvoices,
       canManageInvoices: assignment.canManageInvoices,
     },
-    updates: client.updates.map((u) => ({
+    updates: (client.updates ?? []).map((u) => ({
       id: u.id,
       kind: u.kind,
       text: u.text,
       date: u.date.toISOString().split("T")[0],
     })),
-    contentItems: client.contentItems.map((ci) => ({
+    contentItems: (client.contentItems ?? []).map((ci) => ({
       id: ci.id,
       title: ci.title,
       description: ci.description ?? "",
