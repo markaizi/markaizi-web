@@ -346,7 +346,10 @@ Plan ve kaynaklar: `docs/rakip-analizi-2026-10.md`.
   soruya birebir cevap veren ilk SSS ve yeni meta açıklama (başlık/H1 aynı), blog yazısı
   `isletmenizin-chatgpt-de-gorunup-gorunmedigini-nasil-olcersiniz`. 3-4 hafta sonra o sorgunun tıklama oranına bak.
   **Bekleyen:** markaizi.com (düz) Vercel projesine eklenip markaizi.com.tr'ye 308 yönlendirilecek (şu an projede yok).
-- **23 Kasım 2026** — v3.12.0: VPS'e taşıma altyapısı (`deploy/`), veri VPS'e kopyalandı, gece yedeği kuruldu. Geçiş (DNS) bekliyor; canlı hâlâ Vercel + Neon.
+- **23 Kasım 2026** — v3.12.0: VPS'e taşıma altyapısı (`deploy/`) hazır. **Taşıma ertelendi (Samet: şimdilik Vercel'de kalsın)** — canlı Vercel + Neon.
+  VPS'te durum: `markaizi-web` servisi durduruldu ve devre dışı; gece yedeği cron'u kapalı (`/var/www/markaizi/bin/cron-markaizi-yedek.kapali`);
+  `markaizi_web` veritabanında 23 Kasım tarihli ESKİ kopya var (geçişte Neon'dan yeniden kopyalanacak). Devam: veri kopyala → `env-doldur.sh` →
+  tünelle panel testi → DNS + certbot (sıra CHANGELOG v3.12.0'da).
 - **23 Kasım 2026** — v3.11.0: `/api/agent` (Telegram + Claude botu), işlem kaydı (`AuditLog`, `/admin/islem-kaydi`), `bot/` klasörü.
   Kurulum adımları `bot/KURULUM.md`; migration `20261124010000_audit_log` uygulanmayı bekliyor.
 - **23 Kasım 2026** — v3.10.0: denetim düzeltmeleri (Finans kuralları, çöp kutusu, Ajanda ay görünümü, mobil, pencere davranışı),
