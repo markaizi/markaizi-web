@@ -346,6 +346,8 @@ Plan ve kaynaklar: `docs/rakip-analizi-2026-10.md`.
   soruya birebir cevap veren ilk SSS ve yeni meta açıklama (başlık/H1 aynı), blog yazısı
   `isletmenizin-chatgpt-de-gorunup-gorunmedigini-nasil-olcersiniz`. 3-4 hafta sonra o sorgunun tıklama oranına bak.
   **Bekleyen:** markaizi.com (düz) Vercel projesine eklenip markaizi.com.tr'ye 308 yönlendirilecek (şu an projede yok).
+- **23 Kasım 2026** — v3.11.0: `/api/agent` (Telegram + Claude botu), işlem kaydı (`AuditLog`, `/admin/islem-kaydi`), `bot/` klasörü.
+  Kurulum adımları `bot/KURULUM.md`; migration `20261124010000_audit_log` uygulanmayı bekliyor.
 - **23 Kasım 2026** — v3.10.0: denetim düzeltmeleri (Finans kuralları, çöp kutusu, Ajanda ay görünümü, mobil, pencere davranışı),
   ödemeleri yalnızca admin yazar, eski Mİ Asistan API'si durduruldu, repo gizlilik temizliği (`docs/ozel/`, `scripts/ozel/`).
 - **23 Kasım 2026** — v3.9.0: Kasa öncesi aylara ait geçmiş tahsilatlar eklendi, tek kayıt denetimi (çift kayıt ve kopya notlar temizlendi).

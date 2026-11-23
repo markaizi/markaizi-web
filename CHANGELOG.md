@@ -2,13 +2,36 @@
 
 > **Bu dosya araçlar arası devir-teslim defteridir.** En üstteki sürüm = en son durum.
 > Kurallar ve şablon: [`AGENTS.md`](./AGENTS.md). Eski sürümler silinmez.
-> Güncel sürüm: **v3.10.0** (`package.json` ile aynı olmalı).
+> Güncel sürüm: **v3.11.0** (`package.json` ile aynı olmalı).
 
 ---
 
 > **Gizlilik notu (v3.10.0):** Bu repo herkese açıktır. Müşteri ücretleri, tahsilat tutarları, kişisel finans ve kişi adları
 > bu dosyaya **yazılmaz**. Rakamlı / isimli ayrıntılar yerelde, git'e girmeyen `docs/ozel/` klasöründe tutulur
 > (ör. `docs/ozel/CHANGELOG-OZEL-2026-11-23.md`); tek seferlik veri scriptleri `scripts/ozel/` altındadır.
+
+## v3.11.0 — 23 Kasım 2026 — Telegram + Claude botu için /api/agent, işlem kaydı
+**Araç:** Claude Code (Fable 5.2)  **Tür:** MINOR
+### Yapılanlar
+- **`/api/agent`** (`src/app/api/agent/route.ts`, `src/lib/agent.ts`): botun tek giriş noktası. `Authorization: Bearer <AGENT_TOKEN>`
+  (zaman sabit karşılaştırma; değişken tanımsızsa uç 503 ile kapalı; hatalı token denemeleri hız sınırlı).
+  Yalnızca adlandırılmış işlemler: okuma `ozet, ziyaretler, isler, firmalar, finans, notlar`; yazma `ziyaret_ekle, ziyaret_guncelle,
+  is_ekle, is_guncelle, not_ekle, tahsilat, odeme_yapildi, kasa_ekle, kart_harcama, kart_odeme, sil`.
+  Yazmalar panelle aynı servis katmanından (`agenda.ts`) geçer. Kalıcı silme yok (`sil` → çöp kutusu; ziyaret → iptal).
+  Firma / kart adı yazım toleranslı çözülür, belirsizse adaylarla 400 döner. Aynı firmaya aynı gün ikinci planlı ziyaret açılmaz.
+  Bot üzerinden eklenen iş varsayılan olarak müşteriye kapalıdır.
+- **İşlem kaydı:** `AuditLog` modeli + `src/lib/audit.ts`. Panel ajanda/finans uçları (`agendaApi.respond`) ve bot işlemleri
+  başarılı / başarısız her yazmayı kaydeder; kayıt yazılamazsa asıl işlem etkilenmez. Ekran: `/musteri/admin/islem-kaydi` (yalnızca admin).
+- **`bot/`**: `mkz` (Node, bağımlılıksız CLI → `/api/agent`), `CLAUDE.md` (bot talimatları), `.claude/settings.json` (yalnızca `mkz` izni),
+  `KURULUM.md` (VPS kurulumu: ayrı kullanıcı, Bun, Claude Code, `--channels plugin:telegram@claude-plugins-official`, eşleştirme + allowlist).
+- Migration: `20261124010000_audit_log` (yalnızca ekleme — **canlıya henüz uygulanmadı**; uygulanana kadar kayıt yazılmaz, başka hiçbir şey etkilenmez).
+### Doğrulama
+- `tsc` 0 hata, `next build` başarılı, yeni dosyalarda lint hatası yok.
+- Canlı veritabanında geçici kayıtlarla bot işlemleri uçtan uca denendi (yetki, belirsiz firma, tarih / saat dilimi, mükerrer ziyaret,
+  iş / not / alacak / tahsilat, kart harcaması ve ödemesi, sil → iptal / çöp kutusu); hepsi geçti, test kayıtları silindi.
+### Yarım kalanlar / Sıradaki
+- Samet: `prisma migrate deploy`; Vercel'e `AGENT_TOKEN`; BotFather bot token'ı; VPS'te `mkzbot` ile `claude` girişi (bkz. `bot/KURULUM.md`).
+- Bildirimler (ödeme günü, ziyaret takibi, akşam "bugün nereye gittin") — bot çalıştıktan sonra zamanlanmış görev olarak.
 
 ## v3.10.0 — 23 Kasım 2026 — Denetim düzeltmeleri: Finans kuralları, çöp kutusu, ay görünümü, mobil, gizlilik
 **Araç:** Claude Code (Fable 5.2)  **Tür:** MINOR

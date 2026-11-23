@@ -855,3 +855,19 @@ model KasaCardTransaction {
 
   @@index([entryId, transactionDate])
 }
+
+// ── İşlem kaydı (v3.11.0) ──────────────────────────────────
+// Ajanda + Finans'ta yapılan her yazma işlemi: panelden (admin) veya Telegram botundan (/api/agent).
+// Yalnızca eklenir; arayüzden silinmez / düzenlenmez.
+model AuditLog {
+  id        String   @id @default(cuid())
+  source    String // "panel" | "bot"
+  actor     String? // panel: kullanıcı adı; bot: "telegram"
+  action    String // ör. "events.create", "kasa.pay", "tasks.trash"
+  target    String? // etkilenen kaydın kısa tanımı (başlık)
+  ok        Boolean  @default(true)
+  detail    Json? // istek özeti / hata mesajı
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+}

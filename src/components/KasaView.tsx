@@ -87,6 +87,7 @@ export default function KasaView({ entries, cardTxs, clients, employees = [], no
       subtitle="Kasa, müşteri ödemeleri, borçlar ve giderler — tek yerde. Yalnızca sen görürsün."
       actions={
         <div className="flex items-center gap-2">
+          <Link href="/musteri/admin/islem-kaydi" className="hidden sm:flex text-[12px] text-[#8a8a9a] hover:underline px-2 min-h-[44px] items-center">İşlem kaydı</Link>
           <Link href="/musteri/admin/cop-kutusu" className="text-[12px] text-[#8a8a9a] hover:underline px-2 min-h-[44px] flex items-center">Çöp kutusu</Link>
           <Btn variant="primary" onClick={() => setForm({ direction: "BORC", status: "BEKLIYOR" })}>+ Kayıt</Btn>
         </div>

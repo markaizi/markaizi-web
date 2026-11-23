@@ -2,21 +2,30 @@ import { NextResponse } from "next/server";
 import { ZodError } from "zod";
 import { Prisma } from "@prisma/client";
 import * as agenda from "@/lib/agenda";
+import { audit, titleOf } from "@/lib/audit";
 
-/** Servis hatalarını anlaşılır HTTP yanıtlarına çevirir (panel + bot uçları ortak). */
-export async function respond(fn: () => Promise<unknown>) {
+/**
+ * Servis hatalarını anlaşılır HTTP yanıtlarına çevirir (panel + bot uçları ortak).
+ * `log` verilirse işlem (başarılı / başarısız) işlem kaydına yazılır.
+ */
+export async function respond(fn: () => Promise<unknown>, log?: { source: "panel" | "bot"; actor?: string | null; action: string; detail?: unknown }) {
   try {
     const result = await fn();
+    if (log) await audit({ ...log, target: titleOf(result) });
     return NextResponse.json({ ok: true, result });
   } catch (e) {
-    if (e instanceof ZodError) return NextResponse.json({ error: e.issues[0]?.message ?? "Geçersiz veri." }, { status: 400 });
-    if (e instanceof agenda.AgendaRuleError) return NextResponse.json({ error: e.message }, { status: 400 });
+    const fail = (error: string, status: number) => {
+      if (log) void audit({ ...log, ok: false, detail: { istek: log.detail, hata: error } });
+      return NextResponse.json({ error }, { status });
+    };
+    if (e instanceof ZodError) return fail(e.issues[0]?.message ?? "Geçersiz veri.", 400);
+    if (e instanceof agenda.AgendaRuleError) return fail(e.message, 400);
     if (e instanceof Prisma.PrismaClientKnownRequestError && (e.code === "P2025" || e.code === "P2003")) {
-      return NextResponse.json({ error: e.code === "P2025" ? "Kayıt bulunamadı." : "Bağlı firma/kayıt bulunamadı." }, { status: 404 });
+      return fail(e.code === "P2025" ? "Kayıt bulunamadı." : "Bağlı firma/kayıt bulunamadı.", 404);
     }
-    if (e instanceof Error && e.name === "NotFoundError") return NextResponse.json({ error: "Kayıt bulunamadı." }, { status: 404 });
+    if (e instanceof Error && e.name === "NotFoundError") return fail("Kayıt bulunamadı.", 404);
     console.error("[ajanda]", e);
-    return NextResponse.json({ error: "İşlem yapılamadı." }, { status: 500 });
+    return fail("İşlem yapılamadı.", 500);
   }
 }
 
