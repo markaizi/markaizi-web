@@ -1,0 +1,26 @@
+# /etc/systemd/system/markaizi-web.service
+# markaizi Next.js sitesi — ayrı, yetkisiz kullanıcıyla; yalnızca 127.0.0.1:3002 (dışarıya nginx açar).
+# Diğer sitelerin pm2 süreçlerinden bağımsızdır.
+[Unit]
+Description=markaizi web (Next.js standalone)
+After=network.target postgresql.service
+
+[Service]
+User=markaizi
+Group=markaizi
+WorkingDirectory=/var/www/markaizi/current
+EnvironmentFile=/var/www/markaizi/shared/.env
+Environment=NODE_ENV=production PORT=3002 HOSTNAME=127.0.0.1
+ExecStart=/usr/bin/node --max-old-space-size=512 server.js
+Restart=always
+RestartSec=3
+MemoryMax=900M
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+# Görsel önbelleği her sürümde shared/cache'e bağlıdır (vps-deploy.sh)
+ReadWritePaths=/var/www/markaizi/shared/cache
+
+[Install]
+WantedBy=multi-user.target

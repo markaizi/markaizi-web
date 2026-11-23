@@ -101,13 +101,15 @@ function looksLikeIp(v: string): boolean {
 }
 
 /**
- * İstekten istemci IP'sini çıkarır. Vercel'in uç ağının eklediği doğrulanmış başlık
- * (x-vercel-forwarded-for) önceliklidir; istemcinin gönderebildiği x-forwarded-for
- * yalnızca yedek olarak ve biçim doğrulamasından geçerse kullanılır.
+ * İstekten istemci IP'sini çıkarır.
+ * - Vercel'de: uç ağın eklediği doğrulanmış x-vercel-forwarded-for önceliklidir.
+ * - Kendi sunucumuzda (VPS): nginx'in $remote_addr ile EZEREK yazdığı x-real-ip esastır.
+ *   Vercel dışında x-vercel-forwarded-for'a güvenilmez — istemci bu başlığı kendisi uydurabilir.
+ * İstemcinin gönderebildiği x-forwarded-for yalnızca yedek olarak ve biçim doğrulamasından geçerse kullanılır.
  */
 export function getClientIp(req: Request): string {
   const candidates = [
-    req.headers.get("x-vercel-forwarded-for"),
+    process.env.VERCEL ? req.headers.get("x-vercel-forwarded-for") : null,
     req.headers.get("x-real-ip"),
     req.headers.get("x-forwarded-for")?.split(",")[0],
   ];

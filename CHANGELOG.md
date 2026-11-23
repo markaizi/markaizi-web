@@ -2,13 +2,35 @@
 
 > **Bu dosya araçlar arası devir-teslim defteridir.** En üstteki sürüm = en son durum.
 > Kurallar ve şablon: [`AGENTS.md`](./AGENTS.md). Eski sürümler silinmez.
-> Güncel sürüm: **v3.11.0** (`package.json` ile aynı olmalı).
+> Güncel sürüm: **v3.12.0** (`package.json` ile aynı olmalı).
 
 ---
 
 > **Gizlilik notu (v3.10.0):** Bu repo herkese açıktır. Müşteri ücretleri, tahsilat tutarları, kişisel finans ve kişi adları
 > bu dosyaya **yazılmaz**. Rakamlı / isimli ayrıntılar yerelde, git'e girmeyen `docs/ozel/` klasöründe tutulur
 > (ör. `docs/ozel/CHANGELOG-OZEL-2026-11-23.md`); tek seferlik veri scriptleri `scripts/ozel/` altındadır.
+
+## v3.12.0 — 23 Kasım 2026 — Kendi sunucuya (VPS) taşıma altyapısı
+**Araç:** Claude Code (Opus 5.5)  **Tür:** MINOR
+### Yapılanlar
+- `next.config.ts`: `output: "standalone"`; `schema.prisma`: `binaryTargets = ["native", "debian-openssl-3.0.x"]` (Vercel'de de çalışmaya devam eder).
+- `src/lib/security.ts` `getClientIp`: `x-vercel-forwarded-for` yalnızca Vercel'de (`VERCEL` ortam değişkeni varken) güvenilir;
+  VPS'te nginx'in yazdığı `x-real-ip` esas. (Vercel dışında bu başlık istemci tarafından uydurulabilirdi → hız sınırı atlatma.)
+- `deploy/`:
+  - `vps-deploy.sh` — Mac'te derler (VPS tek çekirdek; diğer siteler yavaşlamasın), Linux sharp'ı ekler, `releases/<zaman>`'a gönderir,
+    `current` bağlantısını çevirir, yalnızca `markaizi-web` servisini yeniden başlatır, sağlık kontrolü başarısızsa önceki sürüme döner, son 5 sürümü tutar.
+  - `markaizi-web.service` — ayrı yetkisiz `markaizi` kullanıcısı, yalnızca `127.0.0.1:3002`, bellek sınırı, salt okunur dosya sistemi.
+  - `nginx-markaizi.conf` — ters vekil; istemcinin gönderdiği `X-Vercel-Forwarded-For` silinir.
+  - `vps-migrate.sh` — önce yedek, sonra yalnızca `prisma migrate deploy` (sırlar sunucuda kalır).
+  - `yedek.sh` (VPS, her gece 03:30, son 30 gece) + `yedek-cek.sh` (Mac'e VPS dışı kopya).
+- VPS'te: ayrı Postgres rolü + veritabanı, sunucuya özel `.env` (git dışı), Neon verisi kopyalandı.
+### Doğrulama
+- Neon ↔ VPS: 29 tablonun satır sayıları birebir aynı.
+- Yedek → ayrı test veritabanına geri yükleme → birebir aynı; test veritabanı silindi.
+- VPS'te sayfalar, görsel optimizasyonu, API'ler 200/beklenen kodlar; süreç ~65 MB bellek.
+### Yarım kalanlar / Sıradaki
+- Geçiş henüz yapılmadı: canlı site hâlâ Vercel + Neon. Sırada: panel testi (tünel), sunucu `.env` sırları, son veri kopyası, DNS, certbot.
+- Neon ve Vercel geçişten sonra 2–3 hafta geri dönüş için tutulacak.
 
 ## v3.11.0 — 23 Kasım 2026 — Telegram + Claude botu için /api/agent, işlem kaydı
 **Araç:** Claude Code (Fable 5.2)  **Tür:** MINOR

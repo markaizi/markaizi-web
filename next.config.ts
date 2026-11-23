@@ -32,6 +32,8 @@ const SECURITY_HEADERS = [
 ];
 
 const nextConfig: NextConfig = {
+  // Kendi sunucumuzda (VPS) çalışmak için bağımsız çıktı: .next/standalone/server.js (deploy/vps-deploy.sh)
+  output: "standalone",
   images: {
     formats: ["image/avif", "image/webp"],
   },
