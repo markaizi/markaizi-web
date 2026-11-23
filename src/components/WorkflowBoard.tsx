@@ -17,14 +17,12 @@ interface CardData {
   creator: { id: string; name: string };
   client: { slug: string; name: string } | null;
   contentItem: { id: string; scheduledDate: string } | null;
-  workLog: { id: string; amount: string | null } | null;
 }
 
 interface ColumnData {
   id: string;
   title: string;
   sortOrder: number;
-  triggersWorkLog: boolean;
   triggersContentItem: boolean;
   adminOnly: boolean;
   hiddenFromEmployees: boolean;
@@ -110,13 +108,6 @@ export default function WorkflowBoard({ initialData }: { initialData?: BoardInit
   } | null>(null);
   const [contentPromptSaving, setContentPromptSaving] = useState(false);
   const [contentPromptError, setContentPromptError] = useState("");
-  // Kart "Tamamlandı"ya taşınınca (admin veya bu yetkiye sahip çalışan için)
-  // oluşan iş kaydını hemen fiyatlandırma penceresi — içerik takvimi penceresi
-  // de açılacaksa önce o gösterilir, sonra bu (bkz. pendingPriceAfterContentRef).
-  const [pricePrompt, setPricePrompt] = useState<{ cardId: string; cardTitle: string } | null>(null);
-  const [pricePromptSaving, setPricePromptSaving] = useState(false);
-  const [pricePromptError, setPricePromptError] = useState("");
-  const pendingPriceAfterContentRef = useRef<{ cardId: string; cardTitle: string } | null>(null);
 
   // ── Sürükleme: mouse'ta anında, dokunmada basılı tutunca (Pointer Events) ──
   const [dragCardId, setDragCardId] = useState<string | null>(null);
@@ -242,38 +233,19 @@ export default function WorkflowBoard({ initialData }: { initialData?: BoardInit
       body: JSON.stringify({ columnId: targetColumnId }),
     });
     if (!res.ok) { load(); return; } // başarısızsa sunucudan tazele
-    const moveJson = await res.json().catch(() => ({}));
 
     // Hedef sütun "İçerik Takvimi'ne ekle" ile işaretliyse ve kartın bağlı
     // bir firması varsa, yayın tarihini sormak için hemen bir pencere aç —
     // admin kartı manuel açıp düğmeyi bulmak zorunda kalmasın.
     const wantsContent = canCreateCards && targetCol?.triggersContentItem && card.client && !card.contentItem;
 
-    // "Tamamlandı"ya taşıyan kişi (admin veya bu yetkiye sahip çalışan) oluşan
-    // iş kaydını hemen fiyatlandırabilsin — Ücret Girişi'ne ayrıca gitmesin.
-    const wantsPrice =
-      targetCol?.title === "Tamamlandı" &&
-      (isAdmin || completeCardsScope !== "NONE") &&
-      moveJson.workLog && !moveJson.workLog.amount;
-    const priceInfo = wantsPrice ? { cardId, cardTitle: card.title } : null;
-
     if (wantsContent) {
-      pendingPriceAfterContentRef.current = priceInfo;
       setContentPrompt({
         cardId,
         cardTitle: card.title,
         clientName: card.client!.name,
         dueDate: card.dueDate,
       });
-    } else if (priceInfo) {
-      setPricePrompt(priceInfo);
-    }
-  }
-
-  function openPendingPriceIfAny() {
-    if (pendingPriceAfterContentRef.current) {
-      setPricePrompt(pendingPriceAfterContentRef.current);
-      pendingPriceAfterContentRef.current = null;
     }
   }
 
@@ -291,26 +263,6 @@ export default function WorkflowBoard({ initialData }: { initialData?: BoardInit
     if (!res.ok) { setContentPromptError(json.error ?? "Eklenemedi."); return; }
     handleContentLinked(contentPrompt.cardId, json.contentItem);
     setContentPrompt(null);
-    openPendingPriceIfAny();
-  }
-
-  async function handlePricePromptSubmit(amount: string, adminNote: string) {
-    if (!pricePrompt) return;
-    setPricePromptSaving(true);
-    setPricePromptError("");
-    const res = await fetch(`/api/musteri/is-akisi/cards/${pricePrompt.cardId}/complete-price`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ amount, adminNote: adminNote.trim() || null }),
-    });
-    const json = await res.json().catch(() => ({}));
-    setPricePromptSaving(false);
-    if (!res.ok) { setPricePromptError(json.error ?? "Kaydedilemedi."); return; }
-    setColumns((prev) => prev.map((col) => ({
-      ...col,
-      cards: col.cards.map((c) => (c.id === pricePrompt.cardId ? { ...c, workLog: json.workLog } : c)),
-    })));
-    setPricePrompt(null);
   }
 
   function autoScrollBoard(clientX: number) {
@@ -485,15 +437,6 @@ export default function WorkflowBoard({ initialData }: { initialData?: BoardInit
       setColError(data.error ?? "Sütun silinemedi.");
       setTimeout(() => setColError(""), 4000);
     }
-  }
-
-  async function handleToggleTrigger(id: string, next: boolean) {
-    setColumns((prev) => prev.map((c) => (c.id === id ? { ...c, triggersWorkLog: next } : c)));
-    await fetch(`/api/musteri/is-akisi/columns/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ triggersWorkLog: next }),
-    });
   }
 
   async function handleToggleContentTrigger(id: string, next: boolean) {
@@ -790,19 +733,6 @@ export default function WorkflowBoard({ initialData }: { initialData?: BoardInit
                         </button>
                       )}
                       <button
-                        onClick={() => handleToggleTrigger(col.id, !col.triggersWorkLog)}
-                        title={col.triggersWorkLog ? "Bu sütuna taşınan kartlar otomatik iş kaydı oluşturur — kapatmak için tıkla" : "Bu sütuna taşınan kartlar otomatik iş kaydı oluştursun mu?"}
-                        className="w-6 h-6 flex items-center justify-center rounded-md transition-colors"
-                        style={{
-                          color: col.triggersWorkLog ? "#c084fc" : "#555",
-                          background: col.triggersWorkLog ? "rgba(168,85,247,0.15)" : "transparent",
-                        }}
-                      >
-                        <svg viewBox="0 0 24 24" fill={col.triggersWorkLog ? "currentColor" : "none"} className="w-3.5 h-3.5" stroke="currentColor" strokeWidth="2">
-                          <path d="M13 2 4 14h6l-1 8 9-12h-6l1-8Z" strokeLinejoin="round" />
-                        </svg>
-                      </button>
-                      <button
                         onClick={() => handleToggleContentTrigger(col.id, !col.triggersContentItem)}
                         title={col.triggersContentItem ? "Bu sütuna taşınan kartlarda İçerik Takvimi'ne ekleme seçeneği görünür — kapatmak için tıkla" : "Bu sütuna taşınan kartlarda İçerik Takvimi'ne ekleme seçeneği görünsün mü?"}
                         className="w-6 h-6 flex items-center justify-center rounded-md transition-colors"
@@ -893,9 +823,14 @@ export default function WorkflowBoard({ initialData }: { initialData?: BoardInit
                     {(card.client || card.dueDate) && (
                       <div className="flex flex-wrap items-center gap-1 mt-1">
                         {card.client && (
-                          <span className="text-[9.5px] font-semibold px-1.5 py-0.5 rounded-md text-[#c084fc]" style={{ background: "rgba(168,85,247,0.1)" }}>
+                          // v3.8.0: firma adına dokununca firmanın sayfası açılır (admin → yönetim, çalışan → firma ekranı).
+                          // Sürükleme / kart açma tetiklenmesin diye olaylar burada durdurulur.
+                          <a href={isAdmin ? `/musteri/admin/${card.client.slug}` : `/musteri/calisan/${card.client.slug}`}
+                            onPointerDown={(e) => e.stopPropagation()}
+                            onClick={(e) => e.stopPropagation()}
+                            className="text-[9.5px] font-semibold px-1.5 py-0.5 rounded-md text-[#c084fc] hover:underline" style={{ background: "rgba(168,85,247,0.1)" }}>
                             {card.client.name}
-                          </span>
+                          </a>
                         )}
                         {card.dueDate && (
                           <span className="text-[9.5px] font-medium text-[#8a8a9a]">📅 {fmtDate(card.dueDate)}</span>
@@ -1018,19 +953,10 @@ export default function WorkflowBoard({ initialData }: { initialData?: BoardInit
           saving={contentPromptSaving}
           error={contentPromptError}
           onSubmit={handleContentPromptSubmit}
-          onSkip={() => { setContentPrompt(null); setContentPromptError(""); openPendingPriceIfAny(); }}
+          onSkip={() => { setContentPrompt(null); setContentPromptError(""); }}
         />
       )}
 
-      {pricePrompt && (
-        <PriceOnCompletePromptModal
-          prompt={pricePrompt}
-          saving={pricePromptSaving}
-          error={pricePromptError}
-          onSubmit={handlePricePromptSubmit}
-          onSkip={() => { setPricePrompt(null); setPricePromptError(""); }}
-        />
-      )}
     </div>
   );
 }
@@ -1085,84 +1011,6 @@ function ContentDatePromptModal({
             style={{ background: "rgba(45,212,191,0.15)", color: "#2dd4bf", border: "1px solid rgba(45,212,191,0.35)" }}
           >
             {saving ? "Ekleniyor..." : "Ekle"}
-          </button>
-          <button onClick={onSkip} disabled={saving} className="btn btn-outline text-sm px-5 py-2.5">
-            Şimdi Değil
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ── Tamamlandı-anı ücret girme penceresi ────────────────────────────────────
-// Kart "Tamamlandı"ya taşınınca (taşıyan admin veya bu yetkiye sahip çalışansa)
-// oluşan iş kaydını hemen fiyatlandırmak için — Ücret Girişi'ne ayrıca gitmeye gerek kalmaz.
-
-function PriceOnCompletePromptModal({
-  prompt, saving, error, onSubmit, onSkip,
-}: {
-  prompt: { cardId: string; cardTitle: string };
-  saving: boolean;
-  error: string;
-  onSubmit: (amount: string, adminNote: string) => void;
-  onSkip: () => void;
-}) {
-  const [amount, setAmount] = useState("");
-  const [note, setNote] = useState("");
-  const [showNote, setShowNote] = useState(false);
-
-  return (
-    <div
-      className="fixed inset-0 z-[70] flex items-center justify-center p-4"
-      style={{ background: "rgba(0,0,0,0.6)" }}
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="price-prompt-title"
-    >
-      <div
-        className="w-full max-w-sm rounded-2xl p-5"
-        style={{ background: "var(--surface)", border: "1px solid rgba(251,191,36,0.35)" }}
-      >
-        <p id="price-prompt-title" className="font-bold text-[16px] text-white mb-1">Ücret Gir</p>
-        <p className="text-[13px] text-[#8a8a9a] mb-4">
-          <span className="text-white font-semibold">{prompt.cardTitle}</span> tamamlandı — hemen ücretini gir, unutma.
-        </p>
-        <label className="block text-[11px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1.5">Ücret</label>
-        <input
-          autoFocus
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          placeholder="Örn: 250 ₺"
-          className="w-full px-3.5 py-2.5 rounded-xl text-[14px] text-white placeholder-[#555] outline-none"
-          style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
-        />
-        <button
-          type="button"
-          onClick={() => setShowNote((v) => !v)}
-          className="text-[11px] font-semibold mt-2.5 transition-colors"
-          style={{ color: note ? "#fbbf24" : "#555" }}
-        >
-          📝{note ? " Not var" : " Not ekle"}
-        </button>
-        {showNote && (
-          <input
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-            placeholder="Örn: Müşteri çok beğendi, normalden yüksek yazdım"
-            className="w-full mt-2 px-3.5 py-2.5 rounded-xl text-[13px] text-white placeholder-[#555] outline-none"
-            style={{ background: "var(--bg)", border: "1px solid rgba(251,191,36,0.25)" }}
-          />
-        )}
-        {error && <p className="text-[12px] mt-2" style={{ color: "#f87171" }}>{error}</p>}
-        <div className="flex gap-2 mt-4">
-          <button
-            onClick={() => onSubmit(amount, note)}
-            disabled={saving || !amount.trim()}
-            className="flex-1 text-[13px] font-semibold py-2.5 rounded-xl transition-colors disabled:opacity-60"
-            style={{ background: "rgba(251,191,36,0.15)", color: "#fbbf24", border: "1px solid rgba(251,191,36,0.35)" }}
-          >
-            {saving ? "Kaydediliyor..." : "Kaydet"}
           </button>
           <button onClick={onSkip} disabled={saving} className="btn btn-outline text-sm px-5 py-2.5">
             Şimdi Değil

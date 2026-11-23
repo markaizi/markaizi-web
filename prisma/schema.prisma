@@ -8,7 +8,7 @@ generator client {
 datasource db {
   provider  = "postgresql"
   url       = env("DATABASE_URL") // pooled — uygulama çalışma zamanı
-  directUrl = env("DIRECT_URL")   // direct — migration'lar için
+  directUrl = env("DIRECT_URL") // direct — migration'lar için
 }
 
 // ── Enumlar ──────────────────────────────────────────────
@@ -19,7 +19,7 @@ enum Role {
 }
 
 enum PanelTheme {
-  KOYU     // mevcut koyu/neon tema (varsayılan)
+  KOYU // mevcut koyu/neon tema (varsayılan)
   AYDINLIK // yeni açık/iOS tarzı tema
 }
 
@@ -37,12 +37,12 @@ enum InvoiceStatus {
 }
 
 enum BillingPeriod {
-  HAFTALIK     // her hafta — 7 gün
+  HAFTALIK // her hafta — 7 gün
   IKI_HAFTALIK // iki haftada bir — 14 gün
-  AYLIK        // her ay, vade tarihinin gününde
-  IKI_AYLIK    // iki ayda bir
-  OZEL_GUN     // her N günde bir — Client.billingIntervalDays belirler
-  MANUEL       // otomatik fatura oluşturulmaz, elle girilir
+  AYLIK // her ay, vade tarihinin gününde
+  IKI_AYLIK // iki ayda bir
+  OZEL_GUN // her N günde bir — Client.billingIntervalDays belirler
+  MANUEL // otomatik fatura oluşturulmaz, elle girilir
 }
 
 enum ContentStatus {
@@ -85,14 +85,14 @@ enum PaymentKind {
 }
 
 enum StaffNotificationType {
-  WORKLOG_PRICED  // admin ücret girdi — otomatik
-  ADMIN_MESSAGE   // admin'in yazdığı bireysel/toplu bildirim
+  WORKLOG_PRICED // admin ücret girdi — otomatik
+  ADMIN_MESSAGE // admin'in yazdığı bireysel/toplu bildirim
 }
 
 enum CompleteCardsScope {
   NONE // taşıyamaz (varsayılan)
-  OWN  // yalnızca kendine atanmış kartları "Tamamlandı"ya taşıyabilir
-  ALL  // herkesin kartını "Tamamlandı"ya taşıyabilir
+  OWN // yalnızca kendine atanmış kartları "Tamamlandı"ya taşıyabilir
+  ALL // herkesin kartını "Tamamlandı"ya taşıyabilir
 }
 
 // ── Modeller ─────────────────────────────────────────────
@@ -126,9 +126,9 @@ model User {
   // verilebilir. Açıklama (description) alanı ise bu ikisinden bağımsız — pano erişimi olan
   // herkes girdiği bir kartın açıklamasına not ekleyebilir; revize notu ise ayrı, varsayılan
   // kapalı bir yetkiyle korunur (sadece admin'in açıkça izin verdiği kişiler yazabilir).
-  workflowAccess               Boolean @default(true)  // panoyu hiç görebilir mi
-  workflowCanCreateCards       Boolean @default(true)  // kart oluşturur, başlık/öncelik/tarih/atanan/firma düzenler, kendi kartını siler
-  workflowCanDragCards         Boolean @default(true)  // kartları sütunlar arası sürükleyip taşıyabilir
+  workflowAccess               Boolean @default(true) // panoyu hiç görebilir mi
+  workflowCanCreateCards       Boolean @default(true) // kart oluşturur, başlık/öncelik/tarih/atanan/firma düzenler, kendi kartını siler
+  workflowCanDragCards         Boolean @default(true) // kartları sütunlar arası sürükleyip taşıyabilir
   workflowCanWriteRevisionNote Boolean @default(false) // kartlara revize notu ekleyebilir/düzenleyebilir
   workflowCanDeleteAnyCard     Boolean @default(false) // başkasının kartını da silebilir
   workflowCanManageColumns     Boolean @default(false) // sütun ekle/yeniden adlandır/sil
@@ -140,26 +140,27 @@ model User {
   // Yönetici Yetkileri — admin'in çalışana tek tek verebildiği, varsayılan kapalı
   // ek yetkiler. İş Akışı yetkilerinden bağımsız: bunlar normalde sadece admin'e
   // özel işlemleri, admin açıkça izin verdiğinde tek tek açar.
-  adminCompleteCardsScope CompleteCardsScope @default(NONE) // "Tamamlandı" sütununa kart taşıyabilir (sütun kilidi bu hareket için aşılır) — kapsam: hiç/kendi/herkes
-  adminCanPriceWorklogs   Boolean            @default(false) // tüm çalışanların iş kayıtlarına ücret girebilir
-  adminCanViewEconomy   Boolean @default(false) // Ekonomi sayfasını salt okunur görebilir
-  adminCanManagePaymentLinks Boolean @default(false) // Ödeme Linkleri: yalnızca kendi linklerini oluşturur/görür/iptal eder (ör. PayTR inceleme hesabı)
+  adminCompleteCardsScope    CompleteCardsScope @default(NONE) // "Tamamlandı" sütununa kart taşıyabilir (sütun kilidi bu hareket için aşılır) — kapsam: hiç/kendi/herkes
+  adminCanPriceWorklogs      Boolean            @default(false) // tüm çalışanların iş kayıtlarına ücret girebilir
+  adminCanViewEconomy        Boolean            @default(false) // Ekonomi sayfasını salt okunur görebilir
+  adminCanManagePaymentLinks Boolean            @default(false) // Ödeme Linkleri: yalnızca kendi linklerini oluşturur/görür/iptal eder (ör. PayTR inceleme hesabı)
 
-  assignments     Assignment[]
-  authoredUpdates Update[]      @relation("UpdateAuthor")
-  authoredContent ContentItem[] @relation("ContentAssignee")
-  authoredNotes   Note[]        @relation("NoteAuthor")
-  noteReads       NoteRead[]
-  authoredAdReports AdReport[]  @relation("AdReportAuthor")
+  assignments       Assignment[]
+  authoredUpdates   Update[]         @relation("UpdateAuthor")
+  authoredContent   ContentItem[]    @relation("ContentAssignee")
+  authoredNotes     Note[]           @relation("NoteAuthor")
+  noteReads         NoteRead[]
+  authoredAdReports AdReport[]       @relation("AdReportAuthor")
   workLogs          WorkLog[]
   payrollPayments   PayrollPayment[]
 
-  workflowCardsAssigned          WorkflowCard[] @relation("WorkflowAssignee")
-  workflowCardsCreated           WorkflowCard[] @relation("WorkflowCreator")
-  workflowAssignmentRequests     WorkflowCard[] @relation("WorkflowAssignmentRequest")
-  passwordResetTokens   PasswordResetToken[]
-  staffNotifications    StaffNotification[]
-  staffFeedback         StaffFeedback[]
+  workflowCardsAssigned      WorkflowCard[]       @relation("WorkflowAssignee")
+  workflowCardsCreated       WorkflowCard[]       @relation("WorkflowCreator")
+  workflowAssignmentRequests WorkflowCard[]       @relation("WorkflowAssignmentRequest")
+  passwordResetTokens        PasswordResetToken[]
+  staffNotifications         StaffNotification[]
+  staffFeedback              StaffFeedback[]
+  kasaPayments               KasaEntry[]          @relation("KasaEmployee")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -207,6 +208,19 @@ model Client {
   dailyMetaSpend   String?
   dailyGoogleSpend String?
 
+  // ── Ajanda (Mİ Asistan'dan taşındı, v3.3.0) ──
+  // Ziyaret takibi: son ziyaretten bu yana visitIntervalDays geçtiyse uyarı verilir.
+  region              String? // ör. "Siteler", "Yeni Batı", "İstanbul Yolu"
+  lastVisitAt         DateTime?
+  visitIntervalDays   Int       @default(14)
+  visitTrackingActive Boolean   @default(true)
+  // Ayın kaçında ödeme alınır (ajanda bilgisi; fatura otomasyonundan bağımsız).
+  // Ayda iki taksitli müşterilerde ikinci gün paymentDay2'de tutulur.
+  paymentDay          Int?
+  paymentDay2         Int?
+  // Mİ Asistan'daki klasör kimliği — taşıma scriptinin tekrar çalıştırılabilmesi için.
+  agendaLegacyId      String?   @unique
+
   updates             Update[]
   contentItems        ContentItem[]
   invoices            Invoice[]
@@ -217,6 +231,10 @@ model Client {
   adReports           AdReport[]
   clientNotifications ClientNotification[]
   paymentLinks        PaymentLink[]
+  agendaEvents        AgendaEvent[]
+  agendaTasks         AgendaTask[]
+  agendaNotes         AgendaNote[]
+  kasaEntries         KasaEntry[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -228,12 +246,12 @@ model Assignment {
   clientId String
 
   // Her section için: false+false=Yok, true+false=Görüntüle, true+true=Düzenle
-  canViewContent     Boolean @default(true)
-  canManageContent   Boolean @default(true)
-  canViewUpdates     Boolean @default(true)
-  canManageUpdates   Boolean @default(true)
-  canViewInvoices    Boolean @default(false)
-  canManageInvoices  Boolean @default(false)
+  canViewContent    Boolean @default(true)
+  canManageContent  Boolean @default(true)
+  canViewUpdates    Boolean @default(true)
+  canManageUpdates  Boolean @default(true)
+  canViewInvoices   Boolean @default(false)
+  canManageInvoices Boolean @default(false)
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
@@ -422,15 +440,15 @@ model AdReport {
 // için reklamlarınız duraklatıldı" gibi. StaffNotification'ın müşteri karşılığı;
 // burada tür/popup ayrımı yok, sade bir gelen kutusu.
 enum ClientNotificationSeverity {
-  YESIL   // iyi haber — popup havai fişek efektiyle gösterilir
-  SARI    // önemli, müşteri kısa bir yanıt yazabilir (admin'e iletilir)
+  YESIL // iyi haber — popup havai fişek efektiyle gösterilir
+  SARI // önemli, müşteri kısa bir yanıt yazabilir (admin'e iletilir)
   KIRMIZI // acil — admin kaldırana kadar Raporlar ve İçerik Takvimi sekmeleri kilitlenir
 }
 
 model ClientNotification {
-  id       String                      @id @default(cuid())
+  id       String                     @id @default(cuid())
   clientId String
-  severity ClientNotificationSeverity  @default(SARI)
+  severity ClientNotificationSeverity @default(SARI)
   title    String
   body     String
   readAt   DateTime?
@@ -504,12 +522,12 @@ model Transaction {
 // üretilmemiş ayların Transaction kaydı burada oluşturulur (bkz. ekonomi/page.tsx).
 // lastGeneratedPeriod ("2026-09" gibi) çift üretimi engeller.
 model RecurringExpense {
-  id                  String   @id @default(cuid())
+  id                  String  @id @default(cuid())
   title               String
   category            String
   amount              String
   dayOfMonth          Int // 1-28 — ayın kaçında düşecek
-  active              Boolean  @default(true)
+  active              Boolean @default(true)
   lastGeneratedPeriod String? // en son hangi ay için kayıt üretildi
 
   transactions Transaction[]
@@ -652,7 +670,7 @@ model PaymentAttempt {
   payerAddress String
   userIp       String
 
-  totalAmountKurus Int?    // PayTR'nin tahsil ettiği tutar (taksit farkı dahil olabilir)
+  totalAmountKurus Int? // PayTR'nin tahsil ettiği tutar (taksit farkı dahil olabilir)
   paymentType      String? // card / eft
   failedReasonCode String?
   failedReasonMsg  String?
@@ -662,4 +680,178 @@ model PaymentAttempt {
   completedAt DateTime?
 
   @@index([paymentLinkId])
+}
+
+// ══════════════════════════════════════════════════════════
+// AJANDA + KASA (v3.3.0) — Mİ Asistan (markaizi-ajanda) verisinin taşındığı yer.
+// Yalnızca ADMIN yazar. Telegram + Claude botu da /api/agent/* üzerinden buraya yazar.
+// legacyId alanları: Mİ Asistan'daki uuid — taşıma scripti tekrar çalışırsa
+// mükerrer kayıt açmamak için (upsert anahtarı). Yeni kayıtlarda boş kalır.
+// ══════════════════════════════════════════════════════════
+
+enum AgendaEventStatus {
+  PLANLI
+  TAMAMLANDI
+  IPTAL
+}
+
+enum AgendaTaskStatus {
+  YAPILACAK
+  YAPILIYOR
+  TAMAMLANDI
+}
+
+enum AgendaPriority {
+  DUSUK
+  ORTA
+  YUKSEK
+  ACIL
+}
+
+enum AgendaNoteKind {
+  NOT // serbest not
+  HAFIZA // asistan hafızası: kurallar, müşteri kararları, sabit metinler
+}
+
+// Ziyaret / toplantı / çekim. clientId doluysa müşteri ziyaretidir.
+model AgendaEvent {
+  id              String            @id @default(cuid())
+  title           String
+  description     String? // yalnızca admin görür
+  clientNote      String? // visibleToClient ise müşteri panelinde görünen kısa not
+  startAt         DateTime
+  endAt           DateTime?
+  allDay          Boolean           @default(false)
+  locationName    String?
+  locationAddress String?
+  latitude        Float?
+  longitude       Float?
+  status          AgendaEventStatus @default(PLANLI)
+  visibleToClient Boolean           @default(true)
+
+  clientId String?
+  client   Client? @relation(fields: [clientId], references: [id], onDelete: SetNull)
+
+  legacyId  String?  @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([startAt])
+  @@index([clientId, startAt])
+}
+
+// Kişisel/operasyon işleri (iş akışı panosundan ayrı — çalışanlara dağıtılan işler orada kalır).
+model AgendaTask {
+  id              String           @id @default(cuid())
+  title           String
+  description     String?
+  priority        AgendaPriority   @default(ORTA)
+  status          AgendaTaskStatus @default(YAPILACAK)
+  sortOrder       Int              @default(0)
+  dueAt           DateTime?
+  completedAt     DateTime?
+  visibleToClient Boolean          @default(true)
+  deletedAt       DateTime? // çöp kutusu — geri alınabilir
+
+  clientId String?
+  client   Client? @relation(fields: [clientId], references: [id], onDelete: SetNull)
+
+  legacyId  String?  @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([status, sortOrder])
+  @@index([clientId, status])
+}
+
+// Notlar ve asistan hafızası. Müşteriye hiçbir zaman gösterilmez.
+model AgendaNote {
+  id              String         @id @default(cuid())
+  kind            AgendaNoteKind @default(NOT)
+  title           String
+  content         String
+  category        String? // hafıza için: musteri_karti, ucret, kural, instagram_metni …
+  tags            String[]       @default([])
+  pinned          Boolean        @default(false)
+  importance      Int            @default(3)
+  // v3.6.0: true ise müşteri kendi panelinde görür (ör. sabit Instagram metni). Varsayılan kapalı.
+  visibleToClient Boolean        @default(false)
+  deletedAt       DateTime?
+
+  clientId String?
+  client   Client? @relation(fields: [clientId], references: [id], onDelete: SetNull)
+
+  legacyId  String?  @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([kind, clientId])
+}
+
+// ── KASA — yalnızca admin'in kişisel nakit/borç takibi ──
+// Ajansın Ekonomi ekranından (Transaction) tamamen ayrıdır; çalışan/müşteri hiçbir
+// koşulda görmez (adminCanViewEconomy yetkisi de buraya erişim VERMEZ).
+
+enum KasaDirection {
+  GELIR // tahsil edilmiş gelir
+  GIDER // ödenmiş/ödenecek gider (abonelik vb.)
+  BORC // ödenecek borç: kart borcu, kira, taksit, maaş
+  ALACAK // tahsil edilecek: müşteri ödemesi, verilen borç
+}
+
+enum KasaStatus {
+  BEKLIYOR
+  ODENDI
+}
+
+model KasaEntry {
+  id               String        @id @default(cuid())
+  title            String
+  amount           Decimal       @db.Decimal(14, 2)
+  direction        KasaDirection
+  // kredi_karti | ek_hesap | Kira | Maaş | Eğitim | Eşya Taksiti | Müşteri Ödemesi |
+  // borc_alacak | kasa_denklestirme … (Mİ Asistan kategorileri olduğu gibi korunur)
+  category         String        @default("genel")
+  status           KasaStatus    @default(BEKLIYOR)
+  dueDate          DateTime
+  paidAt           DateTime?
+  isRecurring      Boolean       @default(false)
+  recurrencePeriod String        @default("none") // none | monthly
+  remindDaysBefore Int           @default(3)
+  notes            String?
+  deletedAt        DateTime?
+
+  clientId String?
+  client   Client? @relation(fields: [clientId], references: [id], onDelete: SetNull)
+
+  // v3.6.0: maaş / avans ise ilgili çalışan — çalışan kendi ekranında salt okunur görür.
+  employeeId String?
+  employee   User?   @relation("KasaEmployee", fields: [employeeId], references: [id], onDelete: SetNull)
+
+  cardTransactions KasaCardTransaction[]
+
+  legacyId  String?  @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([direction, status, dueDate])
+  @@index([employeeId])
+}
+
+// Kredi kartı / ek hesap harcamaları — bağlı oldukları BORC kaydının bakiyesini oluşturur.
+model KasaCardTransaction {
+  id              String    @id @default(cuid())
+  entryId         String
+  entry           KasaEntry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  title           String
+  amount          Decimal   @db.Decimal(14, 2)
+  category        String    @default("alisveris")
+  transactionDate DateTime
+  notes           String?
+  deletedAt       DateTime?
+
+  legacyId  String?  @unique
+  createdAt DateTime @default(now())
+
+  @@index([entryId, transactionDate])
 }

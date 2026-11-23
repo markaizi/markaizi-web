@@ -27,7 +27,6 @@ export async function getWorkflowBoardData(session: SessionPayload) {
             creator: { select: { id: true, name: true } },
             client: { select: { slug: true, name: true } },
             contentItem: { select: { id: true, scheduledDate: true } },
-            workLog: { select: { id: true, amount: true } },
           },
         },
       },

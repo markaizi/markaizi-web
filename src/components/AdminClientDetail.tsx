@@ -2,6 +2,7 @@
 
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { INVOICE_STAGE_COLOR, INVOICE_STAGE_LABEL, type InvoiceStage } from "@/lib/invoiceStage";
 import {
   BILLING_PERIODS, BILLING_PERIOD_LABEL, needsIntervalDays, type BillingPeriod,
@@ -23,6 +24,8 @@ export interface ClientDetailData {
   billingPeriod: BillingPeriod | "";
   billingIntervalDays: number | null;
   overdueGraceDays: number | null;
+  paymentDay: number | null;
+  paymentDay2: number | null;
   dailyMetaSpend: string;
   dailyGoogleSpend: string;
   active: boolean;
@@ -51,8 +54,12 @@ export interface ClientDetailData {
     publishedAt: string | null;
   }[];
   users: { id: string; username: string | null; name: string; email: string }[];
-  laborCost: number;
-  unpricedWorkLogCount: number;
+  // Ajanda (v3.6.0): bu firmanın ziyaretleri, işleri, notları ve hafızası — Ajanda ile aynı kayıtlar.
+  agenda: {
+    visits: { id: string; title: string; startAt: string; status: "PLANLI" | "TAMAMLANDI" | "IPTAL" }[];
+    tasks: { id: string; title: string; status: "YAPILACAK" | "YAPILIYOR" | "TAMAMLANDI"; priority: string; visibleToClient: boolean }[];
+    notes: { id: string; kind: "NOT" | "HAFIZA"; title: string; content: string; visibleToClient: boolean }[];
+  };
   adReports: {
     id: string;
     platform: "META" | "GOOGLE" | "WEBSITE";
@@ -212,7 +219,7 @@ function EditBtn({ onClick }: { onClick: () => void }) {
 
 export default function AdminClientDetail({ data, unreadNoteCount = 0 }: { data: ClientDetailData; unreadNoteCount?: number }) {
   const router = useRouter();
-  const [tab, setTab] = useState<"genel" | "icerikler" | "guncellemeler" | "faturalar" | "raporlar" | "notlar" | "kullanici">("genel");
+  const [tab, setTab] = useState<"genel" | "ajanda" | "icerikler" | "guncellemeler" | "faturalar" | "raporlar" | "notlar" | "kullanici">("genel");
   const [showNotifComposer, setShowNotifComposer] = useState(false);
 
   async function handleLogout() {
@@ -240,6 +247,9 @@ export default function AdminClientDetail({ data, unreadNoteCount = 0 }: { data:
           </a>
           <span className="text-[#555] flex-shrink-0">/</span>
           <span className="text-[14px] font-semibold text-white truncate">{data.name}</span>
+          {!data.active && (
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full flex-shrink-0" style={{ background: "rgba(138,138,154,0.15)", color: "#8a8a9a" }}>Pasif</span>
+          )}
         </div>
         <button
           onClick={handleLogout}
@@ -285,9 +295,10 @@ export default function AdminClientDetail({ data, unreadNoteCount = 0 }: { data:
 
         {/* Sekmeler — yatay kaydırmalı, mobilde kırılmıyor */}
         <div className="flex gap-1 mb-7 overflow-x-auto pb-1 -mx-6 px-6 sm:mx-0 sm:px-0 sm:flex-wrap" style={{ scrollbarWidth: "none" }}>
-          {(["genel", "icerikler", "guncellemeler", "faturalar", "raporlar", "notlar", "kullanici"] as const).map((t) => {
+          {(["genel", "ajanda", "icerikler", "guncellemeler", "faturalar", "raporlar", "notlar", "kullanici"] as const).map((t) => {
             const labels: Record<typeof t, string> = {
               genel: "Genel",
+              ajanda: "Ajanda",
               icerikler: "İçerikler",
               guncellemeler: "Güncellemeler",
               faturalar: "Faturalar",
@@ -320,6 +331,7 @@ export default function AdminClientDetail({ data, unreadNoteCount = 0 }: { data:
 
         {/* İçerik */}
         {tab === "genel" && <GenelTab data={data} router={router} />}
+        {tab === "ajanda" && <FirmaAjandaTab data={data} />}
         {tab === "icerikler" && <IceriklerTab slug={data.slug} contentItems={data.contentItems} router={router} />}
         {tab === "guncellemeler" && <GuncellemelerTab slug={data.slug} updates={data.updates} router={router} />}
         {tab === "faturalar" && <FaturalarTab slug={data.slug} invoices={data.invoices} router={router} />}
@@ -341,16 +353,19 @@ function GenelTab({ data, router }: { data: ClientDetailData; router: ReturnType
     billingPeriod: (data.billingPeriod || "AYLIK") as BillingPeriod,
     billingIntervalDays: data.billingIntervalDays ? String(data.billingIntervalDays) : "",
     overdueGraceDays: data.overdueGraceDays ? String(data.overdueGraceDays) : "",
+    paymentDay: data.paymentDay ? String(data.paymentDay) : "",
+    paymentDay2: data.paymentDay2 ? String(data.paymentDay2) : "",
     dailyMetaSpend: data.dailyMetaSpend, dailyGoogleSpend: data.dailyGoogleSpend,
   });
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
   const [ok, setOk] = useState(false);
+  // Ücret / ödeme günü değişince güncellenen ve dokunulmayan bekleyen alacaklar (v3.6.0)
+  const [repriced, setRepriced] = useState<{ updated: string[]; skipped: string[] } | null>(null);
 
   const revenue = data.invoices
     .filter((i) => i.paid)
     .reduce((s, i) => s + parseAmountNum(i.amount), 0);
-  const profit = revenue - data.laborCost;
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -368,42 +383,38 @@ function GenelTab({ data, router }: { data: ClientDetailData; router: ReturnType
           ? Number(form.billingIntervalDays) || null
           : null,
         overdueGraceDays: Number(form.overdueGraceDays) || null,
+        paymentDay: Number(form.paymentDay) || null,
+        paymentDay2: Number(form.paymentDay2) || null,
       }),
     });
     const json = await res.json();
     setLoading(false);
-    if (json.ok) { setOk(true); router.refresh(); }
+    if (json.ok) { setOk(true); setRepriced(json.repriced ?? null); router.refresh(); }
     else setErr(json.error ?? "Hata.");
   }
 
   async function handleDeactivate() {
-    if (!confirm(`"${data.name}" firmayı deaktive et? Panel listesinden kaldırılır.`)) return;
+    if (!confirm(`"${data.name}" pasife alınsın mı? Firmalar listesinde "Pasif firmalar" altında durur; aylık alacak açılmaz, müşteri girişi kapanır.`)) return;
     await fetch(`/api/musteri/admin/clients/${data.slug}`, { method: "DELETE" });
-    router.push("/musteri/admin");
+    router.refresh();
+  }
+
+  async function handleActivate() {
+    if (!confirm(`"${data.name}" tekrar aktif (sabit müşteri) yapılsın mı? Ücret ve ödeme günü doluysa aylık alacak açılır.`)) return;
+    await fetch(`/api/musteri/admin/clients/${data.slug}`, {
+      method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ active: true }),
+    });
+    router.refresh();
   }
 
   return (
     <div className="space-y-5">
-      <div className="rounded-2xl p-5" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
-        <p className="text-[13px] font-semibold text-white mb-3">Kârlılık</p>
-        <div className="grid grid-cols-3 gap-3">
-          <div className="rounded-xl p-3.5" style={{ background: "rgba(52,211,153,0.08)", border: "1px solid rgba(52,211,153,0.2)" }}>
-            <p className="text-[10px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1">Gelir</p>
-            <p className="text-[16px] sm:text-[18px] font-black" style={{ color: "#34d399" }}>{revenue.toLocaleString("tr-TR")} ₺</p>
-          </div>
-          <div className="rounded-xl p-3.5" style={{ background: "rgba(248,113,113,0.08)", border: "1px solid rgba(248,113,113,0.2)" }}>
-            <p className="text-[10px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1">İşçilik</p>
-            <p className="text-[16px] sm:text-[18px] font-black" style={{ color: "#f87171" }}>{data.laborCost.toLocaleString("tr-TR")} ₺</p>
-          </div>
-          <div className="rounded-xl p-3.5" style={{ background: profit >= 0 ? "rgba(168,85,247,0.08)" : "rgba(248,113,113,0.08)", border: `1px solid ${profit >= 0 ? "rgba(168,85,247,0.2)" : "rgba(248,113,113,0.2)"}` }}>
-            <p className="text-[10px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1">Kâr</p>
-            <p className="text-[16px] sm:text-[18px] font-black" style={{ color: profit >= 0 ? "#c084fc" : "#f87171" }}>{profit.toLocaleString("tr-TR")} ₺</p>
-          </div>
+      <div className="rounded-2xl p-5 flex items-center justify-between gap-3" style={{ background: "rgba(52,211,153,0.08)", border: "1px solid rgba(52,211,153,0.2)" }}>
+        <div>
+          <p className="text-[13px] font-semibold text-white">Toplam tahsilat</p>
+          <p className="text-[11px] text-[#8a8a9a] mt-0.5">Bu firmadan alınan tüm ödemeler (Finans + eski faturalar)</p>
         </div>
-        <p className="text-[11px] text-[#666] mt-3">
-          Gelir: ödenmiş faturalar toplamı · İşçilik: bu firmanın kartlarına bağlı fiyatlandırılmış iş kayıtları toplamı
-          {data.unpricedWorkLogCount > 0 && ` · ${data.unpricedWorkLogCount} iş kaydı henüz fiyatlandırılmadı, işçilik eksik hesaplanmış olabilir`}
-        </p>
+        <p className="text-[18px] sm:text-[20px] font-black" style={{ color: "#34d399" }}>{revenue.toLocaleString("tr-TR")} ₺</p>
       </div>
 
       <form onSubmit={handleSubmit} className="rounded-2xl p-6 space-y-4" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
@@ -423,10 +434,20 @@ function GenelTab({ data, router }: { data: ClientDetailData; router: ReturnType
           <Input type="email" value={form.contactEmail} onChange={(e) => setForm((f) => ({ ...f, contactEmail: e.target.value }))} placeholder="firma@ornek.com" />
         </Field>
 
+        {repriced && (repriced.updated.length > 0 || repriced.skipped.length > 0) && (
+          <div className="rounded-xl p-3.5 text-[12px] space-y-1" style={{ background: "rgba(96,165,250,0.08)", border: "1px solid rgba(96,165,250,0.25)" }}>
+            {repriced.updated.length > 0 && <p className="font-semibold text-[#60a5fa]">Yeni ücrete güncellenen bekleyen alacaklar:</p>}
+            {repriced.updated.map((u) => <p key={u} className="text-[#c8c8d0]">• {u}</p>)}
+            {repriced.skipped.length > 0 && <p className="font-semibold text-[#fbbf24] pt-1">Özel tutarlı olduğu için DEĞİŞTİRİLMEYENLER (gerekirse Finans&apos;tan elle düzelt):</p>}
+            {repriced.skipped.map((u) => <p key={u} className="text-[#c8c8d0]">• {u}</p>)}
+          </div>
+        )}
         <div className="pt-1 pb-1">
           <p className="text-[13px] font-semibold text-white">Ödeme Planı</p>
           <p className="text-[11px] text-[#8a8a9a] mt-0.5">
-            Doluysa, bir fatura &quot;Ödendi&quot; yapıldığında sonraki dönemin faturası otomatik oluşur.
+            Ücret ve ödeme günü doluysa her ayın alacağı Finans&apos;ta (Kasa) otomatik açılır; müşteri kendi panelinde görür.
+            Ayda iki ödeme günü girilirse ücret ikiye bölünür. Ücreti değiştirince (ör. zam) yalnızca bekleyen ve vadesi
+            gelmemiş standart tutarlı alacaklar güncellenir; ödenmiş, gecikmiş ve özel tutarlı kayıtlara dokunulmaz.
           </p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -447,6 +468,17 @@ function GenelTab({ data, router }: { data: ClientDetailData; router: ReturnType
                 </option>
               ))}
             </Select>
+          </Field>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          <Field label="Ödeme Günü (ayın kaçı)">
+            <Input type="number" min={1} max={31} value={form.paymentDay}
+              onChange={(e) => setForm((f) => ({ ...f, paymentDay: e.target.value }))} placeholder="Örn: 5" />
+          </Field>
+          <Field label="2. Ödeme Günü (opsiyonel)">
+            <Input type="number" min={1} max={31} value={form.paymentDay2}
+              onChange={(e) => setForm((f) => ({ ...f, paymentDay2: e.target.value }))} placeholder="Örn: 15" />
           </Field>
         </div>
 
@@ -472,7 +504,7 @@ function GenelTab({ data, router }: { data: ClientDetailData; router: ReturnType
 
         {form.billingPeriod === "MANUEL" && (
           <p className="text-[11px] text-[#8a8a9a] leading-relaxed -mt-1">
-            Bu firmada faturalar otomatik oluşmaz — &quot;Faturalar&quot; sekmesinden elle eklersiniz.
+            Bu firmada aylık alacak otomatik açılmaz — &quot;Faturalar&quot; sekmesinden elle eklersiniz.
           </p>
         )}
 
@@ -522,9 +554,15 @@ function GenelTab({ data, router }: { data: ClientDetailData; router: ReturnType
         {ok && <p className="text-[12px] text-green-400">Kaydedildi.</p>}
         <div className="flex justify-between items-center pt-1">
           <SaveBtn loading={loading} />
-          <button type="button" onClick={handleDeactivate} className="text-[12px] text-red-400 hover:text-red-300 transition-colors">
-            Firmayı Deaktive Et
-          </button>
+          {data.active ? (
+            <button type="button" onClick={handleDeactivate} className="text-[12px] text-red-400 hover:text-red-300 transition-colors">
+              Firmayı Pasife Al
+            </button>
+          ) : (
+            <button type="button" onClick={handleActivate} className="text-[12px] font-semibold text-green-500 hover:opacity-80 transition-opacity">
+              Firmayı Aktifleştir
+            </button>
+          )}
         </div>
       </form>
     </div>
@@ -664,6 +702,77 @@ function GuncellemelerTab({ slug, updates, router }: { slug: string; updates: Up
           </div>
         </form>
       )}
+    </div>
+  );
+}
+
+// ── Ajanda sekmesi (v3.6.0) ───────────────────────────────────────────────────
+// Ajanda'daki kayıtların bu firmaya ait olanları. Düzenleme Ajanda ekranında (firma filtresi açık gelir);
+// burada "müşteri görsün" anahtarı ile not/hafıza müşteri paneline açılıp kapatılabilir.
+function FirmaAjandaTab({ data }: { data: ClientDetailData }) {
+  const router = useRouter();
+  const [busy, setBusy] = useState<string | null>(null);
+  const [notes, setNotes] = useState(data.agenda.notes);
+  const a = data.agenda;
+  const fmt = (iso: string) => new Date(iso).toLocaleString("tr-TR", { timeZone: "Europe/Istanbul", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" });
+  async function toggleNote(id: string, next: boolean) {
+    setBusy(id);
+    const res = await fetch(`/api/musteri/admin/ajanda/notes/${id}`, {
+      method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ visibleToClient: next }),
+    });
+    setBusy(null);
+    if (res.ok) { setNotes((prev) => prev.map((n) => (n.id === id ? { ...n, visibleToClient: next } : n))); router.refresh(); }
+  }
+  const box = { background: "var(--surface)", border: "1px solid var(--border)" };
+  const openTasks = a.tasks.filter((t) => t.status !== "TAMAMLANDI");
+  const upcoming = a.visits.filter((v) => v.status === "PLANLI");
+  const past = a.visits.filter((v) => v.status === "TAMAMLANDI").slice(-5).reverse();
+  return (
+    <div className="space-y-5">
+      <div className="flex flex-wrap gap-2">
+        <Link href={`/musteri/admin/ajanda?firma=${data.id}`} className="text-[13px] font-semibold px-4 py-2 rounded-xl" style={{ background: "rgba(168,85,247,0.1)", border: "1px solid rgba(168,85,247,0.3)", color: "#a855f7" }}>Ajanda&apos;da aç (ziyaret / iş / not ekle)</Link>
+        <Link href={`/musteri/admin/ajanda?firma=${data.id}&tab=isler`} className="text-[13px] font-semibold px-4 py-2 rounded-xl" style={{ background: "rgba(168,85,247,0.1)", border: "1px solid rgba(168,85,247,0.3)", color: "#a855f7" }}>Bu firmanın tüm işleri</Link>
+      </div>
+
+      <div className="rounded-2xl p-5" style={box}>
+        <p className="text-[13px] font-semibold text-white mb-2">Ziyaretler</p>
+        {upcoming.map((v) => <p key={v.id} className="text-[13px] text-[#c8c8d0] py-1">📅 {fmt(v.startAt)} · {v.title}</p>)}
+        {past.map((v) => <p key={v.id} className="text-[12px] text-[#8a8a9a] py-0.5">✓ {fmt(v.startAt)} · {v.title}</p>)}
+        {!upcoming.length && !past.length && <p className="text-[12px] text-[#8a8a9a]">Kayıt yok.</p>}
+      </div>
+
+      <div className="rounded-2xl p-5" style={box}>
+        <p className="text-[13px] font-semibold text-white mb-2">Açık işler ({openTasks.length})</p>
+        {openTasks.map((t) => (
+          <p key={t.id} className="text-[13px] text-[#c8c8d0] py-1">
+            • {t.title}{t.status === "YAPILIYOR" ? " (yapılıyor)" : ""}
+            {!t.visibleToClient && <span className="text-[11px] text-[#8a8a9a]"> · müşteriden gizli</span>}
+          </p>
+        ))}
+        {!openTasks.length && <p className="text-[12px] text-[#8a8a9a]">Açık iş yok.</p>}
+      </div>
+
+      <div className="rounded-2xl p-5" style={box}>
+        <p className="text-[13px] font-semibold text-white mb-1">Notlar & hafıza ({notes.length})</p>
+        <p className="text-[11px] text-[#8a8a9a] mb-3">&quot;Müşteri görsün&quot; açık olanlar müşterinin panelinde &quot;Bilgileriniz&quot; bölümünde görünür.</p>
+        <div className="space-y-2">
+          {notes.map((n) => (
+            <div key={n.id} className="rounded-xl p-3" style={{ background: "var(--bg)", border: "1px solid var(--border)" }}>
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <p className="text-[13px] font-semibold text-white">{n.title} <span className="text-[10px] font-normal text-[#8a8a9a]">{n.kind === "HAFIZA" ? "Hafıza" : "Not"}</span></p>
+                  <p className="text-[12px] text-[#c8c8d0] whitespace-pre-line mt-1 line-clamp-6">{n.content}</p>
+                </div>
+                <label className="flex items-center gap-1.5 text-[11px] text-[#8a8a9a] flex-shrink-0 cursor-pointer">
+                  <input type="checkbox" checked={n.visibleToClient} disabled={busy === n.id} onChange={(e) => toggleNote(n.id, e.target.checked)} />
+                  Müşteri görsün
+                </label>
+              </div>
+            </div>
+          ))}
+          {!notes.length && <p className="text-[12px] text-[#8a8a9a]">Bu firmaya ait not yok.</p>}
+        </div>
+      </div>
     </div>
   );
 }

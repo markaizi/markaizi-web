@@ -47,38 +47,28 @@ export async function requireStaffForSlug(slug: string) {
   return { session: null, perms: null, err: forbidden() };
 }
 
-/** ADMIN veya firma'ya canManageInvoices=true atanmış EMPLOYEE. */
-export async function requireInvoiceManageForSlug(slug: string) {
+/** Yalnızca ADMIN (v3.10.0 — ödemeler Kasa kaydı). */
+export async function requireInvoiceManageForSlug(_slug: string) {
   const session = await getSession();
   if (!session) return { session: null, err: unauth() };
   if (!(await checkActive(session.uid))) return { session: null, err: disabled() };
   const rl = checkRateLimit(session.uid);
   if (rl) return { session: null, err: rl };
   if (session.role === "ADMIN") return { session, err: null };
-  if (session.role === "EMPLOYEE") {
-    const hit = await prisma.assignment.findFirst({
-      where: { userId: session.uid, client: { slug }, canManageInvoices: true },
-    });
-    if (hit) return { session, err: null };
-  }
+  // v3.10.0: müşteri ödemeleri artık Kasa kaydıdır (kasa rakamını doğrudan etkiler) → yalnızca ADMIN yazabilir.
+  // Çalışan "faturaları görüntüle" yetkisiyle listeyi görmeye devam eder.
   return { session: null, err: forbidden() };
 }
 
-/** ADMIN veya faturanın firmasına canManageInvoices=true atanmış EMPLOYEE. */
-export async function requireInvoiceManageById(id: string) {
+/** Yalnızca ADMIN (v3.10.0 — ödemeler Kasa kaydı). */
+export async function requireInvoiceManageById(_id: string) {
   const session = await getSession();
   if (!session) return { session: null, err: unauth() };
   if (!(await checkActive(session.uid))) return { session: null, err: disabled() };
   const rl = checkRateLimit(session.uid);
   if (rl) return { session: null, err: rl };
   if (session.role === "ADMIN") return { session, err: null };
-  if (session.role === "EMPLOYEE") {
-    const invoice = await prisma.invoice.findUnique({
-      where: { id },
-      select: { client: { select: { assignments: { where: { userId: session.uid, canManageInvoices: true } } } } },
-    });
-    if (invoice?.client.assignments.length) return { session, err: null };
-  }
+  // v3.10.0: ödeme kayıtlarını (Kasa / eski fatura) yalnızca ADMIN değiştirebilir — bkz. requireInvoiceManageForSlug.
   return { session: null, err: forbidden() };
 }
 

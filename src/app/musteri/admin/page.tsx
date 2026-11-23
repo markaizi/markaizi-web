@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import AdminPanel, { type AdminClientSummary } from "@/components/AdminPanel";
-import { getInvoiceStage, OVERDUE_GRACE_DAYS } from "@/lib/invoiceStage";
+import { ensureClientReceivables, pendingPaymentCounts } from "@/lib/clientPayments";
 
 export const dynamic = "force-dynamic";
 
@@ -19,16 +19,16 @@ export default async function AdminPage() {
     redirect(session.slug ? `/musteri/${session.slug}` : "/musteri/giris");
   }
 
-  const today = new Date();
+  // Aylık müşteri alacaklarını (bu ay + gelecek ay) gerekiyorsa aç — Mİ Asistan'ın yaptığı gibi.
+  await ensureClientReceivables().catch((e) => console.error("[finans] alacak üretimi başarısız:", e));
 
-  const [rows, unreadNotes, employeeCount, unpricedLogsRaw, unreadSubmissionCount, unreadStaffFeedbackCount] = await Promise.all([
+  const [rows, passiveRows, unreadNotes, employeeCount, unreadSubmissionCount, unreadStaffFeedbackCount] = await Promise.all([
     prisma.client.findMany({
       where: { active: true },
       orderBy: { name: "asc" },
-      include: {
-        invoices: { select: { status: true, dueDate: true } },
-      },
+      select: { id: true, slug: true, name: true, overdueGraceDays: true },
     }),
+    prisma.client.findMany({ where: { active: false }, orderBy: { name: "asc" }, select: { slug: true, name: true } }),
     prisma.note.groupBy({
       by: ["clientId"],
       where: {
@@ -38,46 +38,29 @@ export default async function AdminPage() {
       _count: { id: true },
     }),
     prisma.user.count({ where: { role: "EMPLOYEE", active: true } }),
-    prisma.workLog.findMany({
-      where: { amount: null },
-      select: { userId: true, user: { select: { name: true } } },
-    }),
     prisma.submission.count({ where: { read: false } }),
     prisma.staffFeedback.count({ where: { status: "BEKLIYOR" } }),
   ]);
 
   const unreadMap = new Map(unreadNotes.map((u) => [u.clientId, u._count.id]));
 
-  const unpricedMap = new Map<string, { name: string; count: number }>();
-  for (const log of unpricedLogsRaw) {
-    const cur = unpricedMap.get(log.userId);
-    if (cur) cur.count++;
-    else unpricedMap.set(log.userId, { name: log.user.name, count: 1 });
-  }
-  const unpricedWorkLogs = Array.from(unpricedMap.entries()).map(([id, v]) => ({ id, name: v.name, count: v.count }));
-
-  const clients: AdminClientSummary[] = rows.map((c) => {
-    // Aşama vade tarihinden hesaplanır. Rozetlerde yalnızca aksiyon gereken
-    // faturalar sayılır — vadesi gelmemiş olanlar sayıya girmez.
-    const graceDays = c.overdueGraceDays ?? OVERDUE_GRACE_DAYS;
-    const stages = c.invoices.map((i) => getInvoiceStage(i, today, graceDays));
-    const pendingInvoices = stages.filter((s) => s === "BEKLIYOR" || s === "GECIKMEDI");
-    const overdueInvoices = stages.filter((s) => s === "GECIKMEDI");
-    return {
-      slug: c.slug,
-      name: c.name,
-      pendingInvoiceCount: pendingInvoices.length,
-      overdueInvoiceCount: overdueInvoices.length,
-      unreadNoteCount: unreadMap.get(c.id) ?? 0,
-    };
-  });
+  // Ödeme rozetleri Kasa'daki müşteri alacaklarından (v3.5.0, src/lib/clientPayments.ts).
+  // Yalnızca aksiyon gereken (vadesi gelmiş / gecikmiş) alacaklar sayılır.
+  const counts = await pendingPaymentCounts(rows);
+  const clients: AdminClientSummary[] = rows.map((c) => ({
+    slug: c.slug,
+    name: c.name,
+    pendingInvoiceCount: counts.get(c.id)?.pending ?? 0,
+    overdueInvoiceCount: counts.get(c.id)?.overdue ?? 0,
+    unreadNoteCount: unreadMap.get(c.id) ?? 0,
+  }));
 
   return (
     <AdminPanel
       clients={clients}
+      passiveClients={passiveRows}
       adminName={session.name}
       employeeCount={employeeCount}
-      unpricedWorkLogs={unpricedWorkLogs}
       unreadSubmissionCount={unreadSubmissionCount}
       unreadStaffFeedbackCount={unreadStaffFeedbackCount}
     />

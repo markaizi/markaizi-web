@@ -45,6 +45,20 @@ export interface AdReportItem {
   pdfFilename?: string;
 }
 
+export interface ClientAgendaVisit {
+  date: string;  // "Pazartesi, 30 Kasım 2026"
+  time: string;  // "10:00" (tüm gün etkinlikte boş)
+  title: string;
+  note?: string;
+}
+export interface ClientAgenda {
+  upcomingVisits: ClientAgendaVisit[];
+  pastVisits: ClientAgendaVisit[];
+  openTasks: { title: string; status: "Yapılacak" | "Yapılıyor"; dueDate?: string }[];
+  doneTasks: { title: string; completedAt: string }[]; // son 30 gün
+  sharedNotes: { title: string; content: string }[];   // admin'in "müşteri görsün" dediği notlar (v3.6.0)
+}
+
 export interface ClientData {
   slug: string;
   name: string;
@@ -62,6 +76,10 @@ export interface ClientData {
 
   requests?: ClientRequest[];
   adReports?: AdReportItem[];
+
+  // Ajanda (v3.4.0): admin'in "müşteri görsün" işaretlediği ziyaretler ve işler.
+  // Tarihler sunucuda İstanbul saatine göre Türkçe metne çevrilmiş gelir.
+  agenda?: ClientAgenda;
 
   // Aktif bir KIRMIZI bildirim varsa dolu gelir — Raporlar ve İçerik Takvimi
   // sekmeleri kilitlenir (bkz. getClientView).

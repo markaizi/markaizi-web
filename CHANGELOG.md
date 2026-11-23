@@ -2,9 +2,97 @@
 
 > **Bu dosya araçlar arası devir-teslim defteridir.** En üstteki sürüm = en son durum.
 > Kurallar ve şablon: [`AGENTS.md`](./AGENTS.md). Eski sürümler silinmez.
-> Güncel sürüm: **v3.2.0** (`package.json` ile aynı olmalı).
+> Güncel sürüm: **v3.10.0** (`package.json` ile aynı olmalı).
 
 ---
+
+> **Gizlilik notu (v3.10.0):** Bu repo herkese açıktır. Müşteri ücretleri, tahsilat tutarları, kişisel finans ve kişi adları
+> bu dosyaya **yazılmaz**. Rakamlı / isimli ayrıntılar yerelde, git'e girmeyen `docs/ozel/` klasöründe tutulur
+> (ör. `docs/ozel/CHANGELOG-OZEL-2026-11-23.md`); tek seferlik veri scriptleri `scripts/ozel/` altındadır.
+
+## v3.10.0 — 23 Kasım 2026 — Denetim düzeltmeleri: Finans kuralları, çöp kutusu, ay görünümü, mobil, gizlilik
+**Araç:** Claude Code (Fable 5.2)  **Tür:** MINOR
+### Yapılanlar
+- **Finans kural düzeltmeleri (`src/lib/agenda.ts`):**
+  - Kart / hesap borcu tamamen ödenince kayıt artık kaybolmuyor (bakiye 0, kart listede kalır, yeni harcama eklenebilir).
+  - Borçtan fazla ödeme ve kart olmayan kayıtta "ödeme yap" / harcama ekleme reddedilir (`AgendaRuleError` → 400).
+  - Ödeme / tahsilat tarihi elle girilebilir (`paidAt`); kayıt o tarihin ayına sayılır.
+  - Aylık tekrarlayan kayıtlarda gün kayması giderildi (ayın 30'u kısa aydan sonra yine 30'a döner); silinen sonraki ay kaydı geri açılmaz.
+  - Ziyaret "Geri al" / silme sonrası firmanın son ziyaret tarihi takvimden yeniden hesaplanır (`syncLastVisit`).
+  - Kart harcaması düzenleme, silme (çöp kutusu) ve başka karta taşıma (`updateCardTransaction`, `trashCardTransaction`).
+  - Taksit planı: tek formdan N aylık taksit kaydı (`createInstallmentPlan`, kaynak `installments`).
+- **Otomatik aylık alacak (`clientPayments.ts`):** elle silinen alacak artık yeniden açılmıyor; firma başına sorgu yerine tek sorgu.
+- **Çöp kutusu** (`/musteri/admin/cop-kutusu`, `TrashView.tsx`): silinen iş, not, finans kaydı ve kart harcaması listelenir, geri alınır
+  (`PATCH … { action: "restore" }`).
+- **Ajanda:** Plan sekmesinde Liste / Ay görünümü; konum → harita bağlantısı; çöp kutusu bağlantısı.
+- **Pencereler (`agenda/ui.tsx` Modal):** Esc ile kapanır (iç içe pencerede yalnızca en üstteki), arka plan kaymaz, `role="dialog"`;
+  form pencereleri dışına dokununca kapanmaz. Telefonda form alanları 16 px (iOS yakınlaştırması yok), dokunma alanları büyütüldü,
+  yıllık ödeme tablosu dar ekranda düzenlendi.
+- **Müşteri paneli:** açılış sekmesi artık "Ziyaret & İşler" (içerik yoksa "Fatura") — boş içerik takvimiyle açılmıyor.
+- **Yetki:** müşteri ödemeleri Kasa kaydı olduğu için yalnızca ADMIN yazabilir (`staffGuard`); çalışan görüntüler.
+- **Gizlilik:** repo herkese açık olduğu için sürüm notları ve kod yorumlarından tutar / isim ayrıntıları çıkarıldı; veri scriptleri
+  `scripts/ozel/`'e taşındı; `.gitignore`'a `/docs/ozel/` ve `/scripts/ozel/` eklendi. Yerelde atılmış (push edilmemiş) v3.3.0 commit'i
+  aynı nedenle yeniden oluşturuldu.
+- **Operasyon:** VPS'teki eski Mİ Asistan API süreci durduruldu (`pm2 stop markaizi-api`; veritabanı duruyor, diğer siteler etkilenmedi).
+- **Veri:** müşteriye açık olup iç not niteliğindeki işler gizlendi; takvimde kaydı olmayan son ziyaretler gerçekleşmiş ziyaret olarak eklendi.
+### Doğrulama
+- `tsc --noEmit` 0 hata; `eslint` hata sayısı değişmedi; `next build` başarılı.
+- Canlı veritabanında geçici kayıtlarla 20 senaryo (kart harcaması / taşıma / silme / geri alma, fazla ödeme, tam ödeme sonrası kart,
+  ödeme tarihi, tekrarlayan gün, çift kayıt, taksit planı, ziyaret geri alma, silinen alacak) → 20/20 geçti; test kayıtları kalıcı silindi,
+  finans toplamları test öncesiyle aynı.
+- Tarayıcı: Ajanda ay görünümü, çöp kutusu, Finans formu (ödeme tarihi / taksit alanları, Esc), 375 px'te taşma yok.
+### Yarım kalanlar / Sıradaki
+- İşlem kaydı (audit log, yeni tablo) + `/api/agent/*` + VPS'te Telegram + Claude botu ve bildirimler (ödeme günü, ziyaret takibi).
+- Müşteri girişi olmayan aktif firmalar için kullanıcı açılması (Samet).
+- Repo'nun gizli (private) yapılması önerilir.
+
+## v3.9.0 — 23 Kasım 2026 — Geçmiş tahsilatlar + tek kayıt denetimi
+**Tür:** MINOR — Kasa öncesi aylara ait tahsilatlar "geçmiş kayıt" olarak eklendi (`legacyId "gecmis:…"`, toplam / yıllık gelire girer,
+kasada kalana girmez). Denetimde bulunan çift ödeme kaydı ve kopya notlar çöp kutusuna alındı; müşteri panelinde vadesiz eski faturalar
+arşivden gösterilmiyor. Ayrıntı: `docs/ozel/`.
+
+## v3.8.0 — 23 Kasım 2026 — Pasif firmalar, tıklanabilir firma adları
+**Tür:** MINOR — Firmalar listesinde "Pasif firmalar" bölümü; pasife al / aktifleştir; pasif firmalar Ajanda ve Finans seçicilerinde
+"(pasif)" etiketiyle, Finans yıllık tablosunda ödemesi varsa görünür. `ClientLink`: Ajanda, Finans ve İş Akışı kartlarında firma adı
+firma sayfasına gider.
+
+## v3.7.0 — 23 Kasım 2026 — Eski tahsilatlar Finans geçmişine; yıllık + tüm zamanlar gelir
+**Tür:** MINOR — Kasa başlangıcından önceki "ödendi" faturalar Kasa'ya geçmiş kayıt olarak aktarıldı (`legacyId "invoice:<id>"`).
+`kasaCalc`: `historical` bayrağı, `yearIncome` (İstanbul takvim yılı) + `totalIncome`. Finans üst kartı yıllık + tüm zamanlar.
+Tarihi geçmiş içerik takvimi kayıtları temizlendi.
+
+## v3.6.0 — 23 Kasım 2026 — Sadeleştirme: PayTR arayüzü, iş kaydı / ücret / avans kaldırıldı; yıllık tablo; firma ajandası
+**Tür:** MINOR
+- PayTR admin arayüzünden kaldırıldı (altyapı duruyor: `/odeme/[code]`, `api/musteri/admin/payment-links`, `api/paytr/callback`).
+- İş kaydı + işe göre ücret + avans / dönem ödemesi sistemi kaldırıldı (API'ler, ekranlar, iş akışındaki ücret penceresi). İş Akışı panosu duruyor.
+- Personel ödemeleri Finans'tan girilir (`KasaEntry.employeeId`); çalışan `/musteri/calisan/odemelerim`'de salt okunur görür.
+- Ücret / ödeme günü değişince bekleyen gelecek alacaklar güvenli kurallarla güncellenir (`repriceFutureReceivables`).
+- Finans → Müşteri Ödemeleri yıllık tablo (firma × ay); Geçmiş Aylar → ay detayı.
+- Ajanda firma filtresi; notlarda "Müşteri görsün" (`AgendaNote.visibleToClient`); admin firma detayında "Ajanda" sekmesi;
+  müşteri panelinde "Bilgileriniz".
+- Migration: `20261123230000_kasa_employee_note_visibility` (yalnızca ekleme). İş akışı kartları ve iş kayıtları Samet'in onayıyla silindi.
+
+## v3.5.0 — 23 Kasım 2026 — Finans: Ekonomi + Ödemeler + Kasa tek çatı altında
+**Tür:** MINOR
+- Tek kaynak Kasa: müşteri ödemesi = `KasaEntry` (ALACAK/GELIR, "Müşteri Ödemesi"). `src/lib/clientPayments.ts`:
+  `listClientPayments` (müşteri paneli, admin firma detayı, çalışan ekranı), `pendingPaymentCounts`, `ensureClientReceivables`
+  (ücret + ödeme gününden aylık alacak).
+- Fatura API'leri Kasa'ya yazar; PayTR callback Kasa'daki alacağı kapatır.
+- `/musteri/admin/finans`: Genel Durum + Müşteri Ödemeleri. `/admin/ekonomi`, `/admin/odemeler`, `/admin/kasa` buraya yönlenir.
+- Kaldırıldı: `EkonomiView`, `OdemelerView`, `lib/economy*.ts`, `api/musteri/admin/{ekonomi,transactions,recurring-expenses}`.
+- Firma ayarlarına ödeme günü alanları; müşteri panelinde tamamlanan işler ve otomatik yenileme.
+
+## v3.4.0 — 23 Kasım 2026 — Admin Ajanda + Kasa ekranları, müşteri ziyaret görünümü
+**Tür:** MINOR
+- `src/lib/agenda.ts` servis katmanı + zod şemaları; `src/lib/kasaCalc.ts` Kasa formülleri (saf fonksiyon).
+- `api/musteri/admin/ajanda/[resource]/(route|[id]/route).ts`: `events | tasks | notes | kasa | card-tx` (yalnızca ADMIN).
+- `/musteri/admin/ajanda` (plan, ziyaret takibi, işler, notlar & hafıza) ve Kasa ekranı (Mİ Asistan uygulamasının karşılığı).
+- Müşteri paneli: "Sonraki ziyaretimiz" + "Ziyaret & İşler" (yalnızca `visibleToClient` kayıtlar; admin açıklaması gönderilmez).
+
+## v3.3.0 — 23 Kasım 2026 — Ajanda + Kasa veri modeli (Mİ Asistan taşıma)
+**Tür:** MINOR — Karar: Mİ Asistan (ayrı iOS uygulaması + API) bırakıldı, ajanda verisi panele taşındı.
+- `prisma/schema.prisma`: `Client` ziyaret alanları; `AgendaEvent`, `AgendaTask`, `AgendaNote`, `KasaEntry`, `KasaCardTransaction`.
+- Migration `20261123210000_ajanda_kasa` (yalnızca ekleme). Taşıma scripti `scripts/ozel/`'de (repo dışı).
 
 ## v3.2.0 — 10 Kasım 2026 — Google SEO, GEO (Yapay Zeka Bulunabilirliği) ve UI/UX İyileştirme Paketi
 **Araç:** Antigravity (Gemini 3.8 Flash & Claude Sonnet 5.5)  **Tür:** MINOR

@@ -2,96 +2,68 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { requireInvoiceManageById } from "@/lib/staffGuard";
-import { nextDueDate, BILLING_PERIOD_INVOICE_LABEL, type BillingPeriod } from "@/lib/billingPeriod";
+import { updateKasaEntry, trashKasaEntry } from "@/lib/agenda";
+import { parseTry } from "@/lib/clientPayments";
 
 export const runtime = "nodejs";
 
-// Yalnızca ödendi/ödenmedi yazılabilir — "Günü Gelmedi"/"Gecikmede" aşamaları
-// vade tarihinden hesaplanır, elle atanmaz (bkz. src/lib/invoiceStage.ts).
+// v3.5.0: Müşteri ödemesinin kaydı Kasa'dadır (KasaEntry). id bir Kasa kaydıysa oraya yazılır;
+// 1 Ekim 2026 öncesi eski fatura arşivi (Invoice) ise yalnızca o kayıt düzeltilir.
+// Sonraki ayın alacağı artık burada değil, ensureClientReceivables ile aylık üretilir.
 const patchSchema = z.object({
   status: z.enum(["ODENDI", "BEKLIYOR"]).optional(),
   amount: z.string().min(1).max(100).optional(),
-  period: z.string().min(1).max(100).optional(),
+  period: z.string().trim().min(1).max(100).optional(),
   dueDate: z.string().nullable().optional(),
 });
 
-export async function PATCH(
-  req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const { err } = await requireInvoiceManageById(id);
   if (err) return err;
 
-  const body = await req.json().catch(() => ({}));
-  const parsed = patchSchema.safeParse(body);
-  if (!parsed.success) {
-    return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
+  const parsed = patchSchema.safeParse(await req.json().catch(() => ({})));
+  if (!parsed.success) return NextResponse.json({ error: parsed.error.issues[0].message }, { status: 400 });
+  const { status, amount, period, dueDate } = parsed.data;
+
+  const kasa = await prisma.kasaEntry.findUnique({ where: { id }, include: { client: { select: { name: true } } } });
+  if (kasa) {
+    await updateKasaEntry(id, {
+      ...(status ? { status } : {}),
+      ...(amount ? { amount: parseTry(amount) } : {}),
+      ...(period ? { title: `${kasa.client?.name ?? ""} ${period}`.trim() } : {}),
+      ...(dueDate ? { dueDate: new Date(`${dueDate}T10:00:00+03:00`).toISOString() } : {}),
+    });
+    return NextResponse.json({ ok: true });
   }
 
-  const before = await prisma.invoice.findUnique({ where: { id }, include: { client: true } });
-  if (!before) return NextResponse.json({ error: "Fatura bulunamadı." }, { status: 404 });
-
-  const { dueDate, ...rest } = parsed.data;
-  const updated = await prisma.invoice.update({
+  const before = await prisma.invoice.findUnique({ where: { id } });
+  if (!before) return NextResponse.json({ error: "Kayıt bulunamadı." }, { status: 404 });
+  await prisma.invoice.update({
     where: { id },
     data: {
-      ...rest,
+      ...(status ? { status } : {}),
+      ...(amount ? { amount } : {}),
+      ...(period ? { period } : {}),
       ...(dueDate !== undefined ? { dueDate: dueDate ? new Date(dueDate) : null } : {}),
-      // Ekonomi ekranındaki aylık gelir hesabı paidAt'e göre gruplanır — durum
-      // ODENDI'ye geçince otomatik set edilir, geri alınırsa temizlenir.
-      ...(rest.status !== undefined
-        ? { paidAt: rest.status === "ODENDI" && before.status !== "ODENDI" ? new Date() : rest.status !== "ODENDI" ? null : undefined }
+      ...(status !== undefined
+        ? { paidAt: status === "ODENDI" && before.status !== "ODENDI" ? new Date() : status !== "ODENDI" ? null : undefined }
         : {}),
     },
   });
-
-  // Fatura yeni "Ödendi" olduysa ve firmanın tekrarlayan ödeme planı varsa
-  // sonraki dönemin faturasını otomatik oluştur. Ödenmemiş olarak açılır;
-  // vadesi ileride olduğu için panelde kendiliğinden "Günü Gelmedi" görünür.
-  const { client } = before;
-  if (rest.status === "ODENDI" && before.status !== "ODENDI" && client.billingPeriod && client.billingAmount) {
-    const period = client.billingPeriod as BillingPeriod;
-    const base = updated.dueDate ?? before.dueDate ?? new Date();
-    // MANUEL periyotta (veya gün aralığı girilmemiş OZEL_GUN'de) null döner —
-    // bu firmalarda faturalar elle açılır.
-    const next = nextDueDate(base, period, client.billingIntervalDays);
-
-    // Aynı vade için zaten bir fatura varsa yenisini açma. Bu olmadan, bir fatura
-    // "Ödendi" ↔ "Ödenmedi" arasında her gidip geldiğinde sonraki dönem için bir
-    // fatura daha üretiliyordu; sonuç, aynı firmanın peş peşe günlerde birden çok
-    // ödemesi varmış gibi görünmesiydi.
-    const alreadyExists = next
-      ? await prisma.invoice.findFirst({
-          where: { clientId: client.id, dueDate: next },
-          select: { id: true },
-        })
-      : null;
-
-    if (next && !alreadyExists) {
-      await prisma.invoice.create({
-        data: {
-          clientId: client.id,
-          period: BILLING_PERIOD_INVOICE_LABEL[period],
-          amount: client.billingAmount,
-          dueDate: next,
-          status: "BEKLIYOR",
-        },
-      });
-    }
-  }
-
   return NextResponse.json({ ok: true });
 }
 
-export async function DELETE(
-  _req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
-) {
+// Kasa kaydı çöp kutusuna taşınır (geri alınabilir); arşiv faturası silinir.
+export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
   const { err } = await requireInvoiceManageById(id);
   if (err) return err;
 
-  await prisma.invoice.delete({ where: { id } });
+  if (await prisma.kasaEntry.findUnique({ where: { id }, select: { id: true } })) {
+    await trashKasaEntry(id);
+  } else {
+    await prisma.invoice.delete({ where: { id } }).catch(() => null);
+  }
   return NextResponse.json({ ok: true });
 }

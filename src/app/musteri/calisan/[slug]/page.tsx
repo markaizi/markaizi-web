@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { getInvoiceStage, OVERDUE_GRACE_DAYS } from "@/lib/invoiceStage";
+import { listClientPayments } from "@/lib/clientPayments";
 import EmployeeClientDetail, { type EmployeeClientData } from "@/components/EmployeeClientDetail";
 
 export const dynamic = "force-dynamic";
@@ -46,9 +46,6 @@ export default async function CalisanClientPage({
       // Yetkisiz veri sayfaya hiç gönderilmez (RSC payload'ı sayfa kaynağından okunabilir).
       updates: assignment.canViewUpdates || assignment.canManageUpdates ? { orderBy: { date: "desc" }, take: 20 } : false,
       contentItems: assignment.canViewContent || assignment.canManageContent ? { orderBy: { scheduledDate: "desc" } } : false,
-      // Fatura görüntüleme yetkisi yoksa veri sayfaya hiç gönderilmez (sadece UI'da
-      // gizlemek yetmez — sayfa kaynağından okunabilir olurdu).
-      invoices: assignment.canViewInvoices ? { orderBy: { id: "desc" } } : false,
       adReports: {
         orderBy: { publishedAt: "desc" },
         select: {
@@ -60,6 +57,7 @@ export default async function CalisanClientPage({
   });
 
   if (!client) notFound();
+  const payments = assignment.canViewInvoices ? await listClientPayments(client.id, client.overdueGraceDays) : [];
 
   const data: EmployeeClientData = {
     slug: client.slug,
@@ -70,7 +68,8 @@ export default async function CalisanClientPage({
       canViewUpdates: assignment.canViewUpdates,
       canManageUpdates: assignment.canManageUpdates,
       canViewInvoices: assignment.canViewInvoices,
-      canManageInvoices: assignment.canManageInvoices,
+      // v3.10.0: ödemeler Kasa kaydı olduğu için çalışan düzenleyemez (yalnızca görüntüler).
+      canManageInvoices: false,
     },
     updates: (client.updates ?? []).map((u) => ({
       id: u.id,
@@ -86,14 +85,9 @@ export default async function CalisanClientPage({
       status: ci.status,
       publishedAt: ci.publishedAt?.toISOString().split("T")[0] ?? null,
     })),
-    invoices: (client.invoices ?? []).map((i) => ({
-      id: i.id,
-      period: i.period,
-      amount: i.amount,
-      // Ödendi/ödenmedi saklanan durum; görünen aşama vade tarihinden hesaplanır.
-      paid: i.status === "ODENDI",
-      stage: getInvoiceStage(i, new Date(), client.overdueGraceDays ?? OVERDUE_GRACE_DAYS),
-      dueDate: i.dueDate?.toISOString().split("T")[0] ?? null,
+    // Fatura görüntüleme yetkisi yoksa veri sayfaya hiç gönderilmez. Kaynak: Kasa (v3.5.0).
+    invoices: payments.map((p) => ({
+      id: p.id, period: p.period, amount: p.amount, paid: p.paid, stage: p.stage, dueDate: p.dueDate,
     })),
     adReports: client.adReports.map((r) => ({
       id: r.id,

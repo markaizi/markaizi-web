@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import type { ClientData } from "@/lib/clients";
 import Calendar from "@/components/Calendar";
 import Notes from "@/components/Notes";
@@ -8,7 +9,7 @@ import ClientNotificationBell from "@/components/ClientNotificationBell";
 import ClientPopupNotification from "@/components/ClientPopupNotification";
 import { SEVERITY_META, type ClientNotificationSeverity } from "@/lib/clientNotifySeverity";
 
-type Tab = "website" | "updates" | "calendar" | "invoice" | "raporlar" | "notlar";
+type Tab = "ziyaret" | "website" | "updates" | "calendar" | "invoice" | "raporlar" | "notlar";
 
 function fmtAmount(raw: string): string {
   const digits = raw.replace(/[^\d]/g, "");
@@ -27,6 +28,7 @@ function fmtDate(raw: string): string {
 }
 
 const TABS: { id: Tab; label: string; emoji: string }[] = [
+  { id: "ziyaret",  label: "Ziyaret & İşler",      emoji: "🤝" },
   { id: "website",  label: "Website",             emoji: "🌐" },
   { id: "updates",  label: "Güncellemeler",        emoji: "📝" },
   { id: "calendar", label: "İçerik Takvimi",       emoji: "📅" },
@@ -87,7 +89,19 @@ function Dashboard({
   isClientViewer: boolean;
   isAdmin: boolean;
 }) {
-  const [activeTab, setActiveTab] = useState<Tab>("calendar");
+  // Açılış sekmesi (v3.10.0): ziyaret / iş / bilgi varsa "Ziyaret & İşler", yoksa "Fatura" — boş içerik takvimiyle açılmasın.
+  const hasAgenda = !!client.agenda && (client.agenda.upcomingVisits.length + client.agenda.openTasks.length + client.agenda.doneTasks.length + client.agenda.sharedNotes.length + client.agenda.pastVisits.length > 0);
+  const [activeTab, setActiveTab] = useState<Tab>(hasAgenda ? "ziyaret" : (client.contentCalendar?.length ? "calendar" : "invoice"));
+  const router = useRouter();
+
+  // Ajanda işleri, ziyaretler ve ödemeler admin tarafında değişince müşteri sayfayı
+  // yenilemeden görsün: sayfa açıkken dakikada bir ve sekmeye geri dönüldüğünde tazelenir.
+  useEffect(() => {
+    const refresh = () => { if (document.visibilityState === "visible") router.refresh(); };
+    const id = window.setInterval(refresh, 60_000);
+    document.addEventListener("visibilitychange", refresh);
+    return () => { window.clearInterval(id); document.removeEventListener("visibilitychange", refresh); };
+  }, [router]);
 
   return (
     <div className="min-h-screen" style={{ background: "var(--bg)" }}>
@@ -140,6 +154,9 @@ function Dashboard({
               <p className="text-[13px] text-[#8a8a9a] mt-0.5">Aşağıdan dilediğiniz bölüme geçebilirsiniz.</p>
             </div>
           </div>
+          {client.agenda?.upcomingVisits[0] && (
+            <NextVisitBanner visit={client.agenda.upcomingVisits[0]} onOpen={() => setActiveTab("ziyaret")} />
+          )}
           {/* Inline özet */}
           <QuickSummary client={client} onNavigate={setActiveTab} isClientViewer={isClientViewer} />
         </div>
@@ -175,6 +192,7 @@ function Dashboard({
         </div>
 
         <div>
+          {activeTab === "ziyaret"  && <AgendaTab   client={client} />}
           {activeTab === "website"  && <WebsiteTab  client={client} />}
           {activeTab === "updates"  && <UpdatesTab  client={client} />}
           {activeTab === "calendar" && (
@@ -468,6 +486,99 @@ function UpdatesTab({ client }: { client: ClientData }) {
         ))}
       </div>
     </Section>
+  );
+}
+
+// ── Ajanda: sonraki ziyaret bandı + Ziyaret & İşler sekmesi ─────────────────
+function NextVisitBanner({ visit, onOpen }: { visit: NonNullable<ClientData["agenda"]>["upcomingVisits"][number]; onOpen: () => void }) {
+  return (
+    <button onClick={onOpen} className="w-full text-left rounded-2xl p-4 mb-3 flex items-center gap-3 transition-opacity hover:opacity-90"
+      style={{ background: "linear-gradient(135deg,rgba(124,58,237,0.12),rgba(236,72,153,0.06))", border: "1px solid rgba(168,85,247,0.3)" }}>
+      <span className="w-10 h-10 rounded-xl flex items-center justify-center text-[18px] flex-shrink-0" style={{ background: "rgba(168,85,247,0.15)" }}>🤝</span>
+      <span className="min-w-0">
+        <span className="block text-[11px] font-bold uppercase tracking-wide" style={{ color: "#c084fc" }}>Sonraki ziyaretimiz</span>
+        <span className="block text-[15px] font-semibold text-white">{visit.date}{visit.time ? ` · ${visit.time}` : ""}</span>
+        {visit.note && <span className="block text-[12px] text-[#8a8a9a] truncate">{visit.note}</span>}
+      </span>
+    </button>
+  );
+}
+
+function AgendaTab({ client }: { client: ClientData }) {
+  const a = client.agenda;
+  if (!a || (!a.upcomingVisits.length && !a.pastVisits.length && !a.openTasks.length && !a.doneTasks.length && !a.sharedNotes.length)) {
+    return <Empty text="Henüz planlanmış bir ziyaret veya iş yok." />;
+  }
+  const visitRow = (v: NonNullable<ClientData["agenda"]>["upcomingVisits"][number], i: number, past: boolean) => (
+    <div key={i} className="rounded-xl p-4 flex gap-4 items-start" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+      <span className="text-[11px] font-semibold px-2.5 py-1 rounded-lg flex-shrink-0 whitespace-nowrap mt-0.5"
+        style={past ? { background: "rgba(52,211,153,0.1)", color: "#34d399" } : { background: "rgba(168,85,247,0.1)", color: "#c084fc" }}>
+        {past ? "✓ Gerçekleşti" : v.time || "Tüm gün"}
+      </span>
+      <div className="min-w-0">
+        <p className="text-[14px] font-semibold text-white">{v.date}</p>
+        {v.note && <p className="text-[13px] text-[#c8c8d8] mt-0.5">{v.note}</p>}
+      </div>
+    </div>
+  );
+  return (
+    <div className="space-y-8">
+      {a.upcomingVisits.length > 0 && (
+        <Section title="Planlanan Ziyaretler" subtitle="Ekibimizin size gelmeyi planladığı günler">
+          <div className="space-y-2.5">{a.upcomingVisits.map((v, i) => visitRow(v, i, false))}</div>
+        </Section>
+      )}
+      {a.openTasks.length > 0 && (
+        <Section title="Üzerinde Çalıştığımız İşler" subtitle="Sizin için açık olan işler">
+          <div className="space-y-2.5">
+            {a.openTasks.map((t, i) => (
+              <div key={i} className="rounded-xl p-4 flex gap-3 items-start" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+                <span className="text-[11px] font-semibold px-2.5 py-1 rounded-lg flex-shrink-0 whitespace-nowrap mt-0.5"
+                  style={t.status === "Yapılıyor" ? { background: "rgba(251,146,60,0.12)", color: "#fb923c" } : { background: "rgba(96,165,250,0.12)", color: "#60a5fa" }}>
+                  {t.status}
+                </span>
+                <div className="min-w-0">
+                  <p className="text-[14px] text-white">{t.title}</p>
+                  {t.dueDate && <p className="text-[12px] text-[#8a8a9a] mt-0.5">Hedef: {t.dueDate}</p>}
+                </div>
+              </div>
+            ))}
+          </div>
+        </Section>
+      )}
+      {a.doneTasks.length > 0 && (
+        <Section title="Tamamlanan İşler" subtitle="Son 30 günde bitirdiklerimiz">
+          <div className="space-y-2.5">
+            {a.doneTasks.map((t, i) => (
+              <div key={i} className="rounded-xl p-4 flex gap-3 items-start" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+                <span className="text-[11px] font-semibold px-2.5 py-1 rounded-lg flex-shrink-0 whitespace-nowrap mt-0.5" style={{ background: "rgba(52,211,153,0.1)", color: "#34d399" }}>✓ Tamamlandı</span>
+                <div className="min-w-0">
+                  <p className="text-[14px] text-white">{t.title}</p>
+                  {t.completedAt && <p className="text-[12px] text-[#8a8a9a] mt-0.5">{t.completedAt}</p>}
+                </div>
+              </div>
+            ))}
+          </div>
+        </Section>
+      )}
+      {a.sharedNotes.length > 0 && (
+        <Section title="Bilgileriniz" subtitle="Ajansınızın sizin için tuttuğu sabit bilgiler">
+          <div className="space-y-2.5">
+            {a.sharedNotes.map((n, i) => (
+              <div key={i} className="rounded-xl p-4" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
+                <p className="text-[14px] font-semibold text-white mb-1.5">{n.title}</p>
+                <p className="text-[13px] text-[#c8c8d8] leading-relaxed whitespace-pre-wrap">{n.content}</p>
+              </div>
+            ))}
+          </div>
+        </Section>
+      )}
+      {a.pastVisits.length > 0 && (
+        <Section title="Geçmiş Ziyaretler" subtitle="Son gerçekleşen ziyaretlerimiz">
+          <div className="space-y-2.5">{a.pastVisits.map((v, i) => visitRow(v, i, true))}</div>
+        </Section>
+      )}
+    </div>
   );
 }
 

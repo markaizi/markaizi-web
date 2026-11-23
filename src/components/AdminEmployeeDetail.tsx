@@ -1,16 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
-export interface WorkLogEntry { id: string; date: string; description: string; amount: string | null; adminNote?: string | null; }
-export interface ArchivedPeriodSummary {
-  key: string; label: string; count: number; total: number;
-  advancesInPeriod: number; remaining: number; paid: boolean;
-}
-export interface PaymentHistoryEntry {
-  id: string; kind: "AVANS" | "DONEM_ODEMESI"; amount: number;
-  description: string | null; periodLabel: string | null; date: string;
+/** Çalışana yapılan ödeme — Finans'tan (Kasa) girilir, burada yalnızca görüntülenir (v3.6.0). */
+export interface EmployeePaymentRow {
+  id: string; date: string; title: string; amount: number; status: "ODENDI" | "BEKLIYOR"; source: "kasa" | "eski";
 }
 
 export interface EmployeeDetailData {
@@ -26,14 +22,7 @@ export interface EmployeeDetailData {
   workflowCanManageColumns: boolean;
   workflowSeeAllCards: boolean;
   adminCompleteCardsScope: "NONE" | "OWN" | "ALL";
-  adminCanPriceWorklogs: boolean;
-  adminCanViewEconomy: boolean;
-  adminCanManagePaymentLinks: boolean;
-  paymentDay: number | null;
-  currentPeriod: { key: string; label: string };
-  currentLogs: WorkLogEntry[];
-  archivedSummary: ArchivedPeriodSummary[];
-  paymentHistory: PaymentHistoryEntry[];
+  payments: EmployeePaymentRow[];
   assignments: {
     id: string;
     client: { id: string; slug: string; name: string };
@@ -44,80 +33,6 @@ export interface EmployeeDetailData {
     canViewInvoices: boolean;
     canManageInvoices: boolean;
   }[];
-}
-
-function parseAmount(raw: string | null): number {
-  if (!raw) return 0;
-  const digits = raw.replace(/[^\d]/g, "");
-  return digits ? parseInt(digits, 10) : 0;
-}
-
-function fmtLogDate(iso: string) {
-  return new Date(iso).toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" });
-}
-
-function WorkLogEditableRow({
-  log,
-  draftValue,
-  onDraftChange,
-  noteValue,
-  onNoteChange,
-  onSave,
-  onDelete,
-  saving,
-  deleting,
-}: {
-  log: WorkLogEntry;
-  draftValue: string;
-  onDraftChange: (v: string) => void;
-  noteValue: string;
-  onNoteChange: (v: string) => void;
-  onSave: () => void;
-  onDelete: () => void;
-  saving: boolean;
-  deleting: boolean;
-}) {
-  const [showNote, setShowNote] = useState(!!noteValue);
-  return (
-    <div className="px-6 py-4">
-      <div className="flex items-center gap-3 flex-wrap">
-        <div className="min-w-0 flex-1">
-          <p className="text-[11px] text-[#555] mb-1">{fmtLogDate(log.date)}</p>
-          <p className="text-[13px] text-white">{log.description}</p>
-        </div>
-        <input
-          value={draftValue}
-          onChange={(e) => onDraftChange(e.target.value)}
-          placeholder="Örn: 250 ₺"
-          className="w-28 px-2.5 py-1.5 rounded-lg text-[13px] text-white placeholder-[#555] outline-none focus:ring-1 focus:ring-purple-500/50 flex-shrink-0"
-          style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
-        />
-        <button
-          onClick={() => setShowNote((v) => !v)}
-          title="Çalışana görünecek bir not ekle (örn. neden normalden yüksek)"
-          className="text-[11px] font-semibold flex-shrink-0 transition-colors"
-          style={{ color: noteValue ? "#fbbf24" : "#555" }}
-        >
-          📝{noteValue ? " Not var" : " Not ekle"}
-        </button>
-        <button onClick={onSave} disabled={saving} className="text-[11px] font-semibold text-[#c084fc] hover:text-white transition-colors flex-shrink-0">
-          {saving ? "..." : "Kaydet"}
-        </button>
-        <button onClick={onDelete} disabled={deleting} className="text-[11px] text-[#555] hover:text-red-400 transition-colors flex-shrink-0">
-          {deleting ? "..." : "Sil"}
-        </button>
-      </div>
-      {showNote && (
-        <input
-          value={noteValue}
-          onChange={(e) => onNoteChange(e.target.value)}
-          placeholder="Örn: Müşteri çok beğendi, normalden yüksek yazdım"
-          className="w-full mt-2.5 px-2.5 py-1.5 rounded-lg text-[12.5px] text-white placeholder-[#555] outline-none focus:ring-1 focus:ring-amber-500/50"
-          style={{ background: "var(--bg)", border: "1px solid rgba(251,191,36,0.25)" }}
-        />
-      )}
-    </div>
-  );
 }
 
 interface ClientOption { id: string; slug: string; name: string; }
@@ -162,14 +77,6 @@ const WORKFLOW_TOGGLES = [
   { key: "workflowCanDeleteAnyCard" as const, label: "Tüm Kartları Silme", desc: "Başkasının oluşturduğu kartları da silebilir." },
   { key: "workflowCanManageColumns" as const, label: "Sütun Yönetimi", desc: "Sütun ekler, yeniden adlandırır, siler." },
   { key: "workflowSeeAllCards" as const, label: "Tüm Kartları Görme", desc: "Kapalıysa panoda yalnızca kendine atanmış kartları ve kimseye atanmamış kartları görür." },
-];
-
-// Yönetici Yetkileri — normalde sadece admin'e özel işlemler, admin açıkça
-// izin verdiğinde tek tek açılır. workflowAccess'ten bağımsızdır.
-const ADMIN_TOGGLES = [
-  { key: "adminCanPriceWorklogs" as const, label: "Çalışanlara Ücret Girme", desc: "Tüm çalışanların bu dönem iş kayıtlarını görüp karşılarına ücret yazabilir (Ücret Girişi sayfası)." },
-  { key: "adminCanViewEconomy" as const, label: "Ekonomiyi Görme", desc: "Ekonomi sayfasını salt okunur görebilir — gelir/gider ekleyemez, kayıt silemez." },
-  { key: "adminCanManagePaymentLinks" as const, label: "Ödeme Linklerini Yönetme", desc: "Ödeme Linkleri ekranına erişir; yalnızca kendi oluşturduğu linkleri görür ve iptal eder, firma bilgilerini göremez. PayTR inceleme hesabı için uygundur." },
 ];
 
 const COMPLETE_SCOPE_OPTIONS: { value: "NONE" | "OWN" | "ALL"; label: string }[] = [
@@ -222,9 +129,6 @@ export default function AdminEmployeeDetail({
     workflowCanDeleteAnyCard: employee.workflowCanDeleteAnyCard,
     workflowCanManageColumns: employee.workflowCanManageColumns,
     workflowSeeAllCards: employee.workflowSeeAllCards,
-    adminCanPriceWorklogs: employee.adminCanPriceWorklogs,
-    adminCanViewEconomy: employee.adminCanViewEconomy,
-    adminCanManagePaymentLinks: employee.adminCanManagePaymentLinks,
   });
   const [wfLoading, setWfLoading] = useState<string | null>(null);
 
@@ -308,250 +212,6 @@ export default function AdminEmployeeDetail({
         method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify(updates),
       });
     }
-  }
-
-  // ── Ödeme günü ────────────────────────────────────────────────────────────
-  const [paymentDay, setPaymentDay] = useState<number | null>(employee.paymentDay);
-  const [paymentDaySaving, setPaymentDaySaving] = useState(false);
-
-  async function handleSavePaymentDay(val: number | null) {
-    setPaymentDay(val);
-    setPaymentDaySaving(true);
-    await fetch(`/api/musteri/admin/employees/${employee.id}`, {
-      method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ paymentDay: val }),
-    });
-    setPaymentDaySaving(false);
-    router.refresh();
-  }
-
-  // ── İş Kayıtları — mevcut dönem ──────────────────────────────────────────
-  const [currentLogs, setCurrentLogs] = useState(employee.currentLogs);
-  const [amountDrafts, setAmountDrafts] = useState<Record<string, string>>(
-    () => Object.fromEntries(employee.currentLogs.map((l) => [l.id, l.amount ?? ""]))
-  );
-  const [noteDrafts, setNoteDrafts] = useState<Record<string, string>>(
-    () => Object.fromEntries(employee.currentLogs.map((l) => [l.id, l.adminNote ?? ""]))
-  );
-  const [savingLogId, setSavingLogId] = useState<string | null>(null);
-  const [deletingLogId, setDeletingLogId] = useState<string | null>(null);
-  const [bulkSavingCurrent, setBulkSavingCurrent] = useState(false);
-
-  async function handleBulkSaveCurrent() {
-    const toSave = currentLogs.filter((l) =>
-      (amountDrafts[l.id] ?? "").trim() !== (l.amount ?? "") || (noteDrafts[l.id] ?? "").trim() !== (l.adminNote ?? "")
-    );
-    if (toSave.length === 0) return;
-    setBulkSavingCurrent(true);
-    const results = await Promise.all(toSave.map(async (l) => {
-      const amount = amountDrafts[l.id]?.trim() || null;
-      const adminNote = noteDrafts[l.id]?.trim() || null;
-      const res = await fetch(`/api/musteri/admin/worklogs/${l.id}`, {
-        method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ amount, adminNote }),
-      });
-      const json = await res.json();
-      return { id: l.id, ok: !!json.ok, amount: json.log?.amount as string | null | undefined, adminNote: json.log?.adminNote as string | null | undefined };
-    }));
-    setCurrentLogs((prev) => prev.map((l) => {
-      const r = results.find((x) => x.id === l.id);
-      return r?.ok ? { ...l, amount: r.amount ?? null, adminNote: r.adminNote ?? null } : l;
-    }));
-    setBulkSavingCurrent(false);
-  }
-
-  async function handleSaveAmount(logId: string) {
-    setSavingLogId(logId);
-    const amount = amountDrafts[logId]?.trim() || null;
-    const adminNote = noteDrafts[logId]?.trim() || null;
-    const res = await fetch(`/api/musteri/admin/worklogs/${logId}`, {
-      method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ amount, adminNote }),
-    });
-    const json = await res.json();
-    setSavingLogId(null);
-    if (json.ok) {
-      setCurrentLogs((prev) => prev.map((l) => (l.id === logId ? { ...l, amount: json.log.amount, adminNote: json.log.adminNote } : l)));
-    }
-  }
-
-  async function handleDeleteLog(logId: string) {
-    if (!confirm("Bu iş kaydını sil?")) return;
-    setDeletingLogId(logId);
-    await fetch(`/api/musteri/admin/worklogs/${logId}`, { method: "DELETE" });
-    setCurrentLogs((prev) => prev.filter((l) => l.id !== logId));
-    setDeletingLogId(null);
-  }
-
-  const currentTotal = currentLogs.reduce((s, l) => s + parseAmount(l.amount), 0);
-
-  // ── İş Kayıtları — arşiv (lazy-load) ─────────────────────────────────────
-  const [summaries, setSummaries] = useState(employee.archivedSummary);
-  const [expandedKey, setExpandedKey] = useState<string | null>(null);
-  const [loadingKey, setLoadingKey] = useState<string | null>(null);
-  const [archivedEntries, setArchivedEntries] = useState<Record<string, WorkLogEntry[]>>({});
-  const [archivedAmountDrafts, setArchivedAmountDrafts] = useState<Record<string, string>>({});
-  const [archivedNoteDrafts, setArchivedNoteDrafts] = useState<Record<string, string>>({});
-  const [archivedSavingId, setArchivedSavingId] = useState<string | null>(null);
-  const [archivedDeletingId, setArchivedDeletingId] = useState<string | null>(null);
-  const [bulkSavingArchived, setBulkSavingArchived] = useState<string | null>(null);
-
-  async function handleBulkSaveArchived(periodKey: string) {
-    const entries = archivedEntries[periodKey] ?? [];
-    const toSave = entries.filter((l) =>
-      (archivedAmountDrafts[l.id] ?? "").trim() !== (l.amount ?? "") || (archivedNoteDrafts[l.id] ?? "").trim() !== (l.adminNote ?? "")
-    );
-    if (toSave.length === 0) return;
-    setBulkSavingArchived(periodKey);
-    const results = await Promise.all(toSave.map(async (l) => {
-      const amount = archivedAmountDrafts[l.id]?.trim() || null;
-      const adminNote = archivedNoteDrafts[l.id]?.trim() || null;
-      const res = await fetch(`/api/musteri/admin/worklogs/${l.id}`, {
-        method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ amount, adminNote }),
-      });
-      const json = await res.json();
-      return { id: l.id, ok: !!json.ok, amount: json.log?.amount as string | null | undefined, adminNote: json.log?.adminNote as string | null | undefined, before: l.amount };
-    }));
-    setArchivedEntries((prev) => ({
-      ...prev,
-      [periodKey]: (prev[periodKey] ?? []).map((l) => {
-        const r = results.find((x) => x.id === l.id);
-        return r?.ok ? { ...l, amount: r.amount ?? null, adminNote: r.adminNote ?? null } : l;
-      }),
-    }));
-    const delta = results.reduce((s, r) => (r.ok ? s + (parseAmount(r.amount ?? null) - parseAmount(r.before)) : s), 0);
-    if (delta !== 0) {
-      setSummaries((prev) => prev.map((s) => (s.key === periodKey ? { ...s, total: s.total + delta } : s)));
-    }
-    setBulkSavingArchived(null);
-  }
-
-  // Ödeme günü değişince (handleSavePaymentDay → router.refresh()) sunucudan gelen
-  // yeni employee.currentPeriod/currentLogs/archivedSummary ile client state'i
-  // yeniden senkronize et — useState'in ilk değeri prop değişince kendiliğinden
-  // güncellenmez.
-  useEffect(() => {
-    setCurrentLogs(employee.currentLogs);
-    setAmountDrafts(Object.fromEntries(employee.currentLogs.map((l) => [l.id, l.amount ?? ""])));
-    setNoteDrafts(Object.fromEntries(employee.currentLogs.map((l) => [l.id, l.adminNote ?? ""])));
-    setSummaries(employee.archivedSummary);
-    setArchivedEntries({});
-    setArchivedAmountDrafts({});
-    setArchivedNoteDrafts({});
-    setExpandedKey(null);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [employee.currentPeriod.key]);
-
-  async function handleExpandPeriod(periodKey: string) {
-    if (expandedKey === periodKey) { setExpandedKey(null); return; }
-    setExpandedKey(periodKey);
-    if (archivedEntries[periodKey]) return;
-    setLoadingKey(periodKey);
-    const res = await fetch(`/api/musteri/admin/worklogs/period?userId=${employee.id}&periodEnd=${periodKey}`);
-    const json = await res.json();
-    setLoadingKey(null);
-    if (json.logs) {
-      setArchivedEntries((prev) => ({ ...prev, [periodKey]: json.logs }));
-      setArchivedAmountDrafts((prev) => ({
-        ...prev,
-        ...Object.fromEntries(json.logs.map((l: WorkLogEntry) => [l.id, l.amount ?? ""])),
-      }));
-      setArchivedNoteDrafts((prev) => ({
-        ...prev,
-        ...Object.fromEntries(json.logs.map((l: WorkLogEntry) => [l.id, l.adminNote ?? ""])),
-      }));
-    }
-  }
-
-  async function handleSaveArchivedAmount(periodKey: string, logId: string) {
-    setArchivedSavingId(logId);
-    const before = (archivedEntries[periodKey] ?? []).find((l) => l.id === logId);
-    const amount = archivedAmountDrafts[logId]?.trim() || null;
-    const adminNote = archivedNoteDrafts[logId]?.trim() || null;
-    const res = await fetch(`/api/musteri/admin/worklogs/${logId}`, {
-      method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ amount, adminNote }),
-    });
-    const json = await res.json();
-    setArchivedSavingId(null);
-    if (json.ok) {
-      setArchivedEntries((prev) => ({
-        ...prev,
-        [periodKey]: (prev[periodKey] ?? []).map((l) => (l.id === logId ? { ...l, amount: json.log.amount, adminNote: json.log.adminNote } : l)),
-      }));
-      const delta = parseAmount(json.log.amount) - parseAmount(before?.amount ?? null);
-      if (delta !== 0) {
-        setSummaries((prev) => prev.map((s) => (s.key === periodKey ? { ...s, total: s.total + delta } : s)));
-      }
-    }
-  }
-
-  async function handleDeleteArchivedLog(periodKey: string, logId: string) {
-    if (!confirm("Bu iş kaydını sil?")) return;
-    setArchivedDeletingId(logId);
-    const before = (archivedEntries[periodKey] ?? []).find((l) => l.id === logId);
-    await fetch(`/api/musteri/admin/worklogs/${logId}`, { method: "DELETE" });
-    setArchivedEntries((prev) => ({
-      ...prev,
-      [periodKey]: (prev[periodKey] ?? []).filter((l) => l.id !== logId),
-    }));
-    setSummaries((prev) => prev.map((s) => (s.key === periodKey
-      ? { ...s, count: s.count - 1, total: s.total - parseAmount(before?.amount ?? null) }
-      : s)));
-    setArchivedDeletingId(null);
-  }
-
-  // ── Avans / Ara Ödeme ─────────────────────────────────────────────────────
-  const [showAdvanceForm, setShowAdvanceForm] = useState(false);
-  const [advanceAmount, setAdvanceAmount] = useState("");
-  const [advanceDesc, setAdvanceDesc] = useState("");
-  const [advanceDate, setAdvanceDate] = useState(() => new Date().toISOString().slice(0, 10));
-  const [advanceSaving, setAdvanceSaving] = useState(false);
-  const [advanceError, setAdvanceError] = useState("");
-  const [paymentHistory, setPaymentHistory] = useState(employee.paymentHistory);
-
-  async function handleAddAdvance(e: React.FormEvent) {
-    e.preventDefault();
-    if (!advanceAmount.trim()) return;
-    setAdvanceSaving(true);
-    setAdvanceError("");
-    const res = await fetch(`/api/musteri/admin/employees/${employee.id}/advance`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ amount: advanceAmount.trim(), description: advanceDesc.trim() || undefined, date: advanceDate }),
-    });
-    const json = await res.json();
-    setAdvanceSaving(false);
-    if (!res.ok) { setAdvanceError(json.error ?? "Kaydedilemedi."); return; }
-    setPaymentHistory((prev) => [
-      { id: json.payment.id, kind: "AVANS", amount: parseAmount(advanceAmount), description: advanceDesc.trim() || null, periodLabel: null, date: new Date(advanceDate).toISOString() },
-      ...prev,
-    ]);
-    setAdvanceAmount("");
-    setAdvanceDesc("");
-    setShowAdvanceForm(false);
-    router.refresh();
-  }
-
-  // ── Dönem Ödemesi ─────────────────────────────────────────────────────────
-  const [payingKey, setPayingKey] = useState<string | null>(null);
-  const [payErrorKey, setPayErrorKey] = useState<string | null>(null);
-  const [payError, setPayError] = useState<string | null>(null);
-
-  async function handlePayPeriod(periodKey: string) {
-    setPayingKey(periodKey);
-    setPayErrorKey(null);
-    setPayError(null);
-    const res = await fetch(`/api/musteri/admin/employees/${employee.id}/period-payment`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ periodEnd: periodKey }),
-    });
-    const json = await res.json();
-    setPayingKey(null);
-    if (!res.ok) { setPayErrorKey(periodKey); setPayError(json.error ?? "Ödeme kaydedilemedi."); return; }
-    setSummaries((prev) => prev.map((s) => (s.key === periodKey ? { ...s, paid: true } : s)));
-    setPaymentHistory((prev) => [
-      { id: json.payment.id, kind: "DONEM_ODEMESI", amount: json.remaining, description: null, periodLabel: summaries.find((s) => s.key === periodKey)?.label ?? null, date: new Date().toISOString() },
-      ...prev,
-    ]);
-    router.refresh();
   }
 
   const [showAssignments, setShowAssignments] = useState(false);
@@ -700,30 +360,6 @@ export default function AdminEmployeeDetail({
               </div>
             </div>
 
-            {ADMIN_TOGGLES.map((t) => {
-              const active = wf[t.key];
-              return (
-                <div key={t.key} className="flex items-center justify-between gap-4 py-2">
-                  <div className="min-w-0">
-                    <p className="text-[13px] font-semibold text-white">{t.label}</p>
-                    <p className="text-[11px] text-[#8a8a9a] mt-0.5">{t.desc}</p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => handleWfToggle(t.key, !active)}
-                    disabled={wfLoading === t.key}
-                    className="flex-shrink-0 relative w-11 h-6 rounded-full transition-colors"
-                    style={{ background: active ? "rgba(251,191,36,0.6)" : "var(--surface-2, #141420)", border: "1px solid var(--border)" }}
-                    aria-label={t.label}
-                  >
-                    <span
-                      className="absolute top-[2px] w-5 h-5 rounded-full bg-white transition-transform"
-                      style={{ transform: active ? "translateX(21px)" : "translateX(2px)" }}
-                    />
-                  </button>
-                </div>
-              );
-            })}
           </div>
         </div>
 
@@ -745,243 +381,34 @@ export default function AdminEmployeeDetail({
           </button>
         </div>
 
-        {/* Ödeme Günü */}
+        {/* Ödemeler — Finans'tan girilir, burada yalnızca görünür (v3.6.0) */}
         <div className="rounded-2xl p-6 space-y-3" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
-          <div>
-            <p className="font-semibold text-white text-[14px]">Ödeme Günü</p>
-            <p className="text-[12px] text-[#8a8a9a] mt-0.5">İş kayıtları bu güne göre dönemlere ayrılıp arşivlenir. Çalışan kendi panelinde bunu görür.</p>
-          </div>
-          <select
-            value={paymentDay ?? ""}
-            onChange={(e) => handleSavePaymentDay(e.target.value ? Number(e.target.value) : null)}
-            disabled={paymentDaySaving}
-            className="w-full px-3 py-2.5 rounded-lg text-[14px] text-white outline-none focus:ring-1 focus:ring-purple-500/50"
-            style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
-          >
-            <option value="">Belirtilmedi (takvim ayına göre arşivlenir)</option>
-            {Array.from({ length: 31 }, (_, i) => i + 1).map((d) => (
-              <option key={d} value={d}>Her ayın {d}. günü</option>
-            ))}
-          </select>
-        </div>
-
-        {/* Avans / Ara Ödeme */}
-        <div className="rounded-2xl p-6 space-y-3" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
-          <div className="flex items-center justify-between gap-3 flex-wrap">
+          <div className="flex items-start justify-between gap-3 flex-wrap">
             <div>
-              <p className="font-semibold text-white text-[14px]">Avans / Ara Ödeme</p>
-              <p className="text-[12px] text-[#8a8a9a] mt-0.5">Döneme bağlı olmadan istenildiği an verilebilir — anında Ekonomi&apos;ye gider yazılır.</p>
+              <p className="font-semibold text-white text-[14px]">Ödemeler</p>
+              <p className="text-[12px] text-[#8a8a9a] mt-0.5">
+                Maaş ve avanslar Finans&apos;tan girilir (kayıtta &quot;Çalışan&quot; seçilerek). Çalışan kendi panelinde aynı listeyi görür; buradan değiştirilemez.
+              </p>
             </div>
-            <button
-              type="button"
-              onClick={() => setShowAdvanceForm((v) => !v)}
-              className="text-[13px] font-semibold px-4 min-h-[44px] rounded-xl transition-all flex-shrink-0"
-              style={{ background: "rgba(251,191,36,0.1)", border: "1px solid rgba(251,191,36,0.25)", color: "#fbbf24" }}
-            >
-              {showAdvanceForm ? "İptal" : "+ Avans Ver"}
-            </button>
+            <Link href="/musteri/admin/finans" className="text-[13px] font-semibold px-4 py-2 rounded-xl flex-shrink-0"
+              style={{ background: "rgba(168,85,247,0.1)", border: "1px solid rgba(168,85,247,0.25)", color: "#c084fc" }}>Finans&apos;a git</Link>
           </div>
-          {showAdvanceForm && (
-            <form onSubmit={handleAddAdvance} className="space-y-3 pt-1">
-              <div className="grid grid-cols-2 gap-3">
-                <input
-                  value={advanceAmount}
-                  onChange={(e) => setAdvanceAmount(e.target.value)}
-                  placeholder="Örn: 2.000 ₺"
-                  className="w-full px-3.5 py-2.5 rounded-xl text-[14px] text-white placeholder-[#555] outline-none"
-                  style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
-                />
-                <input
-                  type="date"
-                  value={advanceDate}
-                  onChange={(e) => setAdvanceDate(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl text-[14px] text-white outline-none"
-                  style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
-                />
+          {employee.payments.length === 0 && <p className="text-[13px] text-[#8a8a9a] py-2">Kayıtlı ödeme yok.</p>}
+          {employee.payments.map((p) => (
+            <div key={p.id} className="flex items-center justify-between gap-3 py-2.5" style={{ borderTop: "1px solid var(--border)" }}>
+              <div className="min-w-0">
+                <p className="text-[13px] text-white">{p.title}</p>
+                <p className="text-[11px] text-[#8a8a9a]">
+                  {new Date(p.date).toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" })}
+                  {p.status === "BEKLIYOR" ? " · Bekliyor" : ""}{p.source === "eski" ? " · eski kayıt" : ""}
+                </p>
               </div>
-              <input
-                value={advanceDesc}
-                onChange={(e) => setAdvanceDesc(e.target.value)}
-                placeholder="Açıklama (opsiyonel)"
-                className="w-full px-3.5 py-2.5 rounded-xl text-[14px] text-white placeholder-[#555] outline-none"
-                style={{ background: "var(--bg)", border: "1px solid var(--border)" }}
-              />
-              {advanceError && <p className="text-[12px]" style={{ color: "#f87171" }}>{advanceError}</p>}
-              <button type="submit" disabled={advanceSaving} className="btn btn-primary text-sm px-5 py-2">
-                {advanceSaving ? "Kaydediliyor..." : "Avansı Kaydet"}
-              </button>
-            </form>
-          )}
-          {paymentHistory.length > 0 && (
-            <div className="pt-2 space-y-1.5" style={{ borderTop: paymentHistory.length > 0 ? "1px solid var(--border)" : undefined }}>
-              <p className="text-[11px] font-semibold text-[#8a8a9a] uppercase tracking-wide pt-2">Ödeme Geçmişi</p>
-              {paymentHistory.map((p) => (
-                <div key={p.id} className="flex items-center justify-between gap-3 text-[13px] py-1">
-                  <span className="text-[#c8c8d8] truncate">
-                    {p.kind === "AVANS" ? "Avans" : `Dönem Ödemesi${p.periodLabel ? ` — ${p.periodLabel}` : ""}`}
-                    {p.description ? ` · ${p.description}` : ""}
-                  </span>
-                  <span className="flex-shrink-0 flex items-center gap-2">
-                    <span className="text-[#555] text-[11px]">{fmtLogDate(p.date)}</span>
-                    <span className="font-bold" style={{ color: "#f87171" }}>{p.amount.toLocaleString("tr-TR")} ₺</span>
-                  </span>
-                </div>
-              ))}
+              <p className="text-[14px] font-bold whitespace-nowrap" style={{ color: p.status === "ODENDI" ? "#34d399" : "#fbbf24" }}>
+                {p.amount.toLocaleString("tr-TR")} ₺
+              </p>
             </div>
-          )}
+          ))}
         </div>
-
-        {/* İş Kayıtları — Mevcut Dönem */}
-        <div className="rounded-2xl overflow-hidden" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
-          <div className="px-6 py-4 flex items-center justify-between gap-3 flex-wrap" style={{ borderBottom: "1px solid var(--border)" }}>
-            <div>
-              <p className="font-semibold text-white text-[14px]">Bu Dönem — {employee.currentPeriod.label}</p>
-              <p className="text-[12px] text-[#8a8a9a] mt-0.5">Çalışanın günlük girdiği işler — karşısına ücret yaz.</p>
-            </div>
-            <div className="flex items-center gap-2 flex-shrink-0">
-              <span className="text-[12px] font-semibold px-2.5 py-1 rounded-full" style={{ background: "rgba(52,211,153,0.12)", color: "#34d399" }}>
-                Toplam {currentTotal.toLocaleString("tr-TR")} ₺
-              </span>
-              {currentLogs.length > 0 && (
-                <button
-                  onClick={handleBulkSaveCurrent}
-                  disabled={bulkSavingCurrent}
-                  className="text-[11px] font-semibold px-2.5 py-1 rounded-full transition-colors"
-                  style={{ background: "rgba(168,85,247,0.12)", color: "#c084fc" }}
-                >
-                  {bulkSavingCurrent ? "Kaydediliyor..." : "Toplu Kaydet"}
-                </button>
-              )}
-              {currentLogs.length > 0 && (
-                <a
-                  href={`/api/musteri/admin/worklogs/pdf?userId=${employee.id}&periodEnd=${employee.currentPeriod.key}`}
-                  className="text-[11px] font-semibold px-2.5 py-1 rounded-full transition-colors"
-                  style={{ background: "rgba(96,165,250,0.12)", color: "#60a5fa" }}
-                >
-                  PDF İndir
-                </a>
-              )}
-            </div>
-          </div>
-          <div className="divide-y" style={{ borderColor: "var(--border)" }}>
-            {currentLogs.map((l) => (
-              <WorkLogEditableRow
-                key={l.id}
-                log={l}
-                draftValue={amountDrafts[l.id] ?? ""}
-                onDraftChange={(v) => setAmountDrafts((d) => ({ ...d, [l.id]: v }))}
-                noteValue={noteDrafts[l.id] ?? ""}
-                onNoteChange={(v) => setNoteDrafts((d) => ({ ...d, [l.id]: v }))}
-                onSave={() => handleSaveAmount(l.id)}
-                onDelete={() => handleDeleteLog(l.id)}
-                saving={savingLogId === l.id}
-                deleting={deletingLogId === l.id}
-              />
-            ))}
-            {currentLogs.length === 0 && (
-              <p className="text-[13px] text-[#8a8a9a] text-center py-8">Bu dönemde henüz iş kaydı yok.</p>
-            )}
-          </div>
-        </div>
-
-        {/* İş Kayıtları — Arşiv */}
-        {summaries.some((s) => s.count > 0) && (
-          <div className="space-y-3">
-            <p className="text-[13px] font-bold uppercase tracking-wide text-[#8a8a9a] px-1">Geçmiş Dönemler</p>
-            {summaries.filter((s) => s.count > 0).map((summary) => (
-              <div key={summary.key} className="rounded-2xl overflow-hidden" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
-                <div className="flex items-center justify-between gap-3 px-5 py-4 flex-wrap">
-                  <button
-                    onClick={() => handleExpandPeriod(summary.key)}
-                    className="flex items-center gap-3 text-left flex-1 min-w-0"
-                  >
-                    <svg viewBox="0 0 24 24" fill="none" className={`w-4 h-4 text-[#555] flex-shrink-0 transition-transform ${expandedKey === summary.key ? "rotate-180" : ""}`} stroke="currentColor" strokeWidth="2.5">
-                      <path d="M6 9l6 6 6-6" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                    <div className="min-w-0">
-                      <p className="text-[14px] font-semibold text-white">{summary.label}</p>
-                      <p className="text-[12px] text-[#8a8a9a] mt-0.5">{summary.count} kayıt</p>
-                    </div>
-                  </button>
-                  <div className="flex items-center gap-2 flex-shrink-0">
-                    <span className="text-[13px] font-bold" style={{ color: "#34d399" }}>
-                      {summary.total > 0 ? `${summary.total.toLocaleString("tr-TR")} ₺` : "—"}
-                    </span>
-                    <a
-                      href={`/api/musteri/admin/worklogs/pdf?userId=${employee.id}&periodEnd=${summary.key}`}
-                      className="text-[11px] font-semibold px-2.5 py-1 rounded-full transition-colors"
-                      style={{ background: "rgba(96,165,250,0.12)", color: "#60a5fa" }}
-                    >
-                      PDF
-                    </a>
-                  </div>
-                </div>
-                <div className="px-5 pb-4 flex items-center justify-between gap-3 flex-wrap" style={{ borderTop: "1px solid var(--border)" }}>
-                  <div className="pt-3 min-w-0">
-                    {summary.paid ? (
-                      <span className="text-[12px] font-semibold" style={{ color: "#34d399" }}>✓ Ödendi</span>
-                    ) : summary.advancesInPeriod > 0 ? (
-                      <p className="text-[12px] text-[#8a8a9a]">
-                        Bu dönemde avans: {summary.advancesInPeriod.toLocaleString("tr-TR")} ₺ · Ödenecek: <span className="font-semibold text-white">{summary.remaining.toLocaleString("tr-TR")} ₺</span>
-                      </p>
-                    ) : (
-                      <p className="text-[12px] text-[#8a8a9a]">Ödenecek: <span className="font-semibold text-white">{summary.remaining.toLocaleString("tr-TR")} ₺</span></p>
-                    )}
-                    {payErrorKey === summary.key && payError && (
-                      <p className="text-[11px] mt-1" style={{ color: "#f87171" }}>{payError}</p>
-                    )}
-                  </div>
-                  {!summary.paid && (
-                    <button
-                      onClick={() => handlePayPeriod(summary.key)}
-                      disabled={payingKey === summary.key}
-                      className="mt-3 text-[12px] font-semibold px-3.5 min-h-[44px] rounded-lg transition-colors flex-shrink-0"
-                      style={{ background: "rgba(52,211,153,0.12)", color: "#34d399", border: "1px solid rgba(52,211,153,0.25)" }}
-                    >
-                      {payingKey === summary.key ? "Ödeniyor..." : "Öde"}
-                    </button>
-                  )}
-                </div>
-                {expandedKey === summary.key && (
-                  <div style={{ borderTop: "1px solid var(--border)" }}>
-                    {loadingKey !== summary.key && (archivedEntries[summary.key] ?? []).length > 0 && (
-                      <div className="px-6 py-3 flex justify-end" style={{ borderBottom: "1px solid var(--border)" }}>
-                        <button
-                          onClick={() => handleBulkSaveArchived(summary.key)}
-                          disabled={bulkSavingArchived === summary.key}
-                          className="text-[11px] font-semibold px-2.5 py-1 rounded-full transition-colors"
-                          style={{ background: "rgba(168,85,247,0.12)", color: "#c084fc" }}
-                        >
-                          {bulkSavingArchived === summary.key ? "Kaydediliyor..." : "Toplu Kaydet"}
-                        </button>
-                      </div>
-                    )}
-                    <div className="divide-y" style={{ borderColor: "var(--border)" }}>
-                    {loadingKey === summary.key ? (
-                      <p className="text-[13px] text-[#555] text-center py-6">Yükleniyor...</p>
-                    ) : (
-                      (archivedEntries[summary.key] ?? []).map((l) => (
-                        <WorkLogEditableRow
-                          key={l.id}
-                          log={l}
-                          draftValue={archivedAmountDrafts[l.id] ?? ""}
-                          onDraftChange={(v) => setArchivedAmountDrafts((d) => ({ ...d, [l.id]: v }))}
-                          noteValue={archivedNoteDrafts[l.id] ?? ""}
-                          onNoteChange={(v) => setArchivedNoteDrafts((d) => ({ ...d, [l.id]: v }))}
-                          onSave={() => handleSaveArchivedAmount(summary.key, l.id)}
-                          onDelete={() => handleDeleteArchivedLog(summary.key, l.id)}
-                          saving={archivedSavingId === l.id}
-                          deleting={archivedDeletingId === l.id}
-                        />
-                      ))
-                    )}
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
       </main>
 
       {showAssignments && (

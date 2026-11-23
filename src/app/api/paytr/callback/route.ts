@@ -87,23 +87,40 @@ export async function POST(req: NextRequest) {
     firstSuccess = true;
 
     // Önce linki kapat: aynı link için eşzamanlı iki başarılı bildirim gelirse yalnızca
-    // ilki (count > 0) Ekonomi'ye gelir yazar → mükerrer GELIR kaydı oluşmaz.
+    // ilki (count > 0) Kasa'ya yazar → mükerrer kayıt oluşmaz.
     const closed = await tx.paymentLink.updateMany({
       where: { id: link.id, status: "AKTIF" },
       data: { status: "ODENDI", paidAt: new Date() },
     });
 
-    // Test ödemeleri Ekonomi'ye gelir olarak yazılmaz
+    // Test ödemeleri Kasa'ya yazılmaz. v3.5.0: tek kaynak Kasa — firmaya bağlı linkte aynı
+    // tutardaki en eski bekleyen müşteri alacağı "alındı" yapılır; yoksa yeni gelir kaydı açılır.
     if (closed.count > 0 && !testMode) {
-      const t = await tx.transaction.create({
-        data: {
-          type: "GELIR",
-          amount: String(Math.round(attempt.amountKurus / 100)),
-          description: `PayTR · ${link.title}`.slice(0, 200),
-          date: new Date(),
-        },
-      });
-      await tx.paymentLink.update({ where: { id: link.id }, data: { transactionId: t.id } });
+      const amount = Math.round(attempt.amountKurus / 100);
+      const pending = link.clientId
+        ? await tx.kasaEntry.findFirst({
+            where: {
+              clientId: link.clientId, deletedAt: null, status: "BEKLIYOR", amount,
+              category: "Müşteri Ödemesi", direction: { in: ["ALACAK", "GELIR"] },
+            },
+            orderBy: { dueDate: "asc" },
+            select: { id: true },
+          })
+        : null;
+      if (pending) {
+        await tx.kasaEntry.update({
+          where: { id: pending.id },
+          data: { status: "ODENDI", paidAt: new Date(), notes: `PayTR · ${link.title}`.slice(0, 200) },
+        });
+      } else {
+        await tx.kasaEntry.create({
+          data: {
+            title: `PayTR · ${link.title}`.slice(0, 200), amount, direction: "GELIR",
+            category: link.clientId ? "Müşteri Ödemesi" : "genel", status: "ODENDI",
+            paidAt: new Date(), dueDate: new Date(), clientId: link.clientId,
+          },
+        });
+      }
     }
   });
 

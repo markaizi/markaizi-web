@@ -55,6 +55,9 @@
 - Çalışma saatleri tek doğru: **Pazartesi–Cumartesi 09:00–20:00** (Pazar kapalı). Tüm sayfa, JSON-LD ve `llms.txt` bununla tutarlı olmalı.
 - Alan adı her yerde **markaizi.com.tr** (`.tr`'siz `markaizi.com` yazılmaz).
 - `.env*` dosyalarını okuma/commit etme; sır (secret) yazdırma.
+- **Repo herkese açıktır.** Müşteri ücreti / tahsilat tutarı, kişisel finans (kasa, borç, maaş), kişi adı ve müşteri bazlı
+  veri içeren hiçbir şey commit edilmez: `CHANGELOG.md`, `PROJE-DURUM.md`, kod yorumları ve commit mesajları dahil.
+  Bu tür ayrıntılar `docs/ozel/`, tek seferlik veri scriptleri `scripts/ozel/` altında tutulur (ikisi de `.gitignore`'da).
 
 ## 5. Teknik ortam notları
 

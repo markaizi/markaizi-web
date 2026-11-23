@@ -2,16 +2,10 @@ import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { getInvoiceStage, OVERDUE_GRACE_DAYS } from "@/lib/invoiceStage";
+import { listClientPayments } from "@/lib/clientPayments";
 import AdminClientDetail, { type ClientDetailData } from "@/components/AdminClientDetail";
 
 export const dynamic = "force-dynamic";
-
-function parseAmount(raw: string | null): number {
-  if (!raw) return 0;
-  const digits = raw.replace(/[^\d]/g, "");
-  return digits ? parseInt(digits, 10) : 0;
-}
 
 export async function generateMetadata(
   { params }: { params: Promise<{ slug: string }> }
@@ -39,7 +33,6 @@ export default async function AdminClientPage({
       where: { slug },
       include: {
         updates: { orderBy: { date: "desc" } },
-        invoices: { orderBy: { id: "desc" } },
         contentItems: { orderBy: { scheduledDate: "desc" } },
         users: { where: { role: "CLIENT" }, select: { id: true, username: true, name: true, email: true } },
         // pdfData bilerek seçilmiyor — büyük binary alanı sayfa prop'larına taşımamak için;
@@ -63,18 +56,21 @@ export default async function AdminClientPage({
   ]);
 
   if (!client) notFound();
-
-  // Kârlılık: bu firmanın kartlarına bağlı, fiyatlandırılmış iş kayıtları toplamı.
-  const [pricedLogs, unpricedWorkLogCount] = await Promise.all([
-    prisma.workLog.findMany({
-      where: { amount: { not: null }, workflowCard: { clientId: client.id } },
-      select: { amount: true },
+  const [payments, agendaVisits, agendaTasks, agendaNotes] = await Promise.all([
+    listClientPayments(client.id, client.overdueGraceDays),
+    prisma.agendaEvent.findMany({
+      where: { clientId: client.id, status: { not: "IPTAL" } }, orderBy: { startAt: "desc" }, take: 40,
+      select: { id: true, title: true, startAt: true, status: true },
     }),
-    prisma.workLog.count({
-      where: { amount: null, workflowCard: { clientId: client.id } },
+    prisma.agendaTask.findMany({
+      where: { clientId: client.id, deletedAt: null }, orderBy: [{ status: "asc" }, { sortOrder: "asc" }],
+      select: { id: true, title: true, status: true, priority: true, visibleToClient: true },
+    }),
+    prisma.agendaNote.findMany({
+      where: { clientId: client.id, deletedAt: null }, orderBy: [{ pinned: "desc" }, { updatedAt: "desc" }],
+      select: { id: true, kind: true, title: true, content: true, visibleToClient: true },
     }),
   ]);
-  const laborCost = pricedLogs.reduce((s, l) => s + parseAmount(l.amount), 0);
 
   const data: ClientDetailData = {
     id: client.id,
@@ -88,6 +84,8 @@ export default async function AdminClientPage({
     billingPeriod: client.billingPeriod ?? "",
     billingIntervalDays: client.billingIntervalDays ?? null,
     overdueGraceDays: client.overdueGraceDays ?? null,
+    paymentDay: client.paymentDay ?? null,
+    paymentDay2: client.paymentDay2 ?? null,
     dailyMetaSpend: client.dailyMetaSpend ?? "",
     dailyGoogleSpend: client.dailyGoogleSpend ?? "",
     active: client.active,
@@ -97,15 +95,15 @@ export default async function AdminClientPage({
       text: u.text,
       date: u.date.toISOString().split("T")[0],
     })),
-    invoices: client.invoices.map((i) => ({
-      id: i.id,
-      period: i.period,
-      amount: i.amount,
-      // Ödendi/ödenmedi saklanan durum; görünen aşama vade tarihinden hesaplanır.
-      paid: i.status === "ODENDI",
-      stage: getInvoiceStage(i, new Date(), client.overdueGraceDays ?? OVERDUE_GRACE_DAYS),
-      dueDate: i.dueDate?.toISOString().split("T")[0] ?? null,
+    // Kaynak: Kasa (1 Ekim 2026 sonrası) + eski fatura arşivi — bkz. src/lib/clientPayments.ts
+    invoices: payments.map((p) => ({
+      id: p.id, period: p.period, amount: p.amount, paid: p.paid, stage: p.stage, dueDate: p.dueDate,
     })),
+    agenda: {
+      visits: agendaVisits.map((v) => ({ ...v, startAt: v.startAt.toISOString() })).sort((a, b) => a.startAt.localeCompare(b.startAt)),
+      tasks: agendaTasks,
+      notes: agendaNotes,
+    },
     contentItems: client.contentItems.map((ci) => ({
       id: ci.id,
       title: ci.title,
@@ -115,8 +113,6 @@ export default async function AdminClientPage({
       publishedAt: ci.publishedAt?.toISOString().split("T")[0] ?? null,
     })),
     users: client.users.map((u) => ({ ...u, username: u.username ?? null })),
-    laborCost,
-    unpricedWorkLogCount,
     adReports: client.adReports.map((r) => ({
       id: r.id,
       platform: r.platform,

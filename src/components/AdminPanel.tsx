@@ -14,24 +14,19 @@ export interface AdminClientSummary {
 
 type Section = "dashboard" | "firmalar";
 
-export interface UnpricedWorkLog {
-  id: string;
-  name: string;
-  count: number;
-}
-
 export default function AdminPanel({
   clients,
+  passiveClients = [],
   adminName,
   employeeCount,
-  unpricedWorkLogs = [],
   unreadSubmissionCount = 0,
   unreadStaffFeedbackCount = 0,
 }: {
   clients: AdminClientSummary[];
+  /** v3.8.0: pasif firmalar — sabit müşteri değil ama ara sıra ücretli iş / ziyaret yapılan veya kapanmış firmalar */
+  passiveClients?: { slug: string; name: string }[];
   adminName: string;
   employeeCount: number;
-  unpricedWorkLogs?: UnpricedWorkLog[];
   unreadSubmissionCount?: number;
   unreadStaffFeedbackCount?: number;
 }) {
@@ -87,7 +82,6 @@ export default function AdminPanel({
             employeeCount={employeeCount}
             totalUnread={totalUnread}
             totalOverdue={totalOverdue}
-            unpricedWorkLogs={unpricedWorkLogs}
             unreadSubmissionCount={unreadSubmissionCount}
             unreadStaffFeedbackCount={unreadStaffFeedbackCount}
             onGoFirmalar={() => setSection("firmalar")}
@@ -96,7 +90,7 @@ export default function AdminPanel({
           />
         )}
         {section === "firmalar" && (
-          <FirmalarView clients={clients} onBack={() => setSection("dashboard")} router={router} />
+          <FirmalarView clients={clients} passiveClients={passiveClients} onBack={() => setSection("dashboard")} router={router} />
         )}
       </main>
 
@@ -107,20 +101,18 @@ export default function AdminPanel({
 
 // ── Dashboard ─────────────────────────────────────────────────────────────────
 
-function Dashboard({ clients, adminName, employeeCount, totalUnread, totalOverdue, unpricedWorkLogs, unreadSubmissionCount, unreadStaffFeedbackCount, onGoFirmalar, onOpenComposer, router }: {
+function Dashboard({ clients, adminName, employeeCount, totalUnread, totalOverdue, unreadSubmissionCount, unreadStaffFeedbackCount, onGoFirmalar, onOpenComposer, router }: {
   clients: AdminClientSummary[];
   adminName: string;
   employeeCount: number;
   totalUnread: number;
   totalOverdue: number;
-  unpricedWorkLogs: UnpricedWorkLog[];
   unreadSubmissionCount: number;
   unreadStaffFeedbackCount: number;
   onGoFirmalar: () => void;
   onOpenComposer: () => void;
   router: ReturnType<typeof useRouter>;
 }) {
-  const totalUnpriced = unpricedWorkLogs.reduce((s, e) => s + e.count, 0);
   const totalPending = clients.reduce((s, c) => s + c.pendingInvoiceCount, 0);
   return (
     <>
@@ -136,12 +128,12 @@ function Dashboard({ clients, adminName, employeeCount, totalUnread, totalOverdu
           { label: "Aktif Firma", value: clients.length, color: "#c084fc", bg: "rgba(192,132,252,0.1)", border: "rgba(192,132,252,0.2)", onClick: onGoFirmalar },
           { label: "Çalışan", value: employeeCount, color: "#34d399", bg: "rgba(52,211,153,0.1)", border: "rgba(52,211,153,0.2)", onClick: () => router.push("/musteri/admin/calisanlar") },
           {
-            label: totalOverdue > 0 ? "Gecikmiş Fatura" : "Bekleyen İstek",
+            label: totalOverdue > 0 ? "Gecikmiş Ödeme" : "Bekleyen İstek",
             value: totalOverdue > 0 ? totalOverdue : totalUnread,
             color: totalOverdue > 0 ? "#f87171" : "#fb923c",
             bg: totalOverdue > 0 ? "rgba(248,113,113,0.1)" : "rgba(251,146,60,0.1)",
             border: totalOverdue > 0 ? "rgba(248,113,113,0.2)" : "rgba(251,146,60,0.2)",
-            onClick: () => router.push(totalOverdue > 0 ? "/musteri/admin/odemeler" : "/musteri/admin/istekler"),
+            onClick: () => router.push(totalOverdue > 0 ? "/musteri/admin/finans?tab=musteri" : "/musteri/admin/istekler"),
           },
         ].map(stat => (
           <button key={stat.label} onClick={stat.onClick} className="rounded-2xl p-3 sm:p-4 text-left transition-transform active:scale-[0.98]" style={{ background: stat.bg, border: `1px solid ${stat.border}` }}>
@@ -152,7 +144,7 @@ function Dashboard({ clients, adminName, employeeCount, totalUnread, totalOverdu
       </div>
 
       {/* Uyarı: gecikmiş fatura, bekleyen istek veya fiyatlandırılmamış iş kaydı */}
-      {(totalOverdue > 0 || totalUnread > 0 || totalUnpriced > 0) && (
+      {(totalOverdue > 0 || totalUnread > 0) && (
         <div className="mb-6 space-y-2">
           {totalOverdue > 0 && (
             <div className="px-4 py-3 rounded-xl flex items-center gap-3"
@@ -184,24 +176,6 @@ function Dashboard({ clients, adminName, employeeCount, totalUnread, totalOverdu
                       {c.name}
                     </button>
                     {c.unreadNoteCount > 1 ? ` firmasından ${c.unreadNoteCount} isteğiniz var` : " firmasından bir isteğiniz var"}
-                    {i < arr.length - 1 ? " · " : ""}
-                  </span>
-                ))}
-              </p>
-            </div>
-          )}
-          {totalUnpriced > 0 && (
-            <div className="px-4 py-3 rounded-xl flex items-center gap-3"
-              style={{ background: "rgba(34,211,238,0.07)", border: "1px solid rgba(34,211,238,0.2)" }}>
-              <span className="text-[15px] flex-shrink-0">📝</span>
-              <p className="text-[13px]" style={{ color: "#22d3ee" }}>
-                {unpricedWorkLogs.map((e, i, arr) => (
-                  <span key={e.id}>
-                    <button onClick={() => router.push(`/musteri/admin/calisanlar/${e.id}`)}
-                      className="underline underline-offset-2 font-medium hover:opacity-80 transition-opacity">
-                      {e.name}
-                    </button>
-                    {e.count > 1 ? ` ${e.count} yeni iş kaydı girdi` : " yeni bir iş kaydı girdi"}
                     {i < arr.length - 1 ? " · " : ""}
                   </span>
                 ))}
@@ -243,8 +217,8 @@ function Dashboard({ clients, adminName, employeeCount, totalUnread, totalOverdu
           </div>
         </button>
 
-        {/* Ödemeler */}
-        <button onClick={() => router.push("/musteri/admin/odemeler")}
+        {/* Finans — Ekonomi + Ödemeler + Kasa tek çatı altında (v3.5.0) */}
+        <button onClick={() => router.push("/musteri/admin/finans")}
           className="group rounded-2xl p-6 text-left transition-all duration-200 relative overflow-hidden"
           style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
           onMouseEnter={e => {
@@ -262,8 +236,8 @@ function Dashboard({ clients, adminName, employeeCount, totalUnread, totalOverdu
               <path d="M2 10h20" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </div>
-          <p className="text-[17px] font-bold text-white mb-1">Ödemeler</p>
-          <p className="text-[13px] text-[#8a8a9a]">{totalPending > 0 ? `${totalPending} bekleyen fatura` : "Bekleyen fatura yok"}</p>
+          <p className="text-[17px] font-bold text-white mb-1">Finans</p>
+          <p className="text-[13px] text-[#8a8a9a]">{totalPending > 0 ? `Kasa · ${totalPending} bekleyen müşteri ödemesi` : "Kasa, müşteri ödemeleri, borçlar"}</p>
           <div className="absolute right-5 top-1/2 -translate-y-1/2 text-[#555] group-hover:text-[#f87171] transition-colors">
             <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="currentColor" strokeWidth="2">
               <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round"/>
@@ -271,55 +245,28 @@ function Dashboard({ clients, adminName, employeeCount, totalUnread, totalOverdu
           </div>
         </button>
 
-        {/* Ödeme Linkleri */}
-        <button onClick={() => router.push("/musteri/admin/odeme-linkleri")}
+        {/* Ajanda (Mİ Asistan'dan taşındı) */}
+        <button onClick={() => router.push("/musteri/admin/ajanda")}
           className="group rounded-2xl p-6 text-left transition-all duration-200 relative overflow-hidden"
           style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
           onMouseEnter={e => {
-            (e.currentTarget as HTMLElement).style.borderColor = "rgba(96,165,250,0.4)";
-            (e.currentTarget as HTMLElement).style.background = "rgba(96,165,250,0.06)";
+            (e.currentTarget as HTMLElement).style.borderColor = "rgba(192,132,252,0.4)";
+            (e.currentTarget as HTMLElement).style.background = "rgba(192,132,252,0.06)";
           }}
           onMouseLeave={e => {
             (e.currentTarget as HTMLElement).style.borderColor = "var(--border)";
             (e.currentTarget as HTMLElement).style.background = "var(--surface)";
           }}>
           <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4"
-            style={{ background: "rgba(96,165,250,0.12)", border: "1px solid rgba(96,165,250,0.2)" }}>
-            <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="#60a5fa" strokeWidth="2">
-              <path d="M10 13a5 5 0 007.07 0l3-3a5 5 0 00-7.07-7.07l-1.5 1.5" strokeLinecap="round" strokeLinejoin="round"/>
-              <path d="M14 11a5 5 0 00-7.07 0l-3 3a5 5 0 007.07 7.07l1.5-1.5" strokeLinecap="round" strokeLinejoin="round"/>
+            style={{ background: "rgba(192,132,252,0.12)", border: "1px solid rgba(192,132,252,0.2)" }}>
+            <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="#c084fc" strokeWidth="2">
+              <path d="M8 2v4M16 2v4M3 10h18M5 4h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z" strokeLinecap="round" strokeLinejoin="round"/>
+              <path d="M9 16l2 2 4-4" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </div>
-          <p className="text-[17px] font-bold text-white mb-1">Ödeme Linkleri</p>
-          <p className="text-[13px] text-[#8a8a9a]">PayTR ile kartla tahsilat</p>
-          <div className="absolute right-5 top-1/2 -translate-y-1/2 text-[#555] group-hover:text-[#60a5fa] transition-colors">
-            <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="currentColor" strokeWidth="2">
-              <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </div>
-        </button>
-
-        {/* Ekonomi */}
-        <button onClick={() => router.push("/musteri/admin/ekonomi")}
-          className="group rounded-2xl p-6 text-left transition-all duration-200 relative overflow-hidden"
-          style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
-          onMouseEnter={e => {
-            (e.currentTarget as HTMLElement).style.borderColor = "rgba(52,211,153,0.4)";
-            (e.currentTarget as HTMLElement).style.background = "rgba(52,211,153,0.06)";
-          }}
-          onMouseLeave={e => {
-            (e.currentTarget as HTMLElement).style.borderColor = "var(--border)";
-            (e.currentTarget as HTMLElement).style.background = "var(--surface)";
-          }}>
-          <div className="w-11 h-11 rounded-xl flex items-center justify-center mb-4"
-            style={{ background: "rgba(52,211,153,0.12)", border: "1px solid rgba(52,211,153,0.2)" }}>
-            <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="#34d399" strokeWidth="2">
-              <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </div>
-          <p className="text-[17px] font-bold text-white mb-1">Ekonomi</p>
-          <p className="text-[13px] text-[#8a8a9a]">Gelir, gider, kasa</p>
-          <div className="absolute right-5 top-1/2 -translate-y-1/2 text-[#555] group-hover:text-[#34d399] transition-colors">
+          <p className="text-[17px] font-bold text-white mb-1">Ajanda</p>
+          <p className="text-[13px] text-[#8a8a9a]">Ziyaret planı, 14 gün takibi, işler</p>
+          <div className="absolute right-5 top-1/2 -translate-y-1/2 text-[#555] group-hover:text-[#c084fc] transition-colors">
             <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="currentColor" strokeWidth="2">
               <path d="M9 18l6-6-6-6" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
@@ -560,8 +507,9 @@ function Dashboard({ clients, adminName, employeeCount, totalUnread, totalOverdu
 
 // ── Firmalar Tablosu ──────────────────────────────────────────────────────────
 
-function FirmalarView({ clients, onBack, router }: {
+function FirmalarView({ clients, passiveClients, onBack, router }: {
   clients: AdminClientSummary[];
+  passiveClients: { slug: string; name: string }[];
   onBack: () => void;
   router: ReturnType<typeof useRouter>;
 }) {
@@ -569,6 +517,9 @@ function FirmalarView({ clients, onBack, router }: {
   const filtered = query.trim()
     ? clients.filter((c) => c.name.toLowerCase().includes(query.trim().toLowerCase()))
     : clients;
+  const passiveFiltered = query.trim()
+    ? passiveClients.filter((c) => c.name.toLowerCase().includes(query.trim().toLowerCase()))
+    : passiveClients;
 
   return (
     <>
@@ -752,6 +703,26 @@ function FirmalarView({ clients, onBack, router }: {
           </div>
         )}
       </div>
+
+      {/* Pasif firmalar (v3.8.0) — sabit müşteri değil; ara sıra ücretli iş, ziyaret veya ödeme girilebilir */}
+      {passiveFiltered.length > 0 && (
+        <div className="mt-8">
+          <p className="text-[13px] font-bold uppercase tracking-wide text-[#8a8a9a] mb-1">Pasif firmalar ({passiveFiltered.length})</p>
+          <p className="text-[12px] text-[#8a8a9a] mb-3">Sabit müşteri değil veya kapanmış. Ziyaret, iş ve ödeme girilebilir; aylık alacak açılmaz.</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            {passiveFiltered.map((c) => (
+              <button key={c.slug} onClick={() => router.push(`/musteri/admin/${c.slug}`)}
+                className="rounded-xl px-4 py-3 flex items-center gap-3 text-left transition-opacity hover:opacity-80"
+                style={{ background: "var(--surface)", border: "1px dashed var(--border)" }}>
+                <span className="w-8 h-8 rounded-lg flex items-center justify-center text-[12px] font-black flex-shrink-0"
+                  style={{ background: "rgba(138,138,154,0.12)", color: "#8a8a9a" }}>{c.name.charAt(0).toUpperCase()}</span>
+                <span className="text-[14px] font-semibold text-white truncate flex-1">{c.name}</span>
+                <span className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: "rgba(138,138,154,0.12)", color: "#8a8a9a" }}>Pasif</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </>
   );
 }

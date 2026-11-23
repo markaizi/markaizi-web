@@ -6,18 +6,6 @@ import { assertCanAccessClient } from "@/lib/auth";
 
 export const runtime = "nodejs";
 
-// Kart, tetikleyici sütuna taşındığında otomatik oluşan İş Kaydı'nın açıklaması
-// yalnızca kart başlığı olursa zamanla hangi firmaya ait olduğu unutuluyordu —
-// firma adı ve (varsa) çekim tarihi de açıklamaya gömülür.
-function buildWorkLogDescription(card: { title: string; dueDate: Date | null; client: { name: string } | null }): string {
-  let desc = card.title;
-  if (card.client) desc += ` — ${card.client.name}`;
-  if (card.dueDate) {
-    desc += ` (${card.dueDate.toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" })})`;
-  }
-  return desc;
-}
-
 const patchSchema = z.object({
   title: z.string().trim().min(1).max(160).optional(),
   description: z.string().trim().max(2000).optional().nullable(),
@@ -55,8 +43,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     select: {
       columnId: true,
       assigneeId: true,
-      workLog: { select: { id: true, amount: true } },
-      column: { select: { adminOnly: true, hiddenFromEmployees: true, triggersWorkLog: true } },
+      column: { select: { adminOnly: true, hiddenFromEmployees: true } },
     },
   });
   if (!before) return NextResponse.json({ error: "Kart bulunamadı." }, { status: 404 });
@@ -105,11 +92,11 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     }
   }
 
-  let toCol: { adminOnly: boolean; triggersWorkLog: boolean; title: string } | null = null;
+  let toCol: { adminOnly: boolean; title: string } | null = null;
   if (rest.columnId && rest.columnId !== before.columnId) {
     toCol = await prisma.workflowColumn.findUnique({
       where: { id: rest.columnId },
-      select: { adminOnly: true, triggersWorkLog: true, title: true },
+      select: { adminOnly: true, title: true },
     });
     const scope = me?.adminCompleteCardsScope ?? "NONE";
     const canMoveHere =
@@ -149,42 +136,10 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     },
   });
 
-  // ── İş Akışı → İş Kaydı otomasyonu ──────────────────────────────────────
-  // Kartın taşındığı ana zarar vermemek için otomasyon en sona, ayrı bir
-  // try/catch içinde — burada bir hata olsa da kart taşıma işlemi başarılı sayılır.
-  // Oluşan/var olan iş kaydı, istemcinin "hemen ücret gir" penceresini açıp
-  // açmayacağına karar verebilmesi için yanıtta dönülür.
-  let workLog: { id: string; amount: string | null } | null = before.workLog;
-  try {
-    if (rest.columnId && rest.columnId !== before.columnId) {
-      if (toCol?.triggersWorkLog && card.assigneeId && !before.workLog) {
-        workLog = await prisma.workLog.create({
-          data: { userId: card.assigneeId, date: new Date(), description: buildWorkLogDescription(card), workflowCardId: card.id },
-          select: { id: true, amount: true },
-        });
-      } else if (!toCol?.triggersWorkLog && before.column.triggersWorkLog && before.workLog && before.workLog.amount === null) {
-        // Tetikleyici sütundan, henüz fiyatlandırılmamış hâldeyken çıkarıldı — otomatik oluşan kaydı geri al.
-        await prisma.workLog.delete({ where: { id: before.workLog.id } });
-        workLog = null;
-      }
-    } else if (rest.assigneeId && card.assigneeId && !before.workLog) {
-      // Sütun değişmedi ama atanan kişi eklendi — kart zaten tetikleyici bir sütundaysa iş kaydı oluştur.
-      const currentCol = await prisma.workflowColumn.findUnique({ where: { id: card.columnId }, select: { triggersWorkLog: true } });
-      if (currentCol?.triggersWorkLog) {
-        workLog = await prisma.workLog.create({
-          data: { userId: card.assigneeId, date: new Date(), description: buildWorkLogDescription(card), workflowCardId: card.id },
-          select: { id: true, amount: true },
-        });
-      }
-    }
-  } catch (e) {
-    console.error("İş Akışı → İş Kaydı otomasyonu başarısız:", e);
-  }
-
+  // v3.6.0: İş Akışı → İş Kaydı / ücret otomasyonu kaldırıldı (Samet: kullanılmıyor).
   return NextResponse.json({
     ok: true,
     card: { ...card, dueDate: card.dueDate ? card.dueDate.toISOString().slice(0, 10) : null },
-    workLog,
   });
 }
 
@@ -213,9 +168,6 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
     }
   }
 
-  // Kartı silmek, otomatik oluşan iş kaydını SİLMEZ — WorkLog.workflowCardId
-  // onDelete:SetNull ile null'a düşer, ücret/ödeme kaydı korunur (pano temizliği
-  // ile bordro kaydı birbirinden bağımsızdır).
   await prisma.workflowCard.delete({ where: { id } });
   return NextResponse.json({ ok: true });
 }

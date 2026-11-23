@@ -1,6 +1,6 @@
 # PROJE DURUM — markaizi.com.tr
 
-Son güncelleme: 30 Ekim 2026
+Son güncelleme: 23 Kasım 2026
 
 Bu dosya projenin güncel durumunu, alınmış kararları ve bekleyen işleri özetler.
 Kod ayrıntıları için kaynak dosyalara, veritabanı için `prisma/schema.prisma`'ya bakın.
@@ -199,13 +199,17 @@ KVKK/gizlilik/kullanım şartları PayTR'yi kapsayacak şekilde güncellendi; fo
 ### Admin ekranları
 Firmalar (`/admin/[slug]`), yeni firma, çalışanlar (liste/detay, yetkiler), İş Akışı (kanban),
 takvim, ödemeler/faturalar, istekler, gelen talepler (form başvuruları, CV tutarlılık uyarıları dahil),
-çalışan mesajları, **Ekonomi** (gelir/gider, düzenli giderler, tarih aralığı raporu, CSV), profil.
+çalışan mesajları, **Finans** (`/admin/finans`, v3.5.0: eski Ekonomi + Ödemeler + Kasa — tek kaynak Kasa; müşteri ödemeleri
+`src/lib/clientPayments.ts`, aylık alacaklar otomatik), profil,
+**Ajanda** (`/admin/ajanda`: ziyaret planı liste/ay, 14 gün takibi, işler, notlar/hafıza), **Çöp Kutusu** (`/admin/cop-kutusu`).
+Kasa, Finans'ın "Genel Durum" sekmesidir. Yazma mantığı `src/lib/agenda.ts`, Kasa formülleri `src/lib/kasaCalc.ts`.
 
 ### Çalışan ekranları
-Dashboard, firmalarım, iş akışı, iş kayıtlarım, takvim, ücret girişi, profil.
+Dashboard, firmalarım, iş akışı, ödemelerim (salt okunur, Finans'tan), takvim, profil. (v3.6.0: iş kaydı / ücret girişi kaldırıldı.)
 
 ### Müşteri ekranı
-Firma paneli (içerik takvimi, faturalar, raporlar, bildirimler, istekler), profil.
+Firma paneli (içerik takvimi, faturalar, raporlar, bildirimler, istekler, **Ziyaret & İşler**), profil.
+Müşteri yalnızca "müşteri görsün" işaretli ziyaret/işleri görür; admin açıklamaları ve notlar hiç gönderilmez.
 
 ### Öne çıkan özellikler
 - Trello tarzı iş akışı; kart → iş kaydı ve içerik takvimi otomasyonu
@@ -220,7 +224,10 @@ Firma paneli (içerik takvimi, faturalar, raporlar, bildirimler, istekler), prof
 ### Veritabanı modelleri
 User, PasswordResetToken, Client, Assignment, ContentItem, Update, Invoice, Note, NoteRead,
 WorkflowColumn, WorkflowCard, AdReport, ClientNotification, WorkLog, Transaction, RecurringExpense,
-PayrollPayment, Submission, StaffNotification, StaffFeedback. Ayrıntı: `prisma/schema.prisma`.
+PayrollPayment, Submission, StaffNotification, StaffFeedback, PaymentLink, PaymentAttempt.
+**Ajanda + Kasa (v3.3.0, Mİ Asistan'dan taşınıyor):** AgendaEvent, AgendaTask, AgendaNote, KasaEntry,
+KasaCardTransaction + Client ziyaret alanları. Kasa yalnızca ADMIN'e açık, ajans Ekonomi'sinden ayrı.
+Tek seferlik veri scriptleri `scripts/ozel/` altında (git dışı). Ayrıntı: `prisma/schema.prisma`.
 
 ---
 
@@ -339,4 +346,16 @@ Plan ve kaynaklar: `docs/rakip-analizi-2026-10.md`.
   soruya birebir cevap veren ilk SSS ve yeni meta açıklama (başlık/H1 aynı), blog yazısı
   `isletmenizin-chatgpt-de-gorunup-gorunmedigini-nasil-olcersiniz`. 3-4 hafta sonra o sorgunun tıklama oranına bak.
   **Bekleyen:** markaizi.com (düz) Vercel projesine eklenip markaizi.com.tr'ye 308 yönlendirilecek (şu an projede yok).
+- **23 Kasım 2026** — v3.10.0: denetim düzeltmeleri (Finans kuralları, çöp kutusu, Ajanda ay görünümü, mobil, pencere davranışı),
+  ödemeleri yalnızca admin yazar, eski Mİ Asistan API'si durduruldu, repo gizlilik temizliği (`docs/ozel/`, `scripts/ozel/`).
+- **23 Kasım 2026** — v3.9.0: Kasa öncesi aylara ait geçmiş tahsilatlar eklendi, tek kayıt denetimi (çift kayıt ve kopya notlar temizlendi).
+- **23 Kasım 2026** — v3.8.0: pasif firmalar (Firmalar/Ajanda/Finans), firma adları tıklanabilir.
+- **23 Kasım 2026** — v3.7.0: Kasa öncesi eski tahsilatlar Finans geçmişine (kasada kalana dahil değil); yıllık +
+  tüm zamanlar gelir; tarihi geçmiş içerik takvimi kayıtları silindi.
+- **23 Kasım 2026** — v3.6.0: PayTR arayüzü ve iş kaydı/ücret/avans sistemi kaldırıldı; personel ödemeleri Finans'tan (salt okunur);
+  güvenli zam; Finans müşteri ödemeleri yıllık tablo; firma ajandası ve müşteriye açılan notlar.
+- **23 Kasım 2026** — v3.5.0: Finans tek çatı (Ekonomi + Ödemeler + Kasa), müşteri ödemeleri Kasa'dan, PayTR → Kasa.
+- **23 Kasım 2026** — v3.4.0: admin Ajanda + Kasa ekranları, müşteri panelinde Ziyaret & İşler.
+- **23 Kasım 2026** — v3.3.0: Mİ Asistan (iOS ajanda) bırakılıyor; ajanda + kasa veri modeli ve taşıma scripti
+  (migration 23 Kas'ta uygulandı, veri taşındı). Sıradaki: admin Ajanda/Kasa ekranları, müşteri ziyaret görünümü, Telegram + Claude botu.
 - **3 Kasım 2026** — İlk YouTube videosu sayfaya eklendi (ID, kapak görseli, kanal adresi, VideoObject şeması, video sitemap).

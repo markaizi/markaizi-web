@@ -25,17 +25,11 @@ export default function EmployeeDashboard({
   employeeName,
   workflowAccess = true,
   stats,
-  canPriceWorklogs = false,
-  canViewEconomy = false,
-  canManagePaymentLinks = false,
 }: {
   clients: AssignedClient[];
   employeeName: string;
   workflowAccess?: boolean;
   stats?: EmployeeStats;
-  canPriceWorklogs?: boolean;
-  canViewEconomy?: boolean;
-  canManagePaymentLinks?: boolean;
 }) {
   const router = useRouter();
   const [showFeedback, setShowFeedback] = useState(false);
@@ -92,53 +86,14 @@ export default function EmployeeDashboard({
       ),
     },
     {
-      key: "is-kayitlarim",
-      label: "İş Kayıtlarım",
-      sub: "Kazanç & geçmiş",
+      key: "odemelerim",
+      label: "Ödemelerim",
+      sub: "Maaş & avans geçmişi",
       color: "#2dd4bf",
-      onClick: () => router.push("/musteri/calisan/is-kayitlarim"),
+      onClick: () => router.push("/musteri/calisan/odemelerim"),
       icon: (
         <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="#2dd4bf" strokeWidth="2">
           <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
-      ),
-    },
-    canPriceWorklogs && {
-      key: "ucret-girisi",
-      label: "Ücret Girişi",
-      sub: "Çalışanlara ücret gir",
-      color: "#22d3ee",
-      onClick: () => router.push("/musteri/calisan/ucret-girisi"),
-      icon: (
-        <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="#22d3ee" strokeWidth="2">
-          <rect x="2" y="5" width="20" height="14" rx="2" strokeLinecap="round" strokeLinejoin="round"/>
-          <path d="M2 10h20" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
-      ),
-    },
-    canViewEconomy && {
-      key: "ekonomi",
-      label: "Ekonomi",
-      sub: "Gelir, gider, kasa",
-      color: "#34d399",
-      onClick: () => router.push("/musteri/admin/ekonomi"),
-      icon: (
-        <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="#34d399" strokeWidth="2">
-          <path d="M3 3v18h18" strokeLinecap="round" strokeLinejoin="round"/>
-          <path d="M7 15l4-4 3 3 5-6" strokeLinecap="round" strokeLinejoin="round"/>
-        </svg>
-      ),
-    },
-    canManagePaymentLinks && {
-      key: "odeme-linkleri",
-      label: "Ödeme Linkleri",
-      sub: "PayTR ile kartla tahsilat",
-      color: "#60a5fa",
-      onClick: () => router.push("/musteri/admin/odeme-linkleri"),
-      icon: (
-        <svg viewBox="0 0 24 24" fill="none" className="w-5 h-5" stroke="#60a5fa" strokeWidth="2">
-          <path d="M10 13a5 5 0 007.07 0l3-3a5 5 0 00-7.07-7.07l-1.5 1.5" strokeLinecap="round" strokeLinejoin="round"/>
-          <path d="M14 11a5 5 0 00-7.07 0l-3 3a5 5 0 007.07 7.07l1.5-1.5" strokeLinecap="round" strokeLinejoin="round"/>
         </svg>
       ),
     },
@@ -208,22 +163,22 @@ export default function EmployeeDashboard({
             {/* Kazanç — hero, en göz önündeki kısım */}
             <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-3">
               <button
-                onClick={() => router.push("/musteri/calisan/is-kayitlarim")}
+                onClick={() => router.push("/musteri/calisan/odemelerim")}
                 className="rounded-2xl p-4 sm:p-6 text-left transition-transform active:scale-[0.98]"
                 style={{ background: "rgba(45,212,191,0.08)", border: "1px solid rgba(45,212,191,0.25)" }}
               >
-                <p className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wide" style={{ color: "#2dd4bf" }}>Bu Dönem</p>
+                <p className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wide" style={{ color: "#2dd4bf" }}>Bu Ay Ödenen</p>
                 <p className="text-[26px] sm:text-[36px] font-black text-white leading-tight mt-1 truncate">
                   {stats.currentEarnings > 0 ? `${stats.currentEarnings.toLocaleString("tr-TR")} ₺` : "—"}
                 </p>
                 <p className="text-[10px] sm:text-[11px] text-[#8a8a9a] mt-1.5 leading-snug">{stats.periodLabel}</p>
               </button>
               <button
-                onClick={() => router.push("/musteri/calisan/is-kayitlarim")}
+                onClick={() => router.push("/musteri/calisan/odemelerim")}
                 className="rounded-2xl p-4 sm:p-6 text-left transition-transform active:scale-[0.98]"
                 style={{ background: "linear-gradient(135deg, rgba(251,191,36,0.14), rgba(251,146,60,0.08))", border: "1px solid rgba(251,191,36,0.3)" }}
               >
-                <p className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wide" style={{ color: "#fbbf24" }}>Toplam Kazancım</p>
+                <p className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wide" style={{ color: "#fbbf24" }}>Toplam Ödenen</p>
                 <p className="text-[26px] sm:text-[36px] font-black text-white leading-tight mt-1 truncate">
                   {stats.totalEarnings > 0 ? `${stats.totalEarnings.toLocaleString("tr-TR")} ₺` : "—"}
                 </p>

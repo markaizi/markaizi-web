@@ -28,14 +28,9 @@ export async function proxy(req: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Admin alanı yalnızca ADMIN — tek istisna: /musteri/admin/ekonomi, admin'in
-  // "Ekonomiyi Görme" yetkisi verdiği çalışana da açık. İnce kontrol (yetki gerçekten
-  // var mı) burada değil, sayfanın kendisinde DB'den taze okunarak yapılır — proxy
-  // burada sadece kaba kapıyı EMPLOYEE için de aralık bırakıyor.
-  const economyException = pathname === "/musteri/admin/ekonomi" && session.role === "EMPLOYEE";
-  // Aynı mantık: Ödeme Linkleri, "Ödeme Linklerini Yönetme" yetkili çalışana açık (sayfa DB'den kontrol eder)
-  const paymentLinksException = pathname === "/musteri/admin/odeme-linkleri" && session.role === "EMPLOYEE";
-  if (pathname.startsWith("/musteri/admin") && session.role !== "ADMIN" && !economyException && !paymentLinksException) {
+  // Admin alanı yalnızca ADMIN. (v3.5.0: Ekonomi → Finans; v3.6.0: Ödeme Linkleri arayüzü kaldırıldı —
+  // çalışan istisnaları silindi. PayTR altyapısı (/odeme/[code], /api/paytr) admin alanı dışında, etkilenmez.)
+  if (pathname.startsWith("/musteri/admin") && session.role !== "ADMIN") {
     const url = req.nextUrl.clone();
     url.pathname = session.slug ? `/musteri/${session.slug}` : "/musteri/giris";
     return NextResponse.redirect(url);

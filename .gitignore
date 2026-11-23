@@ -39,3 +39,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Özel / hassas dosyalar (v3.10.0) — repo HERKESE AÇIK: müşteri ücreti, kişisel finans, veri scriptleri asla commit edilmez
+/docs/ozel/
+/scripts/ozel/

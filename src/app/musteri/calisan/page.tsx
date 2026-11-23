@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
-import { getCurrentPeriod, getPeriodForDate } from "@/lib/workLogPeriods";
+import { listEmployeePayments } from "@/lib/clientPayments";
 import EmployeeDashboard, { type AssignedClient, type EmployeeStats } from "@/components/EmployeeDashboard";
 
 export const dynamic = "force-dynamic";
@@ -10,12 +10,6 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
   title: { absolute: "Çalışan Paneli — markaizi" },
 };
-
-function parseAmount(raw: string | null): number {
-  if (!raw) return 0;
-  const digits = raw.replace(/[^\d]/g, "");
-  return digits ? parseInt(digits, 10) : 0;
-}
 
 export default async function CalisanPage() {
   const session = await getSession();
@@ -25,8 +19,8 @@ export default async function CalisanPage() {
   // Admin ise admin paneline yönlendir
   if (session.role === "ADMIN") redirect("/musteri/admin");
 
-  const [me, assignments, unreadNotes, myCards, myWorkLogs, myAvans] = await Promise.all([
-    prisma.user.findUnique({ where: { id: session.uid }, select: { workflowAccess: true, paymentDay: true, adminCanPriceWorklogs: true, adminCanViewEconomy: true, adminCanManagePaymentLinks: true } }),
+  const [me, assignments, unreadNotes, myCards, myPayments] = await Promise.all([
+    prisma.user.findUnique({ where: { id: session.uid }, select: { workflowAccess: true } }),
     prisma.assignment.findMany({
       where: { userId: session.uid },
       include: {
@@ -53,14 +47,7 @@ export default async function CalisanPage() {
       where: { assigneeId: session.uid },
       select: { priority: true, archivedAt: true, column: { select: { title: true } } },
     }),
-    prisma.workLog.findMany({
-      where: { userId: session.uid },
-      select: { date: true, amount: true },
-    }),
-    prisma.payrollPayment.findMany({
-      where: { userId: session.uid, kind: "AVANS" },
-      select: { date: true, amount: true },
-    }),
+    listEmployeePayments(session.uid),
   ]);
 
   const unreadMap = new Map(unreadNotes.map((u) => [u.clientId, u._count.id]));
@@ -83,33 +70,16 @@ export default async function CalisanPage() {
     }
   }
 
-  // Kazanç dönem başına hesaplanır: iş kaydı olan bir dönemde onun toplamı esas
-  // alınır; iş kayıtları sistemi kurulmadan önceki dönemlerde (hiç iş kaydı yok)
-  // verilen avans o dönemin tek kazancı sayılır — böylece "geçen ay" gibi eski
-  // dönemler de toplam kazanca dahil olur.
-  const paymentDay = me?.paymentDay ?? null;
-  const currentPeriod = getCurrentPeriod(paymentDay);
+  // Kazanç (v3.6.0): Finans'tan çalışana bağlanarak girilen ödenmiş kayıtlar + eski personel ödemeleri.
+  const monthKey = new Date().toLocaleDateString("en-CA", { timeZone: "Europe/Istanbul" }).slice(0, 7);
+  const paid = myPayments.filter((p) => p.status === "ODENDI");
+  const currentEarnings = paid
+    .filter((p) => new Date(p.date).toLocaleDateString("en-CA", { timeZone: "Europe/Istanbul" }).slice(0, 7) === monthKey)
+    .reduce((a, p) => a + p.amount, 0);
+  const totalEarnings = paid.reduce((a, p) => a + p.amount, 0);
+  const periodLabel = new Date().toLocaleDateString("tr-TR", { month: "long", year: "numeric" });
 
-  const worklogByPeriod = new Map<string, number>();
-  for (const l of myWorkLogs) {
-    const key = getPeriodForDate(l.date, paymentDay).key;
-    worklogByPeriod.set(key, (worklogByPeriod.get(key) ?? 0) + parseAmount(l.amount));
-  }
-  const avansByPeriod = new Map<string, number>();
-  for (const p of myAvans) {
-    const key = getPeriodForDate(p.date, paymentDay).key;
-    avansByPeriod.set(key, (avansByPeriod.get(key) ?? 0) + parseAmount(p.amount));
-  }
-
-  let totalEarnings = 0;
-  for (const key of new Set([...worklogByPeriod.keys(), ...avansByPeriod.keys()])) {
-    const wl = worklogByPeriod.get(key) ?? 0;
-    totalEarnings += wl > 0 ? wl : (avansByPeriod.get(key) ?? 0);
-  }
-  const currentWorklog = worklogByPeriod.get(currentPeriod.key) ?? 0;
-  const currentEarnings = currentWorklog > 0 ? currentWorklog : (avansByPeriod.get(currentPeriod.key) ?? 0);
-
-  const stats: EmployeeStats = { bitirilen, bekleyen, acil, currentEarnings, totalEarnings, periodLabel: currentPeriod.label };
+  const stats: EmployeeStats = { bitirilen, bekleyen, acil, currentEarnings, totalEarnings, periodLabel };
 
   return (
     <EmployeeDashboard
@@ -117,9 +87,6 @@ export default async function CalisanPage() {
       employeeName={session.name}
       workflowAccess={me?.workflowAccess ?? true}
       stats={stats}
-      canPriceWorklogs={me?.adminCanPriceWorklogs ?? false}
-      canViewEconomy={me?.adminCanViewEconomy ?? false}
-      canManagePaymentLinks={me?.adminCanManagePaymentLinks ?? false}
     />
   );
 }
