@@ -499,3 +499,12 @@ a:focus-visible, button:focus-visible, summary:focus-visible, [tabindex]:focus-v
   to   { transform: translateY(0);    opacity: 1; }
 }
 .cookie-banner { animation: slideUp 0.4s ease forwards; }
+
+/* Açılır filtre menüsü (FilterSelect, v3.14.0) */
+@keyframes fs-pop-in { from { opacity: 0; transform: translateY(-4px) scale(0.98); } to { opacity: 1; transform: none; } }
+.fs-pop { animation: fs-pop-in 0.14s ease-out; transform-origin: top; }
+[data-panel-theme="light"] .fs-pop { box-shadow: 0 18px 50px rgba(0,0,0,0.12), 0 0 0 1px rgba(88,86,214,0.08) !important; }
+.fs-search-wrap:focus-within { border-color: rgba(168,85,247,0.5) !important; box-shadow: 0 0 0 3px rgba(168,85,247,0.1); }
+.fs-search-wrap input:focus { box-shadow: none; border-color: transparent !important; }
+:root { --fs-accent: #c084fc; --fs-sel: rgba(168,85,247,0.14); --fs-trig: linear-gradient(135deg, rgba(124,58,237,0.16), rgba(236,72,153,0.10)); }
+[data-panel-theme="light"] { --fs-accent: #7c3aed; --fs-sel: rgba(124,58,237,0.10); --fs-trig: linear-gradient(135deg, rgba(124,58,237,0.10), rgba(236,72,153,0.06)); }

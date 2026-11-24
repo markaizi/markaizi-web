@@ -2,13 +2,27 @@
 
 > **Bu dosya araçlar arası devir-teslim defteridir.** En üstteki sürüm = en son durum.
 > Kurallar ve şablon: [`AGENTS.md`](./AGENTS.md). Eski sürümler silinmez.
-> Güncel sürüm: **v3.13.0** (`package.json` ile aynı olmalı).
+> Güncel sürüm: **v3.14.0** (`package.json` ile aynı olmalı).
 
 ---
 
 > **Gizlilik notu (v3.10.0):** Bu repo herkese açıktır. Müşteri ücretleri, tahsilat tutarları, kişisel finans ve kişi adları
 > bu dosyaya **yazılmaz**. Rakamlı / isimli ayrıntılar yerelde, git'e girmeyen `docs/ozel/` klasöründe tutulur
 > (ör. `docs/ozel/CHANGELOG-OZEL-2026-11-23.md`); tek seferlik veri scriptleri `scripts/ozel/` altındadır.
+
+## v3.14.0 — 25 Kasım 2026 — Panel filtre menüleri yenilendi + ajandada öncelik filtresi
+**Araç:** Claude Code (Opus 5.5)  **Tür:** MINOR
+### Yapılanlar
+- Yeni `src/components/FilterSelect.tsx`: yerel `<select>` yerine panel tasarımına uygun açılır menü — ikonlu tetik,
+  seçiliyken mor degrade, gölgeli liste, 7'den fazla seçenekte arama, baş harf rozeti, seçili satırda tik;
+  Esc / dışarı tıklama ile kapanır, ok tuşları + Enter ile seçilir. Açık/koyu tema `--fs-*` değişkenleriyle (`globals.css`).
+- Ajanda: "Tüm firmalar" menüsü yenilendi; yanına **öncelik bayrakları** eklendi (Düşük yeşil, Orta turuncu, Yüksek kırmızı,
+  yanlarında açık iş sayısı). Bayrağa basınca yalnızca o öncelikteki işler görünür ve "İşler" sekmesine geçilir;
+  aynı bayrağa tekrar basınca filtre kalkar. "Yüksek" acil işleri de kapsar. İş öncelik rozetlerinin renkleri bayraklarla eşlendi.
+- İş Akışı: "Tüm Çalışanlar", "Tüm Firmalar" ve sıralama menüleri yeni bileşene geçirildi.
+### Doğrulama
+- `tsc --noEmit` temiz. Yerelde Ajanda (firma seçimi, bayrak aç/kapa, filtre temizle) ve İş Akışı menüleri açık ve koyu temada denendi.
+- `WorkflowBoard.tsx` içindeki 2 `react-hooks/set-state-in-effect` lint hatası bu değişiklikten önce de vardı.
 
 ## v3.13.0 — 24 Kasım 2026 — Markaizi Asistan (Claude botu) devrede
 **Araç:** Claude Code (Opus 5.5)  **Tür:** MINOR

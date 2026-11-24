@@ -7,6 +7,7 @@ import {
   PanelShell, Card, Tabs, Field, Btn, Chip, Modal, Stat, ClientLink, agendaApi, inputCls, inputStyle,
   fmtDay, fmtDate, fmtTime, dayKey, todayKey, TZ,
 } from "@/components/agenda/ui";
+import FilterSelect, { FilterIcons, PriorityFilter, type PriorityLevel } from "@/components/FilterSelect";
 
 export interface AjandaEvent {
   id: string; title: string; description: string | null; clientNote: string | null;
@@ -40,12 +41,15 @@ const STATUS_META = {
   TAMAMLANDI: { label: "Gidildi", color: "#34d399" },
   IPTAL: { label: "İptal", color: "#8a8a9a" },
 } as const;
+// Renkler öncelik filtresiyle aynı (v3.14.0): düşük yeşil, orta turuncu, yüksek kırmızı, acil koyu kırmızı.
 const PRIORITY_META = {
-  ACIL: { label: "Acil", color: "#f87171" },
-  YUKSEK: { label: "Yüksek", color: "#fb923c" },
-  ORTA: { label: "Orta", color: "#60a5fa" },
-  DUSUK: { label: "Düşük", color: "#8a8a9a" },
+  ACIL: { label: "Acil", color: "#f43f5e" },
+  YUKSEK: { label: "Yüksek", color: "#f87171" },
+  ORTA: { label: "Orta", color: "#fb923c" },
+  DUSUK: { label: "Düşük", color: "#34d399" },
 } as const;
+/** Öncelik filtresinde "Yüksek" acil işleri de kapsar. */
+const priorityLevel = (p: AjandaTask["priority"]): PriorityLevel => (p === "ACIL" ? "YUKSEK" : p);
 
 /** ISO → <input type="datetime-local"> değeri (İstanbul saati). */
 function toLocalInput(iso: string): string {
@@ -59,13 +63,23 @@ export default function AjandaView({ data: allData, initialClientId = "", initia
   const [tab, setTab] = useState<Tab>(initialTab);
   // Firma filtresi (v3.6.0): seçiliyse tüm sekmeler yalnızca o firmanın kayıtlarını gösterir.
   const [firm, setFirm] = useState(initialClientId);
-  const data: AjandaData = useMemo(() => !firm ? allData : {
+  // Öncelik filtresi (v3.14.0): yalnızca İşler'i daraltır; aynı bayrağa tekrar basınca kalkar.
+  const [prio, setPrio] = useState<PriorityLevel | null>(null);
+  const firmData: AjandaData = useMemo(() => !firm ? allData : {
     ...allData,
     events: allData.events.filter((e) => e.clientId === firm),
     tasks: allData.tasks.filter((t) => t.clientId === firm),
     notes: allData.notes.filter((n) => n.clientId === firm),
     tracking: allData.tracking.filter((r) => r.id === firm),
   }, [allData, firm]);
+  const data: AjandaData = useMemo(() => !prio ? firmData : {
+    ...firmData, tasks: firmData.tasks.filter((t) => priorityLevel(t.priority) === prio),
+  }, [firmData, prio]);
+  const prioCounts = useMemo(() => {
+    const c: Record<PriorityLevel, number> = { DUSUK: 0, ORTA: 0, YUKSEK: 0 };
+    for (const t of firmData.tasks) if (t.status !== "TAMAMLANDI") c[priorityLevel(t.priority)]++;
+    return c;
+  }, [firmData]);
   const firmDefault = firm || null;
   const [error, setError] = useState("");
   const [busy, setBusy] = useState<string | null>(null);
@@ -119,11 +133,26 @@ export default function AjandaView({ data: allData, initialClientId = "", initia
       )}
 
       <div className="flex flex-wrap items-center gap-2 mb-4">
-        <select value={firm} onChange={(e) => setFirm(e.target.value)} className={`${inputCls} !w-auto min-w-[220px]`} style={inputStyle} aria-label="Firma filtresi">
-          <option value="" style={{ background: "var(--surface)" }}>Tüm firmalar</option>
-          {allData.clients.map((c) => <option key={c.id} value={c.id} style={{ background: "var(--surface)" }}>{c.name}</option>)}
-        </select>
-        {firm && <Btn small onClick={() => setFirm("")}>Filtreyi kaldır</Btn>}
+        <FilterSelect
+          value={firm}
+          onChange={setFirm}
+          ariaLabel="Firma filtresi"
+          icon={FilterIcons.building}
+          searchPlaceholder="Firma ara…"
+          minWidth={220}
+          options={[
+            { value: "", label: "Tüm firmalar", muted: true, icon: FilterIcons.all },
+            ...allData.clients.map((c) => ({ value: c.id, label: c.name })),
+          ]}
+        />
+        <PriorityFilter value={prio} counts={prioCounts}
+          onChange={(p) => { setPrio(p); if (p) setTab("isler"); }} />
+        {(firm || prio) && (
+          <button onClick={() => { setFirm(""); setPrio(null); }}
+            className="text-[12px] font-semibold text-[#8a8a9a] hover:text-[#f87171] transition-colors px-2 h-[36px]">
+            Filtreleri temizle
+          </button>
+        )}
       </div>
 
       <Tabs<Tab>
@@ -148,7 +177,7 @@ export default function AjandaView({ data: allData, initialClientId = "", initia
         <VisitTab rows={data.tracking} onPlan={(r) => setEventForm({ clientId: r.id, title: `${r.name} Çekim / Ziyaret`, visibleToClient: true, status: "PLANLI" })} />
       )}
       {tab === "isler" && (
-        <TasksTab tasks={data.tasks} busy={busy}
+        <TasksTab tasks={data.tasks} busy={busy} filtered={!!prio}
           onEdit={(t) => setTaskForm(t)}
           onToggle={(t) => run(t.id, () => agendaApi("PATCH", `tasks/${t.id}`, { status: t.status === "TAMAMLANDI" ? "YAPILACAK" : "TAMAMLANDI" }))}
           onDelete={(t) => confirm(`"${t.title}" çöp kutusuna taşınsın mı?`) && run(t.id, () => agendaApi("DELETE", `tasks/${t.id}`))}
@@ -378,8 +407,8 @@ function VisitTab({ rows, onPlan }: { rows: VisitRow[]; onPlan: (r: VisitRow) =>
 }
 
 // ── İşler ──────────────────────────────────────────────────
-function TasksTab({ tasks, busy, onEdit, onToggle, onDelete }: {
-  tasks: AjandaTask[]; busy: string | null; onEdit: (t: AjandaTask) => void; onToggle: (t: AjandaTask) => void; onDelete: (t: AjandaTask) => void;
+function TasksTab({ tasks, busy, filtered, onEdit, onToggle, onDelete }: {
+  tasks: AjandaTask[]; filtered?: boolean; busy: string | null; onEdit: (t: AjandaTask) => void; onToggle: (t: AjandaTask) => void; onDelete: (t: AjandaTask) => void;
 }) {
   const order = { ACIL: 0, YUKSEK: 1, ORTA: 2, DUSUK: 3 };
   const open = tasks.filter((t) => t.status !== "TAMAMLANDI").sort((a, b) => order[a.priority] - order[b.priority]);
@@ -410,7 +439,7 @@ function TasksTab({ tasks, busy, onEdit, onToggle, onDelete }: {
   );
   return (
     <div>
-      <div className="space-y-2">{open.length ? open.map(row) : <Card><p className="text-[14px] text-[#8a8a9a]">Açık iş yok 🎉</p></Card>}</div>
+      <div className="space-y-2">{open.length ? open.map(row) : <Card><p className="text-[14px] text-[#8a8a9a]">{filtered ? "Bu öncelikte açık iş yok." : "Açık iş yok 🎉"}</p></Card>}</div>
       {done.length > 0 && (
         <details className="mt-6">
           <summary className="text-[12px] font-bold uppercase tracking-wide text-[#8a8a9a] cursor-pointer mb-2">Son 14 günde tamamlananlar ({done.length})</summary>

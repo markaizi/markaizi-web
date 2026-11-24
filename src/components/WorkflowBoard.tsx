@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import FilterSelect, { FilterIcons } from "@/components/FilterSelect";
 
 type Priority = "DUSUK" | "ORTA" | "YUKSEK";
 
@@ -582,47 +583,48 @@ export default function WorkflowBoard({ initialData }: { initialData?: BoardInit
 
       {/* Filtre çubuğu — çalışana/firmaya göre bak, tarihe göre sırala */}
       <div className="flex flex-wrap items-center gap-2 mb-3">
-        <select
+        <FilterSelect
           value={filterAssignee}
-          onChange={(e) => setFilterAssignee(e.target.value)}
-          className="text-[12px] font-semibold px-2.5 py-1.5 rounded-lg text-white outline-none"
-          style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
-        >
-          <option value="all">Tüm Çalışanlar</option>
-          <option value="unassigned">Atanmamış</option>
-          {employees.map((e) => (
-            <option key={e.id} value={e.id}>{e.name}</option>
-          ))}
-        </select>
+          onChange={setFilterAssignee}
+          ariaLabel="Çalışan filtresi"
+          icon={FilterIcons.user}
+          searchPlaceholder="Çalışan ara…"
+          options={[
+            { value: "all", label: "Tüm Çalışanlar", muted: true, icon: FilterIcons.all },
+            { value: "unassigned", label: "Atanmamış", muted: true, icon: "—" },
+            ...employees.map((e) => ({ value: e.id, label: e.name })),
+          ]}
+        />
 
-        <select
+        <FilterSelect
           value={filterClient}
-          onChange={(e) => setFilterClient(e.target.value)}
-          className="text-[12px] font-semibold px-2.5 py-1.5 rounded-lg text-white outline-none"
-          style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
-        >
-          <option value="all">Tüm Firmalar</option>
-          {clients.map((c) => (
-            <option key={c.slug} value={c.slug}>{c.name}</option>
-          ))}
-        </select>
+          onChange={setFilterClient}
+          ariaLabel="Firma filtresi"
+          icon={FilterIcons.building}
+          searchPlaceholder="Firma ara…"
+          options={[
+            { value: "all", label: "Tüm Firmalar", muted: true, icon: FilterIcons.all },
+            ...clients.map((c) => ({ value: c.slug, label: c.name })),
+          ]}
+        />
 
-        <select
+        <FilterSelect
           value={sortMode}
-          onChange={(e) => setSortMode(e.target.value as typeof sortMode)}
-          className="text-[12px] font-semibold px-2.5 py-1.5 rounded-lg text-white outline-none"
-          style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
-        >
-          <option value="default">Sıralama: Varsayılan</option>
-          <option value="dueAsc">Tarih: Önce en eski</option>
-          <option value="dueDesc">Tarih: Önce en yeni</option>
-        </select>
+          onChange={(v) => setSortMode(v as typeof sortMode)}
+          ariaLabel="Sıralama"
+          icon={FilterIcons.sort}
+          minWidth={180}
+          options={[
+            { value: "default", label: "Varsayılan sıralama", muted: true, icon: FilterIcons.sort },
+            { value: "dueAsc", label: "Tarih: önce en eski", icon: "↑" },
+            { value: "dueDesc", label: "Tarih: önce en yeni", icon: "↓" },
+          ]}
+        />
 
         {filtersActive && (
           <button
             onClick={() => { setFilterAssignee("all"); setFilterClient("all"); setSortMode("default"); }}
-            className="text-[12px] font-semibold text-[#8a8a9a] hover:text-[#f87171] transition-colors px-2.5 py-1.5 rounded-lg"
-            style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
+            className="text-[12px] font-semibold text-[#8a8a9a] hover:text-[#f87171] transition-colors px-2.5 h-[40px] sm:h-[36px] rounded-xl"
           >
             Filtreleri Temizle
           </button>
