@@ -6,7 +6,7 @@ import WhatsApp from "@/components/WhatsApp";
 import ServiceFAQ, { FAQItem } from "@/components/ServiceFAQ";
 import Breadcrumb from "@/components/Breadcrumb";
 import JsonLd from "@/components/JsonLd";
-import { breadcrumbJsonLd } from "@/lib/seo";
+import { breadcrumbJsonLd, OG_IMAGES } from "@/lib/seo";
 import { CITY_PAGES, SERVICE_PAGES } from "@/lib/mobilya-pages";
 import VideoCallout from "@/components/VideoCallout";
 import KurumsalReklam from "@/components/KurumsalReklam";
@@ -16,10 +16,8 @@ export const metadata: Metadata = {
   title: { absolute: "Mobilya Reklam Ajansı — Siteler / Ankara | markaizi" },
   description:
     "Siteler merkezli mobilya reklam ajansı. İstikbal, Doğtaş, Kelebek bayileri dahil 200+ mobilya mağazasına Instagram & Google reklamları, sosyal medya yönetimi ve showroom çekimi. Mobilya sektörünü tanıyan ajans.",
-  keywords:
-    "ankara mobilya ajansı, mobilya reklam ajansı, siteler reklam ajansı, mobilya reklamı, mobilya sosyal medya yönetimi, mobilya instagram reklamı, ankara mobilya reklam, siteler mobilya tanıtım, mobilya mağazası reklam, mobilya google reklamları, mobilya dijital pazarlama",
   alternates: { canonical: "https://markaizi.com.tr/mobilya-reklam-ajansi" },
-  openGraph: {
+  openGraph: { images: OG_IMAGES, siteName: "markaizi",
     title: "Mobilya Reklam Ajansı — Siteler / Ankara | markaizi",
     description:
       "Mobilya sektörünü tanıyan reklam ajansı. Siteler'deki mağazanızdan Türkiye'nin her yerine: Instagram & Google reklamları, sosyal medya yönetimi, showroom çekimi.",

@@ -4,7 +4,7 @@ import Footer from "@/components/sections/Footer";
 import WhatsApp from "@/components/WhatsApp";
 
 export const metadata: Metadata = {
-  title: "Sayfa Bulunamadı — markaizi",
+  title: { absolute: "Sayfa Bulunamadı — markaizi" },
   robots: { index: false, follow: false },
 };
 

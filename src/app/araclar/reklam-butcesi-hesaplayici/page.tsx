@@ -7,7 +7,7 @@ import Breadcrumb from "@/components/Breadcrumb";
 import JsonLd from "@/components/JsonLd";
 import ServiceFAQ, { FAQItem } from "@/components/ServiceFAQ";
 import ReklamButcesiHesaplayici from "@/components/ReklamButcesiHesaplayici";
-import { breadcrumbJsonLd, SITE_URL, ORG_NAME } from "@/lib/seo";
+import { breadcrumbJsonLd, SITE_URL, ORG_NAME, OG_IMAGES } from "@/lib/seo";
 
 const PATH = "/araclar/reklam-butcesi-hesaplayici";
 const TITLE = "Reklam Bütçesi Hesaplayıcı — ROAS ve Başabaş Noktası Hesaplama | markaizi";
@@ -17,10 +17,8 @@ const DESC =
 export const metadata: Metadata = {
   title: { absolute: TITLE },
   description: DESC,
-  keywords:
-    "reklam bütçesi hesaplama, reklam bütçesi hesaplayıcı, roas hesaplama, başabaş roas, instagram reklam bütçesi hesaplama, google ads bütçe hesaplama, reklam maliyeti hesaplama, müşteri edinme maliyeti hesaplama",
   alternates: { canonical: `${SITE_URL}${PATH}` },
-  openGraph: { title: TITLE, description: DESC, type: "website", locale: "tr_TR", url: `${SITE_URL}${PATH}` },
+  openGraph: { images: OG_IMAGES, siteName: "markaizi", title: TITLE, description: DESC, type: "website", locale: "tr_TR", url: `${SITE_URL}${PATH}` },
 };
 
 const FAQ: FAQItem[] = [

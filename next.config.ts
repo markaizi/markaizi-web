@@ -29,6 +29,9 @@ const SECURITY_HEADERS = [
   { key: "X-Content-Type-Options", value: "nosniff" },
   { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
   { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), interest-cohort=()" },
+  // Açılan pencerelerle (window.opener) bağlantıyı keser. PayTR iFrame içinde çalıştığı için etkilenmez;
+  // "allow-popups" 3D Secure gibi ödeme pencerelerine izin verir.
+  { key: "Cross-Origin-Opener-Policy", value: "same-origin-allow-popups" },
 ];
 
 const nextConfig: NextConfig = {
@@ -43,11 +46,26 @@ const nextConfig: NextConfig = {
     // production'da hiç gerçekleşmeyen bir davranış; geliştirmede CSP
     // sadece gürültülü konsol hatası üretir, gerçek bir koruma sağlamaz.
     if (process.env.NODE_ENV !== "production") return [];
-    return [{ source: "/:path*", headers: SECURITY_HEADERS }];
+    return [
+      { source: "/:path*", headers: SECURITY_HEADERS },
+      // Vercel'in *.vercel.app adresleri (üretim kopyası + önizlemeler) dizine girmesin — tek kanonik alan adı markaizi.com.tr.
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "(?<vhost>.*\\.vercel\\.app)" }],
+        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
+      },
+    ];
   },
   async redirects() {
     // Fiyat sayfaları kaldırıldı — indekslenmiş eski URL'ler ana sayfaya yönlensin
     return [
+      // www → çıplak alan adı (tek kanonik adres; www daha önce 200 dönüyordu)
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "www.markaizi.com.tr" }],
+        destination: "https://markaizi.com.tr/:path*",
+        permanent: true,
+      },
       { source: "/fiyatlar", destination: "/", permanent: true },
       { source: "/fiyat-hesapla", destination: "/", permanent: true },
     ];

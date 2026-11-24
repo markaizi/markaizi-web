@@ -6,17 +6,15 @@ import WhatsApp from "@/components/WhatsApp";
 import ServiceFAQ, { FAQItem } from "@/components/ServiceFAQ";
 import Breadcrumb from "@/components/Breadcrumb";
 import JsonLd from "@/components/JsonLd";
-import { breadcrumbJsonLd } from "@/lib/seo";
+import { breadcrumbJsonLd, OG_IMAGES } from "@/lib/seo";
 import SektorLinkleri from "@/components/SektorLinkleri";
 
 export const metadata: Metadata = {
   title: { absolute: "Sağlık & Klinik Reklam Ajansı — Diş, Estetik, Tıp Merkezleri | markaizi" },
   description:
     "Diş klinikleri, estetik klinikleri, fizik tedavi merkezleri ve geleneksel-tamamlayıcı tıp (GETAT) merkezleri için sosyal medya yönetimi, Google İşletme Profili, yerel SEO ve mevzuata uygun dijital pazarlama. 12 Kasım 2025 Sağlıkta Tanıtım Yönetmeliği ve Meta/Google sağlık politikalarını bilen ajans.",
-  keywords:
-    "sağlık reklam ajansı, klinik reklam ajansı, diş kliniği reklamı, estetisyen instagram reklamı, ankara sağlık dijital pazarlama, diş hekimi sosyal medya yönetimi, getat tanıtım, sağlıkta tanıtım yönetmeliği, poliklinik dijital pazarlama",
   alternates: { canonical: "https://markaizi.com.tr/saglik-klinik-reklam-ajansi" },
-  openGraph: {
+  openGraph: { images: OG_IMAGES, siteName: "markaizi",
     title: "Sağlık & Klinik Reklam Ajansı — Ankara | markaizi",
     description:
       "Diş, estetik ve sağlık merkezleri için reklam politikalarına uygun, hasta odaklı dijital pazarlama.",

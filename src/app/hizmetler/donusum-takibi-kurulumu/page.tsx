@@ -5,8 +5,6 @@ export const metadata: Metadata = {
   title: { absolute: "Dönüşüm Takibi Kurulumu — Meta Pixel, Conversions API & Google Tag Manager | markaizi" },
   description:
     "Meta Pixel, Conversions API (CAPI), Google Tag Manager, GA4 ve Google Ads dönüşüm takibi kurulumu. WhatsApp, arama, form ve mağazada kapanan satışların reklama doğru ölçülmesi. Ankara merkezli, Türkiye geneli.",
-  keywords:
-    "dönüşüm takibi kurulumu, meta pixel kurulumu, conversions api kurulumu, capi kurulumu, google tag manager kurulumu, gtm kurulumu, google ads dönüşüm takibi, ga4 kurulumu, whatsapp dönüşüm takibi, çevrimdışı dönüşüm, ankara pixel kurulumu",
   alternates: { canonical: "https://markaizi.com.tr/hizmetler/donusum-takibi-kurulumu" },
 };
 

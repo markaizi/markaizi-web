@@ -6,7 +6,7 @@ import WhatsApp from "@/components/WhatsApp";
 import Breadcrumb from "@/components/Breadcrumb";
 import JsonLd from "@/components/JsonLd";
 import { YouTubeLogo } from "@/components/YouTubeEmbed";
-import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
+import { breadcrumbJsonLd, SITE_URL, OG_IMAGES } from "@/lib/seo";
 import { VIDEOS, YOUTUBE_CHANNEL_URL, videoThumb } from "@/lib/video-data";
 
 const DESC =
@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   title: { absolute: "YouTube Videoları — Dijital Pazarlama ve Reklam Rehberleri | markaizi" },
   description: DESC,
   alternates: { canonical: `${SITE_URL}/videolar` },
-  openGraph: { title: "markaizi YouTube Videoları", description: DESC, type: "website", locale: "tr_TR", url: `${SITE_URL}/videolar` },
+  openGraph: { images: OG_IMAGES, siteName: "markaizi", title: "markaizi YouTube Videoları", description: DESC, type: "website", locale: "tr_TR", url: `${SITE_URL}/videolar` },
 };
 
 export default function VideolarPage() {

@@ -7,16 +7,14 @@ import ServiceFAQ, { FAQItem } from "@/components/ServiceFAQ";
 import VideoCallout from "@/components/VideoCallout";
 import Breadcrumb from "@/components/Breadcrumb";
 import JsonLd from "@/components/JsonLd";
-import { breadcrumbJsonLd } from "@/lib/seo";
+import { breadcrumbJsonLd, OG_IMAGES } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: { absolute: "Ücretsiz Sosyal Medya & Dijital Varlık Analizi | markaizi" },
   description:
     "İşletmenizin Instagram, Google ve web varlığını ücretsiz inceleyelim. 24-48 saat içinde size özel yol haritasını paylaşalım — satın alma zorunluluğu yok.",
-  keywords:
-    "ücretsiz sosyal medya analizi, ücretsiz dijital analiz, instagram hesap analizi, ücretsiz reklam denetimi, ankara dijital ajans ücretsiz analiz",
   alternates: { canonical: "https://markaizi.com.tr/ucretsiz-analiz" },
-  openGraph: {
+  openGraph: { images: OG_IMAGES, siteName: "markaizi",
     title: "Ücretsiz Sosyal Medya & Dijital Varlık Analizi | markaizi",
     description:
       "Instagram hesabınızı ve dijital varlığınızı ücretsiz inceleyip 24-48 saat içinde size özel yol haritası sunuyoruz.",

@@ -15,7 +15,6 @@ export function mobilyaMetadata(c: LandingContent): Metadata {
     // metaTitle zaten "| markaizi" ile bitiyor; kök şablon ("%s — markaizi") ikinci kez eklemesin
     title: { absolute: c.metaTitle },
     description: c.metaDescription,
-    keywords: c.keywords,
     alternates: { canonical: `${SITE_URL}${c.path}` },
     openGraph: {
       title: c.metaTitle,

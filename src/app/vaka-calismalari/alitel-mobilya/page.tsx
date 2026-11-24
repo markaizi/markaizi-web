@@ -6,7 +6,7 @@ import WhatsApp from "@/components/WhatsApp";
 import ServiceFAQ, { FAQItem } from "@/components/ServiceFAQ";
 import Breadcrumb from "@/components/Breadcrumb";
 import JsonLd from "@/components/JsonLd";
-import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
+import { breadcrumbJsonLd, SITE_URL, OG_IMAGES } from "@/lib/seo";
 
 const PATH = "/vaka-calismalari/alitel-mobilya";
 const TITLE = "Alitel Mobilya Vaka Çalışması — 7 Yıllık Dijital Reklam Ortaklığı | markaizi";
@@ -16,10 +16,8 @@ const DESC =
 export const metadata: Metadata = {
   title: { absolute: TITLE },
   description: DESC,
-  keywords:
-    "alitel mobilya, mobilya reklam vaka çalışması, mobilya google reklamları başarı hikayesi, mobilya reklam ajansı referans, mobilya dijital pazarlama vaka",
   alternates: { canonical: `${SITE_URL}${PATH}` },
-  openGraph: { title: TITLE, description: DESC, type: "article", locale: "tr_TR", url: `${SITE_URL}${PATH}`, publishedTime: "2026-09-26" },
+  openGraph: { images: OG_IMAGES, siteName: "markaizi", title: TITLE, description: DESC, type: "article", locale: "tr_TR", url: `${SITE_URL}${PATH}`, publishedTime: "2026-09-26" },
 };
 
 const STATS = [

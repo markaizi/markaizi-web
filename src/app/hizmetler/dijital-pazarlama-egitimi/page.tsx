@@ -5,8 +5,6 @@ export const metadata: Metadata = {
   title: { absolute: "Kurumsal Dijital Pazarlama Eğitimi — Video Çekimi, Senaryo & Reklam Eğitimi | markaizi" },
   description:
     "Firma çalışanlarına uygulamalı dijital pazarlama eğitimi: telefonla video çekimi, senaryo yazımı, Instagram içerik planı ve Meta/Google reklam yönetimi. Ekibiniz kendi reklamını yönetebilsin.",
-  keywords:
-    "kurumsal dijital pazarlama eğitimi, sosyal medya eğitimi, reklam verme eğitimi, meta reklam eğitimi, google ads eğitimi, video çekim eğitimi, senaryo yazma eğitimi, çalışanlara sosyal medya eğitimi, firma içi eğitim",
   alternates: { canonical: "https://markaizi.com.tr/hizmetler/dijital-pazarlama-egitimi" },
 };
 

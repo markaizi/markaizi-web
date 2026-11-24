@@ -6,7 +6,7 @@ import WhatsApp from "@/components/WhatsApp";
 import Breadcrumb from "@/components/Breadcrumb";
 import JsonLd from "@/components/JsonLd";
 import VideoCallout from "@/components/VideoCallout";
-import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
+import { breadcrumbJsonLd, SITE_URL, OG_IMAGES } from "@/lib/seo";
 import { FOUNDER, FOUNDER_URL, founderJsonLd } from "@/lib/founder";
 import { VIDEOS } from "@/lib/video-data";
 
@@ -17,9 +17,8 @@ const DESC =
 export const metadata: Metadata = {
   title: { absolute: TITLE },
   description: DESC,
-  keywords: "samet sağlam, samet saglam, samet sağlam markaizi, markaizi kurucusu, samet sağlam reklam, samet sağlam dijital pazarlama, samet sağlam ankara, samet sağlam youtube",
   alternates: { canonical: FOUNDER_URL },
-  openGraph: { title: TITLE, description: DESC, type: "profile", locale: "tr_TR", url: FOUNDER_URL },
+  openGraph: { images: OG_IMAGES, siteName: "markaizi", title: TITLE, description: DESC, type: "profile", locale: "tr_TR", url: FOUNDER_URL },
 };
 
 const profileJsonLd = {

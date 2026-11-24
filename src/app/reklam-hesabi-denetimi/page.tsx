@@ -8,7 +8,7 @@ import ServiceFAQ, { FAQItem } from "@/components/ServiceFAQ";
 import Breadcrumb from "@/components/Breadcrumb";
 import JsonLd from "@/components/JsonLd";
 import { FeatureIcon, type FeatureIconName } from "@/components/icons/FeatureIcons";
-import { breadcrumbJsonLd, SITE_URL, ORG_NAME } from "@/lib/seo";
+import { breadcrumbJsonLd, SITE_URL, ORG_NAME, OG_IMAGES } from "@/lib/seo";
 import { FOUNDER } from "@/lib/founder";
 
 const PATH = "/reklam-hesabi-denetimi";
@@ -19,10 +19,8 @@ const DESC =
 export const metadata: Metadata = {
   title: { absolute: TITLE },
   description: DESC,
-  keywords:
-    "reklam hesabı denetimi, ücretsiz reklam denetimi, meta reklam hesabı analizi, google ads hesap denetimi, reklam neden satış getirmiyor, instagram reklamı satış getirmiyor, reklam ajansı ikinci görüş, ankara reklam denetimi",
   alternates: { canonical: `${SITE_URL}${PATH}` },
-  openGraph: {
+  openGraph: { images: OG_IMAGES, siteName: "markaizi",
     title: TITLE,
     description: DESC,
     type: "website",

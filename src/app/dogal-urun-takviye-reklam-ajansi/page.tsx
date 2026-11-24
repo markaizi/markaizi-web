@@ -6,17 +6,15 @@ import WhatsApp from "@/components/WhatsApp";
 import ServiceFAQ, { FAQItem } from "@/components/ServiceFAQ";
 import Breadcrumb from "@/components/Breadcrumb";
 import JsonLd from "@/components/JsonLd";
-import { breadcrumbJsonLd } from "@/lib/seo";
+import { breadcrumbJsonLd, OG_IMAGES } from "@/lib/seo";
 import SektorLinkleri from "@/components/SektorLinkleri";
 
 export const metadata: Metadata = {
   title: { absolute: "Doğal Ürün & Takviye Reklam Ajansı — Ürün Videosu, YouTube, E-Ticaret Reklamı | markaizi" },
   description:
     "Vitamin, mineral, bitkisel takviye, doğal yağ ve doğal kozmetik markaları için mankenli/mankensiz ürün tanıtım videosu, YouTube içerik üretimi, e-ticaret reklamı ve bayi/distribütör pazarlaması. Fıtrina gibi doğal ürün markalarının tercih ettiği ajans.",
-  keywords:
-    "doğal ürün reklam ajansı, takviye gıda reklamı, bitkisel takviye sosyal medya yönetimi, vitamin mineral reklam ajansı, doğal yağ markası reklamı, kozmetik e-ticaret reklam ajansı, ürün tanıtım videosu çekimi, youtube ürün içerik üretimi, bayilik pazarlama içeriği, ankara doğal ürün reklamı, mankensiz ürün çekimi",
   alternates: { canonical: "https://markaizi.com.tr/dogal-urun-takviye-reklam-ajansi" },
-  openGraph: {
+  openGraph: { images: OG_IMAGES, siteName: "markaizi",
     title: "Doğal Ürün & Takviye Reklam Ajansı | markaizi",
     description:
       "Vitamin, takviye, doğal yağ ve kozmetik markaları için ürün video çekimi, YouTube içerik üretimi ve e-ticaret reklamı.",

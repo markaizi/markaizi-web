@@ -7,7 +7,7 @@ import UcretsizAnalizForm from "@/components/sections/UcretsizAnalizForm";
 import ServiceFAQ, { FAQItem } from "@/components/ServiceFAQ";
 import Breadcrumb from "@/components/Breadcrumb";
 import JsonLd from "@/components/JsonLd";
-import { breadcrumbJsonLd, SITE_URL, ORG_NAME } from "@/lib/seo";
+import { breadcrumbJsonLd, SITE_URL, ORG_NAME, OG_IMAGES } from "@/lib/seo";
 
 const PATH = "/yapay-zeka-gorunurluk-olcumu";
 const TITLE = "Yapay Zeka Görünürlük Ölçümü — İşletmeniz ChatGPT ve Gemini'de Çıkıyor mu? (Ücretsiz) | markaizi";
@@ -17,10 +17,8 @@ const DESC =
 export const metadata: Metadata = {
   title: { absolute: TITLE },
   description: DESC,
-  keywords:
-    "yapay zeka görünürlük ölçümü, chatgpt'de görünüyor muyum, işletmemin yapay zekadaki görünürlüğü, yapay zeka görünürlüğü ölçme, ai görünürlük ajansı, geo ajansı ankara, chatgpt marka görünürlüğü, gemini işletme önerisi, perplexity görünürlük",
   alternates: { canonical: `${SITE_URL}${PATH}` },
-  openGraph: { title: TITLE, description: DESC, type: "website", locale: "tr_TR", url: `${SITE_URL}${PATH}` },
+  openGraph: { images: OG_IMAGES, siteName: "markaizi", title: TITLE, description: DESC, type: "website", locale: "tr_TR", url: `${SITE_URL}${PATH}` },
 };
 
 const FAQ: FAQItem[] = [
