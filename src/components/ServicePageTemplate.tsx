@@ -26,6 +26,7 @@ export interface ServicePageProps {
   approach?: { title: string; paragraphs: string[]; videoSlug?: string; videoText?: string };
   bolge?: boolean; // Sektör ve Ankara hizmet bölgesi bloğunu gösterir
   kurumsal?: boolean; // Meta/Google sayfalarında "Büyük Firmalar İçin" bölümünü gösterir
+  primaryCta?: { href: string; label: string }; // Hero'daki birincil düğme (varsayılan: Ücretsiz Analiz)
 }
 
 export default function ServicePageTemplate({
@@ -41,6 +42,7 @@ export default function ServicePageTemplate({
   approach,
   kurumsal,
   bolge,
+  primaryCta = { href: "/ucretsiz-analiz", label: "Ücretsiz Analiz Al" },
 }: ServicePageProps) {
   const faqJsonLd = faq && faq.length > 0
     ? {
@@ -140,6 +142,20 @@ export default function ServicePageTemplate({
                 {title}
               </h1>
               <p className="text-[#8a8a9a] text-[18px] leading-relaxed">{subtitle}</p>
+              {/* İlk ekranda eylem: reklamdan gelen ziyaretçi ilk düğmeyi önceden ekranın ~2 katı aşağıda görüyordu. */}
+              <div className="flex flex-wrap gap-3 mt-8">
+                <Link href={primaryCta.href} className="btn btn-primary">
+                  {primaryCta.label}
+                </Link>
+                <a
+                  href={`https://wa.me/905520772700?text=${encodeURIComponent(`Merhaba, ${title} hizmetiniz hakkında bilgi almak istiyorum.`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn btn-outline"
+                >
+                  WhatsApp&apos;tan Yaz
+                </a>
+              </div>
             </div>
           </div>
         </section>

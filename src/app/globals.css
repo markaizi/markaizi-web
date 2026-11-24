@@ -259,11 +259,12 @@ h3, h4 {
 .scroll-dot      { animation: scrollDown 2s ease-in-out infinite; }
 
 /* ── Hero Text Animations ──────────────── */
-.hero-badge { animation: fadeInUp 0.8s ease forwards; }
-.hero-h1    { animation: fadeInUp 0.8s ease 0.1s both; }
-.hero-sub   { animation: fadeInUp 0.8s ease 0.2s both; }
-.hero-cta   { animation: fadeInUp 0.8s ease 0.3s both; }
-.hero-stats { animation: fadeInUp 0.8s ease 0.4s both; }
+/* Kısa tutuldu (0.8 sn → 0.45 sn, gecikmeler yarıya): ilk ekran metni daha erken tamamlanır. */
+.hero-badge { animation: fadeInUp 0.45s ease forwards; }
+.hero-h1    { animation: fadeInUp 0.45s ease 0.05s both; }
+.hero-sub   { animation: fadeInUp 0.45s ease 0.1s both; }
+.hero-cta   { animation: fadeInUp 0.45s ease 0.15s both; }
+.hero-stats { animation: fadeInUp 0.45s ease 0.2s both; }
 
 /* ── WhatsApp Pulse ────────────────────── */
 .wa-pulse { animation: waPulse 2.5s ease-out infinite; }

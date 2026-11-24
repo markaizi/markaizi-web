@@ -100,20 +100,10 @@ export default function WebTeklifForm() {
   };
 
   return (
-    <section id="teklif-formu" className="py-20" style={{ background: "var(--bg-alt)" }}>
+    <section id="teklif-formu" className="pt-6 pb-20" style={{ background: "var(--bg-alt)" }}>
       <div className="max-w-[860px] mx-auto px-6">
 
-        {/* Başlık */}
-        <div className="text-center mb-12">
-          <span className="section-tag">Ücretsiz Teklif Al</span>
-          <h2 className="font-black leading-tight mt-4 mb-3" style={{ fontSize: "clamp(26px,3.5vw,38px)" }}>
-            Projenizi <span className="gradient-text">Anlayalım</span>
-          </h2>
-          <p className="text-[#8a8a9a] text-[16px] max-w-[520px] mx-auto">
-            Formu doldurun, 24 saat içinde size özel fiyat teklifiyle geri dönelim. Gizli ücret yok.
-          </p>
-        </div>
-
+        {/* Başlık sayfanın hero'sunda (teklif/page.tsx); burada tekrar ediliyordu. */}
         <form
           onSubmit={handleSubmit}
           className="rounded-2xl p-8 md:p-10 space-y-10"
