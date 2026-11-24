@@ -165,7 +165,7 @@ export default function DogalUrunTakviyeReklamAjansiPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
       <JsonLd data={breadcrumb} />
       <Navbar />
-      <main>
+      <main id="icerik" tabIndex={-1}>
         {/* ── Hero ── */}
         <section className="relative overflow-hidden pt-32 pb-20" style={{ background: "var(--bg)" }}>
           <div
@@ -241,7 +241,7 @@ export default function DogalUrunTakviyeReklamAjansiPage() {
               <p className="text-[#8a8a9a] text-[16px] leading-[1.9] mb-5">
                 Doğal ürün ve geleneksel yöntem alıcısı, parlak bir reklamdan çok gerçek bir deneyime
                 inanır. Aynı zamanda bu alan, reklam politikaları açısından en hassas alanlardan biri —
-                "tedavi eder" gibi bir ifade tek başına reklamınızı reddettirebilir. 200+ Ankara
+                &quot;tedavi eder&quot; gibi bir ifade tek başına reklamınızı reddettirebilir. 200+ Ankara
                 işletmesiyle 10 yılı aşkın süredir çalışan ekibimiz, bu sınırların nerede olduğunu bilir ve
                 mesajınızı gücünden ödün vermeden bu sınırlar içinde kurar.
               </p>

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { Metadata } from "next";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/sections/Footer";
@@ -21,7 +22,7 @@ export default function NotFound() {
   return (
     <>
       <Navbar />
-      <main className="min-h-[70vh] flex items-center px-6" style={{ background: "var(--bg)" }}>
+      <main id="icerik" tabIndex={-1} className="min-h-[70vh] flex items-center px-6" style={{ background: "var(--bg)" }}>
         <div className="max-w-[720px] mx-auto text-center py-24">
           <p className="font-black text-[15px] tracking-[0.2em] uppercase mb-4 gradient-text">404</p>
           <h1 className="font-black text-[32px] sm:text-[42px] leading-tight text-white mb-4">
@@ -33,7 +34,7 @@ export default function NotFound() {
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-3 mb-12">
-            <a href="/" className="btn btn-primary">Ana Sayfaya Dön</a>
+            <Link href="/" className="btn btn-primary">Ana Sayfaya Dön</Link>
             <a
               href="https://wa.me/905520772700"
               target="_blank"

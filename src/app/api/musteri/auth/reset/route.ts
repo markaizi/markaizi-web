@@ -2,13 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
-import { rateLimit, getClientIp } from "@/lib/security";
+import { rateLimit, getClientIp, hashResetToken } from "@/lib/security";
 
 export const runtime = "nodejs";
 
 const schema = z.object({
   token: z.string().trim().min(1),
-  password: z.string().min(6).max(128),
+  password: z.string().min(8).max(128),
 });
 
 export async function POST(req: NextRequest) {
@@ -27,7 +27,10 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Geçersiz istek." }, { status: 400 });
   }
 
-  const record = await prisma.passwordResetToken.findUnique({ where: { token: parsed.token } });
+  // Jetonlar özetle saklanıyor; bu sürümden önce gönderilmiş (en çok 1 saatlik) düz jetonlar da kabul edilir.
+  const record = await prisma.passwordResetToken.findFirst({
+    where: { token: { in: [hashResetToken(parsed.token), parsed.token] } },
+  });
   if (!record || record.usedAt || record.expiresAt < new Date()) {
     return NextResponse.json({ error: "Bağlantının süresi dolmuş veya geçersiz. Yeniden talep edin." }, { status: 400 });
   }

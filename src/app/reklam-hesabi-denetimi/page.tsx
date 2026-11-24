@@ -179,7 +179,7 @@ export default function ReklamHesabiDenetimiPage() {
       <JsonLd data={faqJsonLd} />
       <JsonLd data={breadcrumb} />
       <Navbar />
-      <main>
+      <main id="icerik" tabIndex={-1}>
         {/* ── Hero + Form ── */}
         <section className="relative overflow-hidden pt-28 sm:pt-32 pb-16" style={{ background: "var(--bg)" }}>
           <div

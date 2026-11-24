@@ -198,7 +198,7 @@ export default function SSSPage() {
       />
       <JsonLd data={breadcrumb} />
       <Navbar />
-      <main>
+      <main id="icerik" tabIndex={-1}>
         {/* Hero */}
         <section className="relative overflow-hidden pt-32 pb-16" style={{ background: "var(--bg)" }}>
           <div className="absolute top-[-150px] right-[-100px] w-[400px] h-[400px] rounded-full pointer-events-none"

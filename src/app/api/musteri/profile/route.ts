@@ -10,7 +10,7 @@ export const runtime = "nodejs";
 const patchSchema = z.object({
   name:        z.string().min(1).max(120).optional(),
   email:       z.string().email().optional(),
-  password:    z.string().min(6).max(128).optional(),
+  password:    z.string().min(8).max(128).optional(),
   oldPassword: z.string().optional(),
 });
 

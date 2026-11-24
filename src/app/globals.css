@@ -285,6 +285,17 @@ a:focus-visible, button:focus-visible, summary:focus-visible, [tabindex]:focus-v
   border-radius: 4px;
 }
 
+/* ── İçeriğe geç bağlantısı ─────────────────
+   Görünmez; klavyeyle ilk Tab'da sol üstte belirir. */
+.skip-link {
+  position: fixed; top: 8px; left: 8px; z-index: 20000;
+  padding: 10px 16px; border-radius: 999px;
+  background: #fff; color: #050505; font-weight: 700; font-size: 14px;
+  transform: translateY(-200%); transition: transform 0.15s ease;
+}
+.skip-link:focus { transform: translateY(0); }
+main:focus { outline: none; }
+
 /* ── Mobil form alanı yazı boyutu ──────────
    iOS Safari, 16px altındaki yazı boyutuna sahip bir alana odaklanınca
    sayfayı otomatik yakınlaştırıp geri çıkarmıyor. Panel alanları 14px

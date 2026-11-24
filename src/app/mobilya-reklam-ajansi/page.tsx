@@ -136,7 +136,7 @@ export default function MobilyaReklamAjansiPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
       <JsonLd data={breadcrumb} />
       <Navbar />
-      <main>
+      <main id="icerik" tabIndex={-1}>
         {/* ── Hero ── */}
         <section className="relative overflow-hidden pt-32 pb-20" style={{ background: "var(--bg)" }}>
           <div

@@ -222,13 +222,13 @@ export default function AdminEmployeeDetail({
       <header className="sticky top-0 z-50 px-4 sm:px-6 py-3.5 sm:py-4 flex items-center justify-between gap-3"
         style={{ background: "var(--header-bg)", WebkitBackdropFilter: "blur(20px)", backdropFilter: "blur(20px)", borderBottom: "1px solid var(--border)" }}>
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-          <a href="/musteri/admin" className="font-black text-[16px] sm:text-[18px] gradient-text flex-shrink-0">markaizi</a>
+          <Link href="/musteri/admin" className="font-black text-[16px] sm:text-[18px] gradient-text flex-shrink-0">markaizi</Link>
           <span className="hidden sm:inline text-[#555]">/</span>
-          <a href="/musteri/admin/calisanlar" className="hidden sm:inline text-[14px] text-[#8a8a9a] hover:text-white transition-colors">Çalışanlar</a>
+          <Link href="/musteri/admin/calisanlar" className="hidden sm:inline text-[14px] text-[#8a8a9a] hover:text-white transition-colors">Çalışanlar</Link>
           <span className="hidden sm:inline text-[#555]">/</span>
           <span className="text-[13px] sm:text-[14px] font-semibold text-white truncate">{employee.name}</span>
         </div>
-        <a href="/musteri/admin/calisanlar" className="text-[12px] sm:text-[13px] text-[#8a8a9a] hover:text-white transition-colors flex-shrink-0">← Çalışanlara Dön</a>
+        <Link href="/musteri/admin/calisanlar" className="text-[12px] sm:text-[13px] text-[#8a8a9a] hover:text-white transition-colors flex-shrink-0">← Çalışanlara Dön</Link>
       </header>
 
       <main className="max-w-[720px] mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
@@ -330,14 +330,14 @@ export default function AdminEmployeeDetail({
         <div className="rounded-2xl p-6 space-y-4" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
           <div>
             <p className="font-semibold text-white text-[14px]">Yönetici Yetkileri</p>
-            <p className="text-[12px] text-[#8a8a9a] mt-0.5">Normalde sadece admin'e özel işlemler — istediğini tek tek aç, hepsi varsayılan kapalı.</p>
+            <p className="text-[12px] text-[#8a8a9a] mt-0.5">Normalde sadece admin&apos;e özel işlemler — istediğini tek tek aç, hepsi varsayılan kapalı.</p>
           </div>
           <div className="space-y-3">
             {/* Tamamlandı'ya Kart Taşıma — 3 durumlu: Kapalı / Sadece Kendi / Herkes */}
             <div className="py-2">
-              <p className="text-[13px] font-semibold text-white">Tamamlandı'ya Kart Taşıma</p>
+              <p className="text-[13px] font-semibold text-white">Tamamlandı&apos;ya Kart Taşıma</p>
               <p className="text-[11px] text-[#8a8a9a] mt-0.5 mb-2.5">
-                İş Akışı'nda "Tamamlandı" sütununa kart taşıyabilir. Kart bir kez oraya taşındıktan sonra yine sadece admin dokunabilir.
+                İş Akışı&apos;nda &quot;Tamamlandı&quot; sütununa kart taşıyabilir. Kart bir kez oraya taşındıktan sonra yine sadece admin dokunabilir.
               </p>
               <div className="flex gap-1.5 flex-wrap">
                 {COMPLETE_SCOPE_OPTIONS.map((opt) => {

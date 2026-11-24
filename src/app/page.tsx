@@ -126,7 +126,7 @@ export default function Home() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
       />
       <Navbar />
-      <main>
+      <main id="icerik" tabIndex={-1}>
         <Hero />
         <FreeAnalysisBar />
 

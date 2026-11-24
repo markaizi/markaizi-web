@@ -42,7 +42,7 @@ export default function VideolarPage() {
       <JsonLd data={listJsonLd} />
       <JsonLd data={breadcrumbJsonLd([{ name: "Ana Sayfa", path: "/" }, { name: "Videolar", path: "/videolar" }])} />
       <Navbar />
-      <main>
+      <main id="icerik" tabIndex={-1}>
         <section className="relative overflow-hidden pt-32 pb-14" style={{ background: "var(--bg)" }}>
           <div
             className="absolute top-[-150px] right-[-100px] w-[420px] h-[420px] rounded-full pointer-events-none"

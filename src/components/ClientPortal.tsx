@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import type { ClientData } from "@/lib/clients";
@@ -111,12 +112,12 @@ function Dashboard({
         style={{ background: "var(--header-bg)", WebkitBackdropFilter: "blur(20px)", backdropFilter: "blur(20px)", borderBottom: "1px solid var(--border)" }}
       >
         <div className="flex items-center gap-3 min-w-0">
-          <a href="/" className="font-black text-[18px] gradient-text flex-shrink-0">markaizi</a>
+          <Link href="/" className="font-black text-[18px] gradient-text flex-shrink-0">markaizi</Link>
           <span className="text-[#555] flex-shrink-0">/</span>
           <span className="text-[14px] font-semibold text-white truncate">{client.name}</span>
         </div>
         {isAdminView ? (
-          <a href="/musteri/admin"
+          <Link href="/musteri/admin"
             className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[13px] font-medium transition-all flex-shrink-0"
             style={{ background: "rgba(168,85,247,0.1)", border: "1px solid rgba(168,85,247,0.2)", color: "#c084fc" }}
             onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(168,85,247,0.2)"; }}
@@ -125,15 +126,15 @@ function Dashboard({
               <path d="M19 12H5M5 12l7 7M5 12l7-7" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
             Admin Paneli
-          </a>
+          </Link>
         ) : (
           <div className="flex items-center gap-4 flex-shrink-0">
-            <a href="/musteri/profil" className="text-[12px] text-[#8a8a9a] hover:text-white transition-colors flex items-center gap-1.5 min-h-[44px] px-1">
+            <Link href="/musteri/profil" className="text-[12px] text-[#8a8a9a] hover:text-white transition-colors flex items-center gap-1.5 min-h-[44px] px-1">
               <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth="2">
                 <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
               Profil
-            </a>
+            </Link>
             <button onClick={onLogout} className="text-[12px] text-[#8a8a9a] hover:text-[#f87171] transition-colors flex items-center gap-1.5 min-h-[44px] px-1">
               <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth="2">
                 <path d="M18.364 5.636A9 9 0 1 1 5.636 18.364" strokeLinecap="round"/>

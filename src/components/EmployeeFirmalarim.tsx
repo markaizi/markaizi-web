@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 export interface AssignedClient {
@@ -22,14 +23,14 @@ export default function EmployeeFirmalarim({ clients }: { clients: AssignedClien
       <header className="sticky top-0 z-50 px-4 sm:px-6 py-3.5 sm:py-4 flex items-center justify-between gap-3"
         style={{ background: "var(--header-bg)", WebkitBackdropFilter: "blur(20px)", backdropFilter: "blur(20px)", borderBottom: "1px solid var(--border)" }}>
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-          <a href="/musteri/calisan"
+          <Link href="/musteri/calisan"
             className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[13px] font-medium transition-all flex-shrink-0"
             style={{ background: "rgba(192,132,252,0.1)", border: "1px solid rgba(192,132,252,0.2)", color: "#c084fc" }}>
             <svg viewBox="0 0 24 24" fill="none" className="w-3.5 h-3.5" stroke="currentColor" strokeWidth="2.5">
               <path d="M19 12H5M5 12l7 7M5 12l7-7" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
             Çalışan Paneli
-          </a>
+          </Link>
           <span className="text-[#555] hidden sm:inline">/</span>
           <span className="text-[13px] sm:text-[14px] font-semibold text-white truncate">Firmalarım</span>
         </div>

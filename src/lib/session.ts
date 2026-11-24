@@ -36,7 +36,7 @@ export async function signSession(payload: SessionPayload): Promise<string> {
 /** JWT doğrular, payload döner (geçersizse null). */
 export async function verifySession(token: string): Promise<SessionPayload | null> {
   try {
-    const { payload } = await jwtVerify(token, getSecret());
+    const { payload } = await jwtVerify(token, getSecret(), { algorithms: ["HS256"] });
     return {
       uid: String(payload.uid),
       role: payload.role as Role,

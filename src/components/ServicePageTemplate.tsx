@@ -84,7 +84,7 @@ export default function ServicePageTemplate({
       <JsonLd data={breadcrumb} />
       {faqJsonLd && <JsonLd data={faqJsonLd} />}
       <Navbar />
-      <main>
+      <main id="icerik" tabIndex={-1}>
         {/* ── Hero ── */}
         <section
           className="relative overflow-hidden pt-32 pb-20"

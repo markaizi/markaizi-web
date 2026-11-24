@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import ThemeToggle from "@/components/ThemeToggle";
 
@@ -46,7 +47,7 @@ export default function AdminProfilPage() {
     <div className="min-h-screen" style={{ background: "var(--bg)" }}>
       <header className="sticky top-0 z-50 px-6 py-4 flex items-center gap-2"
         style={{ background: "var(--header-bg)", WebkitBackdropFilter: "blur(20px)", backdropFilter: "blur(20px)", borderBottom: "1px solid var(--border)" }}>
-        <a href="/musteri/admin"
+        <Link href="/musteri/admin"
           className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[13px] font-medium transition-all"
           style={{ background: "rgba(168,85,247,0.1)", border: "1px solid rgba(168,85,247,0.2)", color: "#c084fc" }}
           onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(168,85,247,0.2)"; }}
@@ -55,7 +56,7 @@ export default function AdminProfilPage() {
             <path d="M19 12H5M5 12l7 7M5 12l7-7" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
           Admin Paneli
-        </a>
+        </Link>
         <span className="text-[#555]">/</span>
         <span className="text-[14px] font-semibold text-white">Profilim</span>
       </header>
@@ -94,7 +95,7 @@ export default function AdminProfilPage() {
           <p className="font-semibold text-white text-[14px]">Şifre Değiştir</p>
           {[
             { key: "oldPassword", label: "Mevcut Şifre",   placeholder: "" },
-            { key: "password",    label: "Yeni Şifre",     placeholder: "Min. 6 karakter" },
+            { key: "password",    label: "Yeni Şifre",     placeholder: "Min. 8 karakter" },
             { key: "confirm",     label: "Yeni Şifre (Tekrar)", placeholder: "" },
           ].map(({ key, label, placeholder }) => (
             <div key={key}>

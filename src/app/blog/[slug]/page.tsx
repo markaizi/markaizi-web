@@ -117,7 +117,7 @@ export default async function BlogPostPage({
       {faqJsonLd && <JsonLd data={faqJsonLd} />}
       <JsonLd data={breadcrumb} />
       <Navbar />
-      <main>
+      <main id="icerik" tabIndex={-1}>
         {/* Hero */}
         <section
           className="relative overflow-hidden pt-32 pb-12"
@@ -133,12 +133,12 @@ export default async function BlogPostPage({
           <div className="max-w-[760px] mx-auto px-6 relative z-10">
             <Breadcrumb items={[{ name: "Ana Sayfa", path: "/" }, { name: "Blog", path: "/blog" }, { name: post.title }]} />
             <div className="flex items-center gap-3 mb-5">
-              <a
+              <Link
                 href="/blog"
                 className="text-[13px] text-[#8a8a9a] hover:text-white transition-colors flex items-center gap-1"
               >
                 ← Blog
-              </a>
+              </Link>
               <span className="text-[#8a8a9a]">/</span>
               <span
                 className="text-[11px] font-bold uppercase tracking-wider px-3 py-1 rounded-full"
@@ -323,9 +323,9 @@ export default async function BlogPostPage({
                 >
                   WhatsApp&apos;tan Yaz
                 </a>
-                <a href="/#iletisim" className="btn btn-outline">
+                <Link href="/#iletisim" className="btn btn-outline">
                   Teklif Al
-                </a>
+                </Link>
               </div>
             </div>
 

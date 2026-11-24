@@ -85,7 +85,7 @@ export default function ReklamButcesiHesaplayiciPage() {
       <JsonLd data={faqJsonLd} />
       <JsonLd data={breadcrumb} />
       <Navbar />
-      <main>
+      <main id="icerik" tabIndex={-1}>
         {/* ── Hero ── */}
         <section className="relative overflow-hidden pt-28 sm:pt-32 pb-10" style={{ background: "var(--bg)" }}>
           <div

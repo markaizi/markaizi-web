@@ -43,7 +43,7 @@ export default function SametSaglamPage() {
       <JsonLd data={profileJsonLd} />
       <JsonLd data={breadcrumbJsonLd([{ name: "Ana Sayfa", path: "/" }, { name: FOUNDER.name, path: FOUNDER.path }])} />
       <Navbar />
-      <main>
+      <main id="icerik" tabIndex={-1}>
         <section className="relative overflow-hidden pt-32 pb-16" style={{ background: "var(--bg)" }}>
           <div
             className="absolute top-[-200px] right-[-120px] w-[480px] h-[480px] rounded-full pointer-events-none"

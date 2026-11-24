@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import Calendar from "@/components/Calendar";
 
 export default function EmployeeCalendarView() {
@@ -13,7 +14,7 @@ export default function EmployeeCalendarView() {
       <header className="sticky top-0 z-50 px-6 py-4 flex items-center justify-between"
         style={{ background: "var(--header-bg)", WebkitBackdropFilter: "blur(20px)", backdropFilter: "blur(20px)", borderBottom: "1px solid var(--border)" }}>
         <div className="flex items-center gap-2">
-          <a href="/musteri/calisan"
+          <Link href="/musteri/calisan"
             className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[13px] font-medium transition-all"
             style={{ background: "rgba(96,165,250,0.1)", border: "1px solid rgba(96,165,250,0.2)", color: "#60a5fa" }}
             onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = "rgba(96,165,250,0.2)"; }}
@@ -22,7 +23,7 @@ export default function EmployeeCalendarView() {
               <path d="M19 12H5M5 12l7 7M5 12l7-7" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
             Çalışan Paneli
-          </a>
+          </Link>
           <span className="text-[#555]">/</span>
           <span className="text-[14px] font-semibold text-white">Takvim</span>
         </div>

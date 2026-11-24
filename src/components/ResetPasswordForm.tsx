@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 
@@ -36,10 +37,10 @@ export default function ResetPasswordForm() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4" style={{ background: "var(--bg)" }}>
-      <a href="/" className="mb-10 flex items-center gap-2 opacity-60 hover:opacity-100 transition-opacity">
+      <Link href="/" className="mb-10 flex items-center gap-2 opacity-60 hover:opacity-100 transition-opacity">
         <span className="text-[22px] font-black gradient-text">markaizi</span>
         <span className="text-[#8a8a9a] text-[13px]">× Panel</span>
-      </a>
+      </Link>
 
       <div className="w-full max-w-[380px] rounded-2xl p-8" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
         <div className="text-center mb-7">
@@ -57,14 +58,14 @@ export default function ResetPasswordForm() {
         {!token ? (
           <p className="text-[14px] text-center text-red-400">
             Geçersiz bağlantı. Lütfen{" "}
-            <a href="/musteri/sifremi-unuttum" className="text-[#c084fc] underline underline-offset-2">
+            <Link href="/musteri/sifremi-unuttum" className="text-[#c084fc] underline underline-offset-2">
               yeniden talep edin
-            </a>.
+            </Link>.
           </p>
         ) : done ? (
           <div className="text-center space-y-4">
             <p className="text-[14px] text-[#c0c0d0] leading-relaxed">Şifreniz güncellendi.</p>
-            <a href="/musteri/giris" className="btn btn-primary inline-block">Giriş Yap</a>
+            <Link href="/musteri/giris" className="btn btn-primary inline-block">Giriş Yap</Link>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -78,7 +79,7 @@ export default function ResetPasswordForm() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="Min. 6 karakter"
+                placeholder="Min. 8 karakter"
                 autoFocus
                 autoComplete="new-password"
                 className="w-full px-4 py-3 rounded-xl text-[16px] text-white placeholder-[#555] outline-none focus:ring-1 focus:ring-purple-500/50"

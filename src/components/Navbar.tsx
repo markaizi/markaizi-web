@@ -75,6 +75,8 @@ export default function Navbar() {
 
   return (
     <>
+      {/* Klavye kullanıcıları için: ilk Tab menüyü atlayıp doğrudan içeriğe gider */}
+      <a href="#icerik" className="skip-link">İçeriğe geç</a>
       <header
         className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
         style={

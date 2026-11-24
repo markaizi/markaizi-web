@@ -83,7 +83,7 @@ export default function MobilyaLanding({ c }: { c: LandingContent }) {
       <JsonLd data={faqJsonLd} />
       <JsonLd data={breadcrumb} />
       <Navbar />
-      <main>
+      <main id="icerik" tabIndex={-1}>
         <section className="relative overflow-hidden pt-32 pb-16" style={{ background: "var(--bg)" }}>
           <div
             className="absolute top-[-200px] left-[-100px] w-[500px] h-[500px] rounded-full pointer-events-none"

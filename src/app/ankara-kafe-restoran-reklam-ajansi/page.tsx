@@ -100,7 +100,7 @@ export default function AnkaraKafeRestoranPage() {
       <JsonLd data={faqJsonLd} />
       <JsonLd data={breadcrumbJsonLd([{ name: "Ana Sayfa", path: "/" }, { name: KAFE_HUB.name, path: KAFE_HUB.path }])} />
       <Navbar />
-      <main>
+      <main id="icerik" tabIndex={-1}>
         <section className="relative overflow-hidden pt-32 pb-20" style={{ background: "var(--bg)" }}>
           <div className="absolute top-[-200px] left-[-100px] w-[500px] h-[500px] rounded-full pointer-events-none" style={{ background: "radial-gradient(circle,rgba(124,58,237,0.2) 0%,transparent 70%)", filter: "blur(80px)" }} />
           <div className="absolute top-[50px] right-[-150px] w-[400px] h-[400px] rounded-full pointer-events-none" style={{ background: "radial-gradient(circle,rgba(236,72,153,0.15) 0%,transparent 70%)", filter: "blur(80px)" }} />

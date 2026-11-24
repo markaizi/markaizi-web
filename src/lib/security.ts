@@ -1,3 +1,5 @@
+import { createHash } from "node:crypto";
+
 /**
  * Güvenlik yardımcıları — HTML kaçışı, girdi doğrulama ve basit rate limiting.
  * Ödeme ve form endpoint'lerinde ortak kullanılır.
@@ -20,6 +22,11 @@ export function escapeHtml(input: unknown): string {
 /** Tarih metni gerçekten ayrıştırılabiliyor mu? (zod .refine ile kullanılır; Invalid Date → Prisma 500 önlemi) */
 export function isValidDateString(v: string): boolean {
   return !isNaN(new Date(v).getTime());
+}
+
+/** Parola sıfırlama jetonunun veritabanında saklanan SHA-256 özeti. */
+export function hashResetToken(token: string): string {
+  return createHash("sha256").update(token).digest("hex");
 }
 
 /** E-posta formatı doğrulama (RFC'ye yakın, pratik regex). */

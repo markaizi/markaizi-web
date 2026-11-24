@@ -23,7 +23,7 @@ export default function CvPage() {
         </div>
       </div>
 
-      <main className="max-w-[720px] mx-auto px-5 py-12">
+      <main id="icerik" tabIndex={-1} className="max-w-[720px] mx-auto px-5 py-12">
         <h1 className="sr-only">markaizi Kariyer Başvurusu</h1>
         <CvForm />
       </main>

@@ -27,7 +27,7 @@ export default function BlogPage() {
     <>
       <JsonLd data={breadcrumb} />
       <Navbar />
-      <main>
+      <main id="icerik" tabIndex={-1}>
         {/* Hero */}
         <section className="relative overflow-hidden pt-32 pb-16" style={{ background: "var(--bg)" }}>
           <div className="absolute top-[-150px] left-[-100px] w-[400px] h-[400px] rounded-full pointer-events-none"
@@ -91,7 +91,7 @@ export default function BlogPage() {
             <div className="text-center mt-16 p-10 rounded-2xl" style={{ background: "var(--surface)", border: "1px solid rgba(168,85,247,0.2)" }}>
               <h3 className="text-[22px] font-bold mb-3">Dijital pazarlama konusunda yardım mı lazım?</h3>
               <p className="text-[#8a8a9a] mb-6">Ücretsiz danışmanlık randevusu alın, markanız için en uygun stratejiyi birlikte belirleyelim.</p>
-              <a href="/#iletisim" className="btn btn-primary">Ücretsiz Danışmanlık Al</a>
+              <Link href="/#iletisim" className="btn btn-primary">Ücretsiz Danışmanlık Al</Link>
             </div>
           </div>
         </section>
