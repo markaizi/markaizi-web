@@ -43,3 +43,6 @@ next-env.d.ts
 # Özel / hassas dosyalar (v3.10.0) — repo HERKESE AÇIK: müşteri ücreti, kişisel finans, veri scriptleri asla commit edilmez
 /docs/ozel/
 /scripts/ozel/
+
+# Müşteri panel verisi ve fiyat listesi — herkese açık repoda tutulmaz (denetim 25 Kas 2026, G-01)
+/musteri-data/

@@ -6,7 +6,7 @@ import WhatsApp from "@/components/WhatsApp";
 import ServiceFAQ, { FAQItem } from "@/components/ServiceFAQ";
 import Breadcrumb from "@/components/Breadcrumb";
 import JsonLd from "@/components/JsonLd";
-import { breadcrumbJsonLd } from "@/lib/seo";
+import { breadcrumbJsonLd, OG_IMAGES } from "@/lib/seo";
 import { CITY_PAGES, SERVICE_PAGES } from "@/lib/mobilya-pages";
 import VideoCallout from "@/components/VideoCallout";
 import KurumsalReklam from "@/components/KurumsalReklam";
@@ -15,11 +15,9 @@ import SektorLinkleri from "@/components/SektorLinkleri";
 export const metadata: Metadata = {
   title: { absolute: "Mobilya Reklam Ajansı — Siteler / Ankara | markaizi" },
   description:
-    "Siteler merkezli mobilya reklam ajansı. İstikbal, Doğtaş, Kelebek bayileri dahil 200+ mobilya mağazasına Instagram & Google reklamları, sosyal medya yönetimi ve showroom çekimi. Mobilya sektörünü tanıyan ajans.",
-  keywords:
-    "ankara mobilya ajansı, mobilya reklam ajansı, siteler reklam ajansı, mobilya reklamı, mobilya sosyal medya yönetimi, mobilya instagram reklamı, ankara mobilya reklam, siteler mobilya tanıtım, mobilya mağazası reklam, mobilya google reklamları, mobilya dijital pazarlama",
+    "Siteler merkezli mobilya reklam ajansı. İstikbal, Doğtaş ve Kelebek bayileri dahil mobilya mağazalarına Instagram ve Google reklamı, sosyal medya, çekim.",
   alternates: { canonical: "https://markaizi.com.tr/mobilya-reklam-ajansi" },
-  openGraph: {
+  openGraph: { images: OG_IMAGES, siteName: "markaizi",
     title: "Mobilya Reklam Ajansı — Siteler / Ankara | markaizi",
     description:
       "Mobilya sektörünü tanıyan reklam ajansı. Siteler'deki mağazanızdan Türkiye'nin her yerine: Instagram & Google reklamları, sosyal medya yönetimi, showroom çekimi.",
@@ -138,7 +136,7 @@ export default function MobilyaReklamAjansiPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
       <JsonLd data={breadcrumb} />
       <Navbar />
-      <main>
+      <main id="icerik" tabIndex={-1}>
         {/* ── Hero ── */}
         <section className="relative overflow-hidden pt-32 pb-20" style={{ background: "var(--bg)" }}>
           <div

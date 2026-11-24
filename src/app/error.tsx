@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/sections/Footer";
@@ -19,7 +20,7 @@ export default function ErrorPage({
   return (
     <>
       <Navbar />
-      <main className="min-h-[70vh] flex items-center px-6" style={{ background: "var(--bg)" }}>
+      <main id="icerik" tabIndex={-1} className="min-h-[70vh] flex items-center px-6" style={{ background: "var(--bg)" }}>
         <div className="max-w-[720px] mx-auto text-center py-24">
           <p className="font-black text-[15px] tracking-[0.2em] uppercase mb-4 gradient-text">
             Beklenmedik Hata
@@ -36,9 +37,9 @@ export default function ErrorPage({
             <button onClick={reset} className="btn btn-primary">
               Tekrar Dene
             </button>
-            <a href="/" className="btn btn-outline">
+            <Link href="/" className="btn btn-outline">
               Ana Sayfaya Dön
-            </a>
+            </Link>
             <a
               href="https://wa.me/905520772700"
               target="_blank"

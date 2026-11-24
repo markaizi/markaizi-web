@@ -1,6 +1,6 @@
 {
   "name": "markaizi-web",
-  "version": "3.14.0",
+  "version": "3.15.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -14,26 +14,25 @@
   "dependencies": {
     "@prisma/client": "^6.19.3",
     "bcryptjs": "^3.0.3",
-    "jose": "^6.2.3",
-    "next": "^16.3.0",
-    "nodemailer": "^9.0.3",
+    "jose": "^6.2.18",
+    "next": "^16.4.6",
+    "nodemailer": "^10.6.1",
     "pdfkit": "^0.19.1",
     "prisma": "^6.19.3",
     "react": "19.2.7",
     "react-dom": "19.2.7",
-    "zod": "^4.4.3"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",
-    "@types/nodemailer": "^8.0.0",
     "@types/pdfkit": "^0.17.6",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "dotenv-cli": "^11.0.0",
     "eslint": "^9",
-    "eslint-config-next": "^16.3.0",
+    "eslint-config-next": "^16.4.6",
     "tailwindcss": "^4",
     "tsx": "^4.22.4",
     "typescript": "^5"

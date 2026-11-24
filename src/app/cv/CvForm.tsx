@@ -2,6 +2,7 @@
 
 import { useState, useRef, FormEvent } from "react";
 import { CV_SKILLS, checkSkillConsistency } from "@/lib/cv-skills";
+import { Honeypot, botFields, KvkkNotu } from "@/components/FormExtras";
 
 const SOSYAL_MEDYA_OPTIONS = [
   "Aktif sosyal medya kullanıcısıyım",
@@ -11,7 +12,6 @@ const SOSYAL_MEDYA_OPTIONS = [
   "Reels / kısa video formatlarına hakimim",
 ];
 
-const MEDENI_OPTIONS = ["Bekar", "Evli", "Boşanmış"];
 
 const inputCls = "w-full px-4 py-3 rounded-xl text-[16px] text-white placeholder-[#444] outline-none transition-all";
 const inputStyle = { background: "var(--bg)", border: "1px solid var(--border)" };
@@ -87,7 +87,6 @@ export default function CvForm() {
     () => Object.fromEntries(CV_SKILLS.map((s) => [s, 1]))
   );
   const [sosyalMedya, setSosyalMedya] = useState<string[]>([]);
-  const [medeni, setMedeni]         = useState("");
   const [referanslar, setReferanslar] = useState("");
   // Tutarsızlık varsa ilk "Gönder" tıklaması uyarıya kaydırır; aday ikinci kez
   // tıklarsa (ya da puanları değiştirmezse) başvuru yine de gönderilir.
@@ -121,12 +120,12 @@ export default function CvForm() {
       email:          get("email"),
       phone:          get("phone"),
       age:            get("age"),
-      medeni,
       ucretBeklenti:  get("ucretBeklenti"),
       skills,
       sosyalMedya,
       referanslar,
       about:          get("about"),
+      ...botFields(form),
     };
 
     try {
@@ -140,7 +139,6 @@ export default function CvForm() {
         form.reset();
         setSkills(Object.fromEntries(CV_SKILLS.map((s) => [s, 1])));
         setSosyalMedya([]);
-        setMedeni("");
         setReferanslar("");
         setWarnAck(false);
       } else {
@@ -178,18 +176,19 @@ export default function CvForm() {
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-6">
+          <Honeypot />
 
           {/* Ad Soyad + Yaş */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div>
-              <label className={labelCls}>Ad Soyad *</label>
-              <input name="name" required placeholder="Adınız Soyadınız" className={inputCls} style={inputStyle}
+              <label htmlFor="cv-name" className={labelCls}>Ad Soyad *</label>
+              <input id="cv-name" name="name" required autoComplete="name" placeholder="Adınız Soyadınız" className={inputCls} style={inputStyle}
                 onFocus={(e) => Object.assign(e.target.style, inputFocusStyle)}
                 onBlur={(e) => Object.assign(e.target.style, inputStyle)} />
             </div>
             <div>
-              <label className={labelCls}>Yaş</label>
-              <input name="age" type="number" min="18" max="60" placeholder="Örn: 24" className={inputCls} style={inputStyle}
+              <label htmlFor="cv-age" className={labelCls}>Yaş</label>
+              <input id="cv-age" name="age" type="number" min="18" max="60" placeholder="Örn: 24" className={inputCls} style={inputStyle}
                 onFocus={(e) => Object.assign(e.target.style, inputFocusStyle)}
                 onBlur={(e) => Object.assign(e.target.style, inputStyle)} />
             </div>
@@ -198,40 +197,24 @@ export default function CvForm() {
           {/* E-posta + Telefon */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div>
-              <label className={labelCls}>E-posta *</label>
-              <input name="email" type="email" required placeholder="ornek@mail.com" className={inputCls} style={inputStyle}
+              <label htmlFor="cv-email" className={labelCls}>E-posta *</label>
+              <input id="cv-email" name="email" type="email" required autoComplete="email" placeholder="ornek@mail.com" className={inputCls} style={inputStyle}
                 onFocus={(e) => Object.assign(e.target.style, inputFocusStyle)}
                 onBlur={(e) => Object.assign(e.target.style, inputStyle)} />
             </div>
             <div>
-              <label className={labelCls}>Telefon *</label>
-              <input name="phone" type="tel" required placeholder="05XX XXX XX XX" className={inputCls} style={inputStyle}
+              <label htmlFor="cv-phone" className={labelCls}>Telefon *</label>
+              <input id="cv-phone" name="phone" type="tel" required autoComplete="tel" placeholder="05XX XXX XX XX" className={inputCls} style={inputStyle}
                 onFocus={(e) => Object.assign(e.target.style, inputFocusStyle)}
                 onBlur={(e) => Object.assign(e.target.style, inputStyle)} />
             </div>
           </div>
 
-          {/* Medeni Durum + Ücret Beklentisi */}
+          {/* Ücret Beklentisi — medeni durum sorusu kaldırıldı (işe alımda gereksiz kişisel veri, KVKK ölçülülük) */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
             <div>
-              <label className={labelCls}>Medeni Durum</label>
-              <div className="flex gap-2">
-                {MEDENI_OPTIONS.map((opt) => (
-                  <button
-                    key={opt}
-                    type="button"
-                    onClick={() => setMedeni(opt)}
-                    className="flex-1 py-3 rounded-xl text-[13px] font-semibold transition-all duration-150"
-                    style={medeni === opt ? toggleActive : toggleInactive}
-                  >
-                    {medeni === opt && "✓ "}{opt}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div>
-              <label className={labelCls}>Ücret Beklentisi *</label>
-              <input name="ucretBeklenti" required placeholder="Örn: 25.000 ₺ / net" className={inputCls} style={inputStyle}
+              <label htmlFor="cv-ucretBeklenti" className={labelCls}>Ücret Beklentisi *</label>
+              <input id="cv-ucretBeklenti" name="ucretBeklenti" required placeholder="Örn: 25.000 ₺ / net" className={inputCls} style={inputStyle}
                 onFocus={(e) => Object.assign(e.target.style, inputFocusStyle)}
                 onBlur={(e) => Object.assign(e.target.style, inputStyle)} />
             </div>
@@ -239,7 +222,7 @@ export default function CvForm() {
 
           {/* Bilgi ve Program Seviyeleri */}
           <div>
-            <label className={labelCls}>Bilgi ve Program Seviyeleriniz</label>
+            <p className={labelCls}>Bilgi ve Program Seviyeleriniz</p>
             <p className="text-[12px] text-[#666] mb-4">
               Her biri için kendinizi 1 (başlangıç) ile 10 (uzman) arasında değerlendirin.
               Kimse her alanda uzman değildir; dürüst bir değerlendirme sizi en doğru pozisyonla eşleştirmemize yardımcı olur.
@@ -268,7 +251,7 @@ export default function CvForm() {
 
           {/* Referanslar */}
           <div>
-            <label className={labelCls}>
+            <label htmlFor="cv-referanslar" className={labelCls}>
               Referanslar{" "}
               <span className="text-[#555] normal-case font-normal">(opsiyonel)</span>
             </label>
@@ -276,6 +259,7 @@ export default function CvForm() {
               Yönettiğiniz Instagram sayfa linkleri, çektiğiniz/kurguladığınız video linkleri vb. varsa paylaşın.
             </p>
             <textarea
+              id="cv-referanslar"
               name="referanslar"
               rows={3}
               value={referanslar}
@@ -290,7 +274,7 @@ export default function CvForm() {
 
           {/* Sosyal Medya Tecrübesi */}
           <div>
-            <label className={labelCls}>Sosyal Medya Tecrübeniz</label>
+            <p className={labelCls}>Sosyal Medya Tecrübeniz</p>
             <p className="text-[12px] text-[#666] mb-3">Uyanlar varsa seçin, birden fazla seçebilirsiniz.</p>
             <div className="flex flex-col gap-2">
               {SOSYAL_MEDYA_OPTIONS.map((opt) => {
@@ -325,8 +309,9 @@ export default function CvForm() {
 
           {/* Hakkında */}
           <div>
-            <label className={labelCls}>Kendinizi Kısaca Tanıtın *</label>
+            <label htmlFor="cv-about" className={labelCls}>Kendinizi Kısaca Tanıtın *</label>
             <textarea
+              id="cv-about"
               name="about"
               required
               rows={6}
@@ -338,7 +323,7 @@ export default function CvForm() {
           </div>
 
           {status === "error" && (
-            <p className="text-[13px] text-red-400 text-center">
+            <p role="alert" className="text-[13px] text-red-400 text-center">
               Bir hata oluştu. Lütfen tekrar deneyin veya{" "}
               <a href="https://wa.me/905520772700" className="underline">WhatsApp&apos;tan yazın</a>.
             </p>
@@ -359,6 +344,7 @@ export default function CvForm() {
               </span>
             ) : issues.length > 0 && warnAck ? "Yine de Gönder →" : "Başvurumu Gönder →"}
           </button>
+          <KvkkNotu className="text-center" />
         </form>
       )}
     </div>

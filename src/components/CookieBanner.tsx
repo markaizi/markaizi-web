@@ -9,11 +9,15 @@ export default function CookieBanner() {
 
   useEffect(() => {
     const consent = localStorage.getItem("cookie_consent");
+    let t: ReturnType<typeof setTimeout> | undefined;
     if (!consent) {
       // Short delay so it doesn't pop instantly on first load
-      const t = setTimeout(() => setVisible(true), 1200);
-      return () => clearTimeout(t);
+      t = setTimeout(() => setVisible(true), 1200);
     }
+    // Footer'daki "Çerez Tercihleri" bandı yeniden açar
+    const reopen = () => setVisible(true);
+    window.addEventListener("cookie-consent-open", reopen);
+    return () => { if (t) clearTimeout(t); window.removeEventListener("cookie-consent-open", reopen); };
   }, []);
 
   const accept = () => {
@@ -23,9 +27,12 @@ export default function CookieBanner() {
   };
 
   const reject = () => {
+    const wasAll = localStorage.getItem("cookie_consent") === "all";
     localStorage.setItem("cookie_consent", "essential");
     window.dispatchEvent(new Event("cookie-consent-change"));
     setVisible(false);
+    // Daha önce kabul edilmişse yüklenmiş GA/Pixel betikleri sayfada kalır — temiz başlangıç için yenile.
+    if (wasAll) window.location.reload();
   };
 
   // Çerez bandı sadece kamuya açık pazarlama sayfalarında görünür,

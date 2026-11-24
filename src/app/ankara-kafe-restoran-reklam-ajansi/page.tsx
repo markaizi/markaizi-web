@@ -7,22 +7,20 @@ import ServiceFAQ, { FAQItem } from "@/components/ServiceFAQ";
 import Breadcrumb from "@/components/Breadcrumb";
 import JsonLd from "@/components/JsonLd";
 import VideoCallout from "@/components/VideoCallout";
-import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
+import { breadcrumbJsonLd, SITE_URL, OG_IMAGES } from "@/lib/seo";
 import SektorLinkleri from "@/components/SektorLinkleri";
 import { ANKARA_ILCELER, KAFE_DISTRICT_PAGES, KAFE_HUB } from "@/lib/kafe-pages";
 
 const TITLE = "Ankara Kafe & Restoran Reklam Ajansı — Sosyal Medya, Instagram, Google Haritalar | markaizi";
 const DESC =
-  "Ankara'daki kafe, restoran, kahvaltı salonu ve pastaneler için sosyal medya yönetimi, Instagram reklamları, Google Haritalar ve yemek/mekân çekimi. Çankaya'dan Gölbaşı'na Ankara'nın 25 ilçesinde.";
+  "Ankara'daki kafe, restoran, kahvaltı salonu ve pastaneler için sosyal medya, Instagram reklamı, Google Haritalar ve mekân çekimi. Ankara'nın 25 ilçesinde.";
 const URL = `${SITE_URL}${KAFE_HUB.path}`;
 
 export const metadata: Metadata = {
   title: { absolute: TITLE },
   description: DESC,
-  keywords:
-    "ankara kafe reklam ajansı, ankara restoran reklam ajansı, ankara cafe sosyal medya yönetimi, ankara restoran sosyal medya ajansı, kafe instagram reklamı ankara, restoran instagram yönetimi ankara, ankara kafe google haritalar, ankara yemek fotoğraf çekimi, kafe sosyal medya ajansı, restoran dijital pazarlama ankara",
   alternates: { canonical: URL },
-  openGraph: { title: TITLE, description: DESC, type: "website", locale: "tr_TR", url: URL },
+  openGraph: { images: OG_IMAGES, siteName: "markaizi", title: TITLE, description: DESC, type: "website", locale: "tr_TR", url: URL },
 };
 
 const SERVICES = [
@@ -102,7 +100,7 @@ export default function AnkaraKafeRestoranPage() {
       <JsonLd data={faqJsonLd} />
       <JsonLd data={breadcrumbJsonLd([{ name: "Ana Sayfa", path: "/" }, { name: KAFE_HUB.name, path: KAFE_HUB.path }])} />
       <Navbar />
-      <main>
+      <main id="icerik" tabIndex={-1}>
         <section className="relative overflow-hidden pt-32 pb-20" style={{ background: "var(--bg)" }}>
           <div className="absolute top-[-200px] left-[-100px] w-[500px] h-[500px] rounded-full pointer-events-none" style={{ background: "radial-gradient(circle,rgba(124,58,237,0.2) 0%,transparent 70%)", filter: "blur(80px)" }} />
           <div className="absolute top-[50px] right-[-150px] w-[400px] h-[400px] rounded-full pointer-events-none" style={{ background: "radial-gradient(circle,rgba(236,72,153,0.15) 0%,transparent 70%)", filter: "blur(80px)" }} />

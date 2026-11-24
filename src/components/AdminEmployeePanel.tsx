@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
@@ -51,7 +52,7 @@ export default function AdminEmployeePanel({
       <header className="sticky top-0 z-50 px-6 py-4 flex items-center justify-between"
         style={{ background: "var(--header-bg)", WebkitBackdropFilter: "blur(20px)", backdropFilter: "blur(20px)", borderBottom: "1px solid var(--border)" }}>
         <div className="flex items-center gap-2">
-          <a href="/musteri/admin"
+          <Link href="/musteri/admin"
             className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[13px] font-medium transition-all"
             style={{ background: "rgba(168,85,247,0.1)", border: "1px solid rgba(168,85,247,0.2)", color: "#c084fc" }}
             onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(168,85,247,0.2)"; }}
@@ -60,7 +61,7 @@ export default function AdminEmployeePanel({
               <path d="M19 12H5M5 12l7 7M5 12l7-7" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
             Admin Paneli
-          </a>
+          </Link>
           <span className="text-[#555]">/</span>
           <span className="text-[14px] font-semibold text-white">Çalışanlar</span>
         </div>
@@ -108,7 +109,7 @@ export default function AdminEmployeePanel({
                 { key: "username", label: "Kullanıcı Adı", placeholder: "ali.yilmaz", type: "text" },
                 { key: "name",     label: "Ad Soyad",       placeholder: "Ali Yılmaz",  type: "text" },
                 { key: "email",    label: "E-posta",         placeholder: "ali@markaizi.com", type: "email" },
-                { key: "password", label: "Şifre",           placeholder: "Min. 6 karakter",  type: "password" },
+                { key: "password", label: "Şifre",           placeholder: "Min. 8 karakter",  type: "password" },
               ].map(({ key, label, placeholder, type }) => (
                 <div key={key}>
                   <label className="block text-[11px] font-semibold text-[#8a8a9a] uppercase tracking-wide mb-1.5">{label}</label>

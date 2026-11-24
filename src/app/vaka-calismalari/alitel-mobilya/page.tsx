@@ -6,20 +6,18 @@ import WhatsApp from "@/components/WhatsApp";
 import ServiceFAQ, { FAQItem } from "@/components/ServiceFAQ";
 import Breadcrumb from "@/components/Breadcrumb";
 import JsonLd from "@/components/JsonLd";
-import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
+import { breadcrumbJsonLd, SITE_URL, OG_IMAGES } from "@/lib/seo";
 
 const PATH = "/vaka-calismalari/alitel-mobilya";
 const TITLE = "Alitel Mobilya Vaka Çalışması — 7 Yıllık Dijital Reklam Ortaklığı | markaizi";
 const DESC =
-  "Alitel Mobilya ile 7 yıllık çalışma: her yıl İstikbal bayileri arasında Türkiye ciro birinciliği, 10 milyon TL'nin üzerinde yönetilen reklam bütçesi, Google reklamları ve dijital kanal yönetimi. markaizi mobilya vaka çalışması.";
+  "Alitel Mobilya ile 7 yıl: her yıl İstikbal bayileri arasında Türkiye ciro birinciliği, 10 milyon TL üzeri yönetilen reklam bütçesi, ağırlık Google reklamları.";
 
 export const metadata: Metadata = {
   title: { absolute: TITLE },
   description: DESC,
-  keywords:
-    "alitel mobilya, mobilya reklam vaka çalışması, mobilya google reklamları başarı hikayesi, mobilya reklam ajansı referans, mobilya dijital pazarlama vaka",
   alternates: { canonical: `${SITE_URL}${PATH}` },
-  openGraph: { title: TITLE, description: DESC, type: "article", locale: "tr_TR", url: `${SITE_URL}${PATH}`, publishedTime: "2026-09-26" },
+  openGraph: { images: OG_IMAGES, siteName: "markaizi", title: TITLE, description: DESC, type: "article", locale: "tr_TR", url: `${SITE_URL}${PATH}`, publishedTime: "2026-09-26" },
 };
 
 const STATS = [
@@ -124,7 +122,7 @@ export default function AlitelVakaPage() {
       <JsonLd data={faqJsonLd} />
       <JsonLd data={breadcrumb} />
       <Navbar />
-      <main>
+      <main id="icerik" tabIndex={-1}>
         <section className="relative overflow-hidden pt-32 pb-14" style={{ background: "var(--bg)" }}>
           <div
             className="absolute top-[-200px] right-[-100px] w-[500px] h-[500px] rounded-full pointer-events-none"
@@ -144,7 +142,7 @@ export default function AlitelVakaPage() {
                 Alitel Mobilya: <span className="gradient-text">7 Yıllık Dijital Reklam Ortaklığı</span>
               </h1>
               <p className="text-[#8a8a9a] text-[18px] leading-relaxed">
-                Türkiye'nin en büyük ve en hızlı büyüyen İstikbal bayilerinden Alitel Mobilya ile yedi yıldır aralıksız çalışıyoruz. Gerçek bir iş birliğinin özeti.
+                Türkiye&apos;nin en büyük ve en hızlı büyüyen İstikbal bayilerinden Alitel Mobilya ile yedi yıldır aralıksız çalışıyoruz. Gerçek bir iş birliğinin özeti.
               </p>
             </div>
           </div>

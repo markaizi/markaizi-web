@@ -31,7 +31,7 @@ const schema = z.object({
   username: z.string().min(2).max(60).regex(/^[a-z0-9_-]+$/, "Kullanıcı adı: küçük harf, rakam, tire, alt çizgi"),
   name: z.string().min(1).max(120),
   email: z.string().email(),
-  password: z.string().min(6).max(128),
+  password: z.string().min(8).max(128),
 });
 
 export async function POST(req: NextRequest) {

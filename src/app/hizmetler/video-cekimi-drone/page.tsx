@@ -4,9 +4,7 @@ import ServicePageTemplate from "@/components/ServicePageTemplate";
 export const metadata: Metadata = {
   title: { absolute: "Video Çekimi & Drone Çekimi — Tanıtım Filmi, Sosyal Medya Videosu | markaizi" },
   description:
-    "Firmalara video başı anlaşmayla profesyonel video çekimi: tanıtım filmi, sosyal medya videosu ve Reels, mankenli ya da mankensiz çekim. Emlak, proje ve işletmeler için drone (hava) çekimi.",
-  keywords:
-    "video çekimi, tanıtım filmi çekimi, sosyal medya video çekimi, reels çekimi, drone çekimi, emlak drone çekimi, havadan çekim, ürün video çekimi, mankenli video çekimi, ankara video çekimi, ankara drone çekimi",
+    "Video başı anlaşmayla tanıtım filmi, sosyal medya videosu ve Reels; mankenli ya da mankensiz çekim. Emlak, proje ve işletmeler için drone çekimi. Ankara.",
   alternates: { canonical: "https://markaizi.com.tr/hizmetler/video-cekimi-drone" },
 };
 

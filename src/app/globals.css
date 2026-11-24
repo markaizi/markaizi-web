@@ -259,11 +259,12 @@ h3, h4 {
 .scroll-dot      { animation: scrollDown 2s ease-in-out infinite; }
 
 /* ── Hero Text Animations ──────────────── */
-.hero-badge { animation: fadeInUp 0.8s ease forwards; }
-.hero-h1    { animation: fadeInUp 0.8s ease 0.1s both; }
-.hero-sub   { animation: fadeInUp 0.8s ease 0.2s both; }
-.hero-cta   { animation: fadeInUp 0.8s ease 0.3s both; }
-.hero-stats { animation: fadeInUp 0.8s ease 0.4s both; }
+/* Kısa tutuldu (0.8 sn → 0.45 sn, gecikmeler yarıya): ilk ekran metni daha erken tamamlanır. */
+.hero-badge { animation: fadeInUp 0.45s ease forwards; }
+.hero-h1    { animation: fadeInUp 0.45s ease 0.05s both; }
+.hero-sub   { animation: fadeInUp 0.45s ease 0.1s both; }
+.hero-cta   { animation: fadeInUp 0.45s ease 0.15s both; }
+.hero-stats { animation: fadeInUp 0.45s ease 0.2s both; }
 
 /* ── WhatsApp Pulse ────────────────────── */
 .wa-pulse { animation: waPulse 2.5s ease-out infinite; }
@@ -283,6 +284,17 @@ a:focus-visible, button:focus-visible, summary:focus-visible, [tabindex]:focus-v
   outline-offset: 2px;
   border-radius: 4px;
 }
+
+/* ── İçeriğe geç bağlantısı ─────────────────
+   Görünmez; klavyeyle ilk Tab'da sol üstte belirir. */
+.skip-link {
+  position: fixed; top: 8px; left: 8px; z-index: 20000;
+  padding: 10px 16px; border-radius: 999px;
+  background: #fff; color: #050505; font-weight: 700; font-size: 14px;
+  transform: translateY(-200%); transition: transform 0.15s ease;
+}
+.skip-link:focus { transform: translateY(0); }
+main:focus { outline: none; }
 
 /* ── Mobil form alanı yazı boyutu ──────────
    iOS Safari, 16px altındaki yazı boyutuna sahip bir alana odaklanınca

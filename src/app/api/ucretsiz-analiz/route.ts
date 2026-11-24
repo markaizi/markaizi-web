@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
-import { escapeHtml, cleanStr, cleanPhone, rateLimit, getClientIp } from "@/lib/security";
+import { escapeHtml, cleanStr, cleanPhone, rateLimit, getClientIp, isLikelyBot } from "@/lib/security";
 import { prisma } from "@/lib/db";
 
 export async function POST(req: NextRequest) {
@@ -13,7 +13,13 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const body = await req.json();
+    // Bozuk/JSON olmayan gövde 500 değil 400 dönsün
+    const body = await req.json().catch(() => null);
+    if (!body || typeof body !== "object") {
+      return NextResponse.json({ error: "Geçersiz istek." }, { status: 400 });
+    }
+    // Bot tuzağı: sessizce başarılı yanıt, kayıt ve e-posta yok
+    if (isLikelyBot(body)) return NextResponse.json({ success: true });
 
     const name = cleanStr(body.name, 120);
     const phone = cleanPhone(body.phone);

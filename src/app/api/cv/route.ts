@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import nodemailer from "nodemailer";
-import { escapeHtml, isValidEmail, cleanStr, cleanPhone, rateLimit, getClientIp } from "@/lib/security";
+import { escapeHtml, isValidEmail, cleanStr, cleanPhone, rateLimit, getClientIp, isLikelyBot } from "@/lib/security";
 import { CV_SKILLS, checkSkillConsistency } from "@/lib/cv-skills";
 import { prisma } from "@/lib/db";
 
@@ -14,13 +14,18 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const body = await req.json();
+    // Bozuk/JSON olmayan gövde 500 değil 400 dönsün
+    const body = await req.json().catch(() => null);
+    if (!body || typeof body !== "object") {
+      return NextResponse.json({ error: "Geçersiz istek." }, { status: 400 });
+    }
+    // Bot tuzağı: sessizce başarılı yanıt, kayıt ve e-posta yok
+    if (isLikelyBot(body)) return NextResponse.json({ success: true });
 
     const name          = cleanStr(body.name, 120);
     const email         = cleanStr(body.email, 254);
     const phone         = cleanPhone(body.phone);
     const age           = cleanStr(body.age, 10);
-    const medeni        = cleanStr(body.medeni, 30);
     const ucretBeklenti = cleanStr(body.ucretBeklenti, 100);
     const sosyalMedya   = Array.isArray(body.sosyalMedya) ? body.sosyalMedya.map((p: string) => cleanStr(p, 100)).join(", ") : "";
     const referanslar   = cleanStr(body.referanslar, 2000);
@@ -44,7 +49,7 @@ export async function POST(req: NextRequest) {
 
     // Önce veritabanına yaz — e-posta gönderimi başarısız olsa bile başvuru kaybolmasın.
     const submission = await prisma.submission.create({
-      data: { type: "CV", data: { name, email, phone, age, medeni, ucretBeklenti, sosyalMedya, referanslar, about, skills, tutarlilikUyarilari } },
+      data: { type: "CV", data: { name, email, phone, age, ucretBeklenti, sosyalMedya, referanslar, about, skills, tutarlilikUyarilari } },
     });
 
     const transporter = nodemailer.createTransport({
@@ -86,7 +91,6 @@ export async function POST(req: NextRequest) {
               ${row("E-posta",         `<a href="mailto:${encodeURIComponent(email)}" style="color:#c084fc">${escapeHtml(email)}</a>`)}
               ${row("Telefon",         escapeHtml(phone))}
               ${row("Yaş",             escapeHtml(age))}
-              ${row("Medeni Durum",    escapeHtml(medeni))}
               ${row("Ücret Beklenti",  escapeHtml(ucretBeklenti))}
               ${row("Sosyal Medya",    escapeHtml(sosyalMedya))}
               ${row("Referanslar",     referanslar ? escapeHtml(referanslar).replace(/\n/g, "<br>") : "")}

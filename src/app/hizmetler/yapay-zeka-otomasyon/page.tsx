@@ -3,7 +3,7 @@ import ServicePageTemplate from "@/components/ServicePageTemplate";
 
 export const metadata: Metadata = {
   title: { absolute: "Yapay Zeka & Otomasyon — markaizi" },
-  description: "Yapay zeka ile görseller, reklam filmleri ve videolar üretiyoruz. AI destekli otomasyon araçlarıyla içerik süreçlerinizi hızlandırıyor, kampanyalarınızı akıllı hale getiriyoruz.",
+  description: "Yapay zeka ile görsel, reklam filmi ve video üretimi; sohbet botu ve otomatik mesaj akışlarıyla içerik ve satış süreçlerinizi hızlandırıyoruz.",
   alternates: { canonical: "https://markaizi.com.tr/hizmetler/yapay-zeka-otomasyon" },
 };
 

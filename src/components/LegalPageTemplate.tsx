@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ReactNode } from "react";
 
 interface LegalPageTemplateProps {
@@ -16,7 +17,7 @@ export default function LegalPageTemplate({
   children,
 }: LegalPageTemplateProps) {
   return (
-    <main>
+    <main id="icerik" tabIndex={-1}>
       {/* Hero */}
       <section className="relative overflow-hidden pt-32 pb-16" style={{ background: "var(--bg)" }}>
         <div
@@ -47,9 +48,9 @@ export default function LegalPageTemplate({
 
         {/* Back link */}
         <div className="max-w-[860px] mx-auto px-6 mt-8 flex flex-wrap gap-x-4 gap-y-2 text-[13px]">
-          <a href="/" className="text-[#c084fc] hover:text-white transition-colors">
+          <Link href="/" className="text-[#c084fc] hover:text-white transition-colors">
             ← Ana Sayfa
-          </a>
+          </Link>
           <a href="/kvkk" className="text-[#8a8a9a] hover:text-white transition-colors">
             KVKK
           </a>

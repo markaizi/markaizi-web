@@ -5,8 +5,6 @@ export const metadata: Metadata = {
   title: { absolute: "Yapay Zeka Arama Görünürlüğü (GEO) — ChatGPT ve Gemini'de Önerilen Marka Olun | markaizi" },
   description:
     "İşletmenizin yapay zekadaki görünürlüğünü ölçüp iyileştiren ajans: ChatGPT, Gemini, Perplexity ve Google yapay zeka özetlerinde doğru anlatılmanız için GEO çalışması, ücretsiz görünürlük ölçümü ve ChatGPT reklamları. Ankara merkezli, Türkiye geneli.",
-  keywords:
-    "yapay zeka arama görünürlüğü, geo nedir, generative engine optimization, chatgpt'de görünmek, chatgpt seo, yapay zeka seo, chatgpt reklamları, chatgpt reklam verme, gemini görünürlük, ai görünürlük ajansı, ankara geo ajansı",
   alternates: { canonical: "https://markaizi.com.tr/hizmetler/yapay-zeka-arama-gorunurlugu" },
 };
 

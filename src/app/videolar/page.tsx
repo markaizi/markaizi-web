@@ -6,17 +6,17 @@ import WhatsApp from "@/components/WhatsApp";
 import Breadcrumb from "@/components/Breadcrumb";
 import JsonLd from "@/components/JsonLd";
 import { YouTubeLogo } from "@/components/YouTubeEmbed";
-import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
+import { breadcrumbJsonLd, SITE_URL, OG_IMAGES } from "@/lib/seo";
 import { VIDEOS, YOUTUBE_CHANNEL_URL, videoThumb } from "@/lib/video-data";
 
 const DESC =
-  "markaizi YouTube kanalının videoları: işletme sahipleri için dijital pazarlama, Meta ve Google reklamları, sosyal medya ve ajansla çalışma üzerine rehberler. Her videonun tam metni sayfasında.";
+  "markaizi YouTube videoları: işletme sahipleri için dijital pazarlama, Meta ve Google reklamları, sosyal medya ve ajansla çalışma rehberleri, tam metinleriyle.";
 
 export const metadata: Metadata = {
   title: { absolute: "YouTube Videoları — Dijital Pazarlama ve Reklam Rehberleri | markaizi" },
   description: DESC,
   alternates: { canonical: `${SITE_URL}/videolar` },
-  openGraph: { title: "markaizi YouTube Videoları", description: DESC, type: "website", locale: "tr_TR", url: `${SITE_URL}/videolar` },
+  openGraph: { images: OG_IMAGES, siteName: "markaizi", title: "markaizi YouTube Videoları", description: DESC, type: "website", locale: "tr_TR", url: `${SITE_URL}/videolar` },
 };
 
 export default function VideolarPage() {
@@ -42,7 +42,7 @@ export default function VideolarPage() {
       <JsonLd data={listJsonLd} />
       <JsonLd data={breadcrumbJsonLd([{ name: "Ana Sayfa", path: "/" }, { name: "Videolar", path: "/videolar" }])} />
       <Navbar />
-      <main>
+      <main id="icerik" tabIndex={-1}>
         <section className="relative overflow-hidden pt-32 pb-14" style={{ background: "var(--bg)" }}>
           <div
             className="absolute top-[-150px] right-[-100px] w-[420px] h-[420px] rounded-full pointer-events-none"

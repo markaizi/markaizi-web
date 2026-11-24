@@ -18,6 +18,9 @@ export default function Navbar() {
   const [open, setOpen]               = useState(false);
   const [loginOpen, setLoginOpen]     = useState(false);
   const [session, setSession]         = useState<SessionInfo>(undefined as unknown as SessionInfo);
+  const burgerRef = useRef<HTMLButtonElement>(null);
+  const closeRef  = useRef<HTMLButtonElement>(null);
+  const wasOpen   = useRef(false);
   const pathname  = usePathname();
   const isHome    = pathname === "/";
   const onVideos  = pathname.startsWith("/videolar");
@@ -38,6 +41,13 @@ export default function Navbar() {
   useEffect(() => {
     document.body.style.overflow = (open || loginOpen) ? "hidden" : "";
   }, [open, loginOpen]);
+
+  // Menü açılınca odak menüye, kapanınca menü düğmesine döner (klavye ve ekran okuyucu kullanıcıları).
+  useEffect(() => {
+    if (open) closeRef.current?.focus();
+    else if (wasOpen.current) burgerRef.current?.focus();
+    wasOpen.current = open;
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -65,6 +75,8 @@ export default function Navbar() {
 
   return (
     <>
+      {/* Klavye kullanıcıları için: ilk Tab menüyü atlayıp doğrudan içeriğe gider */}
+      <a href="#icerik" className="skip-link">İçeriğe geç</a>
       <header
         className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
         style={
@@ -164,12 +176,13 @@ export default function Navbar() {
             </li>
           </ul>
 
-          {/* Mobil: Müşteri Girişi ikonu + Hamburger */}
+          {/* Mobil: YouTube + birincil eylem + Hamburger.
+              Müşteri Girişi mobilde menüye taşındı: başlıktaki yer ilk kez gelen ziyaretçinin eylemine ayrıldı. */}
           <div className="lg:hidden flex items-center gap-2 sm:gap-3">
             <Link
               href="/videolar"
               aria-label="YouTube videolarımız"
-              className="flex items-center justify-center min-w-[44px] min-h-[44px] rounded-full transition-all"
+              className="hidden min-[360px]:flex items-center justify-center min-w-[44px] min-h-[44px] rounded-full transition-all"
               style={{ background: "rgba(255,0,51,0.08)", border: "1px solid rgba(255,0,51,0.45)" }}
             >
               <svg viewBox="0 0 28 20" className="w-[22px] h-[16px]" aria-hidden="true">
@@ -180,31 +193,31 @@ export default function Navbar() {
             {session ? (
               <a
                 href={session.redirect}
-                className="flex items-center gap-1.5 px-3 py-2 min-h-[44px] rounded-full transition-all text-[13px] font-medium"
+                aria-label={`Panelim: ${session.name}`}
+                className="flex items-center justify-center min-w-[44px] min-h-[44px] rounded-full transition-all"
                 style={{ border: "1px solid rgba(168,85,247,0.3)", color: "#c084fc", background: "rgba(168,85,247,0.1)" }}
               >
-                <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 flex-shrink-0" stroke="currentColor" strokeWidth="2">
+                <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 flex-shrink-0" stroke="currentColor" strokeWidth="2" aria-hidden="true">
                   <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
-                {session.name.split(" ")[0]}
               </a>
-            ) : session === null ? (
-              <button
-                onClick={() => setLoginOpen(true)}
-                aria-label="Müşteri Girişi"
-                className="flex items-center gap-1.5 px-3 py-2 min-h-[44px] rounded-full transition-all hover:bg-white/[0.08] text-[13px] font-medium"
-                style={{ border: "1px solid var(--border)", color: "#c084fc" }}
+            ) : (
+              <Link
+                href="/ucretsiz-analiz"
+                onClick={close}
+                className="btn btn-primary"
+                style={{ padding: "10px 16px", fontSize: 13, minHeight: 44 }}
               >
-                <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4 flex-shrink-0" stroke="currentColor" strokeWidth="2">
-                  <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-                Müşteri Girişi
-              </button>
-            ) : null}
+                Ücretsiz Analiz
+              </Link>
+            )}
           {/* Hamburger */}
           <button
+            ref={burgerRef}
             onClick={() => setOpen((v) => !v)}
-            aria-label="Menüyü aç"
+            aria-label={open ? "Menüyü kapat" : "Menüyü aç"}
+            aria-expanded={open}
+            aria-controls="mobil-menu"
             className="flex flex-col items-center justify-center gap-[5px] min-w-[44px] min-h-[44px] z-[1001] relative"
           >
             {[
@@ -243,6 +256,7 @@ export default function Navbar() {
             </span>
           </Link>
           <button
+            ref={closeRef}
             onClick={close}
             aria-label="Menüyü kapat"
             className="flex items-center gap-2 px-4 py-2 min-h-[44px] rounded-full transition-all"
@@ -293,13 +307,32 @@ export default function Navbar() {
           </Link>
         </div>
 
+        <div className="flex justify-center pb-6 -mt-2">
+          {session ? (
+            <a href={session.redirect} onClick={close} className="text-[15px] font-semibold text-[#c084fc] min-h-[44px] inline-flex items-center px-4">
+              Panelime Git ({session.name.split(" ")[0]})
+            </a>
+          ) : (
+            <button
+              onClick={() => { close(); setLoginOpen(true); }}
+              className="text-[15px] font-semibold text-[#c084fc] min-h-[44px] inline-flex items-center gap-2 px-4"
+            >
+              <svg viewBox="0 0 24 24" fill="none" className="w-4 h-4" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2M12 11a4 4 0 100-8 4 4 0 000 8z" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              Müşteri Girişi
+            </button>
+          )}
+        </div>
+
         {/* Alt blok: en yüksek niyetli aksiyonlar. Menüde telefon/WhatsApp
             yoktu — mobilde bunlar formdan daha çok dönüşüyor. */}
         <div className="px-6 pb-10 pt-4" style={{ borderTop: "1px solid var(--border)" }}>
           <div className="flex gap-3">
             <a
               href="tel:+905520772700"
-              className="btn btn-outline flex-1 gap-2 px-4"
+              className="btn btn-outline flex-1 min-w-0 gap-2"
+              style={{ padding: "14px 12px" }}
               onClick={close}
             >
               <svg viewBox="0 0 24 24" fill="none" className="w-[18px] h-[18px]" stroke="currentColor" strokeWidth="1.8">
@@ -311,8 +344,8 @@ export default function Navbar() {
               href="https://wa.me/905520772700"
               target="_blank"
               rel="noopener noreferrer"
-              className="btn flex-1 gap-2 px-4 text-white"
-              style={{ background: "#25d366" }}
+              className="btn flex-1 min-w-0 gap-2 text-white"
+              style={{ background: "#0b7a4b", padding: "14px 12px" }}
               onClick={close}
             >
               {/* WhatsApp.tsx'teki resmi marka yolu — sadeleştirilmiş bir çizim

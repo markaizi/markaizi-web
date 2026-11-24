@@ -79,7 +79,7 @@ export default function Hero() {
         { style: { width:400,height:400, background:"radial-gradient(circle,rgba(168,85,247,0.15) 0%,transparent 70%)", bottom:-100, left:"40%", animationDelay:"6s" } },
       ].map((o, i) => (
         <div key={i} className="absolute rounded-full pointer-events-none"
-          style={{ filter:"blur(80px)", animation:"float 8s ease-in-out infinite", ...o.style }} />
+          style={{ filter:"blur(80px)", ...o.style }} />
       ))}
 
       <div className="max-w-[1200px] mx-auto px-6 w-full relative z-10 grid grid-cols-1 lg:grid-cols-[45%_55%] gap-8 items-center">
@@ -89,7 +89,7 @@ export default function Hero() {
           <div className="hero-badge inline-flex items-center gap-2 text-[13px] font-medium text-[#c084fc] px-[18px] py-2 rounded-full mb-9"
             style={{ background:"rgba(124,58,237,0.12)", border:"1px solid rgba(124,58,237,0.3)" }}
           >
-            ✦ Dijital Büyüme Ortağınız
+            ✦ Ankara Siteler · Dijital Reklam Ajansı
           </div>
 
           <h1 className="hero-h1 font-black leading-[1.1] tracking-tight mb-8"

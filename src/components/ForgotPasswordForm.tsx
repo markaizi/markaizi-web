@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 
 export default function ForgotPasswordForm() {
@@ -30,10 +31,10 @@ export default function ForgotPasswordForm() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4" style={{ background: "var(--bg)" }}>
-      <a href="/" className="mb-10 flex items-center gap-2 opacity-60 hover:opacity-100 transition-opacity">
+      <Link href="/" className="mb-10 flex items-center gap-2 opacity-60 hover:opacity-100 transition-opacity">
         <span className="text-[22px] font-black gradient-text">markaizi</span>
         <span className="text-[#8a8a9a] text-[13px]">× Panel</span>
-      </a>
+      </Link>
 
       <div className="w-full max-w-[380px] rounded-2xl p-8" style={{ background: "var(--surface)", border: "1px solid var(--border)" }}>
         <div className="text-center mb-7">
@@ -55,9 +56,9 @@ export default function ForgotPasswordForm() {
               Hesap bulunduysa, şifre sıfırlama bağlantısı e-postanıza gönderildi.
               Gelen kutunuzu (ve spam klasörünü) kontrol edin.
             </p>
-            <a href="/musteri/giris" className="text-[13px] text-[#c084fc] underline underline-offset-2">
+            <Link href="/musteri/giris" className="text-[13px] text-[#c084fc] underline underline-offset-2">
               Girişe dön
-            </a>
+            </Link>
           </div>
         ) : (
           <>
@@ -86,9 +87,9 @@ export default function ForgotPasswordForm() {
             </form>
 
             <p className="text-[12px] text-[#555] text-center mt-5">
-              <a href="/musteri/giris" className="text-[#c084fc] underline underline-offset-2">
+              <Link href="/musteri/giris" className="text-[#c084fc] underline underline-offset-2">
                 Girişe dön
-              </a>
+              </Link>
               {" "}veya{" "}
               <a href="https://wa.me/905520772700" className="text-[#c084fc] underline underline-offset-2">
                 WhatsApp&apos;tan yazın

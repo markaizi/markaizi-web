@@ -3,8 +3,7 @@ import ServicePageTemplate from "@/components/ServicePageTemplate";
 
 export const metadata: Metadata = {
   title: { absolute: "TikTok Reklamları Ankara & Türkiye Geneli — TikTok Ads Yönetimi | markaizi" },
-  description: "Ankara'da TikTok Ads yönetimi. Mobilyacı, avizeci, aksesuar ve yerel Ankara işletmeleri için viral potansiyelli TikTok reklam kampanyaları. Türkiye genelinde uzaktan hizmet.",
-  keywords: "tiktok reklamları ankara, tiktok ads ankara, ankara tiktok reklam ajansı, siteler tiktok reklamı, ankara mobilya tiktok, tiktok reklam yönetimi ankara",
+  description: "Ankara'da TikTok Ads yönetimi: mobilya, avize, aksesuar ve yerel işletmeler için platforma özel kısa video ve reklam kampanyaları. Türkiye geneli hizmet.",
   alternates: { canonical: "https://markaizi.com.tr/hizmetler/tiktok-reklamlari" },
 };
 

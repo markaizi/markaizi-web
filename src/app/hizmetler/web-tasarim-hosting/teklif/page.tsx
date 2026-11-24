@@ -15,7 +15,7 @@ export default function WebTeklifPage() {
   return (
     <>
       <Navbar />
-      <main>
+      <main id="icerik" tabIndex={-1}>
         {/* Hero */}
         <section className="relative overflow-hidden pt-32 pb-10" style={{ background: "var(--bg)" }}>
           <div

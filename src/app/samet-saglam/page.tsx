@@ -6,20 +6,19 @@ import WhatsApp from "@/components/WhatsApp";
 import Breadcrumb from "@/components/Breadcrumb";
 import JsonLd from "@/components/JsonLd";
 import VideoCallout from "@/components/VideoCallout";
-import { breadcrumbJsonLd, SITE_URL } from "@/lib/seo";
+import { breadcrumbJsonLd, SITE_URL, OG_IMAGES } from "@/lib/seo";
 import { FOUNDER, FOUNDER_URL, founderJsonLd } from "@/lib/founder";
 import { VIDEOS } from "@/lib/video-data";
 
 const TITLE = "Samet Sağlam — markaizi Kurucusu | Dijital Pazarlama ve Reklam";
 const DESC =
-  "Samet Sağlam, Ankara Siteler merkezli dijital reklam ajansı markaizi'nin kurucusu. Mobilya sektörü başta olmak üzere Meta ve Google reklamları, sosyal medya ve içerik stratejisi. Samet Sağlam'a markaizi üzerinden ulaşın.";
+  "Samet Sağlam, Ankara Siteler merkezli dijital reklam ajansı markaizi'nin kurucusu. Mobilya sektörü başta olmak üzere Meta ve Google reklamları.";
 
 export const metadata: Metadata = {
   title: { absolute: TITLE },
   description: DESC,
-  keywords: "samet sağlam, samet saglam, samet sağlam markaizi, markaizi kurucusu, samet sağlam reklam, samet sağlam dijital pazarlama, samet sağlam ankara, samet sağlam youtube",
   alternates: { canonical: FOUNDER_URL },
-  openGraph: { title: TITLE, description: DESC, type: "profile", locale: "tr_TR", url: FOUNDER_URL },
+  openGraph: { images: OG_IMAGES, siteName: "markaizi", title: TITLE, description: DESC, type: "profile", locale: "tr_TR", url: FOUNDER_URL },
 };
 
 const profileJsonLd = {
@@ -44,7 +43,7 @@ export default function SametSaglamPage() {
       <JsonLd data={profileJsonLd} />
       <JsonLd data={breadcrumbJsonLd([{ name: "Ana Sayfa", path: "/" }, { name: FOUNDER.name, path: FOUNDER.path }])} />
       <Navbar />
-      <main>
+      <main id="icerik" tabIndex={-1}>
         <section className="relative overflow-hidden pt-32 pb-16" style={{ background: "var(--bg)" }}>
           <div
             className="absolute top-[-200px] right-[-120px] w-[480px] h-[480px] rounded-full pointer-events-none"

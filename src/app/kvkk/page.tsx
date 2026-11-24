@@ -23,8 +23,8 @@ export default function KVKKPage() {
       >
         <h2>1. Veri Sorumlusu</h2>
         <p>
-          Bu aydınlatma metni; <strong>{SELLER.legalName} — {SELLER.tradeName}</strong> ("Şirket") tarafından,
-          6698 Sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") kapsamında veri sorumlusu
+          Bu aydınlatma metni; <strong>{SELLER.legalName} — {SELLER.tradeName}</strong> (&quot;Şirket&quot;) tarafından,
+          6698 Sayılı Kişisel Verilerin Korunması Kanunu (&quot;KVKK&quot;) kapsamında veri sorumlusu
           sıfatıyla hazırlanmıştır.
         </p>
         <p>
@@ -71,7 +71,7 @@ export default function KVKKPage() {
           ödemelerin gerçekleştirilmesi amacıyla lisanslı ödeme kuruluşu PayTR Ödeme ve Elektronik
           Para Kuruluşu A.Ş.&apos;ye ve
           yetkili kamu kurum ve kuruluşlarına aktarılabilmektedir. Yurt dışına veri aktarımı,
-          KVKK'nın 9. maddesi kapsamında gerçekleştirilmektedir.
+          KVKK&apos;nın 9. maddesi kapsamında gerçekleştirilmektedir.
         </p>
 
         <h2>6. Kişisel Verilerin Saklanma Süresi</h2>
@@ -84,14 +84,14 @@ export default function KVKKPage() {
         </p>
 
         <h2>7. İlgili Kişi Hakları</h2>
-        <p>KVKK'nın 11. maddesi kapsamında aşağıdaki haklara sahipsiniz:</p>
+        <p>KVKK&apos;nın 11. maddesi kapsamında aşağıdaki haklara sahipsiniz:</p>
         <ul>
           <li>Kişisel verilerinizin işlenip işlenmediğini öğrenme</li>
           <li>Kişisel verileriniz işlenmişse buna ilişkin bilgi talep etme</li>
           <li>Kişisel verilerinizin işlenme amacını öğrenme</li>
           <li>Yurt içinde veya yurt dışında aktarıldığı üçüncü kişileri bilme</li>
           <li>Eksik veya yanlış işlenen verilerin düzeltilmesini isteme</li>
-          <li>KVKK'nın 7. maddesinde öngörülen şartlar çerçevesinde silinmesini veya yok edilmesini isteme</li>
+          <li>KVKK&apos;nın 7. maddesinde öngörülen şartlar çerçevesinde silinmesini veya yok edilmesini isteme</li>
           <li>İşlenen verilerin münhasıran otomatik sistemler vasıtasıyla analizi nedeniyle aleyhe bir sonuç ortaya çıkmasına itiraz etme</li>
           <li>Kişisel verilerinizin kanuna aykırı olarak işlenmesi sebebiyle zarara uğraması hâlinde zararın giderilmesini talep etme</li>
         </ul>

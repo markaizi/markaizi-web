@@ -1,3 +1,5 @@
+import { createHash } from "node:crypto";
+
 /**
  * Güvenlik yardımcıları — HTML kaçışı, girdi doğrulama ve basit rate limiting.
  * Ödeme ve form endpoint'lerinde ortak kullanılır.
@@ -20,6 +22,11 @@ export function escapeHtml(input: unknown): string {
 /** Tarih metni gerçekten ayrıştırılabiliyor mu? (zod .refine ile kullanılır; Invalid Date → Prisma 500 önlemi) */
 export function isValidDateString(v: string): boolean {
   return !isNaN(new Date(v).getTime());
+}
+
+/** Parola sıfırlama jetonunun veritabanında saklanan SHA-256 özeti. */
+export function hashResetToken(token: string): string {
+  return createHash("sha256").update(token).digest("hex");
 }
 
 /** E-posta formatı doğrulama (RFC'ye yakın, pratik regex). */
@@ -91,6 +98,21 @@ export function rateLimit(
 
   entry.count += 1;
   return { ok: true, retryAfter: 0 };
+}
+
+/**
+ * Form gönderimi bot gibi mi? (FormExtras.tsx → Honeypot)
+ * - Gizli "website" alanı doluysa → bot.
+ * - Form açıldıktan 2,5 sn içinde gönderildiyse → bot. "_t" yoksa (eski önbellekli sayfa) karar verilmez.
+ * Bot isteğine başarı yanıtı dönülür ama hiçbir şey kaydedilmez/gönderilmez — bot tekrar denemeyi öğrenmesin.
+ */
+export function isLikelyBot(body: unknown): boolean {
+  if (!body || typeof body !== "object") return false;
+  const b = body as Record<string, unknown>;
+  if (typeof b.website === "string" && b.website.trim() !== "") return true;
+  const t = Number(b._t);
+  if (Number.isFinite(t) && t > 0 && Date.now() - t < 2500) return true;
+  return false;
 }
 
 /** Basit IPv4/IPv6 biçim doğrulaması (rate-limit anahtarı ve PayTR user_ip için). */

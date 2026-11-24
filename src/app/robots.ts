@@ -9,19 +9,24 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/api/", "/musteri/", "/odeme/"],
       },
       {
-        // Yapay zeka ve GEO arama botları için açık izin kuralları
+        // Yapay zeka arama, eğitim ve kullanıcı adına sayfa çeken botlar — açık izin.
+        // Belirteçler resmî dokümanlardan (Kasım 2026): OpenAI, Anthropic, Perplexity, Google, Apple, Amazon.
+        // "Claude-Web" Anthropic'in güncel listesinde yok; yerine Claude-SearchBot ve Claude-User.
         userAgent: [
-          "GPTBot",
           "OAI-SearchBot",
+          "GPTBot",
           "ChatGPT-User",
+          "OAI-AdsBot",
           "ClaudeBot",
-          "Claude-Web",
+          "Claude-SearchBot",
+          "Claude-User",
           "PerplexityBot",
+          "Perplexity-User",
           "Google-Extended",
           "Applebot-Extended",
           "Amazonbot",
         ],
-        allow: ["/", "/llms.txt"],
+        allow: "/",
         disallow: ["/api/", "/musteri/", "/odeme/"],
       },
     ],

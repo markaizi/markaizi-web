@@ -8,21 +8,19 @@ import ServiceFAQ, { FAQItem } from "@/components/ServiceFAQ";
 import Breadcrumb from "@/components/Breadcrumb";
 import JsonLd from "@/components/JsonLd";
 import { FeatureIcon, type FeatureIconName } from "@/components/icons/FeatureIcons";
-import { breadcrumbJsonLd, SITE_URL, ORG_NAME } from "@/lib/seo";
+import { breadcrumbJsonLd, SITE_URL, ORG_NAME, OG_IMAGES } from "@/lib/seo";
 import { FOUNDER } from "@/lib/founder";
 
 const PATH = "/reklam-hesabi-denetimi";
 const TITLE = "Ücretsiz Reklam Hesabı Denetimi — Meta & Google Ads | markaizi";
 const DESC =
-  "Reklamınız satış getirmiyor mu? Meta (Instagram & Facebook) ve Google Ads hesabınızı yalnızca görüntüleme yetkisiyle ücretsiz denetliyoruz: ölçüm, kampanya yapısı, kitle, kreatif ve bütçe kaybı. Ankara merkezli, Türkiye geneli.";
+  "Reklamınız satış getirmiyor mu? Meta ve Google Ads hesabınızı yalnızca görüntüleme yetkisiyle ücretsiz denetliyoruz: ölçüm, kampanya, kitle, kreatif ve bütçe.";
 
 export const metadata: Metadata = {
   title: { absolute: TITLE },
   description: DESC,
-  keywords:
-    "reklam hesabı denetimi, ücretsiz reklam denetimi, meta reklam hesabı analizi, google ads hesap denetimi, reklam neden satış getirmiyor, instagram reklamı satış getirmiyor, reklam ajansı ikinci görüş, ankara reklam denetimi",
   alternates: { canonical: `${SITE_URL}${PATH}` },
-  openGraph: {
+  openGraph: { images: OG_IMAGES, siteName: "markaizi",
     title: TITLE,
     description: DESC,
     type: "website",
@@ -181,7 +179,7 @@ export default function ReklamHesabiDenetimiPage() {
       <JsonLd data={faqJsonLd} />
       <JsonLd data={breadcrumb} />
       <Navbar />
-      <main>
+      <main id="icerik" tabIndex={-1}>
         {/* ── Hero + Form ── */}
         <section className="relative overflow-hidden pt-28 sm:pt-32 pb-16" style={{ background: "var(--bg)" }}>
           <div

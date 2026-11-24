@@ -1,0 +1,33 @@
+# Her push ve PR'da tip kontrolü, lint ve production build (denetim 25 Kas 2026, Q-01).
+# Canlıya çıkışı Vercel yapar; bu iş yalnızca kırık kodun main'e girdiğini erkenden gösterir.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      # Build sırasında veritabanına bağlanılmaz; Prisma istemcisi üretimi için sahte değerler yeterli.
+      DATABASE_URL: postgresql://ci:ci@localhost:5432/ci
+      DIRECT_URL: postgresql://ci:ci@localhost:5432/ci
+      AUTH_SECRET: ci-yalnizca-test-icin-gercek-anahtar-degil-000000
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx tsc --noEmit
+      - run: npx eslint src/
+      - run: npm run build

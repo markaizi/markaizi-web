@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 
@@ -41,10 +42,10 @@ export default function LoginForm() {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center px-4" style={{ background: "var(--bg)" }}>
-      <a href="/" className="mb-10 flex items-center gap-2 opacity-60 hover:opacity-100 transition-opacity">
+      <Link href="/" className="mb-10 flex items-center gap-2 opacity-60 hover:opacity-100 transition-opacity">
         <span className="text-[22px] font-black gradient-text">markaizi</span>
         <span className="text-[#8a8a9a] text-[13px]">× Panel</span>
-      </a>
+      </Link>
 
       {maintenance && (
         <div className="w-full max-w-[420px] rounded-2xl p-7 mb-4 text-center space-y-4"
@@ -129,9 +130,9 @@ export default function LoginForm() {
         </form>
 
         <p className="text-[12px] text-[#555] text-center mt-5">
-          <a href="/musteri/sifremi-unuttum" className="text-[#c084fc] underline underline-offset-2">
+          <Link href="/musteri/sifremi-unuttum" className="text-[#c084fc] underline underline-offset-2">
             Şifremi unuttum
-          </a>
+          </Link>
         </p>
       </div>
     </div>

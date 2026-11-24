@@ -3,8 +3,7 @@ import ServicePageTemplate from "@/components/ServicePageTemplate";
 
 export const metadata: Metadata = {
   title: { absolute: "Web Tasarım Ankara & Türkiye Geneli — Kurumsal Web Sitesi & Hosting | markaizi" },
-  description: "Ankara'da web tasarım ve hosting hizmeti. Mobilyacı, doktor, klinik, aksesuar ve yerel işletmelere özel hızlı, mobil uyumlu web siteleri. Domain, hosting ve SEO dahil. Türkiye genelinde uzaktan hizmet.",
-  keywords: "web tasarım ankara, kurumsal web sitesi ankara, ankara doktor web sitesi, ankara klinik web tasarım, ankara mobilya web sitesi, siteler web tasarım, ankara işletme web sitesi, ucuz web tasarım ankara, hosting ankara",
+  description: "Ankara'da web tasarım ve hosting: mobilya, klinik ve yerel işletmeler için hızlı, mobil uyumlu web siteleri. Alan adı, hosting, SSL ve SEO dahil.",
   alternates: { canonical: "https://markaizi.com.tr/hizmetler/web-tasarim-hosting" },
 };
 
@@ -20,6 +19,7 @@ export default function WebTasarimPage() {
         badge="Dijital Altyapı"
         icon={ICON}
         path="/hizmetler/web-tasarim-hosting"
+        primaryCta={{ href: "/hizmetler/web-tasarim-hosting/teklif", label: "Web Sitesi Teklifi Al" }}
         relatedPosts={[{ slug: "core-web-vitals", title: "Core Web Vitals Rehberi" }]}
         title="Web Tasarım & Hosting"
         subtitle="Ziyaretçiyi müşteriye dönüştüren, hızlı yüklenen ve her cihazda mükemmel görünen web siteleri tasarlıyoruz. Domain'den yayına tek adımda."

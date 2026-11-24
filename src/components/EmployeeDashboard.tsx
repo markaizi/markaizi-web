@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import StaffFeedbackModal from "@/components/StaffFeedbackModal";
@@ -135,7 +136,7 @@ export default function EmployeeDashboard({
         style={{ background: "var(--header-bg)", WebkitBackdropFilter: "blur(20px)", backdropFilter: "blur(20px)", borderBottom: "1px solid var(--border)" }}
       >
         <div className="flex items-center gap-2 sm:gap-3">
-          <a href="/" className="font-black text-[16px] sm:text-[18px] gradient-text">markaizi</a>
+          <Link href="/" className="font-black text-[16px] sm:text-[18px] gradient-text">markaizi</Link>
           <span className="text-[#555] hidden sm:inline">/</span>
           <span className="hidden sm:inline text-[14px] font-semibold text-white">Çalışan Paneli</span>
           <span className="text-[11px] font-bold px-2.5 py-1 rounded-full"

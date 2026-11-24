@@ -4,9 +4,7 @@ import ServicePageTemplate from "@/components/ServicePageTemplate";
 export const metadata: Metadata = {
   title: { absolute: "Dijital Pazarlama Danışmanlığı — Uzaktan Sosyal Medya & Reklam Danışmanlığı | markaizi" },
   description:
-    "Kendi ekibiyle çalışmak isteyen markalara dijital pazarlama danışmanlığı: içerik ve paylaşım planı, video senaryoları, reklam stratejisi ve düzenli uzaktan yönlendirme. Ankara merkezli, Türkiye geneli.",
-  keywords:
-    "dijital pazarlama danışmanlığı, sosyal medya danışmanlığı, reklam danışmanlığı, uzaktan sosyal medya danışmanı, instagram danışmanlığı, meta reklam danışmanlığı, dijital pazarlama danışmanı ankara, kobi dijital pazarlama danışmanlığı",
+    "Kendi ekibiyle çalışan markalara dijital pazarlama danışmanlığı: paylaşım planı, video senaryoları, reklam stratejisi ve düzenli uzaktan yönlendirme.",
   alternates: { canonical: "https://markaizi.com.tr/hizmetler/dijital-pazarlama-danismanligi" },
 };
 

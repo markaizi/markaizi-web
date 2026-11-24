@@ -1,4 +1,6 @@
+import Link from "next/link";
 import Logo from "@/components/Logo";
+import CookiePrefsButton from "@/components/CookiePrefsButton";
 
 export default function Footer() {
   const year = new Date().getFullYear();
@@ -9,9 +11,9 @@ export default function Footer() {
         <div className="grid grid-cols-1 lg:grid-cols-[260px_1fr] gap-12 lg:gap-16 mb-16">
           {/* Brand */}
           <div>
-            <a href="/" className="inline-block mb-5">
+            <Link href="/" className="inline-block mb-5" aria-label="markaizi ana sayfa">
               <Logo height={56} />
-            </a>
+            </Link>
             <p className="text-sm text-[#8a8a9a] leading-relaxed max-w-[240px]">
               Ankara Siteler merkezli dijital reklam ajansı. Mobilyacıdan doktora, avizeciden aksesuarcıya her işletmeye dijital büyüme.
             </p>
@@ -94,7 +96,7 @@ export default function Footer() {
         <div className="max-w-[1200px] mx-auto px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="text-center sm:text-left">
             <p className="text-[13px] text-[#8a8a9a]">© {year} markaizi. Tüm hakları saklıdır.</p>
-            <p className="text-[12px] text-[#666] mt-1">Güvenli ödeme: PayTR · Visa · Mastercard · Troy</p>
+            <p className="text-[12px] text-[#8a8a9a] mt-1">Güvenli ödeme: PayTR · Visa · Mastercard · Troy</p>
           </div>
           <div className="flex flex-wrap gap-4 justify-center sm:justify-end">
             {[
@@ -106,10 +108,11 @@ export default function Footer() {
               { label: "Ön Bilgilendirme Formu", href: "/on-bilgilendirme-formu" },
               { label: "İptal ve İade Koşulları", href: "/iptal-ve-iade-kosullari" },
             ].map((l) => (
-              <a key={l.label} href={l.href} className="text-[13px] text-[#8a8a9a] hover:text-white transition-colors inline-flex items-center min-h-[44px] py-1">
+              <Link key={l.label} href={l.href} className="text-[13px] text-[#8a8a9a] hover:text-white transition-colors inline-flex items-center min-h-[44px] py-1">
                 {l.label}
-              </a>
+              </Link>
             ))}
+            <CookiePrefsButton className="text-[13px] text-[#8a8a9a] hover:text-white transition-colors inline-flex items-center min-h-[44px] py-1" />
           </div>
         </div>
       </div>
@@ -124,9 +127,15 @@ function FooterCol({ title, links }: { title: string; links: { label: string; hr
       <ul className="flex flex-col gap-3">
         {links.map((l) => (
           <li key={l.label}>
-            <a href={l.href} className="text-[14px] text-white/50 hover:text-white transition-colors [overflow-wrap:anywhere]">
-              {l.label}
-            </a>
+            {l.href.startsWith("/") ? (
+              <Link href={l.href} className="text-[14px] text-white/60 hover:text-white transition-colors [overflow-wrap:anywhere]">
+                {l.label}
+              </Link>
+            ) : (
+              <a href={l.href} className="text-[14px] text-white/60 hover:text-white transition-colors [overflow-wrap:anywhere]">
+                {l.label}
+              </a>
+            )}
           </li>
         ))}
       </ul>

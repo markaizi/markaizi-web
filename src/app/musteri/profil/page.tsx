@@ -102,7 +102,7 @@ export default function MusteriProfilPage() {
           <p className="font-semibold text-white text-[14px]">Şifre Değiştir</p>
           {[
             { key: "oldPassword", label: "Mevcut Şifre",   placeholder: "" },
-            { key: "password",    label: "Yeni Şifre",     placeholder: "Min. 6 karakter" },
+            { key: "password",    label: "Yeni Şifre",     placeholder: "Min. 8 karakter" },
             { key: "confirm",     label: "Yeni Şifre (Tekrar)", placeholder: "" },
           ].map(({ key, label, placeholder }) => (
             <div key={key}>

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import ThemeToggle from "@/components/ThemeToggle";
 
@@ -46,7 +47,7 @@ export default function CalisanProfilPage() {
     <div className="min-h-screen" style={{ background: "var(--bg)" }}>
       <header className="sticky top-0 z-50 px-6 py-4 flex items-center gap-2"
         style={{ background: "var(--header-bg)", WebkitBackdropFilter: "blur(20px)", backdropFilter: "blur(20px)", borderBottom: "1px solid var(--border)" }}>
-        <a href="/musteri/calisan"
+        <Link href="/musteri/calisan"
           className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[13px] font-medium transition-all"
           style={{ background: "rgba(96,165,250,0.1)", border: "1px solid rgba(96,165,250,0.2)", color: "#60a5fa" }}
           onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "rgba(96,165,250,0.2)"; }}
@@ -55,7 +56,7 @@ export default function CalisanProfilPage() {
             <path d="M19 12H5M5 12l7 7M5 12l7-7" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
           Çalışan Paneli
-        </a>
+        </Link>
         <span className="text-[#555]">/</span>
         <span className="text-[14px] font-semibold text-white">Profilim</span>
       </header>
@@ -94,7 +95,7 @@ export default function CalisanProfilPage() {
           <p className="font-semibold text-white text-[14px]">Şifre Değiştir</p>
           {[
             { key: "oldPassword", label: "Mevcut Şifre",   placeholder: "" },
-            { key: "password",    label: "Yeni Şifre",     placeholder: "Min. 6 karakter" },
+            { key: "password",    label: "Yeni Şifre",     placeholder: "Min. 8 karakter" },
             { key: "confirm",     label: "Yeni Şifre (Tekrar)", placeholder: "" },
           ].map(({ key, label, placeholder }) => (
             <div key={key}>

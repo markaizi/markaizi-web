@@ -19,7 +19,7 @@ export const GUZELLIK: LandingContent = {
   kind: "hizmet",
   metaTitle: "Güzellik Merkezi Reklam Ajansı — Ankara | Randevu Defterini Dolduran Instagram & Google Reklamı | markaizi",
   metaDescription:
-    "Ankara güzellik merkezleri ve salonları için Instagram, Meta ve Google reklam yönetimi, Google Haritalar ve sosyal medya. Boş randevu saatlerini dolduran, KVKK ve reklam kurallarına uygun güzellik merkezi dijital pazarlaması.",
+    "Ankara'daki güzellik merkezleri için Instagram, Meta ve Google reklamı, Google Haritalar ve sosyal medya. Boş randevu saatlerini dolduran, kurallara uygun.",
   keywords:
     "güzellik merkezi reklam ajansı, güzellik salonu reklamı, güzellik merkezi instagram reklamı, lazer epilasyon reklamı, ankara güzellik merkezi sosyal medya yönetimi, cilt bakımı reklamı, spa merkezi dijital pazarlama, güzellik merkezi google reklamı ankara",
   tag: "Ankara",
@@ -141,7 +141,7 @@ export const ETICARET: LandingContent = {
   kind: "hizmet",
   metaTitle: "E-Ticaret Reklam Ajansı — Meta, Google Alışveriş ve Dönüşüm Takibi | Ankara | markaizi",
   metaDescription:
-    "E-ticaret siteleri için Meta (Instagram, Facebook) ve Google Ads yönetimi: ürün feed'i, Google Alışveriş, Performance Max, katalog reklamı, Conversions API ve ROAS odaklı raporlama. Ankara merkezli, Türkiye geneli e-ticaret reklam ajansı.",
+    "E-ticaret siteleri için Meta ve Google Ads yönetimi: ürün feed'i, Google Alışveriş, Performance Max, katalog reklamı, Conversions API ve ROAS odaklı rapor.",
   keywords:
     "e-ticaret reklam ajansı, e-ticaret google ads, e-ticaret meta reklamı, google alışveriş reklamı, performance max, ikas shopify reklam yönetimi, e-ticaret roas, ankara e-ticaret ajansı, e-ticaret dönüşüm takibi, katalog reklamı",
   tag: "E-Ticaret",
@@ -250,7 +250,7 @@ export const GETAT: LandingContent = {
   kind: "hizmet",
   metaTitle: "GETAT Merkezi Dijital Pazarlama — Geleneksel ve Tamamlayıcı Tıp Tanıtım Kuralları | markaizi",
   metaDescription:
-    "Geleneksel ve tamamlayıcı tıp (GETAT) merkezleri için mevzuata uygun dijital pazarlama: web sitesi, Google İşletme Profili, bilgilendirme içeriği. GETAT tanıtımında nelere dikkat edilir, ne yapılır, ne yapılmaz.",
+    "GETAT merkezleri için mevzuata uygun dijital pazarlama: web sitesi, Google İşletme Profili ve bilgilendirme içeriği. Tanıtımda ne yapılır, ne yapılmaz?",
   keywords:
     "getat tanıtım, getat merkezi dijital pazarlama, geleneksel tamamlayıcı tıp tanıtım kuralları, hacamat merkezi tanıtım, akupunktur merkezi web sitesi, getat reklam yasağı, tamamlayıcı tıp sosyal medya",
   tag: "Sağlık",

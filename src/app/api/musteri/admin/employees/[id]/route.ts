@@ -10,7 +10,7 @@ const patchSchema = z.object({
   name:     z.string().min(1).max(120).optional(),
   email:    z.string().email().optional(),
   username: z.string().min(2).max(60).regex(/^[a-z0-9_-]+$/, "Kullanıcı adı: küçük harf, rakam, tire, alt çizgi").optional(),
-  password: z.string().min(6).max(128).optional(),
+  password: z.string().min(8).max(128).optional(),
   // İş Akışı yetkileri
   workflowAccess: z.boolean().optional(),
   workflowCanCreateCards: z.boolean().optional(),

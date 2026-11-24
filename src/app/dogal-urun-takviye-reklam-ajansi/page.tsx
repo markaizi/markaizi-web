@@ -6,17 +6,15 @@ import WhatsApp from "@/components/WhatsApp";
 import ServiceFAQ, { FAQItem } from "@/components/ServiceFAQ";
 import Breadcrumb from "@/components/Breadcrumb";
 import JsonLd from "@/components/JsonLd";
-import { breadcrumbJsonLd } from "@/lib/seo";
+import { breadcrumbJsonLd, OG_IMAGES } from "@/lib/seo";
 import SektorLinkleri from "@/components/SektorLinkleri";
 
 export const metadata: Metadata = {
   title: { absolute: "Doğal Ürün & Takviye Reklam Ajansı — Ürün Videosu, YouTube, E-Ticaret Reklamı | markaizi" },
   description:
-    "Vitamin, mineral, bitkisel takviye, doğal yağ ve doğal kozmetik markaları için mankenli/mankensiz ürün tanıtım videosu, YouTube içerik üretimi, e-ticaret reklamı ve bayi/distribütör pazarlaması. Fıtrina gibi doğal ürün markalarının tercih ettiği ajans.",
-  keywords:
-    "doğal ürün reklam ajansı, takviye gıda reklamı, bitkisel takviye sosyal medya yönetimi, vitamin mineral reklam ajansı, doğal yağ markası reklamı, kozmetik e-ticaret reklam ajansı, ürün tanıtım videosu çekimi, youtube ürün içerik üretimi, bayilik pazarlama içeriği, ankara doğal ürün reklamı, mankensiz ürün çekimi",
+    "Vitamin, bitkisel takviye, doğal yağ ve kozmetik markaları için ürün tanıtım videosu, YouTube içeriği, e-ticaret reklamı ve bayi/distribütör pazarlaması.",
   alternates: { canonical: "https://markaizi.com.tr/dogal-urun-takviye-reklam-ajansi" },
-  openGraph: {
+  openGraph: { images: OG_IMAGES, siteName: "markaizi",
     title: "Doğal Ürün & Takviye Reklam Ajansı | markaizi",
     description:
       "Vitamin, takviye, doğal yağ ve kozmetik markaları için ürün video çekimi, YouTube içerik üretimi ve e-ticaret reklamı.",
@@ -167,7 +165,7 @@ export default function DogalUrunTakviyeReklamAjansiPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }} />
       <JsonLd data={breadcrumb} />
       <Navbar />
-      <main>
+      <main id="icerik" tabIndex={-1}>
         {/* ── Hero ── */}
         <section className="relative overflow-hidden pt-32 pb-20" style={{ background: "var(--bg)" }}>
           <div
@@ -243,7 +241,7 @@ export default function DogalUrunTakviyeReklamAjansiPage() {
               <p className="text-[#8a8a9a] text-[16px] leading-[1.9] mb-5">
                 Doğal ürün ve geleneksel yöntem alıcısı, parlak bir reklamdan çok gerçek bir deneyime
                 inanır. Aynı zamanda bu alan, reklam politikaları açısından en hassas alanlardan biri —
-                "tedavi eder" gibi bir ifade tek başına reklamınızı reddettirebilir. 200+ Ankara
+                &quot;tedavi eder&quot; gibi bir ifade tek başına reklamınızı reddettirebilir. 200+ Ankara
                 işletmesiyle 10 yılı aşkın süredir çalışan ekibimiz, bu sınırların nerede olduğunu bilir ve
                 mesajınızı gücünden ödün vermeden bu sınırlar içinde kurar.
               </p>

@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
@@ -24,13 +25,13 @@ export default async function AdminIsAkisiPage() {
       <header className="sticky top-0 z-50 px-4 sm:px-6 py-3.5 sm:py-4 flex items-center justify-between gap-3"
         style={{ background: "var(--header-bg)", WebkitBackdropFilter: "blur(20px)", backdropFilter: "blur(20px)", borderBottom: "1px solid var(--border)" }}>
         <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-          <a href="/musteri/admin" className="font-black text-[16px] sm:text-[18px] gradient-text flex-shrink-0">markaizi</a>
+          <Link href="/musteri/admin" className="font-black text-[16px] sm:text-[18px] gradient-text flex-shrink-0">markaizi</Link>
           <span className="hidden sm:inline text-[#555]">/</span>
-          <a href="/musteri/admin" className="hidden sm:inline text-[14px] text-[#8a8a9a] hover:text-white transition-colors">Admin</a>
+          <Link href="/musteri/admin" className="hidden sm:inline text-[14px] text-[#8a8a9a] hover:text-white transition-colors">Admin</Link>
           <span className="hidden sm:inline text-[#555]">/</span>
           <span className="text-[13px] sm:text-[14px] font-semibold text-white truncate">İş Akışı</span>
         </div>
-        <a href="/musteri/admin" className="text-[12px] sm:text-[13px] text-[#8a8a9a] hover:text-white transition-colors flex-shrink-0">← Panele Dön</a>
+        <Link href="/musteri/admin" className="text-[12px] sm:text-[13px] text-[#8a8a9a] hover:text-white transition-colors flex-shrink-0">← Panele Dön</Link>
       </header>
       <main className="max-w-[1400px] mx-auto px-4 sm:px-6 py-5 sm:py-8">
         <div className="mb-4 sm:mb-6">

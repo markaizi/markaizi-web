@@ -158,7 +158,7 @@ export default function Services() {
         <div className="text-center max-w-[680px] mx-auto mb-16 reveal">
           <span className="section-tag">Hizmetlerimiz</span>
           <h2 className="font-black leading-tight mb-4" style={{ fontSize: "clamp(28px,4vw,42px)" }}>
-            Dijital Dünyada <span className="gradient-text">Her Adımda</span> Yanınızdayız
+            Reklam, Sosyal Medya ve Web <span className="gradient-text">Hizmetlerimiz</span>
           </h2>
           <p className="text-[#8a8a9a] text-[17px]">
             Markanızı büyütmek için ihtiyacınız olan tüm dijital hizmetleri tek çatı altında sunuyoruz.

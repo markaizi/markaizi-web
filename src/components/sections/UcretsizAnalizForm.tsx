@@ -1,5 +1,7 @@
 "use client";
 import { useState, FormEvent } from "react";
+import { Honeypot, botFields, KvkkNotu } from "@/components/FormExtras";
+import { track } from "@/lib/track";
 
 const SECTORS = [
   "Mobilya",
@@ -43,6 +45,7 @@ export default function UcretsizAnalizForm({ variant = "analiz" }: { variant?: "
         : isYz
           ? { kaynak: "Yapay Zeka Görünürlük Ölçümü" }
           : {}),
+      ...botFields(form),
     };
 
     try {
@@ -55,6 +58,7 @@ export default function UcretsizAnalizForm({ variant = "analiz" }: { variant?: "
 
       if (res.ok) {
         setStatus("done");
+        track("generate_lead", { form: isReklam ? "reklam_denetimi" : isYz ? "yz_olcumu" : "ucretsiz_analiz", sector: data.sector || undefined });
         form.reset();
         setShowNote(false);
       } else {
@@ -70,6 +74,8 @@ export default function UcretsizAnalizForm({ variant = "analiz" }: { variant?: "
   if (status === "done") {
     return (
       <div
+        role="status"
+        aria-live="polite"
         className="rounded-2xl p-7 text-center"
         style={{ background: "var(--surface)", border: "1px solid rgba(52,211,153,0.35)" }}
       >
@@ -97,6 +103,7 @@ export default function UcretsizAnalizForm({ variant = "analiz" }: { variant?: "
       className="rounded-2xl p-6 sm:p-7"
       style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
     >
+      <Honeypot />
       <div className="flex flex-col gap-4">
         <Field label="Ad Soyad" id="name" type="text" placeholder="Ahmet Yılmaz" required />
         <Field label="Telefon / WhatsApp" id="phone" type="tel" placeholder="0532 000 00 00" required inputMode="tel" />
@@ -164,7 +171,7 @@ export default function UcretsizAnalizForm({ variant = "analiz" }: { variant?: "
         )}
 
         {status === "error" && (
-          <p className="text-red-400 text-[13px] text-center">{errorMsg}</p>
+          <p role="alert" className="text-red-400 text-[13px] text-center">{errorMsg}</p>
         )}
 
         <button
@@ -184,6 +191,7 @@ export default function UcretsizAnalizForm({ variant = "analiz" }: { variant?: "
         <p className="text-[12px] text-[#8a8a9a] text-center leading-relaxed">
           Formu göndermeniz herhangi bir satın alma yükümlülüğü doğurmaz.
         </p>
+        <KvkkNotu className="text-center -mt-2" />
       </div>
     </form>
   );
@@ -211,6 +219,7 @@ function Field({ label, id, type, placeholder, required, inputMode }: {
         name={id}
         type={type}
         inputMode={inputMode}
+        autoComplete={id === "name" ? "name" : id === "phone" ? "tel" : id === "link" ? "url" : undefined}
         placeholder={placeholder}
         required={required}
         className="w-full px-4 py-3.5 rounded-xl text-white placeholder:text-white/40"

@@ -17,9 +17,7 @@ import ScrollReveal from "@/components/ScrollReveal";
 export const metadata: Metadata = {
   title: "markaizi — Ankara Dijital Reklam Ajansı | Siteler, Mobilya Reklamı & Sosyal Medya",
   description:
-    "Ankara Siteler merkezli dijital reklam ajansı. Mobilya mağazaları, kafe ve restoranlar, klinikler ve yerel işletmelere özel sosyal medya yönetimi, Google Ads, Meta reklam ve web tasarım. 10+ yıl deneyim, 200+ mutlu müşteri.",
-  keywords:
-    "dijital reklam ajansı ankara, siteler reklam ajansı, ankara kafe reklam ajansı, ankara restoran sosyal medya, gölbaşı kafe sosyal medya, ankara mobilya sosyal medya, ankara avize dijital pazarlama, ankara aksesuar instagram yönetimi, ankara klinik doktor google reklamları, ostim dijital ajans, keçiören sosyal medya ajansı, etimesgut reklam, çankaya dijital pazarlama, ankara google ads, ankara meta reklam, ankara tiktok reklamları, ankara instagram yönetimi, yerel işletme dijital pazarlama",
+    "Ankara Siteler merkezli dijital reklam ajansı: mobilya, kafe-restoran ve klinikler için sosyal medya, Google Ads, Meta reklam, web tasarım. 200+ işletme.",
   alternates: { canonical: "https://markaizi.com.tr" },
   openGraph: {
     title: "markaizi — Dijital Reklam Ajansı | Ankara",
@@ -37,7 +35,7 @@ const jsonLd = {
   "@type": ["ProfessionalService", "Organization"],
   "@id": ORG_ID,
   name: "markaizi Dijital Reklam Ajansı",
-  alternateName: "markaizi",
+  alternateName: ["markaizi", "Marka İzi"],
   url: "https://markaizi.com.tr",
   logo: "https://markaizi.com.tr/logo.svg",
   image: "https://markaizi.com.tr/opengraph-image",
@@ -48,17 +46,19 @@ const jsonLd = {
   address: {
     "@type": "PostalAddress",
     streetAddress: "Zübeyde Hanım Mahallesi Elif Sokak No:7/106 2. Kat, Sütçü Kemal İş Merkezi",
-    addressLocality: "Ankara",
+    addressLocality: "Altındağ",
     addressRegion: "Ankara",
     postalCode: "06110",
     addressCountry: "TR",
   },
   geo: {
     "@type": "GeoCoordinates",
-    latitude: "39.9835",
-    longitude: "32.8652",
+    // Zübeyde Hanım Mah. (Altındağ) merkez noktası — OpenStreetMap. Önceki değer Keçiören'i gösteriyordu.
+    // Google İşletme Profili'ndeki iğne konumu alınınca onunla değiştirilmeli.
+    latitude: 39.9527,
+    longitude: 32.8471,
   },
-  hasMap: "https://maps.google.com/?q=Zübeyde+Hanım+Mahallesi+Elif+Sokak+No:7+Ankara",
+  hasMap: "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent("Zübeyde Hanım Mahallesi Elif Sokak No:7 Altındağ Ankara"),
   areaServed: [
     { "@type": "Country", name: "Türkiye" },
     { "@type": "City", name: "Ankara" },
@@ -123,10 +123,10 @@ export default function Home() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
       />
       <Navbar />
-      <main>
+      <main id="icerik" tabIndex={-1}>
         <Hero />
         <FreeAnalysisBar />
 

@@ -48,7 +48,7 @@ const schema = z.object({
   // Opsiyonel: aynı anda müşteri hesabı oluştur
   username: z.string().min(2).max(60).regex(/^[a-z0-9_-]+$/).optional(),
   email:    z.string().email().optional(),
-  password: z.string().min(6).max(128).optional(),
+  password: z.string().min(8).max(128).optional(),
 });
 
 export async function POST(req: NextRequest) {

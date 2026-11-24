@@ -15,7 +15,6 @@ export function mobilyaMetadata(c: LandingContent): Metadata {
     // metaTitle zaten "| markaizi" ile bitiyor; kök şablon ("%s — markaizi") ikinci kez eklemesin
     title: { absolute: c.metaTitle },
     description: c.metaDescription,
-    keywords: c.keywords,
     alternates: { canonical: `${SITE_URL}${c.path}` },
     openGraph: {
       title: c.metaTitle,
@@ -84,7 +83,7 @@ export default function MobilyaLanding({ c }: { c: LandingContent }) {
       <JsonLd data={faqJsonLd} />
       <JsonLd data={breadcrumb} />
       <Navbar />
-      <main>
+      <main id="icerik" tabIndex={-1}>
         <section className="relative overflow-hidden pt-32 pb-16" style={{ background: "var(--bg)" }}>
           <div
             className="absolute top-[-200px] left-[-100px] w-[500px] h-[500px] rounded-full pointer-events-none"
