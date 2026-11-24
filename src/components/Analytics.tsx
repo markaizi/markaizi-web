@@ -1,7 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import Script from "next/script";
+import { track } from "@/lib/track";
 
 const GA_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 const PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID;
@@ -12,12 +14,35 @@ const PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID;
 // tetikleyerek sayfa yenilemeden anında burayı güncelletir.
 export default function Analytics() {
   const [consented, setConsented] = useState(false);
+  const pathname = usePathname();
+  const firstPath = useRef(true);
 
   useEffect(() => {
     const check = () => setConsented(localStorage.getItem("cookie_consent") === "all");
     check();
     window.addEventListener("cookie-consent-change", check);
     return () => window.removeEventListener("cookie-consent-change", check);
+  }, []);
+
+  // Meta Pixel yalnızca ilk yüklemede PageView gönderiyordu; App Router sayfa geçişleri sayılmıyordu.
+  // (GA4 geçişleri kendi "geliştirilmiş ölçüm" ayarıyla tarayıcı geçmişinden yakalar.)
+  useEffect(() => {
+    if (firstPath.current) { firstPath.current = false; return; }
+    if (consented) window.fbq?.("track", "PageView");
+  }, [pathname, consented]);
+
+  // WhatsApp, telefon ve e-posta tıklamaları — sitedeki tüm bağlantılar için tek dinleyici.
+  // track() izin yoksa hiçbir şey göndermez.
+  useEffect(() => {
+    const onClick = (e: MouseEvent) => {
+      const a = (e.target as HTMLElement | null)?.closest?.("a");
+      const href = a?.getAttribute("href") ?? "";
+      if (href.startsWith("https://wa.me")) track("contact_whatsapp");
+      else if (href.startsWith("tel:")) track("contact_phone");
+      else if (href.startsWith("mailto:")) track("contact_email");
+    };
+    document.addEventListener("click", onClick, { capture: true });
+    return () => document.removeEventListener("click", onClick, { capture: true });
   }, []);
 
   if (!consented) return null;
@@ -35,11 +60,18 @@ export default function Analytics() {
             {`
               window.dataLayer = window.dataLayer || [];
               function gtag(){dataLayer.push(arguments);}
-              gtag('js', new Date());
-              gtag('config', '${GA_ID}', {
-                page_path: window.location.pathname,
-                anonymize_ip: true,
+              window.gtag = gtag;
+              // Google izin modu v2: varsayılan "reddedildi", kullanıcı bantta kabul ettiği için hemen "verildi".
+              gtag('consent', 'default', {
+                ad_storage: 'denied', analytics_storage: 'denied',
+                ad_user_data: 'denied', ad_personalization: 'denied'
               });
+              gtag('consent', 'update', {
+                ad_storage: 'granted', analytics_storage: 'granted',
+                ad_user_data: 'granted', ad_personalization: 'granted'
+              });
+              gtag('js', new Date());
+              gtag('config', '${GA_ID}');
             `}
           </Script>
         </>

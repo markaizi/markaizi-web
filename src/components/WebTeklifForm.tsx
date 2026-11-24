@@ -1,5 +1,7 @@
 "use client";
 import { useState, FormEvent } from "react";
+import { Honeypot, botFields, KvkkNotu } from "@/components/FormExtras";
+import { track } from "@/lib/track";
 
 type Status = "idle" | "sending" | "done" | "error";
 
@@ -74,6 +76,7 @@ export default function WebTeklifForm() {
       budget: g("budget"),
       deadline: g("deadline"),
       notes: g("notes"),
+      ...botFields(f),
     };
 
     try {
@@ -84,6 +87,7 @@ export default function WebTeklifForm() {
       });
       if (res.ok) {
         setStatus("done");
+        track("generate_lead", { form: "web_teklif", site_type: siteType || undefined });
         f.reset();
         setSiteType("");
         setMarketplaces([]);
@@ -109,6 +113,7 @@ export default function WebTeklifForm() {
           className="rounded-2xl p-8 md:p-10 space-y-10"
           style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
         >
+          <Honeypot />
 
           {/* ── 1. İletişim ── */}
           <FieldGroup title="1 — İletişim Bilgileri" icon="👤">
@@ -327,7 +332,7 @@ export default function WebTeklifForm() {
 
           {/* Hata */}
           {status === "error" && (
-            <p className="text-red-400 text-[13px] text-center">
+            <p role="alert" className="text-red-400 text-[13px] text-center">
               Bir hata oluştu. Lütfen tekrar deneyin veya WhatsApp&apos;tan yazın.
             </p>
           )}
@@ -354,6 +359,11 @@ export default function WebTeklifForm() {
             {status === "done" && "✓ Talebiniz Alındı! 24 saat içinde dönüyoruz."}
             {status === "error" && "Hata — Tekrar Dene"}
           </button>
+
+          <p className="sr-only" role="status" aria-live="polite">
+            {status === "done" ? "Talebiniz alındı, 24 saat içinde dönüyoruz." : ""}
+          </p>
+          <KvkkNotu className="text-center" />
 
           {!siteType && status === "idle" && (
             <p className="text-center text-[12px] text-[#8a8a9a]">
@@ -428,6 +438,7 @@ function Field({
         type={type}
         placeholder={placeholder}
         required={required}
+        autoComplete={id === "name" ? "name" : id === "email" ? "email" : id === "phone" ? "tel" : id === "businessName" ? "organization" : undefined}
         className="w-full px-4 py-3 rounded-xl text-[14px] text-white placeholder:text-white/40 mt-1"
         style={{ background: "var(--bg)", border: "1.5px solid var(--border)" }}
       />

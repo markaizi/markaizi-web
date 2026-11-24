@@ -1,5 +1,7 @@
 "use client";
 import { useState, FormEvent } from "react";
+import { Honeypot, botFields, KvkkNotu } from "@/components/FormExtras";
+import { track } from "@/lib/track";
 
 const SOCIAL = [
   {
@@ -81,6 +83,7 @@ export default function Contact() {
       sector:  (form.elements.namedItem("sector")  as HTMLSelectElement).value,
       service: (form.elements.namedItem("service") as HTMLSelectElement).value,
       message: (form.elements.namedItem("message") as HTMLTextAreaElement).value,
+      ...botFields(form),
     };
 
     try {
@@ -92,6 +95,7 @@ export default function Contact() {
 
       if (res.ok) {
         setStatus("done");
+        track("generate_lead", { form: "iletisim", service: data.service || undefined, sector: data.sector || undefined });
         form.reset();
         setTimeout(() => setStatus("idle"), 5000);
       } else {
@@ -137,6 +141,7 @@ export default function Contact() {
             className="reveal rounded-2xl p-6 sm:p-10"
             style={{ background: "var(--surface)", border: "1px solid var(--border)" }}
           >
+            <Honeypot />
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 mb-5">
               <Field label="Ad Soyad" id="name" type="text" placeholder="Ahmet Yılmaz" required />
               <Field label="E-posta" id="email" type="email" placeholder="ahmet@sirket.com" required />
@@ -204,6 +209,10 @@ export default function Contact() {
                : status === "done"    ? "✓ Mesajınız Alındı!"
                : "Hata — Tekrar Dene"}
             </button>
+            <p className="sr-only" role="status" aria-live="polite">
+              {status === "sending" ? "Gönderiliyor" : status === "done" ? "Mesajınız alındı, 24 saat içinde dönüş yapacağız." : ""}
+            </p>
+            <KvkkNotu className="text-center mt-4" />
           </form>
 
           {/* Info Panel */}
@@ -285,6 +294,7 @@ function Field({ label, id, type, placeholder, required }: {
         type={type}
         placeholder={placeholder}
         required={required}
+        autoComplete={id === "name" ? "name" : id === "email" ? "email" : id === "phone" ? "tel" : undefined}
         className="w-full px-4 py-3.5 rounded-xl text-[15px] text-white placeholder:text-white/40"
         style={{ background: "var(--bg)", border: "1.5px solid var(--border)" }}
       />
