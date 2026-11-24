@@ -1,6 +1,6 @@
 # PROJE DURUM — markaizi.com.tr
 
-Son güncelleme: 23 Kasım 2026
+Son güncelleme: 25 Kasım 2026
 
 Bu dosya projenin güncel durumunu, alınmış kararları ve bekleyen işleri özetler.
 Kod ayrıntıları için kaynak dosyalara, veritabanı için `prisma/schema.prisma`'ya bakın.
@@ -264,6 +264,12 @@ npx prisma generate
 ## 7. Bekleyenler
 
 ### Samet'in yapması gerekenler
+- [ ] **Denetim (25 Kas 2026) sonrası:** repoyu GitHub'da özel yapmak (`musteri-data/` geçmişte duruyor); DNS'e SPF + DMARC
+      (`v=spf1 -all` / `v=DMARC1; p=reject` ya da kurumsal posta açılırsa sağlayıcının kayıtları); kurumsal e-posta
+      (info@markaizi.com.tr); Google İşletme Profili iğne koordinatını `src/app/page.tsx` `geo` alanına yazdırmak;
+      LinkedIn şirket + kişisel profil, Facebook sayfası, GBP kalıcı adresi → `SAME_AS` / `FOUNDER.sameAs`;
+      Armut, Clutch, Sortlist, Semrush Agency Partners profilleri; GA4 ve Meta Events Manager'da `generate_lead`/`Lead`
+      olayını dönüşüm olarak işaretlemek (Google Ads'e aktarmak); KVKK/çerez metinlerinin avukat teyidi.
 - [ ] İlk videonun gerçek yayın tarihini iletmek (şimdilik 3 Kas 2026 varsayıldı)
 - [ ] YouTube açıklamasına bölüm zaman damgaları eklemek (sitedeki içindekiler videoya bağlanabilir)
 - [ ] Kişi sayfası için fotoğraf; LinkedIn ve kişisel sosyal hesap linkleri (`FOUNDER.sameAs`)
@@ -293,8 +299,10 @@ Plan ve kaynaklar: `docs/rakip-analizi-2026-10.md`.
 - [ ] Rakamlı/isimli yeni vakalar (mobilya, kafe, klinik) hâlâ en güçlü eksik.
 
 ### Teknik
-- [ ] `npm audit`: 3 "yüksek" uyarı yalnızca Prisma CLI'nin geliştirme bağımlılığında
-      (`deepmerge-ts`); düzeltmesi Prisma 7'ye geçiş gerektiriyor.
+- [ ] `npm audit` (25 Kas 2026, v3.15.0 sonrası): kritik 0; 4 "yüksek" yalnızca Prisma CLI zincirinde
+      (`deepmerge-ts`, `effect`); düzeltmesi Prisma 7'ye geçiş gerektiriyor.
+- [ ] Form hız sınırı bellek içi (Vercel'de örnek başına). Kalıcı sınır için küçük bir DB tablosu + migration (Samet onayı).
+- [ ] Panel için iki adımlı doğrulama (ADMIN) — tasarım kararı bekliyor.
 - [ ] Büyük sürüm geçişleri (Prisma 7, TypeScript 7, ESLint 10) yapılmadı.
 - [ ] İki `<option>` öğesinde sabit `#0f0f14` arka plan (aydınlık temada açılır menü rengi).
 
@@ -316,6 +324,10 @@ Plan ve kaynaklar: `docs/rakip-analizi-2026-10.md`.
 ---
 
 ## 9. Değişiklik Geçmişi (Özet)
+
+- **25 Kasım 2026** — v3.15.0: kapsamlı denetim düzeltmeleri (güvenlik yamaları, `musteri-data/` repodan çıkarıldı, www/vercel.app,
+  OG ve meta açıklamaları, şema konumu, dönüşüm olayları + izin modu, KVKK notları, bot koruması, mobil CTA, erişilebilirlik,
+  lint 0 hata, CI). Rapor yerelde `docs/ozel/DENETIM-2026-11-25.md`.
 
 - **Temmuz 2026** — Mobilya SEO paketi (iniş sayfası + 4 blog), site denetimi.
 - **Ağustos 2026** — Panel: Trello tarzı iş akışı, çalışan iş kayıtları ve ödemeleri, ekonomi modülü,

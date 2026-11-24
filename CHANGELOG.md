@@ -2,13 +2,51 @@
 
 > **Bu dosya araçlar arası devir-teslim defteridir.** En üstteki sürüm = en son durum.
 > Kurallar ve şablon: [`AGENTS.md`](./AGENTS.md). Eski sürümler silinmez.
-> Güncel sürüm: **v3.14.0** (`package.json` ile aynı olmalı).
+> Güncel sürüm: **v3.15.0** (`package.json` ile aynı olmalı).
 
 ---
 
 > **Gizlilik notu (v3.10.0):** Bu repo herkese açıktır. Müşteri ücretleri, tahsilat tutarları, kişisel finans ve kişi adları
 > bu dosyaya **yazılmaz**. Rakamlı / isimli ayrıntılar yerelde, git'e girmeyen `docs/ozel/` klasöründe tutulur
 > (ör. `docs/ozel/CHANGELOG-OZEL-2026-11-23.md`); tek seferlik veri scriptleri `scripts/ozel/` altındadır.
+
+## v3.15.0 — 25 Kasım 2026 — Kapsamlı denetim düzeltmeleri (güvenlik, SEO, ölçüm, KVKK, erişilebilirlik)
+**Araç:** Claude Code (Opus 5.5)  **Tür:** MINOR
+Denetim raporu yerelde: `docs/ozel/DENETIM-2026-11-25.md` (git dışı). Dal: `denetim-duzeltmeleri-2026-11`;
+geri dönüş noktası: etiket `yedek/denetim-oncesi-2026-11-25` (= v3.14.0).
+### Yapılanlar
+- **Güvenlik:** `musteri-data/` repodan çıkarıldı (git dışı yerel kopya `docs/ozel/musteri-data/`). next 16.4.6, zod 4.6.7,
+  nodemailer 10.6.1, jose 6.2.18 (npm audit: kritik 0; kalan 4 yüksek yalnızca Prisma CLI zincirinde). JWT yalnızca HS256;
+  şifre sıfırlama jetonu SHA-256 özetiyle saklanır; "şifremi unuttum" işi `after()` ile yanıttan sonra; panel parolası en az 8.
+  COOP başlığı.
+- **Teknik SEO:** www → çıplak alan adı 308 (`next.config.ts`); `*.vercel.app` için `X-Robots-Tag: noindex`; 11 sayfaya
+  og:image; `keywords` meta kaldırıldı; 59 sayfanın meta açıklaması ≤155 karakter (title/H1 değişmedi; blog ve video için
+  ayrı `metaDescription` alanı); favicon.ico, apple-icon, `/feed.xml` (RSS), `/.well-known/security.txt`; 404 başlığı;
+  JSON-LD `<` kaçışı; latin-ext yazı tipi alt kümesi; OG görseli statik.
+- **GEO / şema:** Ana sayfa koordinatı Keçiören yerine Zübeyde Hanım Mah. (Altındağ, OSM mahalle merkezi), `addressLocality`,
+  `alternateName: ["markaizi","Marka İzi"]`; robots.txt güncel yapay zekâ belirteçleri (Claude-SearchBot, Claude-User,
+  Perplexity-User, OAI-AdsBot; Claude-Web çıkarıldı).
+- **Ölçüm:** `src/lib/track.ts` — `generate_lead` (4 form), `contact_whatsapp/phone/email` (tek tıklama dinleyicisi);
+  yalnızca çerez onayıyla. Google izin modu v2 sinyali; Pixel'de sayfa geçişi PageView; footer'da "Çerez Tercihleri".
+- **KVKK / spam:** 4 formda KVKK aydınlatma bağlantısı; honeypot + süre kontrolü (`isLikelyBot`); bozuk JSON'a 400;
+  CV formundan medeni durum kaldırıldı.
+- **UX / mobil:** Hizmet sayfası hero'sunda Ücretsiz Analiz + WhatsApp (web tasarımda teklif formu); mobil başlıkta
+  Müşteri Girişi menüye taşındı, yerine Ücretsiz Analiz; mobil menü odak yönetimi; WhatsApp balonu mobilde küçük;
+  hero animasyonları kısaldı, küreler sabit; rozet ve iki slogan H2 tanımlayıcı (H1 aynı); teklif sayfasında çift başlık kaldırıldı.
+- **Erişilebilirlik / kalite:** "İçeriğe geç" bağlantısı + `<main id="icerik">`; CV etiketleri alanlara bağlı; autocomplete,
+  role=status/alert; 69 iç `<a>` → `<Link>`; ESLint 94 hata → 0 (26 uyarı); `.github/workflows/ci.yml` (tsc + eslint + build).
+### Doğrulama
+- `tsc --noEmit` temiz, `eslint src/` 0 hata, `next build` başarılı (sırsız ortamda da). Yerel production sunucusunda:
+  www yönlendirmesi, vercel.app noindex, favicon/RSS/security.txt, bot isteği → kayıtsız başarı, bozuk JSON → 400,
+  mobil başlık 320/375 px taşmasız, menü odak yönetimi, form KVKK notu ve çerez tercihleri tarayıcıda denendi.
+- Panel ekranlarındaki `<Link>` dönüşümleri giriş yapılmadığı için tarayıcıda denenmedi (derleme ve tip kontrolü temiz).
+### Dikkat / bilinen kısıtlar
+- Push yapılmadı: değişiklikler `denetim-duzeltmeleri-2026-11` dalında. Canlıya almak için main'e birleştirip push.
+- `musteri-data/` geçmiş commit'lerde hâlâ duruyor; tam temizlik için repoyu özel yapmak ya da geçmişi yeniden yazmak gerekir.
+- Kalıcı (çok örnekli) hız sınırı için veritabanı tablosu gerekir — migration Samet onayıyla.
+### Yarım kalanlar / Sıradaki (Samet'in işlemi gereken)
+- Repoyu özel yapmak; SPF/DMARC DNS kayıtları; Google İşletme Profili iğne koordinatı; `sameAs` için LinkedIn/Facebook/GBP adresleri;
+  gerçek iş görselleri, vakalar ve yorumlar; KVKK metinlerinin hukuki teyidi; GA4/Meta'da yeni olayları dönüşüm olarak işaretlemek.
 
 ## v3.14.0 — 25 Kasım 2026 — Panel filtre menüleri yenilendi + ajandada öncelik filtresi
 **Araç:** Claude Code (Opus 5.5)  **Tür:** MINOR
