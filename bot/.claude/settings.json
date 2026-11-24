@@ -6,7 +6,17 @@
       "mcp__plugin_telegram_telegram"
     ],
     "deny": [
-      "Read",
+      "Read(~/.mkz-env)",
+      "Read(~/.claude/**)",
+      "Read(~/.claude.json)",
+      "Read(~/.bash_history)",
+      "Read(//etc/**)",
+      "Read(//var/**)",
+      "Read(//root/**)",
+      "Read(//tmp/**)",
+      "Read(//proc/**)",
+      "Glob",
+      "Grep",
       "Write",
       "Edit",
       "NotebookEdit",

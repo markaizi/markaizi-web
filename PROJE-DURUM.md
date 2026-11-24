@@ -346,6 +346,10 @@ Plan ve kaynaklar: `docs/rakip-analizi-2026-10.md`.
   soruya birebir cevap veren ilk SSS ve yeni meta açıklama (başlık/H1 aynı), blog yazısı
   `isletmenizin-chatgpt-de-gorunup-gorunmedigini-nasil-olcersiniz`. 3-4 hafta sonra o sorgunun tıklama oranına bak.
   **Bekleyen:** markaizi.com (düz) Vercel projesine eklenip markaizi.com.tr'ye 308 yönlendirilecek (şu an projede yok).
+- **24 Kasım 2026** — v3.13.0: **Markaizi Asistan (Claude botu) devrede.** VPS'te `mkzbot` kullanıcısı, `mkzbot.service` ile otomatik başlar.
+  Samet Claude uygulamasından (Code → "Markaizi Asistan", Remote Control) yazıyor; test edildi, çalışıyor. Telegram: eklenti açık,
+  Telegram botlara sürekli 429 döndüğü için eşleştirme bekliyor. **Bekleyen:** Telegram açılınca eşleştirme (`bot/KURULUM.md` 7. adım)
+  ya da kalıcı bildirim kanalı olarak Discord; botun kendiliğinden bildirim göndermesi (ödeme günü, 14 gün ziyaret uyarısı).
 - **23 Kasım 2026** — v3.12.0: VPS'e taşıma altyapısı (`deploy/`) hazır. **Taşıma ertelendi (Samet: şimdilik Vercel'de kalsın)** — canlı Vercel + Neon.
   VPS'te durum: `markaizi-web` servisi durduruldu ve devre dışı; gece yedeği cron'u kapalı (`/var/www/markaizi/bin/cron-markaizi-yedek.kapali`);
   `markaizi_web` veritabanında 23 Kasım tarihli ESKİ kopya var (geçişte Neon'dan yeniden kopyalanacak). Devam: veri kopyala → `env-doldur.sh` →

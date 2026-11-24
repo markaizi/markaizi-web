@@ -2,13 +2,27 @@
 
 > **Bu dosya araçlar arası devir-teslim defteridir.** En üstteki sürüm = en son durum.
 > Kurallar ve şablon: [`AGENTS.md`](./AGENTS.md). Eski sürümler silinmez.
-> Güncel sürüm: **v3.12.0** (`package.json` ile aynı olmalı).
+> Güncel sürüm: **v3.13.0** (`package.json` ile aynı olmalı).
 
 ---
 
 > **Gizlilik notu (v3.10.0):** Bu repo herkese açıktır. Müşteri ücretleri, tahsilat tutarları, kişisel finans ve kişi adları
 > bu dosyaya **yazılmaz**. Rakamlı / isimli ayrıntılar yerelde, git'e girmeyen `docs/ozel/` klasöründe tutulur
 > (ör. `docs/ozel/CHANGELOG-OZEL-2026-11-23.md`); tek seferlik veri scriptleri `scripts/ozel/` altındadır.
+
+## v3.13.0 — 24 Kasım 2026 — Markaizi Asistan (Claude botu) devrede
+**Araç:** Claude Code (Opus 5.5)  **Tür:** MINOR
+### Yapılanlar
+- Bot VPS'te ayrı `mkzbot` kullanıcısıyla çalışıyor; asıl kanal **Claude Remote Control** (Claude uygulaması → Code → "Markaizi Asistan").
+  Telegram eklentisi de açık ama Telegram botlara sürekli 429 döndüğünden eşleştirme beklemede.
+- `bot/mkzbot.service` — sunucu açılışında otomatik başlatma (systemd + tmux, oturum kapanırsa yeniden açılır).
+- `bot/vps-kurulum.sh` (kullanıcı + Bun + Claude Code), `bot/telegram-token.sh` (token'ı gizli girişle sunucuya yazar).
+- `bot/.claude/settings.json` — `dontAsk` modu; yalnızca `mkz` ve Telegram araçları; dosya yazma, web, alt ajan kapalı;
+  sır dosyaları yol bazlı okuma yasağıyla korunuyor (`CLAUDE.md` okunabilsin diye genel Read yasağı kaldırıldı).
+- `bot/KURULUM.md` gerçek adımlarla yeniden yazıldı.
+### Doğrulama
+- Remote Control üzerinden verilen görev ajandaya işlendi (Samet test etti). `mkz ozet` canlı veri döndürüyor.
+- `mkzbot.service` etkin ve çalışıyor; yeniden başlatmada Remote Control ve Telegram eklentisi açılıyor.
 
 ## v3.12.0 — 23 Kasım 2026 — Kendi sunucuya (VPS) taşıma altyapısı
 **Araç:** Claude Code (Opus 5.5)  **Tür:** MINOR

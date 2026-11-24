@@ -1,0 +1,23 @@
+# Markaizi botu — sunucu açılışında kendiliğinden başlar.
+# Claude Code oturumu mkzbot kullanıcısıyla tmux içinde çalışır; oturum kapanırsa 10 sn sonra yeniden açılır.
+# Kurulum: /etc/systemd/system/mkzbot.service → systemctl daemon-reload && systemctl enable --now mkzbot
+# Ekrana bakmak: sudo -iu mkzbot tmux attach -t mkzbot   (çıkış: Ctrl+b, ardından d)
+[Unit]
+Description=Markaizi Asistan (Claude Code: Remote Control + Telegram)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=forking
+User=mkzbot
+WorkingDirectory=/home/mkzbot/markaizi-bot
+Environment=HOME=/home/mkzbot
+Environment=PATH=/home/mkzbot/.local/bin:/home/mkzbot/.bun/bin:/usr/local/bin:/usr/bin:/bin
+Environment=ENABLE_CLAUDEAI_MCP_SERVERS=false
+ExecStart=/usr/bin/tmux new-session -d -s mkzbot -x 160 -y 45 "while true; do claude --remote-control 'Markaizi Asistan' --channels plugin:telegram@claude-plugins-official; sleep 10; done"
+ExecStop=/usr/bin/tmux kill-session -t mkzbot
+Restart=on-failure
+RestartSec=15
+
+[Install]
+WantedBy=multi-user.target
