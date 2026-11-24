@@ -12,7 +12,7 @@ import { VIDEOS } from "@/lib/video-data";
 
 const TITLE = "Samet Sağlam — markaizi Kurucusu | Dijital Pazarlama ve Reklam";
 const DESC =
-  "Samet Sağlam, Ankara Siteler merkezli dijital reklam ajansı markaizi'nin kurucusu. Mobilya sektörü başta olmak üzere Meta ve Google reklamları, sosyal medya ve içerik stratejisi. Samet Sağlam'a markaizi üzerinden ulaşın.";
+  "Samet Sağlam, Ankara Siteler merkezli dijital reklam ajansı markaizi'nin kurucusu. Mobilya sektörü başta olmak üzere Meta ve Google reklamları.";
 
 export const metadata: Metadata = {
   title: { absolute: TITLE },

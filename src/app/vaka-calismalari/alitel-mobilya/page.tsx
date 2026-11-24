@@ -11,7 +11,7 @@ import { breadcrumbJsonLd, SITE_URL, OG_IMAGES } from "@/lib/seo";
 const PATH = "/vaka-calismalari/alitel-mobilya";
 const TITLE = "Alitel Mobilya Vaka Çalışması — 7 Yıllık Dijital Reklam Ortaklığı | markaizi";
 const DESC =
-  "Alitel Mobilya ile 7 yıllık çalışma: her yıl İstikbal bayileri arasında Türkiye ciro birinciliği, 10 milyon TL'nin üzerinde yönetilen reklam bütçesi, Google reklamları ve dijital kanal yönetimi. markaizi mobilya vaka çalışması.";
+  "Alitel Mobilya ile 7 yıl: her yıl İstikbal bayileri arasında Türkiye ciro birinciliği, 10 milyon TL üzeri yönetilen reklam bütçesi, ağırlık Google reklamları.";
 
 export const metadata: Metadata = {
   title: { absolute: TITLE },

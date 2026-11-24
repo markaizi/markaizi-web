@@ -46,7 +46,7 @@ export const ISTANBUL: LandingContent = {
   kind: "sehir",
   metaTitle: "İstanbul Mobilya Reklam Ajansı — Instagram & Google Reklamları | markaizi",
   metaDescription:
-    "İstanbul'daki mobilya mağazaları için ilçe bazlı Instagram, Meta ve Google reklam yönetimi. Yüksek rekabette bütçeyi koruyan, ölçülebilir mobilya reklamcılığı. Ankara Siteler merkezli ajans.",
+    "İstanbul'daki mobilya mağazaları için ilçe bazlı Instagram, Meta ve Google reklam yönetimi. Yüksek rekabette bütçeyi koruyan, ölçülebilir reklamcılık.",
   keywords:
     "istanbul mobilya reklam ajansı, istanbul mobilya reklamı, istanbul mobilya sosyal medya yönetimi, istanbul mobilya mağazası reklam, istanbul mobilya instagram reklamı, istanbul mobilya google reklamları",
   tag: "İstanbul",
@@ -142,7 +142,7 @@ export const INEGOL: LandingContent = {
   kind: "sehir",
   metaTitle: "İnegöl Mobilya Reklam Ajansı — Üretici & Mağaza Dijital Pazarlama | markaizi",
   metaDescription:
-    "İnegöl'deki mobilya üreticileri, toptancılar ve mağazalar için Instagram, Google reklamları ve sosyal medya yönetimi. İl dışı müşteri ve bayi getiren mobilya reklamcılığı.",
+    "İnegöl'deki mobilya üreticileri, toptancılar ve mağazalar için Instagram, Google reklamları ve sosyal medya. İl dışından müşteri ve bayi getiren reklamcılık.",
   keywords:
     "inegöl mobilya reklam ajansı, inegöl mobilya reklamı, inegöl mobilya sosyal medya, inegöl mobilya üreticisi dijital pazarlama, bursa mobilya reklam ajansı, inegöl mobilya google reklamları",
   tag: "İnegöl / Bursa",
@@ -225,7 +225,7 @@ export const KAYSERI: LandingContent = {
   kind: "sehir",
   metaTitle: "Kayseri Mobilya Reklam Ajansı — Mobilya Firmaları İçin Dijital Pazarlama | markaizi",
   metaDescription:
-    "Kayseri'deki mobilya üreticileri ve mağazaları için Google reklamları, Instagram reklamları ve sosyal medya yönetimi. Orta Anadolu müşterisini mağazaya getiren ölçülebilir reklamcılık.",
+    "Kayseri'deki mobilya üreticileri ve mağazaları için Google ve Instagram reklamları, sosyal medya. Orta Anadolu müşterisini mağazaya getiren reklamcılık.",
   keywords:
     "kayseri mobilya reklam ajansı, kayseri mobilya reklamı, kayseri mobilya sosyal medya yönetimi, kayseri mobilya dijital pazarlama, kayseri mobilya mağazası reklam, kayseri mobilya instagram reklamı",
   tag: "Kayseri",
@@ -307,7 +307,7 @@ export const IZMIR: LandingContent = {
   kind: "sehir",
   metaTitle: "İzmir Mobilya Reklam Ajansı — Ege Mobilya Mağazaları İçin Dijital Pazarlama | markaizi",
   metaDescription:
-    "İzmir ve Ege'deki mobilya mağazaları için Instagram reklamları, Google reklamları ve sosyal medya yönetimi. Yazlık, dekorasyon ve yeni ev sezonlarına göre planlanan mobilya reklamcılığı.",
+    "İzmir ve Ege'deki mobilya mağazaları için Instagram ve Google reklamları, sosyal medya yönetimi. Yazlık, dekorasyon ve yeni ev sezonlarına göre planlanır.",
   keywords:
     "izmir mobilya reklam ajansı, izmir mobilya reklamı, izmir mobilya sosyal medya yönetimi, izmir mobilya mağazası reklam, ege mobilya reklam ajansı, izmir mobilya instagram reklamı",
   tag: "İzmir / Ege",
@@ -391,7 +391,7 @@ export const MOBILYA_SEO: LandingContent = {
   kind: "hizmet",
   metaTitle: "Mobilya SEO Hizmeti — Mobilya Mağazası ve Üreticisi İçin SEO | markaizi",
   metaDescription:
-    "Mobilya web siteniz ve Google Haritalar profiliniz için SEO: kategori ve ürün sayfaları, yerel arama görünürlüğü, ürün görselleri ve içerik. Mobilya sektörünü tanıyan ajanstan mobilya SEO hizmeti.",
+    "Mobilya web siteniz ve Google Haritalar profiliniz için SEO: kategori ve ürün sayfaları, yerel arama görünürlüğü, ürün görselleri ve içerik.",
   keywords:
     "mobilya seo, mobilya seo hizmeti, mobilya sitesi seo, mobilya mağazası seo, mobilya yerel seo, mobilya web sitesi seo, mobilya google sıralama",
   tag: "Mobilya SEO",
@@ -480,7 +480,7 @@ export const MOBILYA_GOOGLE: LandingContent = {
   kind: "hizmet",
   metaTitle: "Mobilya Google Reklamları — Mobilya Mağazası ve Üreticisi İçin Google Ads | markaizi",
   metaDescription:
-    "Mobilya mağazaları ve üreticileri için Google arama, harita, alışveriş ve görüntülü reklam yönetimi. Yıllardır mobilya sektöründe milyonlarca liralık reklam bütçesi yöneten ajanstan Google Ads.",
+    "Mobilya mağazaları ve üreticileri için Google arama, harita, alışveriş ve görüntülü reklam yönetimi. Mobilya sektöründe yıllardır Google Ads yöneten ajans.",
   keywords:
     "mobilya google reklamları, mobilya google ads, mobilya reklam yönetimi, mobilya arama reklamı, mobilya google alışveriş reklamı, mobilya google ads ajansı",
   tag: "Mobilya Google Ads",
@@ -588,7 +588,7 @@ export const MOBILYA_SOSYAL: LandingContent = {
   kind: "hizmet",
   metaTitle: "Mobilya Sosyal Medya Yönetimi — Instagram, Facebook, TikTok | markaizi",
   metaDescription:
-    "Mobilya mağazaları ve üreticileri için sosyal medya yönetimi: showroom çekimi, içerik takvimi, Reels, müşteri mesajı yönetimi ve aylık rapor. Mobilya sektörünü tanıyan ajanstan sosyal medya hizmeti.",
+    "Mobilya mağazaları ve üreticileri için sosyal medya yönetimi: showroom çekimi, içerik takvimi, Reels, müşteri mesajı yönetimi ve aylık rapor.",
   keywords:
     "mobilya sosyal medya yönetimi, mobilya instagram yönetimi, mobilya sosyal medya ajansı, mobilya tiktok, mobilya facebook yönetimi, mobilya içerik üretimi",
   tag: "Mobilya Sosyal Medya",
@@ -696,7 +696,7 @@ export const MOBILYA_ETICARET: LandingContent = {
   kind: "hizmet",
   metaTitle: "Mobilya E-Ticaret Danışmanlığı — Online Mobilya Satışı İçin | markaizi",
   metaDescription:
-    "Mobilyayı online satmak isteyen mağaza ve üreticiler için e-ticaret sitesi, ürün listesi, reklam ve satış süreci danışmanlığı. Ölçü, nakliye, montaj ve iade sorunlarını bilen ajanstan mobilya e-ticaret desteği.",
+    "Mobilyayı online satmak isteyen mağaza ve üreticilere e-ticaret sitesi, ürün listesi, reklam ve satış danışmanlığı. Ölçü, nakliye, montaj ve iade dahil.",
   keywords:
     "mobilya e-ticaret, mobilya e-ticaret danışmanlığı, online mobilya satışı, mobilya e-ticaret sitesi, mobilya online satış reklam, mobilya pazaryeri",
   tag: "Mobilya E-Ticaret",
@@ -779,7 +779,7 @@ export const MOBILYA_META: LandingContent = {
   kind: "hizmet",
   metaTitle: "Mobilya Meta Reklamları — Instagram & Facebook Reklam Yönetimi | markaizi",
   metaDescription:
-    "Mobilya mağazaları ve üreticileri için Instagram ve Facebook (Meta) reklam yönetimi: ürün grubu bazlı kampanya, WhatsApp'a mesaj reklamı, katalog ve yeniden hedefleme. Türkiye genelinde mobilya Meta Ads.",
+    "Mobilya mağazaları ve üreticileri için Instagram ve Facebook reklamı: ürün grubu bazlı kampanya, WhatsApp'a mesaj reklamı, katalog ve yeniden hedefleme.",
   keywords:
     "mobilya meta reklamları, mobilya instagram reklamı, mobilya facebook reklamı, mobilya meta ads, mobilya reklam yönetimi, mobilya whatsapp reklamı, instagram mobilya reklamı nasıl verilir",
   tag: "Mobilya Meta Ads",
@@ -896,7 +896,7 @@ export const MOBILYA_WEB: LandingContent = {
   kind: "hizmet",
   metaTitle: "Mobilya Web Sitesi — Mobilya Mağazası ve Üreticisi İçin Web Tasarım | markaizi",
   metaDescription:
-    "Mobilya mağazaları ve üreticileri için ürün kataloglu, WhatsApp entegreli, mobilde hızlı açılan web sitesi tasarımı. Reklamdan gelen müşteriyi karşılayan, Google'da bulunabilen mobilya web siteleri.",
+    "Mobilya mağazaları ve üreticileri için ürün kataloglu, WhatsApp entegreli, mobilde hızlı web sitesi. Reklamdan gelen müşteriyi karşılayan, bulunabilir site.",
   keywords:
     "mobilya web sitesi, mobilya web tasarım, mobilya sitesi yaptırmak, mobilya katalog sitesi, mobilya mağazası web sitesi, mobilya firması web sitesi, mobilya üreticisi web sitesi",
   tag: "Mobilya Web Sitesi",
@@ -988,7 +988,7 @@ export const MOBILYA_BAYI: LandingContent = {
   kind: "hizmet",
   metaTitle: "Mobilya Bayileri İçin Reklam Ajansı — İstikbal, Bellona, Doğtaş, Kelebek Bayi Pazarlaması | markaizi",
   metaDescription:
-    "İstikbal, Bellona, Doğtaş, Kelebek ve diğer mobilya markalarının bayileri için yerel Instagram, Meta ve Google reklamları. Ana markanın kampanyalarıyla uyumlu, bölgeye odaklı bayi pazarlaması. Alitel Mobilya: 7 yıl, her yıl İstikbal bayileri arasında Türkiye ciro birinciliği.",
+    "İstikbal, Bellona, Doğtaş ve Kelebek bayileri için yerel Instagram, Meta ve Google reklamı. Alitel: 7 yıl, her yıl İstikbal bayileri arasında ciro birincisi.",
   keywords:
     "mobilya bayi reklam ajansı, istikbal bayi reklam, bellona bayi reklam, doğtaş bayi reklam, kelebek bayi reklam, mobilya bayisi sosyal medya yönetimi, mobilya bayi google reklamları, bayi pazarlaması, mobilya bayisi instagram reklamı",
   tag: "Mobilya Bayileri",
@@ -1092,7 +1092,7 @@ export const MOBILYA_KURUMSAL: LandingContent = {
   kind: "hizmet",
   metaTitle: "Mobilya Markaları İçin Meta & Google Reklam Yönetimi — Büyük Bütçe, Çok Şubeli Firmalar | markaizi",
   metaDescription:
-    "Büyük mobilya markaları, üreticiler ve çok şubeli firmalar için Meta (Instagram, Facebook) ve Google Ads yönetimi. 7 yıldır bir İstikbal bayisinde 10 milyon TL'yi aşan reklam bütçesi yöneten ajanstan kurumsal reklam yönetimi.",
+    "Büyük mobilya markaları, üreticiler ve çok şubeli firmalar için Meta ve Google Ads yönetimi. 7 yılda bir İstikbal bayisinde 10 milyon TL+ bütçe yöneten ajans.",
   keywords:
     "mobilya markası reklam yönetimi, mobilya firması google ads, çok şubeli mobilya reklam, büyük mobilya firması meta reklam, mobilya zincir reklam ajansı, mobilya üretici marka dijital reklam, kurumsal mobilya reklamı, mobilya meta google reklam ajansı",
   tag: "Kurumsal Mobilya Reklamı",

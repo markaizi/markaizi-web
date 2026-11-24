@@ -15,7 +15,7 @@ import SektorLinkleri from "@/components/SektorLinkleri";
 export const metadata: Metadata = {
   title: { absolute: "Mobilya Reklam Ajansı — Siteler / Ankara | markaizi" },
   description:
-    "Siteler merkezli mobilya reklam ajansı. İstikbal, Doğtaş, Kelebek bayileri dahil 200+ mobilya mağazasına Instagram & Google reklamları, sosyal medya yönetimi ve showroom çekimi. Mobilya sektörünü tanıyan ajans.",
+    "Siteler merkezli mobilya reklam ajansı. İstikbal, Doğtaş ve Kelebek bayileri dahil mobilya mağazalarına Instagram ve Google reklamı, sosyal medya, çekim.",
   alternates: { canonical: "https://markaizi.com.tr/mobilya-reklam-ajansi" },
   openGraph: { images: OG_IMAGES, siteName: "markaizi",
     title: "Mobilya Reklam Ajansı — Siteler / Ankara | markaizi",

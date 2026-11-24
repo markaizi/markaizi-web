@@ -13,7 +13,7 @@ import { ANKARA_ILCELER, KAFE_DISTRICT_PAGES, KAFE_HUB } from "@/lib/kafe-pages"
 
 const TITLE = "Ankara Kafe & Restoran Reklam Ajansı — Sosyal Medya, Instagram, Google Haritalar | markaizi";
 const DESC =
-  "Ankara'daki kafe, restoran, kahvaltı salonu ve pastaneler için sosyal medya yönetimi, Instagram reklamları, Google Haritalar ve yemek/mekân çekimi. Çankaya'dan Gölbaşı'na Ankara'nın 25 ilçesinde.";
+  "Ankara'daki kafe, restoran, kahvaltı salonu ve pastaneler için sosyal medya, Instagram reklamı, Google Haritalar ve mekân çekimi. Ankara'nın 25 ilçesinde.";
 const URL = `${SITE_URL}${KAFE_HUB.path}`;
 
 export const metadata: Metadata = {

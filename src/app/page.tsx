@@ -17,7 +17,7 @@ import ScrollReveal from "@/components/ScrollReveal";
 export const metadata: Metadata = {
   title: "markaizi — Ankara Dijital Reklam Ajansı | Siteler, Mobilya Reklamı & Sosyal Medya",
   description:
-    "Ankara Siteler merkezli dijital reklam ajansı. Mobilya mağazaları, kafe ve restoranlar, klinikler ve yerel işletmelere özel sosyal medya yönetimi, Google Ads, Meta reklam ve web tasarım. 10+ yıl deneyim, 200+ mutlu müşteri.",
+    "Ankara Siteler merkezli dijital reklam ajansı: mobilya, kafe-restoran ve klinikler için sosyal medya, Google Ads, Meta reklam, web tasarım. 200+ işletme.",
   alternates: { canonical: "https://markaizi.com.tr" },
   openGraph: {
     title: "markaizi — Dijital Reklam Ajansı | Ankara",

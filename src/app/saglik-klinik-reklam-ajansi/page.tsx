@@ -12,7 +12,7 @@ import SektorLinkleri from "@/components/SektorLinkleri";
 export const metadata: Metadata = {
   title: { absolute: "Sağlık & Klinik Reklam Ajansı — Diş, Estetik, Tıp Merkezleri | markaizi" },
   description:
-    "Diş klinikleri, estetik klinikleri, fizik tedavi merkezleri ve geleneksel-tamamlayıcı tıp (GETAT) merkezleri için sosyal medya yönetimi, Google İşletme Profili, yerel SEO ve mevzuata uygun dijital pazarlama. 12 Kasım 2025 Sağlıkta Tanıtım Yönetmeliği ve Meta/Google sağlık politikalarını bilen ajans.",
+    "Diş, estetik, fizik tedavi ve GETAT merkezleri için Sağlıkta Tanıtım Yönetmeliği'ne uygun sosyal medya, Google İşletme Profili ve yerel SEO. Ankara merkezli.",
   alternates: { canonical: "https://markaizi.com.tr/saglik-klinik-reklam-ajansi" },
   openGraph: { images: OG_IMAGES, siteName: "markaizi",
     title: "Sağlık & Klinik Reklam Ajansı — Ankara | markaizi",

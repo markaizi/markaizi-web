@@ -3,7 +3,7 @@ import ServicePageTemplate from "@/components/ServicePageTemplate";
 
 export const metadata: Metadata = {
   title: { absolute: "Google Reklamları Ankara & Türkiye Geneli — Google Ads Yönetimi | markaizi" },
-  description: "Ankara'da Google Ads yönetimi. Doktor, klinik, mobilyacı, avizeci ve yerel işletmeler için Search, Display ve YouTube reklam kampanyaları. Müşteriniz sizi aradığında karşısına çıkın. Türkiye genelinde uzaktan hizmet.",
+  description: "Ankara'da Google Ads yönetimi: klinik, mobilya ve yerel işletmeler için arama, görüntülü ve YouTube kampanyaları. Müşteri sizi aradığında karşısına çıkın.",
   alternates: { canonical: "https://markaizi.com.tr/hizmetler/google-reklamlari" },
 };
 

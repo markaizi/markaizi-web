@@ -43,7 +43,7 @@ export async function generateMetadata({
   if (!post) return {};
   return {
     title: post.title,
-    description: post.excerpt,
+    description: post.metaDescription ?? post.excerpt,
     alternates: { canonical: `https://markaizi.com.tr/blog/${slug}` },
     openGraph: {
       title: post.title,

@@ -12,7 +12,7 @@ import { breadcrumbJsonLd, SITE_URL, ORG_NAME, OG_IMAGES } from "@/lib/seo";
 const PATH = "/araclar/reklam-butcesi-hesaplayici";
 const TITLE = "Reklam Bütçesi Hesaplayıcı — ROAS ve Başabaş Noktası Hesaplama | markaizi";
 const DESC =
-  "Ücretsiz reklam bütçesi hesaplayıcı: hedef satış, ortalama satış tutarı, kâr marjı ve müşteri adayı maliyetinden aylık Meta ve Google reklam bütçenizi, ROAS'ı ve başabaş ROAS'ı hesaplayın.";
+  "Ücretsiz reklam bütçesi hesaplayıcı: hedef satış, satış tutarı, kâr marjı ve müşteri adayı maliyetinden aylık Meta/Google bütçenizi ve başabaş ROAS'ı bulun.";
 
 export const metadata: Metadata = {
   title: { absolute: TITLE },

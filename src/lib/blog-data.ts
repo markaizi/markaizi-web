@@ -9,6 +9,7 @@ export type BlogPost = {
   category: string;
   title: string;
   excerpt: string;
+  metaDescription?: string; // Arama sonucu açıklaması (≤155 karakter); yoksa excerpt kullanılır
   date: string;
   dateISO: string; // YYYY-MM-DD — yapılandırılmış veri ve <meta> etiketleri için
   dateModifiedISO?: string; // Yazı gerçekten güncellendiğinde set edilir; yoksa dateISO kullanılır
@@ -427,6 +428,7 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     slug: "sitelerde-musteri-cekmenin-yollari",
+    metaDescription: "Ankara Siteler'de mobilya mağazaları arasından sıyrılmanın yolları: Google Haritalar, Instagram, WhatsApp ve dijital görünürlükle müşteri kazanma rehberi.",
     category: "Mobilya Sektörü",
     color: "#fb923c",
     title: "Siteler'de Mobilya Mağazanıza Müşteri Çekmenin 7 Dijital Yolu",
@@ -517,6 +519,7 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     slug: "ankara-mobilya-magazasi-sosyal-medya-buyume-rehberi",
+    metaDescription: "Ankara'da bir mobilya mağazası sosyal medyada nasıl öne çıkar? Kendi imkanlarınızla yapabilecekleriniz ve ajans desteğinin fark yarattığı noktalar.",
     videoSlug: "isletmeler-icin-dijital-pazarlama-ve-reklam-rehberi",
     category: "Mobilya Sektörü",
     color: "#fb923c",
@@ -571,6 +574,7 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     slug: "ankara-mobilya-ajansi-nasil-secilir",
+    metaDescription: "Ankara'da mobilya mağazanız için reklam ajansı ararken nelere bakmalı? Ajansa sorulacak sorular, kaçınılacak işaretler ve 10 maddelik kontrol listesi.",
     videoSlug: "isletmeler-icin-dijital-pazarlama-ve-reklam-rehberi",
     category: "Mobilya Sektörü",
     color: "#fb923c",
@@ -651,6 +655,7 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     slug: "reklam-neden-satis-getirmiyor",
+    metaDescription: "Reklamı hemen kapatmayın, algoritmayı da suçlamayın. İzlenme, tıklama, dönüşüm ve satış adımlarına bakarak müşteriyi nerede kaybettiğinizi bulun.",
     videoSlug: "isletmeler-icin-dijital-pazarlama-ve-reklam-rehberi",
     category: "Reklam Stratejisi",
     color: "#f87171",
@@ -715,6 +720,7 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     slug: "reklam-butcesi-nasil-belirlenir",
+    metaDescription: "'Günlük kaç TL reklam verelim?' İşletmenizin aşamasına göre reklam bütçesini belirlemenin, ne zaman artırıp ne zaman durmanın pratik rehberi.",
     videoSlug: "isletmeler-icin-dijital-pazarlama-ve-reklam-rehberi",
     category: "Reklam Stratejisi",
     color: "#f87171",
@@ -785,6 +791,7 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     slug: "ankara-kafe-acilis-dijital-pazarlama-rehberi",
+    metaDescription: "Ankara'da kafe ya da restoran açanlar için açılıştan ilk üç aya dijital pazarlama planı: Instagram, Google Haritalar, yorumlar ve konuma göre reklam.",
     category: "Kafe & Restoran",
     color: "#fbbf24",
     title: "Ankara'da Kafe Açtınız: İlk 90 Günde Müşteri Getiren Dijital Pazarlama Rehberi",
@@ -848,6 +855,7 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     slug: "kafe-restoran-google-haritalar-rehberi",
+    metaDescription: "Kafe ve restoranlar için Google İşletme Profili rehberi: menü, fotoğraf, saatler, yorum yanıtları ve 'semt adı + kafe' aramalarında görünür olmak.",
     category: "Kafe & Restoran",
     color: "#fbbf24",
     title: "Kafe ve Restoranlar İçin Google Haritalar Rehberi: 'Yakınımdaki Kafe' Aramalarında Öne Çıkmak",
@@ -911,6 +919,7 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     slug: "meta-pixel-conversions-api-rehberi",
+    metaDescription: "Meta Pixel neden tek başına yetmez, Conversions API ne işe yarar? Satışı WhatsApp'ta veya mağazada kapanan işletmeler için dönüşüm takibi rehberi.",
     category: "Ölçümleme",
     color: "#60a5fa",
     title: "Meta Pixel ve Conversions API Nedir? WhatsApp ve Mağazadan Satış Yapan İşletmeler İçin Dönüşüm Takibi Rehberi",
@@ -975,6 +984,7 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     slug: "chatgpt-reklamlari-turkiye-rehberi",
+    metaDescription: "ChatGPT reklamları Türkiye'de: reklamlar nerede ve kime görünür, nasıl hedeflenir ve ölçülür, hangi işletmeler için denemeye değer?",
     category: "Yapay Zeka",
     color: "#22d3ee",
     title: "ChatGPT Reklamları Türkiye'de: Nedir, Nasıl Çalışır, Kimler Denemeli?",
@@ -1044,6 +1054,7 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     slug: "yapay-zeka-isletme-onerirken-neye-bakar",
+    metaDescription: "ChatGPT ve Gemini işletme önerirken hangi sinyallere bakıyor? Yerel bir işletmenin 'yakınımdaki en iyi…' cevaplarında yer almak için yapabilecekleri.",
     category: "Yapay Zeka",
     color: "#22d3ee",
     title: "ChatGPT ve Gemini İşletme Önerirken Neye Bakıyor? Yerel İşletmeler İçin Yapay Zeka Görünürlüğü Rehberi",
@@ -1108,6 +1119,7 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     slug: "ajans-degistirirken-reklam-hesabi-devri",
+    metaDescription: "Ajans değiştirirken reklam hesabı, Instagram sayfası ve piksel kimde kalır? Geçmiş veriyi kaybetmeden, kampanyayı durdurmadan geçişin kontrol listesi.",
     category: "Reklam Stratejisi",
     color: "#f87171",
     title: "Reklam Ajansı Değiştirirken Hesaplarınızı Nasıl Korursunuz? Devir Kontrol Listesi",
@@ -1172,6 +1184,7 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     "slug": "saglikta-tanitim-ve-bilgilendirme-yonetmeligi-rehberi",
+    "metaDescription": "12 Kasım 2025 yönetmeliği hasta teşekkürü, öncesi-sonrası görseli, fiyat duyurusu ve sponsorlu tanıtımı yeniden düzenledi. Klinikler ne yapabilir?",
     "category": "Mevzuat",
     "color": "#f87171",
     "title": "Sağlıkta Tanıtım ve Bilgilendirme Yönetmeliği: Klinikler ve Hekimler Sosyal Medyada Ne Paylaşabilir?",
@@ -1236,6 +1249,7 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     "slug": "takviye-edici-gida-reklam-kurallari-2026",
+    "metaDescription": "1 Ağustos 2026 değişiklikleri takviye reklamında neyi değiştirdi? Normal beslenme izlenimi, ispat yükümlülüğü, sağlık beyanları ve platform kuralları.",
     "category": "Mevzuat",
     "color": "#fb923c",
     "title": "Takviye Edici Gıda Reklam Kuralları 2026: Yeni Yönetmelik, Meta ve Google Politikaları",
@@ -1416,6 +1430,7 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     "slug": "guzellik-merkezleri-icin-google-haritalar-ve-instagram-rehberi",
+    "metaDescription": "Güzellik merkezi müşterisi nasıl karar verir? Google İşletme Profili, hizmet bazlı Instagram içeriği, WhatsApp randevu akışı ve boş saatleri doldurmak.",
     "category": "Sosyal Medya",
     "color": "#f472b6",
     "title": "Güzellik Merkezleri İçin Google Haritalar ve Instagram Rehberi: Randevu Takvimini Doldurmak",
@@ -1476,6 +1491,7 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     "slug": "restoranlar-icin-google-ads-rezervasyon-ve-paket-servis",
+    "metaDescription": "Restoranda karar anı kafeden farklı. Rezervasyon, grup yemeği ve paket servis için Google aramaları, konum-saat hedeflemesi, platform bağımlılığını azaltmak.",
     "category": "Kafe & Restoran",
     "color": "#fbbf24",
     "title": "Restoranlar İçin Google Ads: Rezervasyon ve Paket Servis Odaklı Strateji",
@@ -1652,6 +1668,7 @@ export const BLOG_POSTS: BlogPost[] = [
   },
   {
     "slug": "isletmenizin-chatgpt-de-gorunup-gorunmedigini-nasil-olcersiniz",
+    "metaDescription": "Müşteriniz yapay zekaya sorduğunda adınız geçiyor mu? 10-12 soruluk basit yöntemle ChatGPT, Gemini, Perplexity ve Google'daki görünürlüğünüzü ölçün.",
     "category": "Yapay Zeka",
     "color": "#a78bfa",
     "title": "İşletmenizin ChatGPT'de Görünüp Görünmediğini Nasıl Ölçersiniz? Adım Adım Rehber",

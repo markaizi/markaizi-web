@@ -10,7 +10,7 @@ import { breadcrumbJsonLd, SITE_URL, OG_IMAGES } from "@/lib/seo";
 import { VIDEOS, YOUTUBE_CHANNEL_URL, videoThumb } from "@/lib/video-data";
 
 const DESC =
-  "markaizi YouTube kanalının videoları: işletme sahipleri için dijital pazarlama, Meta ve Google reklamları, sosyal medya ve ajansla çalışma üzerine rehberler. Her videonun tam metni sayfasında.";
+  "markaizi YouTube videoları: işletme sahipleri için dijital pazarlama, Meta ve Google reklamları, sosyal medya ve ajansla çalışma rehberleri, tam metinleriyle.";
 
 export const metadata: Metadata = {
   title: { absolute: "YouTube Videoları — Dijital Pazarlama ve Reklam Rehberleri | markaizi" },

@@ -20,6 +20,7 @@ export type VideoPost = {
   cover?: string; // /public altındaki kapak görseli (ör. "/videolar/<slug>.webp"); yoksa YouTube küçük resmi
   durationISO?: string; // ör. "PT24M30S" — biliniyorsa şemaya eklenir
   keywords: string;
+  metaDescription?: string; // Arama sonucu açıklaması (≤155 karakter); yoksa excerpt
   ozet: string[]; // sayfanın başındaki kısa özet (yapay zeka ve okuyucu için)
   faq: { q: string; a: string }[];
   related: { href: string; label: string }[];
@@ -28,6 +29,8 @@ export type VideoPost = {
 export const VIDEOS: VideoPost[] = [
   {
     slug: "isletmeler-icin-dijital-pazarlama-ve-reklam-rehberi",
+    metaDescription:
+      "Reklam neden tek başına satış yapmaz? Her gün paylaşım şart mı, reklam bütçesi nasıl belirlenir, ajans neyi garanti edebilir? İşletmeler için rehber.",
     title: "İşletmeler İçin Dijital Pazarlama ve Reklam Rehberi",
     seoTitle: "İşletmeler İçin Dijital Pazarlama ve Reklam Rehberi: Ajansla Çalışmadan Önce Bilmeniz Gerekenler",
     excerpt:

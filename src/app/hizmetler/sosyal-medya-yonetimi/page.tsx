@@ -3,7 +3,7 @@ import ServicePageTemplate from "@/components/ServicePageTemplate";
 
 export const metadata: Metadata = {
   title: { absolute: "Sosyal Medya Yönetimi Ankara & Türkiye Geneli — markaizi | Instagram, Facebook, TikTok" },
-  description: "Ankara'da sosyal medya yönetimi hizmeti. Mobilyacı, avizeci, aksesuarcı, klinik ve yerel işletmelere özel Instagram, Facebook ve TikTok yönetimi. İçerik üretimi ve büyüme stratejileri. Türkiye genelinde uzaktan hizmet.",
+  description: "Ankara'da sosyal medya yönetimi: mobilya, avize, klinik ve yerel işletmeler için Instagram, Facebook ve TikTok içerik üretimi ve büyüme. Türkiye geneli.",
   alternates: { canonical: "https://markaizi.com.tr/hizmetler/sosyal-medya-yonetimi" },
 };
 

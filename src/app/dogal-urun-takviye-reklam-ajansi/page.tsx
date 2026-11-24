@@ -12,7 +12,7 @@ import SektorLinkleri from "@/components/SektorLinkleri";
 export const metadata: Metadata = {
   title: { absolute: "Doğal Ürün & Takviye Reklam Ajansı — Ürün Videosu, YouTube, E-Ticaret Reklamı | markaizi" },
   description:
-    "Vitamin, mineral, bitkisel takviye, doğal yağ ve doğal kozmetik markaları için mankenli/mankensiz ürün tanıtım videosu, YouTube içerik üretimi, e-ticaret reklamı ve bayi/distribütör pazarlaması. Fıtrina gibi doğal ürün markalarının tercih ettiği ajans.",
+    "Vitamin, bitkisel takviye, doğal yağ ve kozmetik markaları için ürün tanıtım videosu, YouTube içeriği, e-ticaret reklamı ve bayi/distribütör pazarlaması.",
   alternates: { canonical: "https://markaizi.com.tr/dogal-urun-takviye-reklam-ajansi" },
   openGraph: { images: OG_IMAGES, siteName: "markaizi",
     title: "Doğal Ürün & Takviye Reklam Ajansı | markaizi",

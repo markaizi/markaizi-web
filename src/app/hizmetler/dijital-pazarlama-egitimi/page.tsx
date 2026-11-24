@@ -4,7 +4,7 @@ import ServicePageTemplate from "@/components/ServicePageTemplate";
 export const metadata: Metadata = {
   title: { absolute: "Kurumsal Dijital Pazarlama Eğitimi — Video Çekimi, Senaryo & Reklam Eğitimi | markaizi" },
   description:
-    "Firma çalışanlarına uygulamalı dijital pazarlama eğitimi: telefonla video çekimi, senaryo yazımı, Instagram içerik planı ve Meta/Google reklam yönetimi. Ekibiniz kendi reklamını yönetebilsin.",
+    "Firma çalışanlarına uygulamalı dijital pazarlama eğitimi: telefonla video, senaryo, içerik planı, Meta ve Google reklam yönetimi. Yüz yüze veya online.",
   alternates: { canonical: "https://markaizi.com.tr/hizmetler/dijital-pazarlama-egitimi" },
 };
 

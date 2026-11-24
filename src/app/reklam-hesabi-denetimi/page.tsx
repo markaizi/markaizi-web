@@ -14,7 +14,7 @@ import { FOUNDER } from "@/lib/founder";
 const PATH = "/reklam-hesabi-denetimi";
 const TITLE = "Ücretsiz Reklam Hesabı Denetimi — Meta & Google Ads | markaizi";
 const DESC =
-  "Reklamınız satış getirmiyor mu? Meta (Instagram & Facebook) ve Google Ads hesabınızı yalnızca görüntüleme yetkisiyle ücretsiz denetliyoruz: ölçüm, kampanya yapısı, kitle, kreatif ve bütçe kaybı. Ankara merkezli, Türkiye geneli.";
+  "Reklamınız satış getirmiyor mu? Meta ve Google Ads hesabınızı yalnızca görüntüleme yetkisiyle ücretsiz denetliyoruz: ölçüm, kampanya, kitle, kreatif ve bütçe.";
 
 export const metadata: Metadata = {
   title: { absolute: TITLE },

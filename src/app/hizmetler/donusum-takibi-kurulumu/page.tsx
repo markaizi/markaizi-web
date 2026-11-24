@@ -4,7 +4,7 @@ import ServicePageTemplate from "@/components/ServicePageTemplate";
 export const metadata: Metadata = {
   title: { absolute: "Dönüşüm Takibi Kurulumu — Meta Pixel, Conversions API & Google Tag Manager | markaizi" },
   description:
-    "Meta Pixel, Conversions API (CAPI), Google Tag Manager, GA4 ve Google Ads dönüşüm takibi kurulumu. WhatsApp, arama, form ve mağazada kapanan satışların reklama doğru ölçülmesi. Ankara merkezli, Türkiye geneli.",
+    "Meta Pixel, Conversions API, Google Tag Manager, GA4 ve Google Ads dönüşüm takibi kurulumu. WhatsApp, arama, form ve mağaza satışlarını reklama bağlayın.",
   alternates: { canonical: "https://markaizi.com.tr/hizmetler/donusum-takibi-kurulumu" },
 };
 

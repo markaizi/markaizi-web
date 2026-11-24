@@ -51,7 +51,7 @@ function district(
 export const CANKAYA = district("cankaya", "Çankaya", "Çankaya'daki", {
   metaTitle: "Çankaya Kafe & Restoran Reklam Ajansı — Kızılay, Tunalı, Bahçelievler | markaizi",
   metaDescription:
-    "Çankaya'daki kafe ve restoranlar için Instagram reklamı, sosyal medya yönetimi ve Google Haritalar. Kızılay, Tunalı Hilmi, Bahçelievler, Ayrancı ve Çukurambar'ın yoğun rekabetinde öne çıkın.",
+    "Çankaya'daki kafe ve restoranlar için Instagram reklamı, sosyal medya ve Google Haritalar. Kızılay, Tunalı, Bahçelievler ve Çukurambar rekabetinde öne çıkın.",
   keywords:
     "çankaya kafe reklam ajansı, çankaya restoran sosyal medya, kızılay kafe instagram reklamı, tunalı kafe sosyal medya yönetimi, bahçelievler kafe reklam, çukurambar restoran reklamı, çankaya sosyal medya ajansı, ankara çankaya cafe reklam",
   lead: [
@@ -119,7 +119,7 @@ export const CANKAYA = district("cankaya", "Çankaya", "Çankaya'daki", {
 export const GOLBASI = district("golbasi", "Gölbaşı", "Gölbaşı'ndaki", {
   metaTitle: "Gölbaşı Kafe & Restoran Reklam Ajansı — Ankara Gölbaşı Sosyal Medya | markaizi",
   metaDescription:
-    "Ankara Gölbaşı'ndaki kafe, restoran ve kahvaltı mekânları için sosyal medya yönetimi, Instagram reklamı ve Google Haritalar. Mogan Gölü çevresi, hafta sonu kahvaltısı ve şehir merkezinden gelen misafir için.",
+    "Gölbaşı'ndaki kafe, restoran ve kahvaltı mekânları için sosyal medya, Instagram reklamı ve Google Haritalar. Mogan çevresi ve hafta sonu misafiri için.",
   keywords:
     "gölbaşı kafe reklam ajansı, gölbaşı sosyal medya ajansı, gölbaşı restoran reklamı, gölbaşı cafe instagram reklamı, gölbaşı kahvaltı mekanı reklam, mogan kafe sosyal medya, ankara gölbaşı reklam ajansı, gölbaşı dijital ajans",
   lead: [
@@ -186,7 +186,7 @@ export const GOLBASI = district("golbasi", "Gölbaşı", "Gölbaşı'ndaki", {
 export const YENIMAHALLE = district("yenimahalle", "Yenimahalle", "Yenimahalle'deki", {
   metaTitle: "Yenimahalle Kafe & Restoran Reklam Ajansı — Batıkent Sosyal Medya | markaizi",
   metaDescription:
-    "Yenimahalle ve Batıkent'teki kafe, restoran ve pastaneler için sosyal medya yönetimi, Instagram reklamı ve Google Haritalar. Mahalle müşterisini müdavime çeviren dijital pazarlama.",
+    "Yenimahalle ve Batıkent'teki kafe, restoran ve pastaneler için sosyal medya, Instagram reklamı ve Google Haritalar. Mahalle müşterisini müdavime çevirin.",
   keywords:
     "yenimahalle kafe reklam ajansı, batıkent kafe sosyal medya, yenimahalle restoran reklamı, batıkent restoran instagram reklamı, yenimahalle sosyal medya ajansı, ankara yenimahalle cafe reklam, batıkent pastane reklam",
   lead: [
@@ -242,7 +242,7 @@ export const YENIMAHALLE = district("yenimahalle", "Yenimahalle", "Yenimahalle'd
 export const ETIMESGUT = district("etimesgut", "Etimesgut", "Etimesgut'taki", {
   metaTitle: "Etimesgut Kafe & Restoran Reklam Ajansı — Eryaman Sosyal Medya | markaizi",
   metaDescription:
-    "Etimesgut ve Eryaman'daki kafe, restoran ve brunch mekânları için sosyal medya yönetimi, Instagram reklamı ve Google Haritalar. Genç aileleri ve yeni yerleşim bölgelerini hedefleyen dijital pazarlama.",
+    "Etimesgut ve Eryaman'daki kafe, restoran ve brunch mekânları için sosyal medya, Instagram reklamı ve Google Haritalar. Genç aileler ve yeni yerleşimler için.",
   keywords:
     "etimesgut kafe reklam ajansı, eryaman kafe sosyal medya, etimesgut restoran reklamı, eryaman restoran instagram, etimesgut sosyal medya ajansı, ankara etimesgut cafe reklam, eryaman brunch mekanı reklam",
   lead: [
@@ -298,7 +298,7 @@ export const ETIMESGUT = district("etimesgut", "Etimesgut", "Etimesgut'taki", {
 export const KECIOREN = district("kecioren", "Keçiören", "Keçiören'deki", {
   metaTitle: "Keçiören Kafe & Restoran Reklam Ajansı — Etlik Sosyal Medya | markaizi",
   metaDescription:
-    "Keçiören ve Etlik'teki kafe, restoran, lokanta ve pastaneler için sosyal medya yönetimi, Instagram reklamı ve Google Haritalar. Aile müşterisi, paket servis ve sezon kampanyaları için dijital pazarlama.",
+    "Keçiören ve Etlik'teki kafe, restoran, lokanta ve pastaneler için sosyal medya, Instagram reklamı ve Google Haritalar. Aile müşterisi ve paket servis için.",
   keywords:
     "keçiören kafe reklam ajansı, keçiören restoran sosyal medya, etlik kafe instagram reklamı, keçiören lokanta reklam, keçiören sosyal medya ajansı, ankara keçiören cafe reklam, etlik restoran reklamı",
   lead: [
@@ -354,7 +354,7 @@ export const KECIOREN = district("kecioren", "Keçiören", "Keçiören'deki", {
 export const ALTINDAG = district("altindag", "Altındağ", "Altındağ'daki", {
   metaTitle: "Altındağ Kafe & Restoran Reklam Ajansı — Ulus, Hamamönü, Kale | markaizi",
   metaDescription:
-    "Altındağ'da Ulus, Hamamönü, Samanpazarı ve Ankara Kalesi çevresindeki kafe ve restoranlar için sosyal medya yönetimi, Instagram reklamı ve Google Haritalar. Tarihi dokuda ziyaretçi çeken dijital pazarlama.",
+    "Ulus, Hamamönü, Samanpazarı ve Ankara Kalesi çevresindeki kafe ve restoranlar için sosyal medya, Instagram reklamı ve Google Haritalar. Altındağ.",
   keywords:
     "altındağ kafe reklam ajansı, hamamönü kafe sosyal medya, ulus restoran reklamı, ankara kalesi kafe instagram, samanpazarı restoran reklam, altındağ sosyal medya ajansı, ankara altındağ cafe reklam",
   lead: [
@@ -410,7 +410,7 @@ export const ALTINDAG = district("altindag", "Altındağ", "Altındağ'daki", {
 export const BEYPAZARI = district("beypazari", "Beypazarı", "Beypazarı'ndaki", {
   metaTitle: "Beypazarı Kafe & Restoran Reklam Ajansı — Kahvaltı ve Konak Mekânları | markaizi",
   metaDescription:
-    "Beypazarı'ndaki kafe, restoran, kahvaltı ve konak mekânları için sosyal medya yönetimi, Instagram reklamı ve Google Haritalar. Ankara'dan günübirlik gelen ziyaretçiyi yola çıkmadan yakalayan dijital pazarlama.",
+    "Beypazarı'ndaki kafe, restoran, kahvaltı ve konak mekânları için sosyal medya, Instagram reklamı ve Google Haritalar. Günübirlik ziyaretçiyi yakalayın.",
   keywords:
     "beypazarı kafe reklam ajansı, beypazarı restoran sosyal medya, beypazarı kahvaltı mekanı reklam, beypazarı konak restoran instagram, beypazarı sosyal medya ajansı, ankara beypazarı reklam",
   lead: [
