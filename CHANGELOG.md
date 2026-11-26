@@ -14,7 +14,7 @@
 **Araç:** Claude Code (Fable 5.2)  **Tür:** MINOR
 ### Yapılanlar
 - **Şema (yalnızca ekleme):** `KasaEntry.creditLimit Decimal?` — migration `prisma/migrations/20261126120000_kasa_credit_limit`
-  (tek, boş bırakılabilir sütun; mevcut veriye dokunmaz, eski kodla uyumlu).
+  (tek, boş bırakılabilir sütun; mevcut veriye dokunmaz, eski kodla uyumlu). **Uygulandı: 26 Kasım 2026.**
 - **Hesap** (`src/lib/kasaCalc.ts`): `cardLimit()` → limit / kullanılan / kalan / doluluk %; `computeKasa` → `limitTotal`,
   `limitUsed`, `limitAvailable`, `limitCardCount` (yalnızca limiti tanımlı kartlar toplanır; kalan eksiye düşerse kırpılmaz).
 - **Servis** (`src/lib/agenda.ts`): `createDebtCard` (borcu 0 olabilen, limitli kart / ek hesap; aynı adda ikinci kart açılmaz),
@@ -31,7 +31,7 @@
 ### Doğrulama
 - `tsc --noEmit` temiz, `eslint src/` 0 hata (26 uyarı, değişmedi), `next build` başarılı. `computeKasa` limit ve yatırım
   hesapları örnek veriyle sınandı (limitsiz kart toplamı bozmuyor, aşım eksi kalan veriyor).
-- Finans ekranı ve yeni API uçları tarayıcıda / canlı veride denenmedi: giriş gerekiyor ve `creditLimit` sütunu henüz yok.
+- Finans ekranı tarayıcıda denenmedi (giriş gerekiyor); servis katmanı ve bot çıktısı migration sonrası gerçek veride doğrulandı.
 ### Dikkat / bilinen kısıtlar
 - **Sıra zorunlu:** (1) `migrate deploy` → (2) limitleri yaz → (3) push / deploy → (4) ilk yatırım kaydı. Migration uygulanmadan
   bu sürüm canlıya çıkarsa `KasaEntry` okuyan her sayfa (Finans, çöp kutusu, firma ödemeleri, bot) hata verir.
@@ -39,8 +39,10 @@
   `mkzbot` yeniden başlatılmalı (`bot/KURULUM.md`).
 - `package-lock.json` içindeki sürüm alanı eskiden beri güncellenmiyor (3.14.0) — dokunulmadı.
 ### Yarım kalanlar / Sıradaki
-- Samet: `npx dotenv -e .env.local -- npx prisma migrate deploy`. Ardından: `scripts/ozel/kart-limit-yatirim-2026-11-26.ts --limitler --apply`,
-  push, deploy sonrası `--yatirim --apply`, bot yönergesini VPS'e gönder.
+- ✅ 26 Kas: migration canlı veritabanına uygulandı (Samet), limitler yazıldı ve gerçek veride doğrulandı (toplamlar,
+  yinelenen kart reddi, asistanın `finans` çıktısı).
+- Kalan: push (Samet'in onayıyla) → deploy sonrası `scripts/ozel/kart-limit-yatirim-2026-11-26.ts --yatirim --apply` →
+  bot yönergesini VPS'e gönder.
 
 ## v3.16.0 — 26 Kasım 2026 — Finans: Yatırım bölümü
 **Araç:** Claude Code (Fable 5.2)  **Tür:** MINOR

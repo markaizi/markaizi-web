@@ -328,7 +328,7 @@ Plan ve kaynaklar: `docs/rakip-analizi-2026-10.md`.
 
 ## 9. Değişiklik Geçmişi (Özet)
 
-- **26 Kasım 2026** — v3.17.0: kart / ek hesap limitleri (`creditLimit`, migration bekliyor), kart ekleme formu, asistanda kart + limit + yatırım işlemleri.
+- **26 Kasım 2026** — v3.17.0: kart / ek hesap limitleri (`creditLimit`, migration uygulandı), kart ekleme formu, asistanda kart + limit + yatırım işlemleri.
 - **26 Kasım 2026** — v3.16.0: Finans → Genel Durum'a Yatırım bölümü (şema değişmeden, `category: "yatirim"`; gider sayılmaz).
 - **25 Kasım 2026** — v3.15.0: kapsamlı denetim düzeltmeleri (güvenlik yamaları, `musteri-data/` repodan çıkarıldı, www/vercel.app,
   OG ve meta açıklamaları, şema konumu, dönüşüm olayları + izin modu, KVKK notları, bot koruması, mobil CTA, erişilebilirlik,
