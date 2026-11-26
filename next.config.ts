@@ -1,4 +1,9 @@
 import type { NextConfig } from "next";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+
+// Panelde gösterilen sürüm tek kaynaktan gelir: package.json → derleme anında pakete gömülür (src/lib/version.ts).
+const APP_VERSION: string = JSON.parse(readFileSync(join(process.cwd(), "package.json"), "utf8")).version;
 
 // Analytics.tsx'in yüklediği script'ler (GA4, Meta Pixel) — CSP'nin izin
 // vermesi gereken tek üçüncü taraf kaynaklar bunlar. script-src ve style-src'de
@@ -37,6 +42,7 @@ const SECURITY_HEADERS = [
 const nextConfig: NextConfig = {
   // Kendi sunucumuzda (VPS) çalışmak için bağımsız çıktı: .next/standalone/server.js (deploy/vps-deploy.sh)
   output: "standalone",
+  env: { NEXT_PUBLIC_APP_VERSION: APP_VERSION },
   images: {
     formats: ["image/avif", "image/webp"],
   },

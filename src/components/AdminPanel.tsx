@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { PanelVersion } from "@/components/agenda/ui";
 import { useRouter } from "next/navigation";
 import StaffNotificationComposer from "@/components/StaffNotificationComposer";
 
@@ -93,6 +94,7 @@ export default function AdminPanel({
           <FirmalarView clients={clients} passiveClients={passiveClients} onBack={() => setSection("dashboard")} router={router} />
         )}
       </main>
+      <PanelVersion />
 
       {showComposer && <StaffNotificationComposer onClose={() => setShowComposer(false)} />}
     </div>

@@ -2,13 +2,31 @@
 
 > **Bu dosya araçlar arası devir-teslim defteridir.** En üstteki sürüm = en son durum.
 > Kurallar ve şablon: [`AGENTS.md`](./AGENTS.md). Eski sürümler silinmez.
-> Güncel sürüm: **v3.18.0** (`package.json` ile aynı olmalı).
+> Güncel sürüm: **v4.0.0** (`package.json` ile aynı olmalı).
 
 ---
 
 > **Gizlilik notu (v3.10.0):** Bu repo herkese açıktır. Müşteri ücretleri, tahsilat tutarları, kişisel finans ve kişi adları
 > bu dosyaya **yazılmaz**. Rakamlı / isimli ayrıntılar yerelde, git'e girmeyen `docs/ozel/` klasöründe tutulur
 > (ör. `docs/ozel/CHANGELOG-OZEL-2026-11-23.md`); tek seferlik veri scriptleri `scripts/ozel/` altındadır.
+
+## v4.0.0 — 26 Kasım 2026 — Tam sürüm: markaizi v4.0 + panelde sürüm göstergesi
+**Araç:** Claude Code (Fable 5.2)  **Tür:** MAJOR (Samet'in kararı)
+Samet'in 26 Kasım 2026 kararı: v3.16.0–v3.18.0 Finans paketi (yatırım, kart / ek hesap limitleri, altın borcu, asistan
+komutları) canlıya çıktıktan sonra sürüm "tam sürüm" olarak **v4.0.0**'a yükseltildi. Mimari / şema kırılması yok; yeni taban budur.
+### Yapılanlar
+- **Sürüm göstergesi:** admin ana sayfasının ve `PanelShell` kullanan tüm admin ekranlarının (Finans, Ajanda, Çöp Kutusu,
+  İşlem Kaydı) altında "markaizi panel · vX.Y.Z" (`PanelVersion`, `src/components/agenda/ui.tsx`).
+- **Tek kaynak:** sürüm `package.json`'dan okunur; `next.config.ts` derleme anında `NEXT_PUBLIC_APP_VERSION` olarak gömer,
+  `src/lib/version.ts` dışa verir. Sürüm yükseltirken ek bir yere dokunmak gerekmez.
+- `package.json` 4.0.0; `package-lock.json` içindeki (3.14.0'da kalmış) kök sürüm alanları da eşitlendi. `AGENTS.md` §2 tabanı güncellendi.
+### Doğrulama
+- `tsc --noEmit` temiz, `eslint src/` 0 hata (26 uyarı, değişmedi), `next build` başarılı; derlenen pakette sürüm metni doğrulandı.
+### Dikkat / bilinen kısıtlar
+- Gösterge yalnızca admin ekranlarında; çalışan ve müşteri panellerine eklenmedi.
+- Admin'in firma detayı, çalışanlar, iş akışı gibi kendi başlığını çizen ekranlarında (PanelShell kullanmayanlar) görünmez.
+### Yarım kalanlar / Sıradaki
+- Finans ekranının tarayıcıda gözle kontrolü; otomatik altın düşme kuralının ilk gerçek çalışmasının kontrolü (v3.18.0 notu).
 
 ## v3.18.0 — 26 Kasım 2026 — Finans: altın (gram) cinsinden borç + otomatik düşme kuralı
 **Araç:** Claude Code (Fable 5.2)  **Tür:** MINOR

@@ -330,6 +330,7 @@ Plan ve kaynaklar: `docs/rakip-analizi-2026-10.md`.
 
 ## 9. Değişiklik Geçmişi (Özet)
 
+- **26 Kasım 2026** — v4.0.0: tam sürüm (Samet'in kararı); sürüm admin panelinin altında gösteriliyor (`PanelVersion`, tek kaynak `package.json`).
 - **26 Kasım 2026** — v3.18.0: altın (gram) cinsinden borç, ödeme defteri, gidere bağlı otomatik düşme kuralı, asistanda altın borcu işlemleri (migration uygulandı).
 - **26 Kasım 2026** — v3.17.0: kart / ek hesap limitleri (`creditLimit`, migration uygulandı), kart ekleme formu, asistanda kart + limit + yatırım işlemleri.
 - **26 Kasım 2026** — v3.16.0: Finans → Genel Durum'a Yatırım bölümü (şema değişmeden, `category: "yatirim"`; gider sayılmaz).

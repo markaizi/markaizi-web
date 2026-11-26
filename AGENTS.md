@@ -13,7 +13,9 @@
 
 ## 2. Sürümleme (Semantic Versioning, `v<MAJOR>.<MINOR>.<PATCH>`)
 
-- **Mevcut taban: v3.0.0** (Samet'in 10 Kasım 2026 kararı: o ana kadarki durum "markaizi v3.0").
+- **Mevcut taban: v4.0.0** (Samet'in 26 Kasım 2026 kararı: Finans paketiyle birlikte "markaizi v4.0" tam sürüm).
+  Önceki taban v3.0.0'dı (10 Kasım 2026 kararı). Tam sürüm (MAJOR) geçişine Samet karar verir.
+- Çalışan sürüm admin panelinin altında görünür (`package.json` → `src/lib/version.ts`); ayrıca elle yazılmaz.
 - Sürümü **güncellemenin kapsamına göre** yükselt:
   - **MAJOR** (4.0.0): mimari/teknoloji değişimi, veritabanı şemasında geriye uyumsuz değişiklik, tasarım dilinin baştan kurulması.
   - **MINOR** (3.x.0): yeni özellik, yeni sayfa/bölüm, yeni API, toplu bir denetim-düzeltme paketi.

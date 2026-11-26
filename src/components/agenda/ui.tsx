@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, type ReactNode } from "react";
+import { APP_VERSION } from "@/lib/version";
 import Link from "next/link";
 
 // Ajanda + Kasa ekranlarının ortak parçaları. Panelin mevcut koyu/aydınlık tema
@@ -40,6 +41,16 @@ export async function agendaApi(method: "POST" | "PATCH" | "DELETE", path: strin
   return json.result;
 }
 
+/** Panel alt bilgisi: çalışan sürüm (admin ana sayfası + PanelShell kullanan tüm admin ekranları). */
+export function PanelVersion() {
+  if (!APP_VERSION) return null;
+  return (
+    <footer className="max-w-[1080px] mx-auto px-4 sm:px-6 pb-8 pt-2 text-center text-[11px] text-[#8a8a9a]">
+      markaizi panel · <span className="font-semibold" title="CHANGELOG.md'deki güncel sürüm">v{APP_VERSION}</span>
+    </footer>
+  );
+}
+
 export function PanelShell({ title, subtitle, children, actions }: { title: string; subtitle?: string; children: ReactNode; actions?: ReactNode }) {
   async function handleLogout() {
     try { await fetch("/api/musteri/auth/logout", { method: "POST" }); } catch { /* ignore */ }
@@ -70,6 +81,7 @@ export function PanelShell({ title, subtitle, children, actions }: { title: stri
         </div>
         {children}
       </main>
+      <PanelVersion />
     </div>
   );
 }
