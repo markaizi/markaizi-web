@@ -14,7 +14,7 @@
 **Araç:** Claude Code (Fable 5.2)  **Tür:** MINOR
 ### Yapılanlar
 - **Şema (yalnızca ekleme):** `GoldDebt` + `GoldDebtPayment` — migration `prisma/migrations/20261126180000_gold_debt`
-  (iki yeni tablo; mevcut tablolara dokunmaz). Borç gram olarak tutulur; her ödeme gram olarak düşer, TL ile ödendiyse
+  (iki yeni tablo; mevcut tablolara dokunmaz; **uygulandı: 26 Kasım 2026**). Borç gram olarak tutulur; her ödeme gram olarak düşer, TL ile ödendiyse
   tutar ve o günkü gram fiyatı da saklanır (gram = TL ÷ fiyat, 0,01 gr).
 - **Servis** (`src/lib/gold.ts`, saf hesaplar `src/lib/goldCalc.ts`): borç oluştur / düzenle / çöp kutusu; ödeme üç biçimde
   (doğrudan gram · TL + gram fiyatı · yalnızca TL → güncel kur `fetchGramGoldPrice` ile dış servisten). Ortak hata sınıfı ve
@@ -34,7 +34,8 @@
 ### Doğrulama
 - `tsc --noEmit` temiz, `eslint src/` 0 hata (26 uyarı, değişmedi), `next build` derlendi. Migration SQL'i `prisma migrate diff`
   çıktısıyla birebir aynı. Hesaplar (kalan, ara kalanlar, kur bekleyen, sayı ayrıştırma, başlık eşleşmesi) ve canlı kur servisi sınandı.
-- Tablolar henüz olmadığı için servis / API gerçek veride ve ekran tarayıcıda denenmedi.
+- Finans ekranı tarayıcıda denenmedi (giriş gerekiyor). Otomatik kuralın yazan kısmı ilk gerçek ödemede çalışacak; eşleştirme
+  kısmı (`matchGoldRule`) gerçek veride yazmadan sınandı.
 ### Dikkat / bilinen kısıtlar
 - **Sıra zorunlu:** `migrate deploy` → veri betiği → push. Migration uygulanmadan bu sürüm canlıya çıkarsa Finans sayfası,
   çöp kutusu ve bot `finans` / `ozet` hata verir.
@@ -43,8 +44,9 @@
 - TL karşılığı gösterimi son kayıtlı ödeme kurunu kullanır (canlı kur değil) ve "≈" ile işaretlidir.
 - Silinen bir gider çöp kutusundan geri alınırsa otomatik altın ödemesi kendiliğinden yeniden açılmaz (elle eklenir).
 ### Yarım kalanlar / Sıradaki
-- Samet: `npx dotenv -e .env.local -- npx prisma migrate deploy`. Ardından `scripts/ozel/altin-borc-2026-11-26.ts --apply`
-  ve `--dogrula`; push (onayla) → deploy sonrası v3.16.0'ın ilk yatırım kaydı → bot yönergesini VPS'e gönder.
+- ✅ 26 Kas: migration canlı veritabanına uygulandı (Samet); borç kaydı ve geçmiş ödemeler yazıldı, gerçek veride doğrulandı
+  (defter ve ara kalanlar, bekleyen taksit için yazmadan prova, çift düşme koruması, asistanın `finans` / `altin_borc` / `ozet` çıktıları).
+- Kalan: push (Samet'in onayıyla) → deploy sonrası v3.16.0'ın ilk yatırım kaydı → bot yönergesini VPS'e gönder.
 
 ## v3.17.0 — 26 Kasım 2026 — Finans: kart / ek hesap limitleri, kart ekleme, asistanda yatırım + kart yönetimi
 **Araç:** Claude Code (Fable 5.2)  **Tür:** MINOR
