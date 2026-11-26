@@ -34,5 +34,7 @@ dosya yazma / web / alt ajan kapalı, sır dosyalarını okumak yasak.
 - Durum: `systemctl status mkzbot` · ekran: `sudo -iu mkzbot tmux attach -t mkzbot` (çıkış: Ctrl+b, d)
 - Yeniden başlat: `systemctl restart mkzbot` (yalnızca bot; diğer servislere dokunmaz). Her yeniden başlatmada
   Remote Control yeni bir oturum açar — uygulamada yine "Markaizi Asistan" adıyla görünür.
+- Yönerge güncelleme (asistana yeni komut eklendiğinde): `bot/CLAUDE.md` → `/home/mkzbot/markaizi-bot/CLAUDE.md`
+  (sahibi `mkzbot`, eskisini yedekle) → `systemctl restart mkzbot`. Önce site deploy edilmiş olmalı; sonra `sudo -iu mkzbot mkz finans` ile sına.
 - Bot işlemleri panelde **İşlem kaydı** (`/musteri/admin/islem-kaydi`) sayfasında "bot" kaynağıyla görünür.
 - Token sızarsa: Vercel'de `AGENT_TOKEN`'ı ve VPS'te `MKZ_TOKEN`'ı birlikte yenile, siteyi yeniden deploy et.

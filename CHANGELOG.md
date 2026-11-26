@@ -46,7 +46,12 @@
 ### Yarım kalanlar / Sıradaki
 - ✅ 26 Kas: migration canlı veritabanına uygulandı (Samet); borç kaydı ve geçmiş ödemeler yazıldı, gerçek veride doğrulandı
   (defter ve ara kalanlar, bekleyen taksit için yazmadan prova, çift düşme koruması, asistanın `finans` / `altin_borc` / `ozet` çıktıları).
-- Kalan: push (Samet'in onayıyla) → deploy sonrası v3.16.0'ın ilk yatırım kaydı → bot yönergesini VPS'e gönder.
+- ✅ 26 Kas (Samet'in onayıyla): main'e birleştirildi ve push edildi (geri dönüş etiketi `yedek/finans-oncesi-2026-11-26` = v3.15.0);
+  Vercel yayını READY. Yayından sonra ilk yatırım kaydı eklendi (kasa dışı). `bot/CLAUDE.md` VPS'e kopyalandı
+  (eski kopya `CLAUDE.md.yedek-2026-11-26`), `mkzbot` yeniden başlatıldı; canlı API bot kullanıcısıyla sınandı
+  (`mkz finans`, `mkz altin_borc`).
+- Açık kalan: Finans ekranı tarayıcıda gözle denenmedi; otomatik altın düşme kuralının ilk gerçek çalışması bir sonraki
+  eşleşen gider ödemesinde — o gün ödeme defteri kontrol edilmeli.
 
 ## v3.17.0 — 26 Kasım 2026 — Finans: kart / ek hesap limitleri, kart ekleme, asistanda yatırım + kart yönetimi
 **Araç:** Claude Code (Fable 5.2)  **Tür:** MINOR
@@ -79,8 +84,7 @@
 ### Yarım kalanlar / Sıradaki
 - ✅ 26 Kas: migration canlı veritabanına uygulandı (Samet), limitler yazıldı ve gerçek veride doğrulandı (toplamlar,
   yinelenen kart reddi, asistanın `finans` çıktısı).
-- Kalan: push (Samet'in onayıyla) → deploy sonrası `scripts/ozel/kart-limit-yatirim-2026-11-26.ts --yatirim --apply` →
-  bot yönergesini VPS'e gönder.
+- ✅ Push, yatırım kaydı ve bot yönergesi tamamlandı — ayrıntı v3.18.0 "Yarım kalanlar" bölümünde.
 
 ## v3.16.0 — 26 Kasım 2026 — Finans: Yatırım bölümü
 **Araç:** Claude Code (Fable 5.2)  **Tür:** MINOR
@@ -102,7 +106,7 @@
   sanar (ay gideri / yaklaşan ödemeler). İlk yatırım kaydı bu yüzden deploy'dan SONRA eklenir.
 - Genel "+ Kayıt" formunun kategori listesinde "yatirim" yok; yatırım yalnızca Yatırım penceresinden eklenir.
 ### Yarım kalanlar / Sıradaki
-- Push (deploy) ve ardından ilk yatırım kaydının eklenmesi — Samet'in onayıyla.
+- ✅ Tamamlandı (26 Kas) — ayrıntı v3.18.0 "Yarım kalanlar" bölümünde.
 
 ## v3.15.0 — 25 Kasım 2026 — Kapsamlı denetim düzeltmeleri (güvenlik, SEO, ölçüm, KVKK, erişilebilirlik)
 **Araç:** Claude Code (Opus 5.5)  **Tür:** MINOR
