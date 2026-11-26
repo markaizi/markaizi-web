@@ -13,6 +13,10 @@ import { z } from "zod";
 import { Prisma } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { DEBT_CATEGORIES, type KasaCalcCardTx, type KasaCalcEntry } from "@/lib/kasaCalc";
+import { AgendaRuleError, amount } from "@/lib/agendaShared";
+import { applyGoldAutoRules, revertGoldAutoPayment } from "@/lib/gold";
+
+export { AgendaRuleError };
 
 export const TZ = "Europe/Istanbul";
 
@@ -63,14 +67,6 @@ export const noteInput = z.object({
 });
 export const notePatch = noteInput.partial();
 
-// "42.500", "42500,50", "42.500 ₺" ve sayı kabul edilir; rakam içermeyen ya da 0/negatif tutar reddedilir.
-const amount = z.union([z.number(), z.string()]).transform((v, ctx) => {
-  let n = NaN;
-  if (typeof v === "number") n = v;
-  else if (/\d/.test(v)) n = Number(v.replace(/[^\d,.-]/g, "").replace(/\.(?=\d{3}(\D|$))/g, "").replace(",", "."));
-  if (!isFinite(n) || n <= 0) { ctx.addIssue({ code: "custom", message: "Geçersiz tutar." }); return z.NEVER; }
-  return Math.round(n * 100) / 100;
-});
 
 export const kasaInput = z.object({
   title: z.string().trim().min(1, "Başlık gerekli.").max(200),
@@ -250,7 +246,7 @@ async function ensureNextRecurring(tx: Tx, e: { id: string; title: string; amoun
 export async function createKasaEntry(raw: unknown) {
   const d = kasaInput.parse(raw);
   const status = d.status ?? (d.direction === "GELIR" ? "ODENDI" : "BEKLIYOR");
-  return prisma.$transaction(async (tx) => {
+  const created = await prisma.$transaction(async (tx) => {
     const e = await tx.kasaEntry.create({
       data: {
         title: d.title, amount: new Prisma.Decimal(d.amount), direction: d.direction, category: d.category ?? "genel",
@@ -262,13 +258,17 @@ export async function createKasaEntry(raw: unknown) {
     if (status === "ODENDI") await ensureNextRecurring(tx, e);
     return e;
   });
+  if (status === "ODENDI") await applyGoldAutoRules(created); // altın borcu otomatik kuralı (hata fırlatmaz)
+  return created;
 }
 
 export async function updateKasaEntry(id: string, raw: unknown) {
   const d = kasaPatch.parse(raw);
-  return prisma.$transaction(async (tx) => {
+  let becamePaid = false, becameUnpaid = false;
+  const updated = await prisma.$transaction(async (tx) => {
     const before = await tx.kasaEntry.findUniqueOrThrow({ where: { id }, select: { status: true } });
-    const becamePaid = d.status === "ODENDI" && before.status !== "ODENDI";
+    becamePaid = d.status === "ODENDI" && before.status !== "ODENDI";
+    becameUnpaid = d.status === "BEKLIYOR" && before.status === "ODENDI";
     const e = await tx.kasaEntry.update({
       where: { id },
       data: {
@@ -285,9 +285,17 @@ export async function updateKasaEntry(id: string, raw: unknown) {
     if (becamePaid) await ensureNextRecurring(tx, e);
     return e;
   });
+  // Altın borcu otomatik kuralı: gider ödendiyse payı grama çevrilip düşülür; "ödenmedi"ye dönerse geri alınır.
+  if (becamePaid) await applyGoldAutoRules(updated);
+  if (becameUnpaid) await revertGoldAutoPayment(id);
+  return updated;
 }
 
-export const trashKasaEntry = (id: string) => prisma.kasaEntry.update({ where: { id }, data: { deletedAt: new Date() } });
+export async function trashKasaEntry(id: string) {
+  const e = await prisma.kasaEntry.update({ where: { id }, data: { deletedAt: new Date() } });
+  await revertGoldAutoPayment(id); // silinen giderden doğan otomatik altın ödemesi de geri alınır
+  return e;
+}
 export const restoreKasaEntry = (id: string) => prisma.kasaEntry.update({ where: { id }, data: { deletedAt: null } });
 
 /** Kart / ek hesap borcu mu? Harcama ekleme ve "ödeme yap" yalnızca bu kayıtlarda geçerlidir. */
@@ -297,8 +305,6 @@ async function requireDebtCard(tx: Tx, id: string) {
   return e;
 }
 
-/** İş kuralı ihlali — API'de 400 olarak kullanıcıya gösterilir. */
-export class AgendaRuleError extends Error {}
 
 /**
  * Kart/ek hesap harcaması: bağlı borç kaydının tutarını artırır (kasadaki nakitten düşmez).
@@ -390,6 +396,45 @@ export async function payDebt(entryId: string, rawAmount: unknown) {
   });
 }
 
+// "0", "", null → 0 kabul edilir (yeni kartın borcu olmayabilir); diğerleri `amount` ile aynı kurallar.
+const zeroOk = (v: unknown) => v === undefined || v === null || v === "" || v === 0 || (typeof v === "string" && /^\s*0+([.,]0+)?\s*(₺|tl)?\s*$/i.test(v));
+const debtCardInput = z.object({
+  title: z.string().trim().min(1, "Kart / hesap adı gerekli.").max(120),
+  kind: z.enum(["kredi_karti", "ek_hesap"]),
+  balance: z.unknown().optional(), // güncel borç — boş / 0 olabilir
+  creditLimit: z.unknown().optional(), // limit — boş bırakılabilir
+});
+
+/**
+ * Yeni kart / ek hesap (v3.17.0): borcu 0 olabilen, isteğe bağlı limitli borç kartı kaydı. Genel kasa kaydından farkı:
+ * 0 tutara izin verir ve aynı adda ikinci kart açılmasını engeller. Kayıt BEKLIYOR durur (kart listesinde kalır).
+ */
+export async function createDebtCard(raw: unknown) {
+  const d = debtCardInput.parse(raw);
+  const balance = zeroOk(d.balance) ? 0 : amount.parse(d.balance);
+  const limit = zeroOk(d.creditLimit) ? null : amount.parse(d.creditLimit);
+  return prisma.$transaction(async (tx) => {
+    const same = await tx.kasaEntry.findFirst({ where: { deletedAt: null, category: { in: DEBT_CATEGORIES }, title: { equals: d.title, mode: "insensitive" } } });
+    if (same) throw new AgendaRuleError(`"${same.title}" adında bir kart / hesap zaten var.`);
+    return tx.kasaEntry.create({
+      data: {
+        title: d.title, amount: new Prisma.Decimal(balance), direction: "BORC", category: d.kind, status: "BEKLIYOR", dueDate: new Date(),
+        creditLimit: limit === null ? null : new Prisma.Decimal(limit),
+        notes: d.kind === "ek_hesap" ? "Güncel ek hesap borcu" : "Güncel kredi kartı borcu",
+      },
+    });
+  });
+}
+
+/** Kart / ek hesap limitini belirler; boş / 0 gönderilirse limit kaldırılır. Borç bakiyesine dokunmaz. */
+export async function setCardLimit(entryId: string, rawLimit: unknown) {
+  const limit = zeroOk(rawLimit) ? null : amount.parse(rawLimit);
+  return prisma.$transaction(async (tx) => {
+    const e = await requireDebtCard(tx, entryId);
+    return tx.kasaEntry.update({ where: { id: e.id }, data: { creditLimit: limit === null ? null : new Prisma.Decimal(limit) } });
+  });
+}
+
 const installmentInput = z.object({
   title: z.string().trim().min(1, "Başlık gerekli.").max(160),
   amount, // taksit tutarı
@@ -442,6 +487,7 @@ export async function loadKasaData(): Promise<{ entries: KasaCalcEntry[]; cardTx
       id: e.id, title: e.title, amount: Number(e.amount), direction: e.direction, category: e.category, status: e.status,
       dueDate: e.dueDate.toISOString(), paidAt: e.paidAt?.toISOString() ?? null, isRecurring: e.isRecurring,
       clientId: e.clientId, clientName: e.client?.name ?? null, clientSlug: e.client?.slug ?? null, employeeId: e.employeeId,
+      creditLimit: e.creditLimit === null ? null : Number(e.creditLimit),
       // Kasa öncesi geçmiş tahsilat: eski faturalardan ("invoice:") veya elle bildirilen geçmiş aylardan ("gecmis:").
       historical: !!e.legacyId && (e.legacyId.startsWith("invoice:") || e.legacyId.startsWith("gecmis:")),
     })),

@@ -10,8 +10,10 @@
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import * as A from "@/lib/agenda";
-import { computeKasa, isDebt, isIncoming } from "@/lib/kasaCalc";
+import { computeKasa, cardLimit, isDebt, isIncoming, isInvestment, INVESTMENT_CATEGORY } from "@/lib/kasaCalc";
 import { CLIENT_PAYMENT_CATEGORY } from "@/lib/clientPayments";
+import * as G from "@/lib/gold";
+import { goldSummary, goldRuleText, type GoldDebtView } from "@/lib/goldCalc";
 
 const TZ = "Europe/Istanbul";
 const ymd = (d: Date) => d.toLocaleDateString("en-CA", { timeZone: TZ });
@@ -63,6 +65,34 @@ async function resolveCard(name: unknown) {
   throw new AgentError(hits.length ? `"${name}" birden fazla kartla eşleşiyor: ${hits.map((c) => c.title).join(", ")}.` : `"${name}" adında kart yok. Kartlar: ${cards.map((c) => c.title).join(", ")}`);
 }
 
+/** Altın borcunu ada göre çözer; ad verilmezse ve tek borç varsa onu döndürür. */
+async function resolveGoldDebt(name: unknown): Promise<GoldDebtView> {
+  const debts = await G.loadGoldDebts();
+  if (!debts.length) throw new AgentError("Kayıtlı altın borcu yok.");
+  if (name === undefined || name === null || name === "") {
+    if (debts.length === 1) return debts[0];
+    throw new AgentError(`Hangi altın borcu? ${debts.map((d) => d.title).join(", ")}`);
+  }
+  if (typeof name !== "string") throw new AgentError("borc metin olmalı.");
+  const q = norm(name).split(" ");
+  const hits = debts.filter((d) => q.every((w) => norm(d.title).includes(w)));
+  if (hits.length === 1) return hits[0];
+  throw new AgentError(hits.length ? `"${name}" birden fazla borçla eşleşiyor: ${hits.map((d) => d.title).join(", ")}.` : `"${name}" adında altın borcu yok. Borçlar: ${debts.map((d) => d.title).join(", ")}`);
+}
+
+const goldOut = (d: GoldDebtView, all = false) => {
+  const s = goldSummary(d);
+  const rows = (all ? s.ledger : s.ledger.slice(-6)).map((p) => ({
+    id: p.id, tarih: ymd(new Date(p.paidAt)), gram: p.grams, tl: p.tlAmount, gramFiyat: p.gramPrice, kurBekliyor: p.grams === null,
+    otomatik: p.auto, not: p.note, odemeSonrasiKalanGr: p.remainingAfter,
+  }));
+  return {
+    id: d.id, ad: d.title, baslangicGr: s.totalGrams, odenenGr: s.paidGrams, kalanGr: s.remainingGrams,
+    kurBekleyenOdeme: s.pendingCount, kural: goldRuleText(d), not: d.notes,
+    [all ? "odemeler" : "sonOdemeler"]: rows,
+  };
+};
+
 const str = (max = 300) => z.string().trim().min(1).max(max);
 const opt = <T extends z.ZodTypeAny>(t: T) => t.nullable().optional();
 
@@ -94,6 +124,8 @@ export const ACTIONS: Record<string, Handler> = {
         acikIsler: openTasks.map((t) => ({ id: t.id, baslik: t.title, oncelik: t.priority, firma: t.client?.name ?? null })),
         finans: {
           kasadaKalan: k.cash, toplamBorc: k.debtTotal, buAyTahsilEdilen: k.collectedTotal,
+          yatirim: k.investmentTotal, kalanKartLimiti: k.limitCardCount ? k.limitAvailable : null,
+          altinBorclari: (await G.loadGoldDebts()).map((d) => { const s = goldSummary(d); return { ad: d.title, kalanGr: s.remainingGrams, kurBekleyenOdeme: s.pendingCount }; }),
           tahsilEdilecek: k.openReceivables.map((e) => ({ id: e.id, baslik: e.title, tutar: e.amount, vade: ymd(new Date(e.dueDate)) })),
         },
       };
@@ -142,14 +174,37 @@ export const ACTIONS: Record<string, Handler> = {
       const horizon = now.getTime() + 30 * 86_400_000;
       return {
         yil: k.year, yillikGelir: k.yearIncome, tumZamanlarGelir: k.totalIncome, kasadaKalan: k.cash,
+        yatirim: k.investmentTotal,
+        yatirimlar: k.investments.map((e) => ({ id: e.id, baslik: e.title, tutar: e.amount, tarih: ymd(new Date(e.dueDate)), kasadan: e.status === "ODENDI" })),
+        toplamLimit: k.limitCardCount ? k.limitTotal : null, kalanLimit: k.limitCardCount ? k.limitAvailable : null,
+        // Altın (gram) borçları TL toplamına (toplamBorc) dahil DEĞİLDİR.
+        altinBorclari: (await G.loadGoldDebts()).map((d) => goldOut(d)),
         toplamBorc: k.debtTotal, buAyGelirHedefi: k.monthIncomeTarget, buAyGider: k.monthExpenseTotal, buAyTahsilEdilen: k.collectedTotal,
-        kartlar: k.debtCards.map((c) => ({ id: c.id, ad: c.title, borc: c.amount })),
+        kartlar: k.debtCards.map((c) => {
+          const l = cardLimit(c);
+          return { id: c.id, ad: c.title, tur: c.category, borc: c.amount, limit: l?.limit ?? null, kalanLimit: l?.available ?? null, dolulukYuzde: l?.pct ?? null };
+        }),
         taksitliBorclar: k.installments.map((g) => ({ ad: g.base, odenen: `${g.paidCount}/${g.total}`, kalanTutar: g.remainingAmount })),
         tahsilEdilecek: k.openReceivables.map((e) => ({ id: e.id, baslik: e.title, tutar: e.amount, vade: ymd(new Date(e.dueDate)) })),
         yaklasanOdemeler: entries
-          .filter((e) => e.status === "BEKLIYOR" && !isIncoming(e.direction) && !isDebt(e) && new Date(e.dueDate).getTime() <= horizon)
+          .filter((e) => e.status === "BEKLIYOR" && !isIncoming(e.direction) && !isDebt(e) && !isInvestment(e) && new Date(e.dueDate).getTime() <= horizon)
           .map((e) => ({ id: e.id, baslik: e.title, tutar: e.amount, vade: ymd(new Date(e.dueDate)) })),
       };
+    },
+  },
+  altin_borc: {
+    write: false,
+    async run(a) {
+      // Bir altın borcunun tam ödeme defteri (tarih tarih) — ad verilmezse ve tek borç varsa o.
+      const p = z.object({ borc: opt(z.string()) }).parse(a);
+      return goldOut(await resolveGoldDebt(p.borc), true);
+    },
+  },
+  altin_kuru: {
+    write: false,
+    async run() {
+      try { const g = await G.fetchGramGoldPrice(); return { gramAltinSatis: g.price, gramAltinAlis: g.buying, guncelleme: g.updatedAt }; }
+      catch { throw new AgentError("Güncel gram altın kuru alınamadı."); }
     },
   },
   notlar: {
@@ -273,13 +328,17 @@ export const ACTIONS: Record<string, Handler> = {
       if (!before || before.deletedAt) throw new AgentError("Kayıt bulunamadı.");
       if (isDebt(before)) throw new AgentError("Bu bir kart / hesap borcu — kart_odeme kullan.");
       const e = await A.updateKasaEntry(p.id, { status: "ODENDI", ...(p.tarih ? { paidAt: parseDate(p.tarih).toISOString() } : {}) });
-      return { id: e.id, baslik: e.title, tutar: Number(e.amount) };
+      // Bu gider bir altın borcu kuralına bağlıysa ne kadar gram düşüldüğü de bildirilir (kurBekliyor:true → altin_odeme_guncelle ile kur gir).
+      const altin = await G.goldPaymentForEntry(e.id);
+      return { id: e.id, baslik: e.title, tutar: Number(e.amount), ...(altin ? { altinBorcundanDusulen: altin } : {}) };
     },
   },
   kasa_ekle: {
     write: true,
     async run(a) {
       const p = z.object({ baslik: str(200), tutar: z.union([z.number(), z.string()]), tur: z.enum(["GELIR", "GIDER", "BORC", "ALACAK"]), vade: opt(z.string()), kategori: opt(str(60)), firma: opt(z.string()), odendi: opt(z.boolean()), herAy: opt(z.boolean()) }).parse(a);
+      if (p.kategori === INVESTMENT_CATEGORY) throw new AgentError("Yatırım için yatirim_ekle kullan.");
+      if (p.kategori && A.DEBT_CATEGORIES.includes(p.kategori)) throw new AgentError("Yeni kart / ek hesap için kart_ekle kullan.");
       const c = await resolveClient(p.firma);
       const due = p.vade ? parseDate(p.vade, "vade") : new Date();
       const e = await A.createKasaEntry({
@@ -310,10 +369,91 @@ export const ACTIONS: Record<string, Handler> = {
       return { kart: card.title, kalanBorc: Number(after.amount) };
     },
   },
+  // ── Kart / ek hesap tanımı ve limit (v3.17.0) ─────────────
+  kart_ekle: {
+    write: true,
+    async run(a) {
+      const p = z.object({ ad: str(120), tur: z.enum(["kredi_karti", "ek_hesap"]), borc: opt(z.union([z.number(), z.string()])), limit: opt(z.union([z.number(), z.string()])) }).parse(a);
+      const e = await A.createDebtCard({ title: p.ad, kind: p.tur, balance: p.borc ?? 0, creditLimit: p.limit ?? null });
+      const l = cardLimit({ amount: Number(e.amount), creditLimit: e.creditLimit === null ? null : Number(e.creditLimit) });
+      return { id: e.id, baslik: e.title, tur: e.category, borc: Number(e.amount), limit: l?.limit ?? null, kalanLimit: l?.available ?? null };
+    },
+  },
+  kart_limit: {
+    write: true,
+    async run(a) {
+      // limit 0 / null → limit kaldırılır. Borç bakiyesine dokunmaz.
+      const p = z.object({ kart: z.string(), limit: z.union([z.number(), z.string()]).nullable() }).parse(a);
+      const card = await resolveCard(p.kart);
+      const e = await A.setCardLimit(card.id, p.limit);
+      const l = cardLimit({ amount: Number(e.amount), creditLimit: e.creditLimit === null ? null : Number(e.creditLimit) });
+      return { baslik: e.title, borc: Number(e.amount), limit: l?.limit ?? null, kalanLimit: l?.available ?? null };
+    },
+  },
+  // ── Yatırım (v3.16.0 → bot: v3.17.0) ──────────────────────
+  yatirim_ekle: {
+    write: true,
+    async run(a) {
+      // kasadan:true → para kasadan çıktı (Kasada Kalan düşer); false / verilmezse yalnızca Yatırım toplamına yazılır.
+      const p = z.object({ baslik: str(200), tutar: z.union([z.number(), z.string()]), tarih: opt(z.string()), kasadan: opt(z.boolean()) }).parse(a);
+      const when = (p.tarih ? parseDate(p.tarih) : new Date()).toISOString();
+      const e = await A.createKasaEntry({
+        title: p.baslik, amount: p.tutar, direction: "GIDER", category: INVESTMENT_CATEGORY, dueDate: when,
+        status: p.kasadan ? "ODENDI" : "BEKLIYOR", ...(p.kasadan ? { paidAt: when } : {}),
+      });
+      const sum = await prisma.kasaEntry.aggregate({ where: { deletedAt: null, category: INVESTMENT_CATEGORY }, _sum: { amount: true } });
+      return { id: e.id, baslik: e.title, tutar: Number(e.amount), kasadan: e.status === "ODENDI", toplamYatirim: Number(sum._sum.amount ?? 0) };
+    },
+  },
+  yatirim_guncelle: {
+    write: true,
+    async run(a) {
+      const p = z.object({ id: str(60), baslik: opt(str(200)), tutar: opt(z.union([z.number(), z.string()])), tarih: opt(z.string()), kasadan: opt(z.boolean()) }).parse(a);
+      const before = await prisma.kasaEntry.findUnique({ where: { id: p.id } });
+      if (!before || before.deletedAt) throw new AgentError("Kayıt bulunamadı.");
+      if (!isInvestment(before)) throw new AgentError("Bu kayıt bir yatırım değil.");
+      const when = p.tarih ? parseDate(p.tarih) : null;
+      const fromCash = p.kasadan ?? before.status === "ODENDI";
+      const e = await A.updateKasaEntry(p.id, {
+        ...(p.baslik ? { title: p.baslik } : {}),
+        ...(p.tutar !== undefined && p.tutar !== null ? { amount: p.tutar } : {}),
+        ...(when ? { dueDate: when.toISOString() } : {}),
+        status: fromCash ? "ODENDI" : "BEKLIYOR",
+        // Kasadan çıkış tarihi = yatırım tarihi.
+        ...(fromCash ? { paidAt: (when ?? before.dueDate).toISOString() } : {}),
+      });
+      return { id: e.id, baslik: e.title, tutar: Number(e.amount), tarih: ymd(e.dueDate), kasadan: e.status === "ODENDI" };
+    },
+  },
+  // ── Altın (gram) borcu (v3.18.0) ──────────────────────────
+  altin_odeme: {
+    write: true,
+    async run(a) {
+      // gram verilirse doğrudan düşer; tl verilirse gram = tl ÷ gramFiyat (gramFiyat yoksa güncel kur servisten alınır).
+      const num = z.union([z.number(), z.string()]);
+      const p = z.object({ borc: opt(z.string()), gram: opt(num), tl: opt(num), gramFiyat: opt(num), tarih: opt(z.string()), not: opt(str(500)) }).parse(a);
+      const debt = await resolveGoldDebt(p.borc);
+      const pay = await G.addGoldPayment({ debtId: debt.id, grams: p.gram, tlAmount: p.tl, gramPrice: p.gramFiyat, note: p.not, ...(p.tarih ? { paidAt: parseDate(p.tarih).toISOString() } : {}) });
+      const after = goldSummary((await G.loadGoldDebts()).find((d) => d.id === debt.id)!);
+      return { id: pay.id, baslik: pay.title, dusulenGr: Number(pay.grams), tl: pay.tlAmount === null ? null : Number(pay.tlAmount), gramFiyat: pay.gramPrice === null ? null : Number(pay.gramPrice), kalanGr: after.remainingGrams };
+    },
+  },
+  altin_odeme_guncelle: {
+    write: true,
+    async run(a) {
+      // "Kur bekleyen" ödemeyi tamamlamak (gramFiyat ya da gram ver) veya bir ödemeyi düzeltmek için.
+      const num = z.union([z.number(), z.string()]);
+      const p = z.object({ id: str(60), gram: opt(num), tl: opt(num), gramFiyat: opt(num), tarih: opt(z.string()), not: opt(str(500)) }).parse(a);
+      const pay = await G.updateGoldPayment(p.id, { grams: p.gram, tlAmount: p.tl, gramPrice: p.gramFiyat, ...(p.not ? { note: p.not } : {}), ...(p.tarih ? { paidAt: parseDate(p.tarih).toISOString() } : {}) });
+      const after = goldSummary((await G.loadGoldDebts()).find((d) => d.id === pay.debtId)!);
+      return { id: pay.id, baslik: pay.title, gram: pay.grams === null ? null : Number(pay.grams), gramFiyat: pay.gramPrice === null ? null : Number(pay.gramPrice), kalanGr: after.remainingGrams };
+    },
+  },
   sil: {
     write: true,
     async run(a) {
-      const p = z.object({ tur: z.enum(["is", "not", "kasa", "ziyaret"]), id: str(60) }).parse(a);
+      const p = z.object({ tur: z.enum(["is", "not", "kasa", "ziyaret", "altin_odeme"]), id: str(60) }).parse(a);
+      if (p.tur === "altin_odeme") { const r = await G.trashGoldPayment(p.id); return { baslik: r.title, sonuc: "çöp kutusuna taşındı (panelden geri alınabilir); kalan borç o kadar gram arttı" }; }
       if (p.tur === "ziyaret") { const e = await A.updateEvent(p.id, { status: "IPTAL" }); return { baslik: e.title, sonuc: "iptal edildi (silinmedi)" }; }
       const r = p.tur === "is" ? await A.trashTask(p.id) : p.tur === "not" ? await A.trashNote(p.id) : await A.trashKasaEntry(p.id);
       return { baslik: r.title, sonuc: "çöp kutusuna taşındı (panelden geri alınabilir)" };

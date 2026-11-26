@@ -22,6 +22,8 @@ export interface KasaCalcEntry {
   clientName: string | null;
   clientSlug?: string | null;
   employeeId?: string | null;
+  /** Kart / ek hesap limiti (v3.17.0) — yalnızca borç kartı kayıtlarında; tanımlı değilse null. */
+  creditLimit?: number | null;
   /**
    * Kasa öncesi geçmiş kayıt (v3.7.0): 1 Ekim 2026 öncesi eski faturalardan Finans geçmişine alınan tahsilatlar.
    * Toplam gelire, yıllık gelire ve geçmiş aylara girer; KASADA KALAN hesabına girmez (31 Ekim kasa
@@ -48,6 +50,26 @@ export const monthOf = (iso: string) => new Date(iso).toLocaleDateString("en-CA"
 export const isIncoming = (d: KasaDirection) => d === "GELIR" || d === "ALACAK";
 export const isDebt = (e: Pick<KasaCalcEntry, "category">) => DEBT_CATEGORIES.includes(e.category);
 
+/**
+ * Kart limiti (v3.17.0): limit tanımlı bir kart / ek hesap için kullanılan, kalan ve doluluk oranı.
+ * Kalan eksiye düşebilir (limit aşımı) — kırpılmaz, ekranda uyarı olarak gösterilir.
+ */
+export function cardLimit(e: Pick<KasaCalcEntry, "amount" | "creditLimit">) {
+  if (!e.creditLimit || e.creditLimit <= 0) return null;
+  const available = Math.round((e.creditLimit - e.amount) * 100) / 100;
+  return { limit: e.creditLimit, used: e.amount, available, pct: Math.min(100, Math.max(0, Math.round((e.amount / e.creditLimit) * 100))) };
+}
+
+/**
+ * Yatırım (v3.16.0): kenara ayrılan para — gider, borç ya da alacak değildir; ayrı bir varlık kalemi olarak izlenir.
+ * Kayıt KasaEntry'de `category: "yatirim"` ile tutulur (şema değişmedi):
+ *   - status ODENDI   → para kasadan çıktı: `paidAt` tarihinde "Kasada Kalan"dan düşer.
+ *   - status BEKLIYOR → kasa dışı kaynak: yalnızca Yatırım toplamında görünür, kasaya dokunmaz.
+ * Ay giderine, yaklaşan ödemelere, borçlara ve geçmiş ayların gider toplamına hiçbir durumda girmez.
+ */
+export const INVESTMENT_CATEGORY = "yatirim";
+export const isInvestment = (e: Pick<KasaCalcEntry, "category">) => e.category === INVESTMENT_CATEGORY;
+
 /** "Eşya Ödemesi (3/9 - Aralık)" → { base: "Eşya Ödemesi", index: 3, total: 9 } */
 export function parseInstallment(title: string): { base: string; index: number; total: number } | null {
   const m = title.match(/^(.*?)\s*\((\d+)\s*\/\s*(\d+)/);
@@ -69,9 +91,14 @@ function isMonthlyExpense(e: KasaCalcEntry) {
   return (e.direction === "BORC" || e.direction === "GIDER") && !isDebt(e) && e.category !== "borc_odemesi";
 }
 
-export function computeKasa(entries: KasaCalcEntry[], cardTxs: KasaCalcCardTx[], nowIso: string) {
+export function computeKasa(allEntries: KasaCalcEntry[], cardTxs: KasaCalcCardTx[], nowIso: string) {
   const month = monthOf(nowIso);
   const sum = (list: { amount: number }[]) => list.reduce((a, x) => a + x.amount, 0);
+
+  // Yatırımlar ayrı tutulur; aşağıdaki gelir / gider / borç hesaplarının hiçbirine girmez.
+  const investments = allEntries.filter(isInvestment).sort((a, b) => b.dueDate.localeCompare(a.dueDate));
+  const investedFromCash = investments.filter((e) => e.status === "ODENDI" && !e.historical);
+  const entries = allEntries.filter((e) => !isInvestment(e));
 
   const paidIn = entries.filter((e) => e.status === "ODENDI" && isIncoming(e.direction));
   const paidOut = entries.filter((e) => e.status === "ODENDI" && !isIncoming(e.direction));
@@ -82,6 +109,10 @@ export function computeKasa(entries: KasaCalcEntry[], cardTxs: KasaCalcCardTx[],
 
   // Kart / hesap borçları
   const debtCards = entries.filter((e) => e.status === "BEKLIYOR" && isDebt(e));
+  // Limitler — yalnızca limiti tanımlı kartlar toplanır (limitsiz kartın borcu "kullanılan"a girmez).
+  const limited = debtCards.filter((e) => cardLimit(e));
+  const limitTotal = limited.reduce((a, e) => a + (e.creditLimit ?? 0), 0);
+  const limitUsed = sum(limited);
 
   // Taksitli borçlar — başlıktaki (n/N) ile gruplanır; ödenen sayısı = N − bekleyen taksit.
   const groupMap = new Map<string, KasaCalcEntry[]>();
@@ -119,10 +150,17 @@ export function computeKasa(entries: KasaCalcEntry[], cardTxs: KasaCalcCardTx[],
     totalIncome: sum(paidIn), // tüm zamanlar (geçmiş kayıtlar dahil)
     yearIncome: sum(paidIn.filter((e) => e.paidAt && monthOf(e.paidAt).startsWith(year))), // İstanbul takvim yılı
     year,
-    cash: sum(cashIn) - sum(cashOut),
+    cash: sum(cashIn) - sum(cashOut) - sum(investedFromCash),
+    investments,
+    investmentTotal: sum(investments),
+    investedFromCashTotal: sum(investedFromCash),
     debtTotal: sum(debtCards) + installments.reduce((a, g) => a + g.remainingAmount, 0),
     debtItemCount: debtCards.length + installments.length,
     debtCards,
+    limitTotal,
+    limitUsed,
+    limitAvailable: Math.round((limitTotal - limitUsed) * 100) / 100,
+    limitCardCount: limited.length,
     installments,
     monthIncomeTarget: sum(collectedThisMonth) + sum(openReceivables),
     collectedThisMonth,
@@ -142,6 +180,7 @@ export function monthlyHistory(entries: KasaCalcEntry[], cardTxs: KasaCalcCardTx
   const map = new Map<string, { gelir: number; gider: number }>();
   const bucket = (m: string) => map.get(m) ?? map.set(m, { gelir: 0, gider: 0 }).get(m)!;
   for (const e of entries) {
+    if (isInvestment(e)) continue; // yatırım gelir de gider de değildir
     if (e.status === "ODENDI" && isIncoming(e.direction) && e.paidAt) bucket(monthOf(e.paidAt)).gelir += e.amount;
     if (isMonthlyExpense(e)) bucket(monthOf(e.dueDate)).gider += e.amount;
   }

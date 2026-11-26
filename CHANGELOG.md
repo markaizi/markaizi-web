@@ -2,13 +2,107 @@
 
 > **Bu dosya araçlar arası devir-teslim defteridir.** En üstteki sürüm = en son durum.
 > Kurallar ve şablon: [`AGENTS.md`](./AGENTS.md). Eski sürümler silinmez.
-> Güncel sürüm: **v3.15.0** (`package.json` ile aynı olmalı).
+> Güncel sürüm: **v3.18.0** (`package.json` ile aynı olmalı).
 
 ---
 
 > **Gizlilik notu (v3.10.0):** Bu repo herkese açıktır. Müşteri ücretleri, tahsilat tutarları, kişisel finans ve kişi adları
 > bu dosyaya **yazılmaz**. Rakamlı / isimli ayrıntılar yerelde, git'e girmeyen `docs/ozel/` klasöründe tutulur
 > (ör. `docs/ozel/CHANGELOG-OZEL-2026-11-23.md`); tek seferlik veri scriptleri `scripts/ozel/` altındadır.
+
+## v3.18.0 — 26 Kasım 2026 — Finans: altın (gram) cinsinden borç + otomatik düşme kuralı
+**Araç:** Claude Code (Fable 5.2)  **Tür:** MINOR
+### Yapılanlar
+- **Şema (yalnızca ekleme):** `GoldDebt` + `GoldDebtPayment` — migration `prisma/migrations/20261126180000_gold_debt`
+  (iki yeni tablo; mevcut tablolara dokunmaz; **uygulandı: 26 Kasım 2026**). Borç gram olarak tutulur; her ödeme gram olarak düşer, TL ile ödendiyse
+  tutar ve o günkü gram fiyatı da saklanır (gram = TL ÷ fiyat, 0,01 gr).
+- **Servis** (`src/lib/gold.ts`, saf hesaplar `src/lib/goldCalc.ts`): borç oluştur / düzenle / çöp kutusu; ödeme üç biçimde
+  (doğrudan gram · TL + gram fiyatı · yalnızca TL → güncel kur `fetchGramGoldPrice` ile dış servisten). Ortak hata sınıfı ve
+  tutar ayrıştırıcı `src/lib/agendaShared.ts`'e taşındı (agenda.ts ↔ gold.ts döngüsel içe aktarma olmasın diye).
+- **Otomatik kural:** borçta `autoMatch` + `autoShare` tanımlıysa, başlığı eşleşen kasa gideri ÖDENDİ olunca
+  (`createKasaEntry` / `updateKasaEntry` → `applyGoldAutoRules`) tutarın payı güncel kurla grama çevrilip düşülür.
+  Kur alınamazsa ödeme **"kur bekliyor"** olarak yine yazılır (borçtan düşmez, Finans'ta uyarı çıkar, kur girilince hesaplanır).
+  Aynı gider iki kez düşülmez (`sourceEntryId` tekil); gider "ödenmedi"ye döner ya da silinirse otomatik ödeme de geri alınır.
+  Kural hata fırlatmaz — asıl ödeme etkilenmez; her sonuç işlem kaydına düşer.
+- **Finans ekranı** (`src/components/KasaView.tsx`): Güncel Borçlarım'da "Altın borçları" bölümü (kalan gram, ≈ TL karşılığı);
+  detayda başlangıç / ödenen / kalan, kural açıklaması ve **tarih tarih ödeme defteri** (her satırda o ödemeden sonra kalan gram);
+  ödeme formu ("Güncel kuru getir", canlı gram önizlemesi), borç formu, kur bekleyen ödeme uyarısı. Altın borcu TL borç
+  toplamına **dahil edilmez**; kutuda "+ N gr altın" olarak görünür. Çöp kutusuna altın borcu / ödemesi eklendi.
+- **API:** `…/ajanda/gold-debts`, `…/ajanda/gold-payments` (POST / PATCH / DELETE, işlem kaydıyla), `GET /api/musteri/admin/altin-kuru`.
+- **Asistan** (`src/lib/agent.ts`, `bot/CLAUDE.md`): `altin_borc` (tam defter), `altin_kuru`, `altin_odeme`, `altin_odeme_guncelle`,
+  `sil` → `tur:"altin_odeme"`; `finans` ve `ozet`te `altinBorclari`; `odeme_yapildi` yanıtında `altinBorcundanDusulen`.
+### Doğrulama
+- `tsc --noEmit` temiz, `eslint src/` 0 hata (26 uyarı, değişmedi), `next build` derlendi. Migration SQL'i `prisma migrate diff`
+  çıktısıyla birebir aynı. Hesaplar (kalan, ara kalanlar, kur bekleyen, sayı ayrıştırma, başlık eşleşmesi) ve canlı kur servisi sınandı.
+- Finans ekranı tarayıcıda denenmedi (giriş gerekiyor). Otomatik kuralın yazan kısmı ilk gerçek ödemede çalışacak; eşleştirme
+  kısmı (`matchGoldRule`) gerçek veride yazmadan sınandı.
+### Dikkat / bilinen kısıtlar
+- **Sıra zorunlu:** `migrate deploy` → veri betiği → push. Migration uygulanmadan bu sürüm canlıya çıkarsa Finans sayfası,
+  çöp kutusu ve bot `finans` / `ozet` hata verir.
+- Kur dış servise bağlıdır (`finans.truncgil.com`, gram altın **satış**); banka / kuyumcu fiyatından farklı olabilir. Her ödemede
+  kullanılan kur kayıtlıdır ve ödeme düzenlenerek değiştirilebilir. 500–1.000.000 ₺ dışındaki değer reddedilir.
+- TL karşılığı gösterimi son kayıtlı ödeme kurunu kullanır (canlı kur değil) ve "≈" ile işaretlidir.
+- Silinen bir gider çöp kutusundan geri alınırsa otomatik altın ödemesi kendiliğinden yeniden açılmaz (elle eklenir).
+### Yarım kalanlar / Sıradaki
+- ✅ 26 Kas: migration canlı veritabanına uygulandı (Samet); borç kaydı ve geçmiş ödemeler yazıldı, gerçek veride doğrulandı
+  (defter ve ara kalanlar, bekleyen taksit için yazmadan prova, çift düşme koruması, asistanın `finans` / `altin_borc` / `ozet` çıktıları).
+- Kalan: push (Samet'in onayıyla) → deploy sonrası v3.16.0'ın ilk yatırım kaydı → bot yönergesini VPS'e gönder.
+
+## v3.17.0 — 26 Kasım 2026 — Finans: kart / ek hesap limitleri, kart ekleme, asistanda yatırım + kart yönetimi
+**Araç:** Claude Code (Fable 5.2)  **Tür:** MINOR
+### Yapılanlar
+- **Şema (yalnızca ekleme):** `KasaEntry.creditLimit Decimal?` — migration `prisma/migrations/20261126120000_kasa_credit_limit`
+  (tek, boş bırakılabilir sütun; mevcut veriye dokunmaz, eski kodla uyumlu). **Uygulandı: 26 Kasım 2026.**
+- **Hesap** (`src/lib/kasaCalc.ts`): `cardLimit()` → limit / kullanılan / kalan / doluluk %; `computeKasa` → `limitTotal`,
+  `limitUsed`, `limitAvailable`, `limitCardCount` (yalnızca limiti tanımlı kartlar toplanır; kalan eksiye düşerse kırpılmaz).
+- **Servis** (`src/lib/agenda.ts`): `createDebtCard` (borcu 0 olabilen, limitli kart / ek hesap; aynı adda ikinci kart açılmaz),
+  `setCardLimit` (0 / boş = limiti kaldır). Panel API: `POST …/ajanda/cards`, `PATCH …/ajanda/kasa/{id}` `{action:"limit"}` —
+  ikisi de işlem kaydına düşer (`src/lib/agendaApi.ts`).
+- **Finans ekranı** (`src/components/KasaView.tsx`): Genel Durum'da Yatırım'ın yanına **Kalan Limit** kutusu; Güncel Borçlarım'da
+  toplam / kalan limit, her kartta limit çubuğu (yeşil, %90 üstü turuncu, aşımda kırmızı); kart detayında "Limit" düğmesi;
+  "+ Kart / hesap ekle" formu.
+- **Asistan** (`src/lib/agent.ts`, `bot/CLAUDE.md`): yeni yazma işlemleri `kart_ekle`, `kart_limit`, `yatirim_ekle`,
+  `yatirim_guncelle` (silme: mevcut `sil`); `finans` çıktısında kart başına `limit` / `kalanLimit` / `dolulukYuzde`,
+  `toplamLimit`, `kalanLimit`, `yatirimlar` listesi; `ozet`te `yatirim` ve `kalanKartLimiti`. `kasa_ekle` yatırım / kart
+  kategorilerini doğru işleme yönlendirir. Bot yönergesi: yatırımda "kasadan mı?" sorusu, kasadan düşen yatırım onaylı.
+- Veri (rakamlar git dışı, `scripts/ozel/`): yeni kart / ek hesap kayıtları eklendi; limitler ve ilk yatırım kaydı için betik hazır.
+### Doğrulama
+- `tsc --noEmit` temiz, `eslint src/` 0 hata (26 uyarı, değişmedi), `next build` başarılı. `computeKasa` limit ve yatırım
+  hesapları örnek veriyle sınandı (limitsiz kart toplamı bozmuyor, aşım eksi kalan veriyor).
+- Finans ekranı tarayıcıda denenmedi (giriş gerekiyor); servis katmanı ve bot çıktısı migration sonrası gerçek veride doğrulandı.
+### Dikkat / bilinen kısıtlar
+- **Sıra zorunlu:** (1) `migrate deploy` → (2) limitleri yaz → (3) push / deploy → (4) ilk yatırım kaydı. Migration uygulanmadan
+  bu sürüm canlıya çıkarsa `KasaEntry` okuyan her sayfa (Finans, çöp kutusu, firma ödemeleri, bot) hata verir.
+- VPS'teki bot kendi `CLAUDE.md` kopyasını kullanır; yeni komutları öğrenmesi için `bot/CLAUDE.md` oraya kopyalanıp
+  `mkzbot` yeniden başlatılmalı (`bot/KURULUM.md`).
+- `package-lock.json` içindeki sürüm alanı eskiden beri güncellenmiyor (3.14.0) — dokunulmadı.
+### Yarım kalanlar / Sıradaki
+- ✅ 26 Kas: migration canlı veritabanına uygulandı (Samet), limitler yazıldı ve gerçek veride doğrulandı (toplamlar,
+  yinelenen kart reddi, asistanın `finans` çıktısı).
+- Kalan: push (Samet'in onayıyla) → deploy sonrası `scripts/ozel/kart-limit-yatirim-2026-11-26.ts --yatirim --apply` →
+  bot yönergesini VPS'e gönder.
+
+## v3.16.0 — 26 Kasım 2026 — Finans: Yatırım bölümü
+**Araç:** Claude Code (Fable 5.2)  **Tür:** MINOR
+### Yapılanlar
+- Finans → Genel Durum'a **Yatırım** kutusu eklendi (kutuların altında tam genişlik, altın sarısı). Dokununca yatırım kalemleri,
+  toplam ve "+ Yatırım ekle" açılır; kalem düzenlenir / çöp kutusuna taşınır (`src/components/KasaView.tsx`: `InvestmentForm`).
+- Veri modeli **değişmedi**: yatırım, `KasaEntry` içinde `category: "yatirim"` kaydıdır (`src/lib/kasaCalc.ts`:
+  `INVESTMENT_CATEGORY`, `isInvestment`). `status ODENDI` = para kasadan çıktı (Kasada Kalan'dan düşer, işlem geçmişinde görünür);
+  `status BEKLIYOR` = kasa dışı kaynak (yalnızca Yatırım toplamında). Formda bu, "Kasadan düş" kutusudur.
+- Yatırım gider sayılmaz: ay giderine, yaklaşan ödemelere, borçlara, alacaklara ve geçmiş ayların gider toplamına girmez
+  (`computeKasa` yatırımları baştan ayırır; `monthlyHistory` atlar).
+- Telegram botu (`src/lib/agent.ts`): `finans` çıktısına `yatirim` toplamı eklendi; yatırım kayıtları "yaklaşan ödemeler"e girmez.
+### Doğrulama
+- `tsc --noEmit` temiz, `eslint src/` 0 hata (26 uyarı, değişmedi). `computeKasa` örnek veriyle sınandı: kasa dışı yatırım
+  hiçbir mevcut rakamı değiştirmiyor; "kasadan" yatırım yalnızca Kasada Kalan'ı düşürüyor, ay gideri aynı kalıyor.
+- Finans ekranı giriş gerektirdiği için tarayıcıda denenmedi.
+### Dikkat / bilinen kısıtlar
+- **Sıra önemli:** `category: "yatirim"` kaydı, bu sürüm canlıya çıkmadan veritabanına yazılırsa eski kod onu sıradan gider
+  sanar (ay gideri / yaklaşan ödemeler). İlk yatırım kaydı bu yüzden deploy'dan SONRA eklenir.
+- Genel "+ Kayıt" formunun kategori listesinde "yatirim" yok; yatırım yalnızca Yatırım penceresinden eklenir.
+### Yarım kalanlar / Sıradaki
+- Push (deploy) ve ardından ilk yatırım kaydının eklenmesi — Samet'in onayıyla.
 
 ## v3.15.0 — 25 Kasım 2026 — Kapsamlı denetim düzeltmeleri (güvenlik, SEO, ölçüm, KVKK, erişilebilirlik)
 **Araç:** Claude Code (Opus 5.5)  **Tür:** MINOR

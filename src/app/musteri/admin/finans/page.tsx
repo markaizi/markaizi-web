@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { loadKasaData } from "@/lib/agenda";
+import { loadGoldDebts } from "@/lib/gold";
 import { ensureClientReceivables, parseTry } from "@/lib/clientPayments";
 import { OVERDUE_GRACE_DAYS } from "@/lib/invoiceStage";
 import KasaView from "@/components/KasaView";
@@ -25,8 +26,9 @@ export default async function FinansPage({ searchParams }: { searchParams: Promi
   await ensureClientReceivables().catch((e) => console.error("[finans] alacak üretimi başarısız:", e));
 
   const now = new Date();
-  const [{ entries, cardTxs }, clients, employees] = await Promise.all([
+  const [{ entries, cardTxs }, goldDebts, clients, employees] = await Promise.all([
     loadKasaData(),
+    loadGoldDebts(),
     // Pasif firmalar da gelir: ödeme girilebilsin ve geçmiş tahsilatları tabloda görünsün (aylık alacak açılmaz).
     prisma.client.findMany({
       orderBy: [{ active: "desc" }, { name: "asc" }],
@@ -40,6 +42,7 @@ export default async function FinansPage({ searchParams }: { searchParams: Promi
     <KasaView
       entries={entries}
       cardTxs={cardTxs}
+      goldDebts={goldDebts}
       clients={clients.map((c) => ({
         id: c.id, slug: c.slug, name: c.name, active: c.active, fee: c.active ? parseTry(c.billingAmount) : 0,
         paymentDays: [c.paymentDay, c.paymentDay2].filter((d): d is number => !!d),
