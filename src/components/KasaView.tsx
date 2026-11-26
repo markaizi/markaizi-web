@@ -6,7 +6,7 @@ import Link from "next/link";
 import { PanelShell, Card, Field, Btn, Modal, Chip, Tabs, ClientLink, agendaApi, inputCls, inputStyle, fmtTL, TZ } from "@/components/agenda/ui";
 import { getInvoiceStage, INVOICE_STAGE_COLOR, INVOICE_STAGE_LABEL } from "@/lib/invoiceStage";
 import {
-  computeKasa, monthlyHistory, monthOf, isIncoming, isDebt, isInvestment, parseInstallment, INVESTMENT_CATEGORY,
+  computeKasa, monthlyHistory, monthOf, isIncoming, isDebt, isInvestment, parseInstallment, cardLimit, INVESTMENT_CATEGORY,
   type KasaCalcEntry, type KasaCalcCardTx, type KasaDirection, type InstallmentGroup,
 } from "@/lib/kasaCalc";
 
@@ -48,6 +48,8 @@ export default function KasaView({ entries: allEntries, cardTxs, clients, employ
   const [txEdit, setTxEdit] = useState<KasaCalcCardTx | null>(null);
   const [filter, setFilter] = useState<"ALL" | "IN" | "OUT">("ALL");
   const [invForm, setInvForm] = useState<Partial<KasaCalcEntry> | null>(null);
+  const [cardForm, setCardForm] = useState(false);
+  const [limitFor, setLimitFor] = useState<KasaCalcEntry | null>(null);
 
   const k = useMemo(() => computeKasa(allEntries, cardTxs, nowIso), [allEntries, cardTxs, nowIso]);
   // Yatırımlar gider / borç / alacak listelerine girmez; kendi bölümünde (k.investments) gösterilir.
@@ -141,8 +143,10 @@ export default function KasaView({ entries: allEntries, cardTxs, clients, employ
         <Tile label="Güncel Ay Gider" value={fmtTL(k.monthExpenseTotal)} sub={`${k.monthExpenseCount} gider kalemi · Detay`} color="#fb923c" onClick={() => open({ kind: "gider" })} />
         <Tile label="Tahsil Edilenler" value={fmtTL(k.collectedTotal)} sub="Detay için dokun" color="#34d399" onClick={() => open({ kind: "tahsil" })} />
         <Tile label="Alacaklar" value={fmtTL(k.openReceivablesTotal)} sub={`${k.openReceivables.length} bekleyen · Detay`} color="#f87171" onClick={() => open({ kind: "alacak" })} />
-        <Tile wide label="📈 Yatırım" value={fmtTL(k.investmentTotal)} color="#fbbf24" onClick={() => open({ kind: "yatirim" })}
-          sub={k.investments.length ? `${k.investments.length} kalem · Detay` : "Henüz yatırım yok · Eklemek için dokun"} />
+        <Tile label="📈 Yatırım" value={fmtTL(k.investmentTotal)} color="#fbbf24" onClick={() => open({ kind: "yatirim" })}
+          sub={k.investments.length ? `${k.investments.length} kalem · Detay` : "Eklemek için dokun"} />
+        <Tile label="💳 Kalan Limit" value={k.limitCardCount ? fmtTL(k.limitAvailable) : "—"} color="#a78bfa" onClick={() => open({ kind: "borclar" })}
+          sub={k.limitCardCount ? `${fmtTL(k.limitTotal)} limitin %${Math.round((k.limitUsed / k.limitTotal) * 100)}’i dolu · Detay` : "Kartlara limit tanımla"} />
       </div>
 
       <button onClick={() => open({ kind: "gecmis" })} className="w-full rounded-2xl px-5 py-4 mb-8 flex items-center justify-between text-left min-h-[56px]"
@@ -193,12 +197,18 @@ export default function KasaView({ entries: allEntries, cardTxs, clients, employ
             <p className="text-[13px] text-[#8a8a9a]">Toplam</p>
             <p className="text-[20px] font-black text-[#f87171]">{fmtTL(k.debtTotal)}</p>
           </div>
+          {k.limitCardCount > 0 && (
+            <div className="grid grid-cols-2 gap-2 mb-5">
+              <MiniStat label={`Toplam limit (${k.limitCardCount} kart / hesap)`} value={fmtTL(k.limitTotal)} color="#a78bfa" />
+              <MiniStat label="Kalan limit" value={fmtTL(k.limitAvailable)} color={k.limitAvailable < 0 ? "#f87171" : "#34d399"} />
+            </div>
+          )}
           <SectionTitle>Kart & hesap borçları (harcamalar için dokun)</SectionTitle>
           <div className="rounded-2xl px-4 mb-5" style={{ background: "var(--bg)" }}>
             {k.debtCards.map((e) => (
               <Row key={e.id} onClick={() => open({ kind: "kart", entryId: e.id })}
                 title={<>{e.title} <span className="text-[#8a8a9a]">›</span></>}
-                sub={<span className="text-[15px] font-bold text-[#f87171]">{fmtTL(e.amount)}</span>}
+                sub={<><span className="text-[15px] font-bold text-[#f87171]">{fmtTL(e.amount)}</span><LimitBar e={e} /></>}
                 right={<Btn small variant="primary" onClick={() => setPayFor(e)}>Ödeme Yap</Btn>} />
             ))}
           </div>
@@ -215,7 +225,10 @@ export default function KasaView({ entries: allEntries, cardTxs, clients, employ
               </div>
             </>
           )}
-          <div className="flex justify-end mt-5"><Btn onClick={() => setForm({ direction: "BORC", status: "BEKLIYOR" })}>+ Borç ekle</Btn></div>
+          <div className="flex flex-wrap justify-end gap-2 mt-5">
+            <Btn onClick={() => setCardForm(true)}>+ Kart / hesap ekle</Btn>
+            <Btn onClick={() => setForm({ direction: "BORC", status: "BEKLIYOR" })}>+ Borç ekle</Btn>
+          </div>
         </Modal>
       )}
 
@@ -225,9 +238,13 @@ export default function KasaView({ entries: allEntries, cardTxs, clients, employ
         const txs = cardTxs.filter((t) => t.entryId === card.id);
         return (
           <Modal title={card.title} onClose={back}>
-            <div className="rounded-2xl px-4 py-4 mb-5 flex justify-between items-center" style={{ background: "var(--bg)" }}>
-              <span className="text-[14px] text-[#8a8a9a]">Güncel kart borcu</span>
-              <span className="text-[20px] font-black text-[#f87171]">{fmtTL(card.amount)}</span>
+            <div className="rounded-2xl px-4 py-4 mb-5" style={{ background: "var(--bg)" }}>
+              <div className="flex justify-between items-center">
+                <span className="text-[14px] text-[#8a8a9a]">Güncel borç</span>
+                <span className="text-[20px] font-black text-[#f87171]">{fmtTL(card.amount)}</span>
+              </div>
+              <LimitBar e={card} />
+              {!cardLimit(card) && <p className="text-[11px] text-[#8a8a9a] mt-1">Limit tanımlı değil — “Limit” ile ekleyebilirsin.</p>}
             </div>
             <SectionTitle>Eklenen harcamalar ({txs.length})</SectionTitle>
             <div className="rounded-2xl px-4 mb-5" style={{ background: "var(--bg)" }}>
@@ -237,7 +254,8 @@ export default function KasaView({ entries: allEntries, cardTxs, clients, employ
               ))}
               {txs.length === 0 && <p className="text-[13px] text-[#8a8a9a] py-3">Henüz harcama eklenmedi.</p>}
             </div>
-            <div className="flex justify-end gap-2">
+            <div className="flex flex-wrap justify-end gap-2">
+              <Btn onClick={() => setLimitFor(card)}>Limit</Btn>
               <Btn onClick={() => setCardTxFor(card)}>+ Harcama</Btn>
               <Btn variant="primary" onClick={() => setPayFor(card)}>Ödeme Yap</Btn>
             </div>
@@ -419,6 +437,17 @@ export default function KasaView({ entries: allEntries, cardTxs, clients, employ
             if (await run("inv", () => (invForm.id ? agendaApi("PATCH", `kasa/${invForm.id}`, body) : agendaApi("POST", "kasa", body)))) setInvForm(null);
           }} />
       )}
+      {cardForm && (
+        <CardForm busy={busy === "card"} onClose={() => setCardForm(false)}
+          onSave={async (body) => { if (await run("card", () => agendaApi("POST", "cards", body))) setCardForm(false); }} />
+      )}
+      {limitFor && (
+        <AmountModal title={`${limitFor.title} — limit`} busy={busy === "limit"} onClose={() => setLimitFor(null)} defaultAmount={limitFor.creditLimit ?? undefined}
+          hint="Kartın / ek hesabın toplam limiti. Borç bakiyesi değişmez; 0 yazarsan limit kaldırılır."
+          onSave={async (limit) => {
+            if (await run("limit", () => agendaApi("PATCH", `kasa/${limitFor.id}`, { action: "limit", limit }))) setLimitFor(null);
+          }} />
+      )}
       {cardTxFor && (
         <AmountModal title={`${cardTxFor.title} — harcama ekle`} withTitle busy={busy === "cardtx"} onClose={() => setCardTxFor(null)}
           hint="Kart borcuna eklenir, kasadaki nakitten düşmez."
@@ -446,7 +475,7 @@ export default function KasaView({ entries: allEntries, cardTxs, clients, employ
 }
 
 // ── Küçük parçalar ─────────────────────────────────────────
-function Tile({ label, value, sub, color, onClick, wide }: { label: string; value: string; sub: string; color: string; onClick?: () => void; wide?: boolean }) {
+function Tile({ label, value, sub, color, onClick }: { label: string; value: string; sub: string; color: string; onClick?: () => void }) {
   const body = (
     <>
       <p className="text-[12px] sm:text-[13px] font-semibold text-[#8a8a9a] mb-1">{label}</p>
@@ -456,8 +485,8 @@ function Tile({ label, value, sub, color, onClick, wide }: { label: string; valu
   );
   const style = { background: `${color}12`, border: `1px solid ${color}33` };
   return onClick
-    ? <button onClick={onClick} className={`rounded-2xl p-4 text-left transition-opacity hover:opacity-85 ${wide ? "col-span-2" : ""}`} style={style}>{body}</button>
-    : <div className={`rounded-2xl p-4 ${wide ? "col-span-2" : ""}`} style={style}>{body}</div>;
+    ? <button onClick={onClick} className="rounded-2xl p-4 text-left transition-opacity hover:opacity-85" style={style}>{body}</button>
+    : <div className="rounded-2xl p-4" style={style}>{body}</div>;
 }
 
 function MiniStat({ label, value, color }: { label: string; value: string; color: string }) {
@@ -465,6 +494,23 @@ function MiniStat({ label, value, color }: { label: string; value: string; color
     <div className="rounded-xl p-3" style={{ background: `${color}12`, border: `1px solid ${color}33` }}>
       <p className="text-[11px] text-[#8a8a9a]">{label}</p>
       <p className="text-[16px] font-black" style={{ color }}>{value}</p>
+    </div>
+  );
+}
+
+/** Kart / ek hesap limit çubuğu — limit tanımlı değilse hiçbir şey çizmez. */
+function LimitBar({ e }: { e: Pick<KasaCalcEntry, "amount" | "creditLimit"> }) {
+  const l = cardLimit(e);
+  if (!l) return null;
+  const color = l.available < 0 ? "#f87171" : l.pct >= 90 ? "#fb923c" : "#34d399";
+  return (
+    <div className="w-full mt-1.5">
+      <div className="h-1.5 rounded-full overflow-hidden" style={{ background: "var(--border)" }}>
+        <div className="h-full rounded-full" style={{ width: `${l.pct}%`, background: color }} />
+      </div>
+      <p className="text-[11px] text-[#8a8a9a] mt-1">
+        Limit {fmtTL(l.limit)} · <span className="font-semibold" style={{ color }}>{l.available < 0 ? `${fmtTL(-l.available)} aşıldı` : `Kalan ${fmtTL(l.available)}`}</span> · %{l.pct} dolu
+      </p>
     </div>
   );
 }
@@ -629,6 +675,36 @@ function EntryForm({ initial, clients, employees, busy, onClose, onSave, onDelet
             <Btn onClick={onClose}>Vazgeç</Btn>
             <Btn type="submit" variant="primary" disabled={busy}>{busy ? "Kaydediliyor…" : "Kaydet"}</Btn>
           </div>
+        </div>
+      </form>
+    </Modal>
+  );
+}
+
+// ── Yeni kart / ek hesap (v3.17.0) ──────────────────────────
+// Genel kayıt formundan farkı: borç 0 olabilir, limit girilebilir, aynı adda ikinci kart açılmaz (createDebtCard).
+function CardForm({ busy, onClose, onSave }: { busy: boolean; onClose: () => void; onSave: (b: Record<string, unknown>) => void }) {
+  const [title, setTitle] = useState("");
+  const [kind, setKind] = useState<"kredi_karti" | "ek_hesap">("kredi_karti");
+  const [balance, setBalance] = useState("");
+  const [limit, setLimit] = useState("");
+  return (
+    <Modal dismissable={false} title="Yeni kart / ek hesap" onClose={onClose}>
+      <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); onSave({ title: title.trim(), kind, balance, creditLimit: limit }); }}>
+        <Field label="Ad"><input required value={title} onChange={(e) => setTitle(e.target.value)} className={inputCls} style={inputStyle} placeholder="Banka adı + kart / ek hesap" /></Field>
+        <Field label="Tür">
+          <select value={kind} onChange={(e) => setKind(e.target.value as "kredi_karti" | "ek_hesap")} className={inputCls} style={inputStyle}>
+            <option value="kredi_karti" style={{ background: "var(--surface)" }}>Kredi kartı</option>
+            <option value="ek_hesap" style={{ background: "var(--surface)" }}>Ek hesap</option>
+          </select>
+        </Field>
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Güncel borç (₺)"><input inputMode="decimal" value={balance} onChange={(e) => setBalance(e.target.value)} className={inputCls} style={inputStyle} placeholder="Yoksa boş bırak" /></Field>
+          <Field label="Limit (₺)"><input inputMode="decimal" value={limit} onChange={(e) => setLimit(e.target.value)} className={inputCls} style={inputStyle} placeholder="Opsiyonel" /></Field>
+        </div>
+        <div className="flex justify-end gap-2 pt-2">
+          <Btn onClick={onClose}>Vazgeç</Btn>
+          <Btn type="submit" variant="primary" disabled={busy}>{busy ? "Kaydediliyor…" : "Kaydet"}</Btn>
         </div>
       </form>
     </Modal>

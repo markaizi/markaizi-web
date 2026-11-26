@@ -29,7 +29,7 @@ export async function respond(fn: () => Promise<unknown>, log?: { source: "panel
   }
 }
 
-export type AgendaResource = "events" | "tasks" | "notes" | "kasa" | "card-tx" | "installments";
+export type AgendaResource = "events" | "tasks" | "notes" | "kasa" | "card-tx" | "installments" | "cards";
 
 export const createByResource: Record<AgendaResource, (body: unknown) => Promise<unknown>> = {
   events: agenda.createEvent,
@@ -38,18 +38,21 @@ export const createByResource: Record<AgendaResource, (body: unknown) => Promise
   kasa: agenda.createKasaEntry,
   "card-tx": agenda.addCardTransaction,
   installments: agenda.createInstallmentPlan,
+  cards: agenda.createDebtCard, // yeni kart / ek hesap (borç 0 olabilir, limit opsiyonel)
 };
 
 const isAction = (body: unknown, action: string) =>
   !!body && typeof body === "object" && (body as { action?: string }).action === action;
 
-// PATCH gövdesi { action: "restore" } → çöp kutusundan geri al; kasa'da { action: "pay", amount } → borç ödemesi.
+// PATCH gövdesi { action: "restore" } → çöp kutusundan geri al; kasa'da { action: "pay", amount } → borç ödemesi,
+// { action: "limit", limit } → kart / ek hesap limiti (boş / 0 = limiti kaldır).
 export const updateByResource: Partial<Record<AgendaResource, (id: string, body: unknown) => Promise<unknown>>> = {
   events: agenda.updateEvent,
   tasks: (id, body) => (isAction(body, "restore") ? agenda.restoreTask(id) : agenda.updateTask(id, body)),
   notes: (id, body) => (isAction(body, "restore") ? agenda.restoreNote(id) : agenda.updateNote(id, body)),
   kasa: (id, body) => {
     if (isAction(body, "pay")) return agenda.payDebt(id, (body as { amount?: unknown }).amount);
+    if (isAction(body, "limit")) return agenda.setCardLimit(id, (body as { limit?: unknown }).limit);
     if (isAction(body, "restore")) return agenda.restoreKasaEntry(id);
     return agenda.updateKasaEntry(id, body);
   },

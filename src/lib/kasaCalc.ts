@@ -22,6 +22,8 @@ export interface KasaCalcEntry {
   clientName: string | null;
   clientSlug?: string | null;
   employeeId?: string | null;
+  /** Kart / ek hesap limiti (v3.17.0) — yalnızca borç kartı kayıtlarında; tanımlı değilse null. */
+  creditLimit?: number | null;
   /**
    * Kasa öncesi geçmiş kayıt (v3.7.0): 1 Ekim 2026 öncesi eski faturalardan Finans geçmişine alınan tahsilatlar.
    * Toplam gelire, yıllık gelire ve geçmiş aylara girer; KASADA KALAN hesabına girmez (31 Ekim kasa
@@ -47,6 +49,16 @@ const TZ = "Europe/Istanbul";
 export const monthOf = (iso: string) => new Date(iso).toLocaleDateString("en-CA", { timeZone: TZ }).slice(0, 7);
 export const isIncoming = (d: KasaDirection) => d === "GELIR" || d === "ALACAK";
 export const isDebt = (e: Pick<KasaCalcEntry, "category">) => DEBT_CATEGORIES.includes(e.category);
+
+/**
+ * Kart limiti (v3.17.0): limit tanımlı bir kart / ek hesap için kullanılan, kalan ve doluluk oranı.
+ * Kalan eksiye düşebilir (limit aşımı) — kırpılmaz, ekranda uyarı olarak gösterilir.
+ */
+export function cardLimit(e: Pick<KasaCalcEntry, "amount" | "creditLimit">) {
+  if (!e.creditLimit || e.creditLimit <= 0) return null;
+  const available = Math.round((e.creditLimit - e.amount) * 100) / 100;
+  return { limit: e.creditLimit, used: e.amount, available, pct: Math.min(100, Math.max(0, Math.round((e.amount / e.creditLimit) * 100))) };
+}
 
 /**
  * Yatırım (v3.16.0): kenara ayrılan para — gider, borç ya da alacak değildir; ayrı bir varlık kalemi olarak izlenir.
@@ -97,6 +109,10 @@ export function computeKasa(allEntries: KasaCalcEntry[], cardTxs: KasaCalcCardTx
 
   // Kart / hesap borçları
   const debtCards = entries.filter((e) => e.status === "BEKLIYOR" && isDebt(e));
+  // Limitler — yalnızca limiti tanımlı kartlar toplanır (limitsiz kartın borcu "kullanılan"a girmez).
+  const limited = debtCards.filter((e) => cardLimit(e));
+  const limitTotal = limited.reduce((a, e) => a + (e.creditLimit ?? 0), 0);
+  const limitUsed = sum(limited);
 
   // Taksitli borçlar — başlıktaki (n/N) ile gruplanır; ödenen sayısı = N − bekleyen taksit.
   const groupMap = new Map<string, KasaCalcEntry[]>();
@@ -141,6 +157,10 @@ export function computeKasa(allEntries: KasaCalcEntry[], cardTxs: KasaCalcCardTx
     debtTotal: sum(debtCards) + installments.reduce((a, g) => a + g.remainingAmount, 0),
     debtItemCount: debtCards.length + installments.length,
     debtCards,
+    limitTotal,
+    limitUsed,
+    limitAvailable: Math.round((limitTotal - limitUsed) * 100) / 100,
+    limitCardCount: limited.length,
     installments,
     monthIncomeTarget: sum(collectedThisMonth) + sum(openReceivables),
     collectedThisMonth,

@@ -822,6 +822,8 @@ model KasaEntry {
   remindDaysBefore Int           @default(3)
   notes            String?
   deletedAt        DateTime?
+  // v3.17.0: kart / ek hesap limiti — yalnızca borç kartı kayıtlarında (DEBT_CATEGORIES) anlamlıdır. Kalan limit = limit − amount.
+  creditLimit      Decimal?      @db.Decimal(14, 2)
 
   clientId String?
   client   Client? @relation(fields: [clientId], references: [id], onDelete: SetNull)

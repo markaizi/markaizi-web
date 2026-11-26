@@ -2,13 +2,45 @@
 
 > **Bu dosya araçlar arası devir-teslim defteridir.** En üstteki sürüm = en son durum.
 > Kurallar ve şablon: [`AGENTS.md`](./AGENTS.md). Eski sürümler silinmez.
-> Güncel sürüm: **v3.16.0** (`package.json` ile aynı olmalı).
+> Güncel sürüm: **v3.17.0** (`package.json` ile aynı olmalı).
 
 ---
 
 > **Gizlilik notu (v3.10.0):** Bu repo herkese açıktır. Müşteri ücretleri, tahsilat tutarları, kişisel finans ve kişi adları
 > bu dosyaya **yazılmaz**. Rakamlı / isimli ayrıntılar yerelde, git'e girmeyen `docs/ozel/` klasöründe tutulur
 > (ör. `docs/ozel/CHANGELOG-OZEL-2026-11-23.md`); tek seferlik veri scriptleri `scripts/ozel/` altındadır.
+
+## v3.17.0 — 26 Kasım 2026 — Finans: kart / ek hesap limitleri, kart ekleme, asistanda yatırım + kart yönetimi
+**Araç:** Claude Code (Fable 5.2)  **Tür:** MINOR
+### Yapılanlar
+- **Şema (yalnızca ekleme):** `KasaEntry.creditLimit Decimal?` — migration `prisma/migrations/20261126120000_kasa_credit_limit`
+  (tek, boş bırakılabilir sütun; mevcut veriye dokunmaz, eski kodla uyumlu).
+- **Hesap** (`src/lib/kasaCalc.ts`): `cardLimit()` → limit / kullanılan / kalan / doluluk %; `computeKasa` → `limitTotal`,
+  `limitUsed`, `limitAvailable`, `limitCardCount` (yalnızca limiti tanımlı kartlar toplanır; kalan eksiye düşerse kırpılmaz).
+- **Servis** (`src/lib/agenda.ts`): `createDebtCard` (borcu 0 olabilen, limitli kart / ek hesap; aynı adda ikinci kart açılmaz),
+  `setCardLimit` (0 / boş = limiti kaldır). Panel API: `POST …/ajanda/cards`, `PATCH …/ajanda/kasa/{id}` `{action:"limit"}` —
+  ikisi de işlem kaydına düşer (`src/lib/agendaApi.ts`).
+- **Finans ekranı** (`src/components/KasaView.tsx`): Genel Durum'da Yatırım'ın yanına **Kalan Limit** kutusu; Güncel Borçlarım'da
+  toplam / kalan limit, her kartta limit çubuğu (yeşil, %90 üstü turuncu, aşımda kırmızı); kart detayında "Limit" düğmesi;
+  "+ Kart / hesap ekle" formu.
+- **Asistan** (`src/lib/agent.ts`, `bot/CLAUDE.md`): yeni yazma işlemleri `kart_ekle`, `kart_limit`, `yatirim_ekle`,
+  `yatirim_guncelle` (silme: mevcut `sil`); `finans` çıktısında kart başına `limit` / `kalanLimit` / `dolulukYuzde`,
+  `toplamLimit`, `kalanLimit`, `yatirimlar` listesi; `ozet`te `yatirim` ve `kalanKartLimiti`. `kasa_ekle` yatırım / kart
+  kategorilerini doğru işleme yönlendirir. Bot yönergesi: yatırımda "kasadan mı?" sorusu, kasadan düşen yatırım onaylı.
+- Veri (rakamlar git dışı, `scripts/ozel/`): yeni kart / ek hesap kayıtları eklendi; limitler ve ilk yatırım kaydı için betik hazır.
+### Doğrulama
+- `tsc --noEmit` temiz, `eslint src/` 0 hata (26 uyarı, değişmedi), `next build` başarılı. `computeKasa` limit ve yatırım
+  hesapları örnek veriyle sınandı (limitsiz kart toplamı bozmuyor, aşım eksi kalan veriyor).
+- Finans ekranı ve yeni API uçları tarayıcıda / canlı veride denenmedi: giriş gerekiyor ve `creditLimit` sütunu henüz yok.
+### Dikkat / bilinen kısıtlar
+- **Sıra zorunlu:** (1) `migrate deploy` → (2) limitleri yaz → (3) push / deploy → (4) ilk yatırım kaydı. Migration uygulanmadan
+  bu sürüm canlıya çıkarsa `KasaEntry` okuyan her sayfa (Finans, çöp kutusu, firma ödemeleri, bot) hata verir.
+- VPS'teki bot kendi `CLAUDE.md` kopyasını kullanır; yeni komutları öğrenmesi için `bot/CLAUDE.md` oraya kopyalanıp
+  `mkzbot` yeniden başlatılmalı (`bot/KURULUM.md`).
+- `package-lock.json` içindeki sürüm alanı eskiden beri güncellenmiyor (3.14.0) — dokunulmadı.
+### Yarım kalanlar / Sıradaki
+- Samet: `npx dotenv -e .env.local -- npx prisma migrate deploy`. Ardından: `scripts/ozel/kart-limit-yatirim-2026-11-26.ts --limitler --apply`,
+  push, deploy sonrası `--yatirim --apply`, bot yönergesini VPS'e gönder.
 
 ## v3.16.0 — 26 Kasım 2026 — Finans: Yatırım bölümü
 **Araç:** Claude Code (Fable 5.2)  **Tür:** MINOR
