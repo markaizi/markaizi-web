@@ -46,6 +46,9 @@ Okuma:
   (`borc` opsiyonel: tek borç varsa gerekmez).
 - `mkz altin_kuru` — güncel gram altın (TL, satış / alış).
 - `mkz notlar '{"ara":"instagram","firma":"Örnek Mobilya"}'`
+- `mkz alacaklar '{"firma":"Örnek Koltuk"}'` — firmanın TÜM bekleyen alacakları, **gelecek aylar dahil** (id, tutar, vade, `musteriGoruyor`).
+  `odenenlerDahil:true` ile tahsil edilenler de gelir. `mkz finans` yalnızca vadesi gelenleri gösterir; bir alacağı düzeltmek /
+  silmek için id'yi buradan al.
 
 Yazma:
 - `mkz ziyaret_ekle '{"firma":"Örnek Mobilya","tarih":"2026-11-24T10:00","sureDk":150,"konum":"Merkez","aciklama":"…"}'`
@@ -58,6 +61,12 @@ Yazma:
 - `mkz tahsilat '{"firma":"Örnek Koltuk"}'` — firmanın en eski bekleyen ödemesini "alındı" yapar (veya `{"id":"…"}`; `tarih` opsiyonel).
 - `mkz odeme_yapildi '{"id":"…"}'` — bekleyen bir gideri / taksiti "ödendi" yapar (id'yi `mkz finans`tan al).
 - `mkz kasa_ekle '{"baslik":"…","tutar":1500,"tur":"GIDER","vade":"2026-11-24","odendi":true}'` — tur: GELIR | GIDER | BORC | ALACAK
+- `mkz kasa_guncelle '{"id":"…","tutar":10000,"vade":"2026-12-05"}'` — kaydın `baslik`, `tutar`, `vade`, `firma`,
+  `musteriGorsun` alanlarını düzeltir (silip yeniden yazmaya gerek yok). Firmalı "Müşteri Ödemesi" alacakları müşteri panelinde
+  otomatik görünür; `musteriGorsun:false` gizler, `true` gösterir.
+- `mkz firma_ucret '{"firma":"Örnek Koltuk","ucret":10000,"odemeGunu":5}'` — firmanın aylık ücretini kalıcı olarak değiştirir
+  (`odemeGunu` opsiyonel). Bekleyen gelecek aylar yeni tutara çekilir, sonraki aylar yeni tutarla açılır. Yanıttaki `atlanan`
+  listesi özel tutarlı kayıtlardır — gerekiyorsa `kasa_guncelle` ile tek tek düzelt.
 - `mkz kart_harcama '{"kart":"Banka B","baslik":"Market","tutar":1250}'` — kart borcuna ekler, nakitten düşmez.
 - `mkz kart_odeme '{"kart":"Banka A Kredi","tutar":20000}'` — kart borcunu düşer, kasadan çıkış yazar. (Onay iste.)
 - `mkz kart_ekle '{"ad":"Banka C Kredi Kartı","tur":"kredi_karti","borc":0,"limit":50000}'` — yeni kart / ek hesap. tur: kredi_karti | ek_hesap;
@@ -74,6 +83,9 @@ Yazma:
 - `mkz sil '{"tur":"is","id":"…"}'` — tur: is | not | kasa → çöp kutusuna; ziyaret → iptal edilir. (Onay iste.)
 
 ## Örnekler
+- "X firmasından Aralık'ta 25 değil 10 bin alacağım, anlaşma değişti" → `mkz alacaklar '{"firma":"X"}'` → Aralık kaydının
+  id'si → `mkz kasa_guncelle '{"id":"…","tutar":10000}'`. Sonraki aylar da değişiyorsa `mkz firma_ucret '{"firma":"X","ucret":10000}'`
+  (yalnızca bir ay ise firma_ucret KULLANMA). Ücret değişikliğini ayrıca firmaya HAFIZA notu olarak yaz.
 - "yarın örnek mobilyaya gidilecek" → `mkz ozet` (tarihi öğren) → `mkz ziyaret_ekle '{"firma":"Örnek Mobilya","tarih":"<yarın>"}'`
   → "Örnek Mobilya ziyareti yarın (24 Kasım Salı) 10:00'a eklendi."
 - "bugün örnek kliniğe gittim" → o günün planlı Örnek Klinik ziyaretini `mkz ziyaretler` ile bul → `ziyaret_guncelle … "durum":"TAMAMLANDI"`;

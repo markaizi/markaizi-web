@@ -11,7 +11,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/db";
 import * as A from "@/lib/agenda";
 import { computeKasa, cardLimit, isDebt, isIncoming, isInvestment, INVESTMENT_CATEGORY } from "@/lib/kasaCalc";
-import { CLIENT_PAYMENT_CATEGORY } from "@/lib/clientPayments";
+import { CLIENT_PAYMENT_CATEGORY, ensureClientReceivables, fmtTry, parseTry, repriceFutureReceivables } from "@/lib/clientPayments";
 import * as G from "@/lib/gold";
 import { goldSummary, goldRuleText, type GoldDebtView } from "@/lib/goldCalc";
 
@@ -192,6 +192,26 @@ export const ACTIONS: Record<string, Handler> = {
       };
     },
   },
+  alacaklar: {
+    write: false,
+    async run(a) {
+      // v4.1.0: tüm alacaklar (gelecek vadeliler dahil) — finans'taki "tahsilEdilecek" yalnızca vadesi gelenleri gösterir.
+      // Tutar düzeltmek / silmek için id buradan alınır. musteriGoruyor:true → müşteri panelinde "Ödemeler"de görünür.
+      const p = z.object({ firma: opt(z.string()), odenenlerDahil: opt(z.boolean()) }).parse(a);
+      const c = await resolveClient(p.firma);
+      const rows = await prisma.kasaEntry.findMany({
+        where: {
+          deletedAt: null, direction: { in: ["ALACAK", "GELIR"] }, ...(c ? { clientId: c.id } : {}),
+          ...(p.odenenlerDahil ? {} : { status: "BEKLIYOR" as const }),
+        },
+        orderBy: { dueDate: "asc" }, take: 80, include: { client: { select: { name: true } } },
+      });
+      return rows.map((e) => ({
+        id: e.id, baslik: e.title, tutar: Number(e.amount), vade: ymd(e.dueDate), durum: e.status, firma: e.client?.name ?? null,
+        musteriGoruyor: e.category === CLIENT_PAYMENT_CATEGORY && !!e.clientId,
+      }));
+    },
+  },
   altin_borc: {
     write: false,
     async run(a) {
@@ -347,6 +367,64 @@ export const ACTIONS: Record<string, Handler> = {
         status: p.odendi ?? p.tur === "GELIR" ? "ODENDI" : "BEKLIYOR", isRecurring: p.herAy ?? false,
       });
       return { id: e.id, baslik: e.title, tutar: Number(e.amount), durum: e.status, firma: c?.name ?? null };
+    },
+  },
+  kasa_guncelle: {
+    write: true,
+    async run(a) {
+      // v4.1.0: alacak / gider kaydının başlığını, tutarını, vadesini, firmasını ve müşteriye görünürlüğünü düzeltir.
+      // Kart borçları (kart_harcama / kart_odeme) ve yatırımlar (yatirim_guncelle) burada değişmez.
+      const p = z.object({
+        id: str(60), baslik: opt(str(200)), tutar: opt(z.union([z.number(), z.string()])), vade: opt(z.string()),
+        firma: opt(z.string()), musteriGorsun: opt(z.boolean()),
+      }).parse(a);
+      const before = await prisma.kasaEntry.findUnique({ where: { id: p.id } });
+      if (!before || before.deletedAt) throw new AgentError("Kayıt bulunamadı.");
+      if (isDebt(before)) throw new AgentError("Bu bir kart / hesap borcu — kart_harcama / kart_odeme / kart_limit kullan.");
+      if (isInvestment(before)) throw new AgentError("Bu bir yatırım — yatirim_guncelle kullan.");
+      const c = await resolveClient(p.firma);
+      const clientId = c?.id ?? before.clientId;
+      const patch: Record<string, unknown> = {};
+      if (p.baslik) patch.title = p.baslik;
+      if (p.tutar !== undefined && p.tutar !== null) patch.amount = p.tutar;
+      if (p.vade) patch.dueDate = parseDate(p.vade, "vade").toISOString();
+      if (c) patch.clientId = c.id;
+      if (typeof p.musteriGorsun === "boolean") {
+        if (p.musteriGorsun) {
+          if (!isIncoming(before.direction)) throw new AgentError("Müşteriye yalnızca alacak / gelir kayıtları gösterilebilir.");
+          if (!clientId) throw new AgentError("Müşteriye göstermek için firma gerekli (firma ver).");
+          patch.category = CLIENT_PAYMENT_CATEGORY;
+        } else if (before.category === CLIENT_PAYMENT_CATEGORY) {
+          patch.category = "genel";
+        }
+      }
+      if (!Object.keys(patch).length) throw new AgentError("Değiştirilecek alan yok (baslik, tutar, vade, firma, musteriGorsun).");
+      const e = await A.updateKasaEntry(p.id, patch);
+      return {
+        id: e.id, baslik: e.title, tutar: Number(e.amount), vade: ymd(e.dueDate), durum: e.status,
+        oncekiTutar: Number(before.amount), musteriGoruyor: e.category === CLIENT_PAYMENT_CATEGORY && !!e.clientId,
+      };
+    },
+  },
+  firma_ucret: {
+    write: true,
+    async run(a) {
+      // v4.1.0: firmanın aylık ücretini (ve istenirse ödeme gününü) değiştirir — panelde firma detayından ücret değiştirmekle aynı:
+      // bekleyen gelecek alacaklar eski standart tutardaysa yeni tutara çekilir, eksik aylar yeni tutarla açılır.
+      // Özel tutarlı / ödenmiş / vadesi geçmiş kayıtlara dokunulmaz (atlananlar listesinde döner → gerekirse kasa_guncelle).
+      const p = z.object({ firma: z.string(), ucret: z.union([z.number(), z.string()]), odemeGunu: opt(z.number().int().min(1).max(31)) }).parse(a);
+      const c = await resolveClient(p.firma);
+      if (!c) throw new AgentError("firma gerekli.");
+      const fee = typeof p.ucret === "number" ? Math.round(p.ucret) : parseTry(p.ucret);
+      if (!fee || fee <= 0) throw new AgentError("ucret pozitif bir tutar olmalı.");
+      const client = await prisma.client.findUniqueOrThrow({ where: { id: c.id }, select: { billingAmount: true, paymentDay: true, paymentDay2: true } });
+      const days = (x?: number | null, y?: number | null) => [x, y].filter((d): d is number => !!d);
+      const beforeDays = days(client.paymentDay, client.paymentDay2);
+      const afterDays = p.odemeGunu ? days(p.odemeGunu, client.paymentDay2) : beforeDays;
+      await prisma.client.update({ where: { id: c.id }, data: { billingAmount: fmtTry(fee), ...(p.odemeGunu ? { paymentDay: p.odemeGunu } : {}) } });
+      const r = await repriceFutureReceivables(c.id, { fee: parseTry(client.billingAmount), days: beforeDays }, { fee, days: afterDays });
+      const gen = await ensureClientReceivables();
+      return { firma: c.name, eskiUcret: client.billingAmount, yeniUcret: fmtTry(fee), odemeGunu: afterDays, guncellenen: r.updated, atlanan: r.skipped, yeniAcilanAlacak: gen.created };
     },
   },
   kart_harcama: {

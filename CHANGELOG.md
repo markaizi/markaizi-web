@@ -2,13 +2,38 @@
 
 > **Bu dosya araçlar arası devir-teslim defteridir.** En üstteki sürüm = en son durum.
 > Kurallar ve şablon: [`AGENTS.md`](./AGENTS.md). Eski sürümler silinmez.
-> Güncel sürüm: **v4.0.0** (`package.json` ile aynı olmalı).
+> Güncel sürüm: **v4.1.0** (`package.json` ile aynı olmalı).
 
 ---
 
 > **Gizlilik notu (v3.10.0):** Bu repo herkese açıktır. Müşteri ücretleri, tahsilat tutarları, kişisel finans ve kişi adları
 > bu dosyaya **yazılmaz**. Rakamlı / isimli ayrıntılar yerelde, git'e girmeyen `docs/ozel/` klasöründe tutulur
 > (ör. `docs/ozel/CHANGELOG-OZEL-2026-11-23.md`); tek seferlik veri scriptleri `scripts/ozel/` altındadır.
+
+## v4.1.0 — 26 Kasım 2026 — Asistan alacakları düzeltebiliyor (tutar, vade, müşteri görünürlüğü, firma ücreti)
+**Araç:** Claude Code (Opus 5.5)  **Tür:** MINOR
+Sorun: Telegram asistanı bir müşterinin anlaşması değişince gelecek ayın alacağını düzeltemiyordu — `finans` yalnızca vadesi
+gelen alacakları listelediği için gelecek kaydın id'sini göremiyor, tutar değiştiren bir işlem de yoktu (silip yeniden yazmaya
+çalışınca aynı ay için iki alacak oluştu). Firmanın aylık ücretini değiştirme yolu da yoktu.
+### Yapılanlar
+- **`alacaklar`** (okuma): firmanın tüm bekleyen alacakları, gelecek aylar dahil (`odenenlerDahil` ile tahsil edilenler de);
+  her kayıtta `musteriGoruyor`.
+- **`kasa_guncelle`** (yazma): kaydın `baslik`, `tutar`, `vade`, `firma`, `musteriGorsun` alanlarını yerinde düzeltir.
+  Kart borçları ve yatırımlar kendi işlemlerine yönlendirilir.
+- **`firma_ucret`** (yazma): panelde firma ücretini değiştirmekle aynı akış — `billingAmount` (+ opsiyonel ödeme günü) güncellenir,
+  `repriceFutureReceivables` + `ensureClientReceivables` çalışır; özel tutarlı kayıtlar `atlanan` olarak döner.
+- `bot/CLAUDE.md`: üç işlem ve "anlaşma değişti" örneği eklendi.
+- Veri düzeltmesi bir firmada yapıldı (aynı aya düşen çift alacak çöpe taşındı, ücret güncellendi) — ayrıntı `docs/ozel/`'de değil,
+  işlem kaydında (AuditLog, actor `claude-code`).
+### Doğrulama
+- `tsc --noEmit` temiz (yalnızca `.next/` içindeki iCloud kopyası " 2" dosyaları hata veriyor, kodla ilgisiz), `eslint src/lib/agent.ts` temiz.
+- Yeni işlemler canlı veritabanında script üzerinden çalıştırıldı; müşteri panelinin ödeme listesi (`listClientPayments`) kontrol edildi.
+### Dikkat / bilinen kısıtlar
+- Bot canlı `/api/agent`'ı çağırdığı için yeni işlemler **deploy sonrası** kullanılabilir.
+### Yarım kalanlar / Sıradaki
+- Proje kökündeki ve `.next/` içindeki " 2" ekli iCloud kopya dosyaları temizlenmeli.
+
+---
 
 ## v4.0.0 — 26 Kasım 2026 — Tam sürüm: markaizi v4.0 + panelde sürüm göstergesi
 **Araç:** Claude Code (Fable 5.2)  **Tür:** MAJOR (Samet'in kararı)
