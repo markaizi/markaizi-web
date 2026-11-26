@@ -10,7 +10,7 @@
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import * as A from "@/lib/agenda";
-import { computeKasa, isDebt, isIncoming } from "@/lib/kasaCalc";
+import { computeKasa, isDebt, isIncoming, isInvestment } from "@/lib/kasaCalc";
 import { CLIENT_PAYMENT_CATEGORY } from "@/lib/clientPayments";
 
 const TZ = "Europe/Istanbul";
@@ -142,12 +142,13 @@ export const ACTIONS: Record<string, Handler> = {
       const horizon = now.getTime() + 30 * 86_400_000;
       return {
         yil: k.year, yillikGelir: k.yearIncome, tumZamanlarGelir: k.totalIncome, kasadaKalan: k.cash,
+        yatirim: k.investmentTotal,
         toplamBorc: k.debtTotal, buAyGelirHedefi: k.monthIncomeTarget, buAyGider: k.monthExpenseTotal, buAyTahsilEdilen: k.collectedTotal,
         kartlar: k.debtCards.map((c) => ({ id: c.id, ad: c.title, borc: c.amount })),
         taksitliBorclar: k.installments.map((g) => ({ ad: g.base, odenen: `${g.paidCount}/${g.total}`, kalanTutar: g.remainingAmount })),
         tahsilEdilecek: k.openReceivables.map((e) => ({ id: e.id, baslik: e.title, tutar: e.amount, vade: ymd(new Date(e.dueDate)) })),
         yaklasanOdemeler: entries
-          .filter((e) => e.status === "BEKLIYOR" && !isIncoming(e.direction) && !isDebt(e) && new Date(e.dueDate).getTime() <= horizon)
+          .filter((e) => e.status === "BEKLIYOR" && !isIncoming(e.direction) && !isDebt(e) && !isInvestment(e) && new Date(e.dueDate).getTime() <= horizon)
           .map((e) => ({ id: e.id, baslik: e.title, tutar: e.amount, vade: ymd(new Date(e.dueDate)) })),
       };
     },

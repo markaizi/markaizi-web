@@ -2,13 +2,35 @@
 
 > **Bu dosya araçlar arası devir-teslim defteridir.** En üstteki sürüm = en son durum.
 > Kurallar ve şablon: [`AGENTS.md`](./AGENTS.md). Eski sürümler silinmez.
-> Güncel sürüm: **v3.15.0** (`package.json` ile aynı olmalı).
+> Güncel sürüm: **v3.16.0** (`package.json` ile aynı olmalı).
 
 ---
 
 > **Gizlilik notu (v3.10.0):** Bu repo herkese açıktır. Müşteri ücretleri, tahsilat tutarları, kişisel finans ve kişi adları
 > bu dosyaya **yazılmaz**. Rakamlı / isimli ayrıntılar yerelde, git'e girmeyen `docs/ozel/` klasöründe tutulur
 > (ör. `docs/ozel/CHANGELOG-OZEL-2026-11-23.md`); tek seferlik veri scriptleri `scripts/ozel/` altındadır.
+
+## v3.16.0 — 26 Kasım 2026 — Finans: Yatırım bölümü
+**Araç:** Claude Code (Fable 5.2)  **Tür:** MINOR
+### Yapılanlar
+- Finans → Genel Durum'a **Yatırım** kutusu eklendi (kutuların altında tam genişlik, altın sarısı). Dokununca yatırım kalemleri,
+  toplam ve "+ Yatırım ekle" açılır; kalem düzenlenir / çöp kutusuna taşınır (`src/components/KasaView.tsx`: `InvestmentForm`).
+- Veri modeli **değişmedi**: yatırım, `KasaEntry` içinde `category: "yatirim"` kaydıdır (`src/lib/kasaCalc.ts`:
+  `INVESTMENT_CATEGORY`, `isInvestment`). `status ODENDI` = para kasadan çıktı (Kasada Kalan'dan düşer, işlem geçmişinde görünür);
+  `status BEKLIYOR` = kasa dışı kaynak (yalnızca Yatırım toplamında). Formda bu, "Kasadan düş" kutusudur.
+- Yatırım gider sayılmaz: ay giderine, yaklaşan ödemelere, borçlara, alacaklara ve geçmiş ayların gider toplamına girmez
+  (`computeKasa` yatırımları baştan ayırır; `monthlyHistory` atlar).
+- Telegram botu (`src/lib/agent.ts`): `finans` çıktısına `yatirim` toplamı eklendi; yatırım kayıtları "yaklaşan ödemeler"e girmez.
+### Doğrulama
+- `tsc --noEmit` temiz, `eslint src/` 0 hata (26 uyarı, değişmedi). `computeKasa` örnek veriyle sınandı: kasa dışı yatırım
+  hiçbir mevcut rakamı değiştirmiyor; "kasadan" yatırım yalnızca Kasada Kalan'ı düşürüyor, ay gideri aynı kalıyor.
+- Finans ekranı giriş gerektirdiği için tarayıcıda denenmedi.
+### Dikkat / bilinen kısıtlar
+- **Sıra önemli:** `category: "yatirim"` kaydı, bu sürüm canlıya çıkmadan veritabanına yazılırsa eski kod onu sıradan gider
+  sanar (ay gideri / yaklaşan ödemeler). İlk yatırım kaydı bu yüzden deploy'dan SONRA eklenir.
+- Genel "+ Kayıt" formunun kategori listesinde "yatirim" yok; yatırım yalnızca Yatırım penceresinden eklenir.
+### Yarım kalanlar / Sıradaki
+- Push (deploy) ve ardından ilk yatırım kaydının eklenmesi — Samet'in onayıyla.
 
 ## v3.15.0 — 25 Kasım 2026 — Kapsamlı denetim düzeltmeleri (güvenlik, SEO, ölçüm, KVKK, erişilebilirlik)
 **Araç:** Claude Code (Opus 5.5)  **Tür:** MINOR

@@ -1,6 +1,6 @@
 # PROJE DURUM — markaizi.com.tr
 
-Son güncelleme: 25 Kasım 2026
+Son güncelleme: 26 Kasım 2026
 
 Bu dosya projenin güncel durumunu, alınmış kararları ve bekleyen işleri özetler.
 Kod ayrıntıları için kaynak dosyalara, veritabanı için `prisma/schema.prisma`'ya bakın.
@@ -203,6 +203,7 @@ takvim, ödemeler/faturalar, istekler, gelen talepler (form başvuruları, CV tu
 `src/lib/clientPayments.ts`, aylık alacaklar otomatik), profil,
 **Ajanda** (`/admin/ajanda`: ziyaret planı liste/ay, 14 gün takibi, işler, notlar/hafıza), **Çöp Kutusu** (`/admin/cop-kutusu`).
 Kasa, Finans'ın "Genel Durum" sekmesidir. Yazma mantığı `src/lib/agenda.ts`, Kasa formülleri `src/lib/kasaCalc.ts`.
+**Yatırım** (v3.16.0) aynı sekmede ayrı bir kutudur: `KasaEntry` + `category: "yatirim"`; gider sayılmaz, "Kasadan düş" işaretliyse (ODENDI) nakitten düşer.
 
 ### Çalışan ekranları
 Dashboard, firmalarım, iş akışı, ödemelerim (salt okunur, Finans'tan), takvim, profil. (v3.6.0: iş kaydı / ücret girişi kaldırıldı.)
@@ -325,6 +326,7 @@ Plan ve kaynaklar: `docs/rakip-analizi-2026-10.md`.
 
 ## 9. Değişiklik Geçmişi (Özet)
 
+- **26 Kasım 2026** — v3.16.0: Finans → Genel Durum'a Yatırım bölümü (şema değişmeden, `category: "yatirim"`; gider sayılmaz).
 - **25 Kasım 2026** — v3.15.0: kapsamlı denetim düzeltmeleri (güvenlik yamaları, `musteri-data/` repodan çıkarıldı, www/vercel.app,
   OG ve meta açıklamaları, şema konumu, dönüşüm olayları + izin modu, KVKK notları, bot koruması, mobil CTA, erişilebilirlik,
   lint 0 hata, CI). Rapor yerelde `docs/ozel/DENETIM-2026-11-25.md`.

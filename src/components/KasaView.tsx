@@ -6,7 +6,7 @@ import Link from "next/link";
 import { PanelShell, Card, Field, Btn, Modal, Chip, Tabs, ClientLink, agendaApi, inputCls, inputStyle, fmtTL, TZ } from "@/components/agenda/ui";
 import { getInvoiceStage, INVOICE_STAGE_COLOR, INVOICE_STAGE_LABEL } from "@/lib/invoiceStage";
 import {
-  computeKasa, monthlyHistory, monthOf, isIncoming, isDebt, parseInstallment,
+  computeKasa, monthlyHistory, monthOf, isIncoming, isDebt, isInvestment, parseInstallment, INVESTMENT_CATEGORY,
   type KasaCalcEntry, type KasaCalcCardTx, type KasaDirection, type InstallmentGroup,
 } from "@/lib/kasaCalc";
 
@@ -21,6 +21,7 @@ type Sheet =
   | { kind: "gider" }
   | { kind: "alacak" }
   | { kind: "gecmis" }
+  | { kind: "yatirim" }
   | { kind: "ay"; month: string };
 
 const DIR_LABEL: Record<KasaDirection, string> = { GELIR: "Gelir", GIDER: "Gider", BORC: "Borç / ödeme", ALACAK: "Alacak" };
@@ -32,7 +33,7 @@ export interface FinansClient {
   id: string; slug: string; name: string; active: boolean; fee: number; paymentDays: number[]; graceDays: number;
 }
 
-export default function KasaView({ entries, cardTxs, clients, employees = [], nowIso, initialTab = "genel" }: {
+export default function KasaView({ entries: allEntries, cardTxs, clients, employees = [], nowIso, initialTab = "genel" }: {
   entries: KasaCalcEntry[]; cardTxs: KasaCalcCardTx[]; clients: FinansClient[]; employees?: { id: string; name: string }[];
   nowIso: string; initialTab?: "genel" | "musteri";
 }) {
@@ -46,8 +47,12 @@ export default function KasaView({ entries, cardTxs, clients, employees = [], no
   const [payFor, setPayFor] = useState<KasaCalcEntry | null>(null);
   const [txEdit, setTxEdit] = useState<KasaCalcCardTx | null>(null);
   const [filter, setFilter] = useState<"ALL" | "IN" | "OUT">("ALL");
+  const [invForm, setInvForm] = useState<Partial<KasaCalcEntry> | null>(null);
 
-  const k = useMemo(() => computeKasa(entries, cardTxs, nowIso), [entries, cardTxs, nowIso]);
+  const k = useMemo(() => computeKasa(allEntries, cardTxs, nowIso), [allEntries, cardTxs, nowIso]);
+  // Yatırımlar gider / borç / alacak listelerine girmez; kendi bölümünde (k.investments) gösterilir.
+  const entries = useMemo(() => allEntries.filter((e) => !isInvestment(e)), [allEntries]);
+  const editEntry = (e: KasaCalcEntry) => (isInvestment(e) ? setInvForm(e) : setForm(e));
   const sheet = stack[stack.length - 1];
   const open = (s: Sheet) => setStack((st) => [...st, s]);
   const back = () => setStack((st) => st.slice(0, -1));
@@ -67,8 +72,9 @@ export default function KasaView({ entries, cardTxs, clients, employees = [], no
 
   // İşlem geçmişi: ödenmiş kayıtlar + kart harcamaları
   const history = [
-    ...entries.filter((e) => e.status === "ODENDI" && e.paidAt).map((e) => ({
-      id: e.id, date: e.paidAt!, title: e.title, sub: e.category, chip: null as string | null,
+    // Kasadan çıkan yatırımlar da nakit hareketidir → geçmişte görünür (allEntries).
+    ...allEntries.filter((e) => e.status === "ODENDI" && e.paidAt).map((e) => ({
+      id: e.id, date: e.paidAt!, title: e.title, sub: isInvestment(e) ? "Yatırım" : e.category, chip: null as string | null,
       clientName: e.clientName, clientSlug: e.clientSlug ?? null,
       amount: e.amount, incoming: isIncoming(e.direction), entry: e,
     })),
@@ -135,6 +141,8 @@ export default function KasaView({ entries, cardTxs, clients, employees = [], no
         <Tile label="Güncel Ay Gider" value={fmtTL(k.monthExpenseTotal)} sub={`${k.monthExpenseCount} gider kalemi · Detay`} color="#fb923c" onClick={() => open({ kind: "gider" })} />
         <Tile label="Tahsil Edilenler" value={fmtTL(k.collectedTotal)} sub="Detay için dokun" color="#34d399" onClick={() => open({ kind: "tahsil" })} />
         <Tile label="Alacaklar" value={fmtTL(k.openReceivablesTotal)} sub={`${k.openReceivables.length} bekleyen · Detay`} color="#f87171" onClick={() => open({ kind: "alacak" })} />
+        <Tile wide label="📈 Yatırım" value={fmtTL(k.investmentTotal)} color="#fbbf24" onClick={() => open({ kind: "yatirim" })}
+          sub={k.investments.length ? `${k.investments.length} kalem · Detay` : "Henüz yatırım yok · Eklemek için dokun"} />
       </div>
 
       <button onClick={() => open({ kind: "gecmis" })} className="w-full rounded-2xl px-5 py-4 mb-8 flex items-center justify-between text-left min-h-[56px]"
@@ -168,7 +176,7 @@ export default function KasaView({ entries, cardTxs, clients, employees = [], no
           ))}
         </div>
         {history.slice(0, 60).map((h) => (
-          <Row key={h.id} onClick={h.entry ? () => setForm(h.entry!) : undefined}
+          <Row key={h.id} onClick={h.entry ? () => editEntry(h.entry!) : undefined}
             title={`${dayMonth(h.date)} · ${h.title}`}
             sub={<>{h.chip && <Chip color="#c084fc">{h.chip}</Chip>} {h.clientName ? <ClientLink slug={h.clientSlug} name={h.clientName} /> : <span>{h.sub}</span>}</>}
             right={<Amount value={h.incoming ? h.amount : -h.amount} />} />
@@ -308,6 +316,25 @@ export default function KasaView({ entries, cardTxs, clients, employees = [], no
         </Modal>
       )}
 
+      {sheet?.kind === "yatirim" && (
+        <Modal title="Yatırım" onClose={back}>
+          <div className="flex justify-between items-center mb-4">
+            <p className="text-[13px] text-[#8a8a9a]">Toplam</p>
+            <p className="text-[20px] font-black text-[#fbbf24]">{fmtTL(k.investmentTotal)}</p>
+          </div>
+          <div className="rounded-2xl px-4" style={{ background: "var(--bg)" }}>
+            {k.investments.map((e) => (
+              <Row key={e.id} onClick={() => setInvForm(e)} title={e.title}
+                sub={<>{dayMonth(e.dueDate)} {e.status === "ODENDI" ? <Chip color="#22d3ee">Kasadan</Chip> : <Chip color="#8a8a9a">Kasa dışı</Chip>}</>}
+                right={<span className="text-[15px] font-bold text-[#fbbf24]">{fmtTL(e.amount)}</span>} />
+            ))}
+            {k.investments.length === 0 && <p className="text-[13px] text-[#8a8a9a] py-3">Henüz yatırım eklenmedi.</p>}
+          </div>
+          <p className="text-[11px] text-[#8a8a9a] mt-3">Yatırım gider sayılmaz; ay giderine ve borçlara girmez. “Kasadan” işaretli olanlar Kasada Kalan’dan düşülür.</p>
+          <div className="flex justify-end mt-4"><Btn variant="primary" onClick={() => setInvForm({})}>+ Yatırım ekle</Btn></div>
+        </Modal>
+      )}
+
       {sheet?.kind === "gecmis" && (
         <Modal title="Geçmiş Aylar" onClose={back}>
           <div className="rounded-2xl px-4" style={{ background: "var(--bg)" }}>
@@ -382,6 +409,16 @@ export default function KasaView({ entries, cardTxs, clients, employees = [], no
             if (ok) setForm(null);
           }} />
       )}
+      {invForm && (
+        <InvestmentForm initial={invForm} busy={busy === "inv"} onClose={() => setInvForm(null)}
+          onDelete={invForm.id ? async () => {
+            if (!confirm(`"${invForm.title}" çöp kutusuna taşınsın mı?`)) return;
+            if (await run("inv", () => agendaApi("DELETE", `kasa/${invForm.id}`))) setInvForm(null);
+          } : undefined}
+          onSave={async (body) => {
+            if (await run("inv", () => (invForm.id ? agendaApi("PATCH", `kasa/${invForm.id}`, body) : agendaApi("POST", "kasa", body)))) setInvForm(null);
+          }} />
+      )}
       {cardTxFor && (
         <AmountModal title={`${cardTxFor.title} — harcama ekle`} withTitle busy={busy === "cardtx"} onClose={() => setCardTxFor(null)}
           hint="Kart borcuna eklenir, kasadaki nakitten düşmez."
@@ -409,7 +446,7 @@ export default function KasaView({ entries, cardTxs, clients, employees = [], no
 }
 
 // ── Küçük parçalar ─────────────────────────────────────────
-function Tile({ label, value, sub, color, onClick }: { label: string; value: string; sub: string; color: string; onClick?: () => void }) {
+function Tile({ label, value, sub, color, onClick, wide }: { label: string; value: string; sub: string; color: string; onClick?: () => void; wide?: boolean }) {
   const body = (
     <>
       <p className="text-[12px] sm:text-[13px] font-semibold text-[#8a8a9a] mb-1">{label}</p>
@@ -419,8 +456,8 @@ function Tile({ label, value, sub, color, onClick }: { label: string; value: str
   );
   const style = { background: `${color}12`, border: `1px solid ${color}33` };
   return onClick
-    ? <button onClick={onClick} className="rounded-2xl p-4 text-left transition-opacity hover:opacity-85" style={style}>{body}</button>
-    : <div className="rounded-2xl p-4" style={style}>{body}</div>;
+    ? <button onClick={onClick} className={`rounded-2xl p-4 text-left transition-opacity hover:opacity-85 ${wide ? "col-span-2" : ""}`} style={style}>{body}</button>
+    : <div className={`rounded-2xl p-4 ${wide ? "col-span-2" : ""}`} style={style}>{body}</div>;
 }
 
 function MiniStat({ label, value, color }: { label: string; value: string; color: string }) {
@@ -586,6 +623,47 @@ function EntryForm({ initial, clients, employees, busy, onClose, onSave, onDelet
           </Field>
         )}
         <label className="flex items-center gap-2 text-[13px] text-[#c8c8d0]"><input type="checkbox" checked={isRecurring} onChange={(e) => setIsRecurring(e.target.checked)} /> Her ay tekrar eder (ödenince sonraki ayın kaydı açılır)</label>
+        <div className="flex justify-between gap-2 pt-2">
+          {onDelete ? <Btn variant="danger" onClick={onDelete}>Sil</Btn> : <span />}
+          <div className="flex gap-2">
+            <Btn onClick={onClose}>Vazgeç</Btn>
+            <Btn type="submit" variant="primary" disabled={busy}>{busy ? "Kaydediliyor…" : "Kaydet"}</Btn>
+          </div>
+        </div>
+      </form>
+    </Modal>
+  );
+}
+
+// ── Yatırım kaydı (v3.16.0) ─────────────────────────────────
+// KasaEntry'de category "yatirim": ODENDI = kasadan çıktı (nakitten düşer), BEKLIYOR = kasa dışı kaynak.
+function InvestmentForm({ initial, busy, onClose, onSave, onDelete }: {
+  initial: Partial<KasaCalcEntry>; busy: boolean; onClose: () => void; onSave: (b: Record<string, unknown>) => void; onDelete?: () => void;
+}) {
+  const ymd = (iso?: string) => (iso ? new Date(iso) : new Date()).toLocaleDateString("en-CA", { timeZone: TZ });
+  const [title, setTitle] = useState(initial.title ?? "");
+  const [amount, setAmount] = useState(initial.amount !== undefined ? String(initial.amount) : "");
+  const [date, setDate] = useState(ymd(initial.dueDate));
+  const [fromCash, setFromCash] = useState(initial.status === "ODENDI");
+  return (
+    <Modal dismissable={false} title={initial.id ? "Yatırımı düzenle" : "Yeni yatırım"} onClose={onClose}>
+      <form className="space-y-3" onSubmit={(e) => {
+        e.preventDefault();
+        const iso = new Date(`${date}T10:00:00+03:00`).toISOString();
+        onSave({
+          direction: "GIDER", category: INVESTMENT_CATEGORY, title: title.trim(), amount, dueDate: iso, isRecurring: false,
+          status: fromCash ? "ODENDI" : "BEKLIYOR", ...(fromCash ? { paidAt: iso } : {}),
+        });
+      }}>
+        <Field label="Başlık"><input required value={title} onChange={(e) => setTitle(e.target.value)} className={inputCls} style={inputStyle} placeholder="Altın, fon, döviz…" /></Field>
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Tutar (₺)"><input required inputMode="decimal" value={amount} onChange={(e) => setAmount(e.target.value)} className={inputCls} style={inputStyle} /></Field>
+          <Field label="Tarih"><input type="date" required value={date} max={fromCash ? ymd() : undefined} onChange={(e) => setDate(e.target.value)} className={inputCls} style={inputStyle} /></Field>
+        </div>
+        <label className="flex items-start gap-2 text-[13px] text-[#c8c8d0]">
+          <input type="checkbox" className="mt-0.5" checked={fromCash} onChange={(e) => setFromCash(e.target.checked)} />
+          <span>Kasadan düş<span className="block text-[11px] text-[#8a8a9a]">İşaretlenirse bu tutar Kasada Kalan’dan çıkar. İşaretlenmezse yalnızca Yatırım toplamında görünür.</span></span>
+        </label>
         <div className="flex justify-between gap-2 pt-2">
           {onDelete ? <Btn variant="danger" onClick={onDelete}>Sil</Btn> : <span />}
           <div className="flex gap-2">
