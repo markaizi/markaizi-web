@@ -206,6 +206,8 @@ Kasa, Finans'ın "Genel Durum" sekmesidir. Yazma mantığı `src/lib/agenda.ts`,
 **Yatırım** (v3.16.0) aynı sekmede ayrı bir kutudur: `KasaEntry` + `category: "yatirim"`; gider sayılmaz, "Kasadan düş" işaretliyse (ODENDI) nakitten düşer.
 **Kart / ek hesap limiti** (v3.17.0): `KasaEntry.creditLimit`; kalan limit = limit − borç (`cardLimit`). Kart ekleme `createDebtCard`, limit `setCardLimit`.
 Asistan (`/api/agent`) kart ekler, limit değiştirir, yatırım ekler / günceller; hepsi işlem kaydına düşer.
+**Altın (gram) borcu** (v3.18.0): `GoldDebt` + `GoldDebtPayment`, `src/lib/gold.ts`. Gram olarak izlenir, TL borç toplamına girmez.
+Otomatik kural: eşleşen gider ödenince payı güncel gram altın kuruyla grama çevrilip düşülür (kur alınamazsa "kur bekliyor").
 
 ### Çalışan ekranları
 Dashboard, firmalarım, iş akışı, ödemelerim (salt okunur, Finans'tan), takvim, profil. (v3.6.0: iş kaydı / ücret girişi kaldırıldı.)
@@ -229,7 +231,7 @@ User, PasswordResetToken, Client, Assignment, ContentItem, Update, Invoice, Note
 WorkflowColumn, WorkflowCard, AdReport, ClientNotification, WorkLog, Transaction, RecurringExpense,
 PayrollPayment, Submission, StaffNotification, StaffFeedback, PaymentLink, PaymentAttempt.
 **Ajanda + Kasa (v3.3.0, Mİ Asistan'dan taşınıyor):** AgendaEvent, AgendaTask, AgendaNote, KasaEntry,
-KasaCardTransaction + Client ziyaret alanları. Kasa yalnızca ADMIN'e açık, ajans Ekonomi'sinden ayrı.
+KasaCardTransaction + Client ziyaret alanları. **v3.18.0:** GoldDebt, GoldDebtPayment. Kasa yalnızca ADMIN'e açık, ajans Ekonomi'sinden ayrı.
 Tek seferlik veri scriptleri `scripts/ozel/` altında (git dışı). Ayrıntı: `prisma/schema.prisma`.
 
 ---
@@ -328,6 +330,7 @@ Plan ve kaynaklar: `docs/rakip-analizi-2026-10.md`.
 
 ## 9. Değişiklik Geçmişi (Özet)
 
+- **26 Kasım 2026** — v3.18.0: altın (gram) cinsinden borç, ödeme defteri, gidere bağlı otomatik düşme kuralı, asistanda altın borcu işlemleri (migration bekliyor).
 - **26 Kasım 2026** — v3.17.0: kart / ek hesap limitleri (`creditLimit`, migration uygulandı), kart ekleme formu, asistanda kart + limit + yatırım işlemleri.
 - **26 Kasım 2026** — v3.16.0: Finans → Genel Durum'a Yatırım bölümü (şema değişmeden, `category: "yatirim"`; gider sayılmaz).
 - **25 Kasım 2026** — v3.15.0: kapsamlı denetim düzeltmeleri (güvenlik yamaları, `musteri-data/` repodan çıkarıldı, www/vercel.app,

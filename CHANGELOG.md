@@ -2,13 +2,49 @@
 
 > **Bu dosya araçlar arası devir-teslim defteridir.** En üstteki sürüm = en son durum.
 > Kurallar ve şablon: [`AGENTS.md`](./AGENTS.md). Eski sürümler silinmez.
-> Güncel sürüm: **v3.17.0** (`package.json` ile aynı olmalı).
+> Güncel sürüm: **v3.18.0** (`package.json` ile aynı olmalı).
 
 ---
 
 > **Gizlilik notu (v3.10.0):** Bu repo herkese açıktır. Müşteri ücretleri, tahsilat tutarları, kişisel finans ve kişi adları
 > bu dosyaya **yazılmaz**. Rakamlı / isimli ayrıntılar yerelde, git'e girmeyen `docs/ozel/` klasöründe tutulur
 > (ör. `docs/ozel/CHANGELOG-OZEL-2026-11-23.md`); tek seferlik veri scriptleri `scripts/ozel/` altındadır.
+
+## v3.18.0 — 26 Kasım 2026 — Finans: altın (gram) cinsinden borç + otomatik düşme kuralı
+**Araç:** Claude Code (Fable 5.2)  **Tür:** MINOR
+### Yapılanlar
+- **Şema (yalnızca ekleme):** `GoldDebt` + `GoldDebtPayment` — migration `prisma/migrations/20261126180000_gold_debt`
+  (iki yeni tablo; mevcut tablolara dokunmaz). Borç gram olarak tutulur; her ödeme gram olarak düşer, TL ile ödendiyse
+  tutar ve o günkü gram fiyatı da saklanır (gram = TL ÷ fiyat, 0,01 gr).
+- **Servis** (`src/lib/gold.ts`, saf hesaplar `src/lib/goldCalc.ts`): borç oluştur / düzenle / çöp kutusu; ödeme üç biçimde
+  (doğrudan gram · TL + gram fiyatı · yalnızca TL → güncel kur `fetchGramGoldPrice` ile dış servisten). Ortak hata sınıfı ve
+  tutar ayrıştırıcı `src/lib/agendaShared.ts`'e taşındı (agenda.ts ↔ gold.ts döngüsel içe aktarma olmasın diye).
+- **Otomatik kural:** borçta `autoMatch` + `autoShare` tanımlıysa, başlığı eşleşen kasa gideri ÖDENDİ olunca
+  (`createKasaEntry` / `updateKasaEntry` → `applyGoldAutoRules`) tutarın payı güncel kurla grama çevrilip düşülür.
+  Kur alınamazsa ödeme **"kur bekliyor"** olarak yine yazılır (borçtan düşmez, Finans'ta uyarı çıkar, kur girilince hesaplanır).
+  Aynı gider iki kez düşülmez (`sourceEntryId` tekil); gider "ödenmedi"ye döner ya da silinirse otomatik ödeme de geri alınır.
+  Kural hata fırlatmaz — asıl ödeme etkilenmez; her sonuç işlem kaydına düşer.
+- **Finans ekranı** (`src/components/KasaView.tsx`): Güncel Borçlarım'da "Altın borçları" bölümü (kalan gram, ≈ TL karşılığı);
+  detayda başlangıç / ödenen / kalan, kural açıklaması ve **tarih tarih ödeme defteri** (her satırda o ödemeden sonra kalan gram);
+  ödeme formu ("Güncel kuru getir", canlı gram önizlemesi), borç formu, kur bekleyen ödeme uyarısı. Altın borcu TL borç
+  toplamına **dahil edilmez**; kutuda "+ N gr altın" olarak görünür. Çöp kutusuna altın borcu / ödemesi eklendi.
+- **API:** `…/ajanda/gold-debts`, `…/ajanda/gold-payments` (POST / PATCH / DELETE, işlem kaydıyla), `GET /api/musteri/admin/altin-kuru`.
+- **Asistan** (`src/lib/agent.ts`, `bot/CLAUDE.md`): `altin_borc` (tam defter), `altin_kuru`, `altin_odeme`, `altin_odeme_guncelle`,
+  `sil` → `tur:"altin_odeme"`; `finans` ve `ozet`te `altinBorclari`; `odeme_yapildi` yanıtında `altinBorcundanDusulen`.
+### Doğrulama
+- `tsc --noEmit` temiz, `eslint src/` 0 hata (26 uyarı, değişmedi), `next build` derlendi. Migration SQL'i `prisma migrate diff`
+  çıktısıyla birebir aynı. Hesaplar (kalan, ara kalanlar, kur bekleyen, sayı ayrıştırma, başlık eşleşmesi) ve canlı kur servisi sınandı.
+- Tablolar henüz olmadığı için servis / API gerçek veride ve ekran tarayıcıda denenmedi.
+### Dikkat / bilinen kısıtlar
+- **Sıra zorunlu:** `migrate deploy` → veri betiği → push. Migration uygulanmadan bu sürüm canlıya çıkarsa Finans sayfası,
+  çöp kutusu ve bot `finans` / `ozet` hata verir.
+- Kur dış servise bağlıdır (`finans.truncgil.com`, gram altın **satış**); banka / kuyumcu fiyatından farklı olabilir. Her ödemede
+  kullanılan kur kayıtlıdır ve ödeme düzenlenerek değiştirilebilir. 500–1.000.000 ₺ dışındaki değer reddedilir.
+- TL karşılığı gösterimi son kayıtlı ödeme kurunu kullanır (canlı kur değil) ve "≈" ile işaretlidir.
+- Silinen bir gider çöp kutusundan geri alınırsa otomatik altın ödemesi kendiliğinden yeniden açılmaz (elle eklenir).
+### Yarım kalanlar / Sıradaki
+- Samet: `npx dotenv -e .env.local -- npx prisma migrate deploy`. Ardından `scripts/ozel/altin-borc-2026-11-26.ts --apply`
+  ve `--dogrula`; push (onayla) → deploy sonrası v3.16.0'ın ilk yatırım kaydı → bot yönergesini VPS'e gönder.
 
 ## v3.17.0 — 26 Kasım 2026 — Finans: kart / ek hesap limitleri, kart ekleme, asistanda yatırım + kart yönetimi
 **Araç:** Claude Code (Fable 5.2)  **Tür:** MINOR

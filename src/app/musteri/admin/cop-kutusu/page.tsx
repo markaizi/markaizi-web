@@ -17,11 +17,14 @@ export default async function CopKutusuPage() {
   if (session.role !== "ADMIN") redirect("/musteri/admin");
 
   const where = { deletedAt: { not: null } };
-  const [kasa, txs, tasks, notes] = await Promise.all([
+  const [kasa, txs, tasks, notes, goldDebts, goldPayments] = await Promise.all([
     prisma.kasaEntry.findMany({ where, orderBy: { deletedAt: "desc" }, include: { client: { select: { name: true } } } }),
     prisma.kasaCardTransaction.findMany({ where, orderBy: { deletedAt: "desc" }, include: { entry: { select: { title: true } } } }),
     prisma.agendaTask.findMany({ where, orderBy: { deletedAt: "desc" }, include: { client: { select: { name: true } } } }),
     prisma.agendaNote.findMany({ where, orderBy: { deletedAt: "desc" }, include: { client: { select: { name: true } } } }),
+    prisma.goldDebt.findMany({ where, orderBy: { deletedAt: "desc" } }),
+    // Borcu da silinmiş ödemeler listelenmez — borç geri alınınca kendiliğinden döner.
+    prisma.goldDebtPayment.findMany({ where: { ...where, debt: { deletedAt: null } }, orderBy: { deletedAt: "desc" }, include: { debt: { select: { title: true } } } }),
   ]);
   const tl = (n: unknown) => `${Number(n).toLocaleString("tr-TR")} ₺`;
 
@@ -41,6 +44,14 @@ export default async function CopKutusuPage() {
     ...notes.map((n) => ({
       id: n.id, resource: "notes" as const, kind: n.kind === "HAFIZA" ? "Hafıza" : "Not", title: n.title,
       detail: [n.client?.name, n.content.slice(0, 90)].filter(Boolean).join(" · "), deletedAt: n.deletedAt!.toISOString(),
+    })),
+    ...goldDebts.map((d) => ({
+      id: d.id, resource: "gold-debts" as const, kind: "Altın borcu", title: d.title,
+      detail: `${Number(d.totalGrams).toLocaleString("tr-TR")} gr`, deletedAt: d.deletedAt!.toISOString(),
+    })),
+    ...goldPayments.map((p) => ({
+      id: p.id, resource: "gold-payments" as const, kind: "Altın ödemesi", title: `${p.debt.title} — ${p.grams === null ? "kur bekleyen ödeme" : `${Number(p.grams).toLocaleString("tr-TR")} gr`}`,
+      detail: [p.tlAmount === null ? null : tl(p.tlAmount), p.note].filter(Boolean).join(" · "), deletedAt: p.deletedAt!.toISOString(),
     })),
   ];
 

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { ZodError } from "zod";
 import { Prisma } from "@prisma/client";
 import * as agenda from "@/lib/agenda";
+import * as gold from "@/lib/gold";
 import { audit, titleOf } from "@/lib/audit";
 
 /**
@@ -29,7 +30,7 @@ export async function respond(fn: () => Promise<unknown>, log?: { source: "panel
   }
 }
 
-export type AgendaResource = "events" | "tasks" | "notes" | "kasa" | "card-tx" | "installments" | "cards";
+export type AgendaResource = "events" | "tasks" | "notes" | "kasa" | "card-tx" | "installments" | "cards" | "gold-debts" | "gold-payments";
 
 export const createByResource: Record<AgendaResource, (body: unknown) => Promise<unknown>> = {
   events: agenda.createEvent,
@@ -39,6 +40,8 @@ export const createByResource: Record<AgendaResource, (body: unknown) => Promise
   "card-tx": agenda.addCardTransaction,
   installments: agenda.createInstallmentPlan,
   cards: agenda.createDebtCard, // yeni kart / ek hesap (borç 0 olabilir, limit opsiyonel)
+  "gold-debts": gold.createGoldDebt, // altın (gram) cinsinden borç
+  "gold-payments": gold.addGoldPayment, // gram ya da TL (+ gram fiyatı) ile ödeme
 };
 
 const isAction = (body: unknown, action: string) =>
@@ -57,6 +60,8 @@ export const updateByResource: Partial<Record<AgendaResource, (id: string, body:
     return agenda.updateKasaEntry(id, body);
   },
   "card-tx": (id, body) => (isAction(body, "restore") ? agenda.restoreCardTransaction(id) : agenda.updateCardTransaction(id, body)),
+  "gold-debts": (id, body) => (isAction(body, "restore") ? gold.restoreGoldDebt(id) : gold.updateGoldDebt(id, body)),
+  "gold-payments": (id, body) => (isAction(body, "restore") ? gold.restoreGoldPayment(id) : gold.updateGoldPayment(id, body)),
 };
 
 export const deleteByResource: Partial<Record<AgendaResource, (id: string) => Promise<unknown>>> = {
@@ -65,6 +70,8 @@ export const deleteByResource: Partial<Record<AgendaResource, (id: string) => Pr
   notes: agenda.trashNote,
   kasa: agenda.trashKasaEntry,
   "card-tx": agenda.trashCardTransaction,
+  "gold-debts": gold.trashGoldDebt,
+  "gold-payments": gold.trashGoldPayment,
 };
 
 export function isResource(r: string): r is AgendaResource {

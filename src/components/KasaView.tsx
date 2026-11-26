@@ -9,6 +9,7 @@ import {
   computeKasa, monthlyHistory, monthOf, isIncoming, isDebt, isInvestment, parseInstallment, cardLimit, INVESTMENT_CATEGORY,
   type KasaCalcEntry, type KasaCalcCardTx, type KasaDirection, type InstallmentGroup,
 } from "@/lib/kasaCalc";
+import { goldSummary, goldRuleText, gramsFor, fmtGr, parseTr, type GoldDebtView, type GoldPaymentView } from "@/lib/goldCalc";
 
 // Mİ Asistan iOS uygulamasındaki "Ödemeler / Kasa" ekranının web karşılığı.
 // Hesaplar src/lib/kasaCalc.ts'te — burada yalnızca gösterim ve etkileşim var.
@@ -22,19 +23,22 @@ type Sheet =
   | { kind: "alacak" }
   | { kind: "gecmis" }
   | { kind: "yatirim" }
+  | { kind: "altin"; debtId: string }
   | { kind: "ay"; month: string };
 
 const DIR_LABEL: Record<KasaDirection, string> = { GELIR: "Gelir", GIDER: "Gider", BORC: "Borç / ödeme", ALACAK: "Alacak" };
 const CATEGORIES = ["Müşteri Ödemesi", "Kira", "Maaş", "Eğitim", "Abonelik", "muhasebe", "Eşya Taksiti", "Mobilya Taksiti", "borc_alacak", "kredi_karti", "ek_hesap", "genel"];
 const dayMonth = (iso: string) => new Date(iso).toLocaleDateString("tr-TR", { timeZone: TZ, day: "numeric", month: "long" });
+const fullDate = (iso: string) => new Date(iso).toLocaleDateString("tr-TR", { timeZone: TZ, day: "numeric", month: "long", year: "numeric" });
+const GOLD = "#fbbf24";
 const monthName = (key: string) => new Date(`${key}-15T12:00:00Z`).toLocaleDateString("tr-TR", { month: "long", year: "numeric" });
 
 export interface FinansClient {
   id: string; slug: string; name: string; active: boolean; fee: number; paymentDays: number[]; graceDays: number;
 }
 
-export default function KasaView({ entries: allEntries, cardTxs, clients, employees = [], nowIso, initialTab = "genel" }: {
-  entries: KasaCalcEntry[]; cardTxs: KasaCalcCardTx[]; clients: FinansClient[]; employees?: { id: string; name: string }[];
+export default function KasaView({ entries: allEntries, cardTxs, goldDebts = [], clients, employees = [], nowIso, initialTab = "genel" }: {
+  entries: KasaCalcEntry[]; cardTxs: KasaCalcCardTx[]; goldDebts?: GoldDebtView[]; clients: FinansClient[]; employees?: { id: string; name: string }[];
   nowIso: string; initialTab?: "genel" | "musteri";
 }) {
   const [tab, setTab] = useState<"genel" | "musteri">(initialTab);
@@ -50,6 +54,12 @@ export default function KasaView({ entries: allEntries, cardTxs, clients, employ
   const [invForm, setInvForm] = useState<Partial<KasaCalcEntry> | null>(null);
   const [cardForm, setCardForm] = useState(false);
   const [limitFor, setLimitFor] = useState<KasaCalcEntry | null>(null);
+  const [goldForm, setGoldForm] = useState<GoldDebtView | "new" | null>(null);
+  const [goldPay, setGoldPay] = useState<{ debt: GoldDebtView; payment?: GoldPaymentView } | null>(null);
+  // Altın (gram) borçları — TL toplamlarına girmez, gram olarak ayrı gösterilir.
+  const gold = useMemo(() => goldDebts.map((d) => ({ d, s: goldSummary(d) })), [goldDebts]);
+  const goldRemaining = gold.reduce((a, g) => a + g.s.remainingGrams, 0);
+  const goldPending = gold.filter((g) => g.s.pendingCount > 0);
 
   const k = useMemo(() => computeKasa(allEntries, cardTxs, nowIso), [allEntries, cardTxs, nowIso]);
   // Yatırımlar gider / borç / alacak listelerine girmez; kendi bölümünde (k.investments) gösterilir.
@@ -136,9 +146,16 @@ export default function KasaView({ entries: allEntries, cardTxs, clients, employ
         </div>
       </div>
 
+      {goldPending.map(({ d, s }) => (
+        <button key={d.id} onClick={() => open({ kind: "altin", debtId: d.id })} className="w-full rounded-2xl px-4 py-3 mb-3 text-left text-[13px] font-semibold min-h-[44px]"
+          style={{ background: "rgba(251,146,60,0.1)", color: "#fb923c", border: "1px solid rgba(251,146,60,0.3)" }}>
+          ⚠ {d.title}: {s.pendingCount} ödeme kur bekliyor ({fmtTL(s.pendingTl)}) — gram fiyatını girince borçtan düşülecek ›
+        </button>
+      ))}
+
       <div className="grid grid-cols-2 gap-3 mb-3">
         <Tile label="Kasada Kalan" value={fmtTL(k.cash)} sub="Güncel net nakit (TRY)" color="#22d3ee" />
-        <Tile label="Güncel Borçlarım" value={fmtTL(k.debtTotal)} sub={`${k.debtItemCount} kalem · Detay`} color="#f87171" onClick={() => open({ kind: "borclar" })} />
+        <Tile label="Güncel Borçlarım" value={fmtTL(k.debtTotal)} sub={`${k.debtItemCount} kalem${goldRemaining > 0 ? ` + ${fmtGr(goldRemaining)} altın` : ""} · Detay`} color="#f87171" onClick={() => open({ kind: "borclar" })} />
         <Tile label="Güncel Ay Gelir" value={fmtTL(k.monthIncomeTarget)} sub="Alacaklar dahil hedef" color="#60a5fa" />
         <Tile label="Güncel Ay Gider" value={fmtTL(k.monthExpenseTotal)} sub={`${k.monthExpenseCount} gider kalemi · Detay`} color="#fb923c" onClick={() => open({ kind: "gider" })} />
         <Tile label="Tahsil Edilenler" value={fmtTL(k.collectedTotal)} sub="Detay için dokun" color="#34d399" onClick={() => open({ kind: "tahsil" })} />
@@ -225,7 +242,23 @@ export default function KasaView({ entries: allEntries, cardTxs, clients, employ
               </div>
             </>
           )}
+          {gold.length > 0 && (
+            <>
+              <div className="mt-5" />
+              <SectionTitle>Altın borçları (detay için dokun)</SectionTitle>
+              <div className="rounded-2xl px-4" style={{ background: "var(--bg)" }}>
+                {gold.map(({ d, s }) => (
+                  <Row key={d.id} onClick={() => open({ kind: "altin", debtId: d.id })}
+                    title={d.title}
+                    sub={<><Chip color={GOLD}>{fmtGr(s.paidGrams)} / {fmtGr(s.totalGrams)} ödendi</Chip>{s.lastPrice && <span>≈ {fmtTL(Math.round(s.remainingGrams * s.lastPrice))}</span>}{s.pendingCount > 0 && <Chip color="#fb923c">{s.pendingCount} kur bekliyor</Chip>}</>}
+                    right={<span className="text-[15px] font-bold" style={{ color: GOLD }}>{fmtGr(s.remainingGrams)} ›</span>} />
+                ))}
+              </div>
+              <p className="text-[11px] text-[#8a8a9a] mt-2">Altın borçları gram olarak izlenir; yukarıdaki TL toplamına dahil değildir. TL karşılığı son kayıtlı kurla yaklaşık değerdir.</p>
+            </>
+          )}
           <div className="flex flex-wrap justify-end gap-2 mt-5">
+            <Btn onClick={() => setGoldForm("new")}>+ Altın borcu ekle</Btn>
             <Btn onClick={() => setCardForm(true)}>+ Kart / hesap ekle</Btn>
             <Btn onClick={() => setForm({ direction: "BORC", status: "BEKLIYOR" })}>+ Borç ekle</Btn>
           </div>
@@ -334,6 +367,55 @@ export default function KasaView({ entries: allEntries, cardTxs, clients, employ
         </Modal>
       )}
 
+      {sheet?.kind === "altin" && (() => {
+        const g = gold.find((x) => x.d.id === sheet.debtId);
+        if (!g) return null;
+        const { d, s } = g;
+        const pct = s.totalGrams > 0 ? Math.min(100, Math.round((s.paidGrams / s.totalGrams) * 100)) : 0;
+        const rule = goldRuleText(d);
+        return (
+          <Modal title={d.title} onClose={back}>
+            <div className="grid grid-cols-3 gap-2 mb-3">
+              <MiniStat label="Başlangıç" value={fmtGr(s.totalGrams)} color="#8a8a9a" />
+              <MiniStat label="Ödenen" value={fmtGr(s.paidGrams)} color="#34d399" />
+              <MiniStat label="Kalan" value={fmtGr(s.remainingGrams)} color={GOLD} />
+            </div>
+            <div className="h-1.5 rounded-full overflow-hidden mb-1" style={{ background: "var(--border)" }}>
+              <div className="h-full rounded-full" style={{ width: `${pct}%`, background: "#34d399" }} />
+            </div>
+            <p className="text-[11px] text-[#8a8a9a] mb-4">
+              %{pct} ödendi{s.lastPrice ? ` · kalan ≈ ${fmtTL(Math.round(s.remainingGrams * s.lastPrice))} (son kayıtlı kur ${fmtTL(s.lastPrice)}/gr — canlı kur değil)` : ""}
+            </p>
+            {(d.notes || rule) && (
+              <div className="rounded-2xl px-4 py-3 mb-4 text-[12px] text-[#c8c8d0] space-y-1.5" style={{ background: "var(--bg)" }}>
+                {d.notes && <p className="whitespace-pre-line">{d.notes}</p>}
+                {rule && <p><span className="font-semibold" style={{ color: GOLD }}>Otomatik kural:</span> {rule}</p>}
+              </div>
+            )}
+            <SectionTitle>Ödemeler — tarih tarih ({s.ledger.length})</SectionTitle>
+            <div className="rounded-2xl px-4 mb-5" style={{ background: "var(--bg)" }}>
+              {[...s.ledger].reverse().map((p) => (
+                <Row key={p.id} onClick={() => setGoldPay({ debt: d, payment: p })}
+                  title={<>{fullDate(p.paidAt)} · {p.grams === null ? <span className="text-[#fb923c]">kur bekliyor</span> : <span style={{ color: GOLD }}>−{fmtGr(p.grams)}</span>}</>}
+                  sub={<>
+                    {p.tlAmount !== null && <span>{fmtTL(p.tlAmount)}{p.gramPrice ? ` ÷ ${fmtTL(p.gramPrice)}/gr` : ""}</span>}
+                    {p.auto && <Chip color="#22d3ee">Otomatik</Chip>}
+                    {p.note && <span className="w-full">{p.note}</span>}
+                  </>}
+                  right={p.grams === null
+                    ? <Btn small variant="primary" onClick={() => setGoldPay({ debt: d, payment: p })}>Kur gir</Btn>
+                    : <span className="text-[12px] text-[#8a8a9a] whitespace-nowrap">Kalan {fmtGr(p.remainingAfter ?? 0)}</span>} />
+              ))}
+              {s.ledger.length === 0 && <p className="text-[13px] text-[#8a8a9a] py-3">Henüz ödeme yok.</p>}
+            </div>
+            <div className="flex flex-wrap justify-end gap-2">
+              <Btn onClick={() => setGoldForm(d)}>Düzenle</Btn>
+              <Btn variant="primary" onClick={() => setGoldPay({ debt: d })}>+ Ödeme</Btn>
+            </div>
+          </Modal>
+        );
+      })()}
+
       {sheet?.kind === "yatirim" && (
         <Modal title="Yatırım" onClose={back}>
           <div className="flex justify-between items-center mb-4">
@@ -435,6 +517,27 @@ export default function KasaView({ entries: allEntries, cardTxs, clients, employ
           } : undefined}
           onSave={async (body) => {
             if (await run("inv", () => (invForm.id ? agendaApi("PATCH", `kasa/${invForm.id}`, body) : agendaApi("POST", "kasa", body)))) setInvForm(null);
+          }} />
+      )}
+      {goldForm && (
+        <GoldDebtForm initial={goldForm === "new" ? null : goldForm} busy={busy === "gold"} onClose={() => setGoldForm(null)}
+          onDelete={goldForm !== "new" ? async () => {
+            if (!confirm(`"${goldForm.title}" çöp kutusuna taşınsın mı? Ödeme defteriyle birlikte gizlenir; çöp kutusundan geri alınabilir.`)) return;
+            if (await run("gold", () => agendaApi("DELETE", `gold-debts/${goldForm.id}`))) { setGoldForm(null); back(); }
+          } : undefined}
+          onSave={async (body) => {
+            if (await run("gold", () => (goldForm === "new" ? agendaApi("POST", "gold-debts", body) : agendaApi("PATCH", `gold-debts/${goldForm.id}`, body)))) setGoldForm(null);
+          }} />
+      )}
+      {goldPay && (
+        <GoldPaymentForm debt={goldPay.debt} initial={goldPay.payment ?? null} busy={busy === "goldpay"} onClose={() => setGoldPay(null)}
+          onDelete={goldPay.payment ? async () => {
+            if (!confirm("Bu ödeme çöp kutusuna taşınsın mı? Kalan borç o kadar gram artar.")) return;
+            if (await run("goldpay", () => agendaApi("DELETE", `gold-payments/${goldPay.payment!.id}`))) setGoldPay(null);
+          } : undefined}
+          onSave={async (body) => {
+            const p = goldPay.payment;
+            if (await run("goldpay", () => (p ? agendaApi("PATCH", `gold-payments/${p.id}`, body) : agendaApi("POST", "gold-payments", { ...body, debtId: goldPay.debt.id })))) setGoldPay(null);
           }} />
       )}
       {cardForm && (
@@ -669,6 +772,98 @@ function EntryForm({ initial, clients, employees, busy, onClose, onSave, onDelet
           </Field>
         )}
         <label className="flex items-center gap-2 text-[13px] text-[#c8c8d0]"><input type="checkbox" checked={isRecurring} onChange={(e) => setIsRecurring(e.target.checked)} /> Her ay tekrar eder (ödenince sonraki ayın kaydı açılır)</label>
+        <div className="flex justify-between gap-2 pt-2">
+          {onDelete ? <Btn variant="danger" onClick={onDelete}>Sil</Btn> : <span />}
+          <div className="flex gap-2">
+            <Btn onClick={onClose}>Vazgeç</Btn>
+            <Btn type="submit" variant="primary" disabled={busy}>{busy ? "Kaydediliyor…" : "Kaydet"}</Btn>
+          </div>
+        </div>
+      </form>
+    </Modal>
+  );
+}
+
+// ── Altın (gram) borcu (v3.18.0) ────────────────────────────
+function GoldDebtForm({ initial, busy, onClose, onSave, onDelete }: {
+  initial: GoldDebtView | null; busy: boolean; onClose: () => void; onSave: (b: Record<string, unknown>) => void; onDelete?: () => void;
+}) {
+  const [title, setTitle] = useState(initial?.title ?? "");
+  const [total, setTotal] = useState(initial ? String(initial.totalGrams) : "");
+  const [notes, setNotes] = useState(initial?.notes ?? "");
+  const [autoMatch, setAutoMatch] = useState(initial?.autoMatch ?? "");
+  const [autoShare, setAutoShare] = useState(initial?.autoShare ? String(Math.round(initial.autoShare * 100)) : "");
+  return (
+    <Modal dismissable={false} title={initial ? "Altın borcunu düzenle" : "Yeni altın borcu"} onClose={onClose}>
+      <form className="space-y-3" onSubmit={(e) => { e.preventDefault(); onSave({ title: title.trim(), totalGrams: total, notes, autoMatch: autoMatch.trim(), autoShare }); }}>
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Ad"><input required value={title} onChange={(e) => setTitle(e.target.value)} className={inputCls} style={inputStyle} /></Field>
+          <Field label="Başlangıç borcu (gr)"><input required inputMode="decimal" value={total} onChange={(e) => setTotal(e.target.value)} className={inputCls} style={inputStyle} /></Field>
+        </div>
+        <Field label="Ayrıntı / not"><textarea rows={3} value={notes} onChange={(e) => setNotes(e.target.value)} className={inputCls} style={inputStyle} /></Field>
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Bağlı gider başlığı"><input value={autoMatch} onChange={(e) => setAutoMatch(e.target.value)} className={inputCls} style={inputStyle} placeholder="Opsiyonel" /></Field>
+          <Field label="Oran (%)"><input inputMode="decimal" value={autoShare} onChange={(e) => setAutoShare(e.target.value)} className={inputCls} style={inputStyle} placeholder="ör. 50" /></Field>
+        </div>
+        <p className="text-[11px] text-[#8a8a9a]">Otomatik kural (opsiyonel): başlığında bu metin geçen bir gider “Ödendi” yapılınca, tutarının bu oranı o günkü gram altın kuruyla grama çevrilip borçtan düşülür.</p>
+        <div className="flex justify-between gap-2 pt-2">
+          {onDelete ? <Btn variant="danger" onClick={onDelete}>Sil</Btn> : <span />}
+          <div className="flex gap-2">
+            <Btn onClick={onClose}>Vazgeç</Btn>
+            <Btn type="submit" variant="primary" disabled={busy}>{busy ? "Kaydediliyor…" : "Kaydet"}</Btn>
+          </div>
+        </div>
+      </form>
+    </Modal>
+  );
+}
+
+// Ödeme: gram doğrudan girilebilir ya da TL + gram fiyatı (gram = TL ÷ fiyat). Fiyat boşsa sunucu güncel kuru kendisi alır.
+function GoldPaymentForm({ debt, initial, busy, onClose, onSave, onDelete }: {
+  debt: GoldDebtView; initial: GoldPaymentView | null; busy: boolean; onClose: () => void; onSave: (b: Record<string, unknown>) => void; onDelete?: () => void;
+}) {
+  const ymd = (iso?: string) => (iso ? new Date(iso) : new Date()).toLocaleDateString("en-CA", { timeZone: TZ });
+  const str = (n: number | null | undefined) => (n === null || n === undefined ? "" : String(n));
+  const [date, setDate] = useState(ymd(initial?.paidAt));
+  const [tl, setTl] = useState(str(initial?.tlAmount));
+  const [price, setPrice] = useState(str(initial?.gramPrice));
+  // TL'den hesaplanan gram alanı boş kalır; yalnızca gram elle girilmişse (TL'siz kayıt) doldurulur.
+  const [grams, setGrams] = useState(initial && initial.tlAmount === null ? str(initial.grams) : "");
+  const [note, setNote] = useState(initial?.note ?? "");
+  const [priceInfo, setPriceInfo] = useState("");
+  const [loading, setLoading] = useState(false);
+  const preview = !grams && parseTr(tl) > 0 && parseTr(price) > 0 ? gramsFor(parseTr(tl), parseTr(price)) : null;
+
+  async function loadPrice() {
+    setLoading(true); setPriceInfo("");
+    try {
+      const res = await fetch("/api/musteri/admin/altin-kuru");
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(json.error ?? "Kur alınamadı.");
+      setPrice(String(json.result.price));
+      setPriceInfo(`Güncel gram altın (satış)${json.result.updatedAt ? ` · ${json.result.updatedAt}` : ""}`);
+    } catch (e) { setPriceInfo(e instanceof Error ? e.message : "Kur alınamadı."); }
+    finally { setLoading(false); }
+  }
+
+  return (
+    <Modal dismissable={false} title={`${debt.title} — ${initial ? "ödemeyi düzenle" : "ödeme"}`} onClose={onClose}>
+      <form className="space-y-3" onSubmit={(e) => {
+        e.preventDefault();
+        onSave({ paidAt: new Date(`${date}T10:00:00+03:00`).toISOString(), tlAmount: tl, gramPrice: price, grams, note });
+      }}>
+        <Field label="Tarih"><input type="date" required value={date} max={ymd()} onChange={(e) => setDate(e.target.value)} className={inputCls} style={inputStyle} /></Field>
+        <div className="grid grid-cols-2 gap-3">
+          <Field label="Verilen tutar (₺)"><input inputMode="decimal" value={tl} onChange={(e) => setTl(e.target.value)} className={inputCls} style={inputStyle} /></Field>
+          <Field label="Gram altın fiyatı (₺)"><input inputMode="decimal" value={price} onChange={(e) => setPrice(e.target.value)} className={inputCls} style={inputStyle} placeholder="Boşsa güncel kur" /></Field>
+        </div>
+        <div className="flex flex-wrap items-center gap-2">
+          <Btn small onClick={loadPrice} disabled={loading}>{loading ? "Alınıyor…" : "Güncel kuru getir"}</Btn>
+          {priceInfo && <span className="text-[11px] text-[#8a8a9a]">{priceInfo}</span>}
+          {preview !== null && <span className="text-[13px] font-bold" style={{ color: GOLD }}>= {fmtGr(preview)} düşülecek</span>}
+        </div>
+        <Field label="Gram (doğrudan altın verdiysen)"><input inputMode="decimal" value={grams} onChange={(e) => setGrams(e.target.value)} className={inputCls} style={inputStyle} placeholder="Boşsa TL ÷ fiyat" /></Field>
+        <Field label="Not"><input value={note} onChange={(e) => setNote(e.target.value)} className={inputCls} style={inputStyle} /></Field>
         <div className="flex justify-between gap-2 pt-2">
           {onDelete ? <Btn variant="danger" onClick={onDelete}>Sil</Btn> : <span />}
           <div className="flex gap-2">

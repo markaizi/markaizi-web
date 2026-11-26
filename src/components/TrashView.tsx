@@ -6,14 +6,14 @@ import { PanelShell, Card, Btn, Chip, agendaApi, fmtDate } from "@/components/ag
 
 export interface TrashItem {
   id: string;
-  resource: "kasa" | "card-tx" | "tasks" | "notes";
+  resource: "kasa" | "card-tx" | "tasks" | "notes" | "gold-debts" | "gold-payments";
   kind: string;
   title: string;
   detail: string;
   deletedAt: string;
 }
 
-const COLOR: Record<TrashItem["resource"], string> = { kasa: "#34d399", "card-tx": "#f87171", tasks: "#fb923c", notes: "#60a5fa" };
+const COLOR: Record<TrashItem["resource"], string> = { kasa: "#34d399", "card-tx": "#f87171", tasks: "#fb923c", notes: "#60a5fa", "gold-debts": "#fbbf24", "gold-payments": "#fbbf24" };
 
 // Çöp kutusu: Ajanda ve Finans'ta silinen kayıtlar. "Geri al" kaydı eski yerine koyar
 // (kart harcamasında kart borcuna tutar geri eklenir).
@@ -43,6 +43,9 @@ export default function TrashView({ items }: { items: TrashItem[] }) {
         <Btn small variant={filter === "card-tx" ? "primary" : "ghost"} onClick={() => setFilter("card-tx")}>Kart harcaması ({count("card-tx")})</Btn>
         <Btn small variant={filter === "tasks" ? "primary" : "ghost"} onClick={() => setFilter("tasks")}>İşler ({count("tasks")})</Btn>
         <Btn small variant={filter === "notes" ? "primary" : "ghost"} onClick={() => setFilter("notes")}>Notlar ({count("notes")})</Btn>
+        {count("gold-payments") + count("gold-debts") > 0 && (
+          <Btn small variant={filter === "gold-payments" ? "primary" : "ghost"} onClick={() => setFilter("gold-payments")}>Altın ödemesi ({count("gold-payments")})</Btn>
+        )}
       </div>
       {list.length === 0 && <Card><p className="text-[14px] text-[#8a8a9a]">Çöp kutusu boş.</p></Card>}
       <div className="space-y-2">

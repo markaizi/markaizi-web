@@ -860,6 +860,46 @@ model KasaCardTransaction {
   @@index([entryId, transactionDate])
 }
 
+// ── Altın (gram) cinsinden borç (v3.18.0) ───────────────────
+// Borç TL değil gram olarak tutulur; her ödeme gram olarak düşer. TL ile ödendiyse tutar ve o günkü gram fiyatı da
+// saklanır (gram = TL ÷ gram fiyatı). Yalnızca ADMIN görür (Finans → Güncel Borçlarım).
+model GoldDebt {
+  id         String   @id @default(cuid())
+  title      String
+  totalGrams Decimal  @db.Decimal(10, 2) // başlangıçtaki borç (gr)
+  notes      String?
+  // Otomatik düşme kuralı (opsiyonel): başlığı `autoMatch` içeren bir kasa gideri ÖDENDİ olunca, tutarının
+  // `autoShare` oranı (0.5 = yarısı) güncel gram altın kuruyla grama çevrilip bu borçtan düşülür.
+  autoMatch  String?
+  autoShare  Decimal? @db.Decimal(5, 4)
+  deletedAt  DateTime?
+
+  payments GoldDebtPayment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model GoldDebtPayment {
+  id          String   @id @default(cuid())
+  debtId      String
+  debt        GoldDebt @relation(fields: [debtId], references: [id], onDelete: Cascade)
+  paidAt      DateTime
+  // null = "kur bekliyor": TL tutarı belli ama gram fiyatı alınamadı; kur girilince hesaplanır (kalan borca henüz yansımaz).
+  grams       Decimal? @db.Decimal(10, 2)
+  tlAmount    Decimal? @db.Decimal(14, 2)
+  gramPrice   Decimal? @db.Decimal(14, 2)
+  priceSource String? // "otomatik" (kur servisinden) | "elle"
+  note        String?
+  // Bu ödemeyi doğuran kasa kaydı (otomatik kural) — aynı gider iki kez düşülmesin diye tekil.
+  sourceEntryId String?   @unique
+  deletedAt     DateTime?
+
+  createdAt DateTime @default(now())
+
+  @@index([debtId, paidAt])
+}
+
 // ── İşlem kaydı (v3.11.0) ──────────────────────────────────
 // Ajanda + Finans'ta yapılan her yazma işlemi: panelden (admin) veya Telegram botundan (/api/agent).
 // Yalnızca eklenir; arayüzden silinmez / düzenlenmez.
